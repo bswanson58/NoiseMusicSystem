@@ -62,8 +62,8 @@ namespace ArchiveLoader.ViewModels {
                 displayItem.CurrentHandler = handler != null ? handler.Handler.HandlerName : "Completed";
                 displayItem.CurrentState = handler?.ProcessState ?? ProcessState.Completed;
 
-                if( displayItem.CurrentState == ProcessState.Error ) {
-                    displayItem.SetProcessOutput( handler?.ProcessErrOut );
+                if( displayItem?.CurrentState == ProcessState.Error ) {
+                    displayItem.SetProcessOutput( handler?.ProcessErrOut, handler?.OutputFileCreated == true );
                 }
             }
         }

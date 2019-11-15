@@ -33,7 +33,8 @@
 
                 <Grid Grid.Row="2" Visibility="Collapsed" x:Name="ErrorStatus">
                     <TextBlock Margin="10,0,0,0" Style="{StaticResource ListViewTextStyle}" Foreground="OrangeRed" Text="{Binding ProcessOutput}"/>
-                    <Button Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}" Content="Continue" Command="{Binding OnContinue}"/>
+                    <Button x:Name="ContinueButton" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}"
+                            Content="Continue" Command="{Binding OnContinue}"/>
                 </Grid>
             </Grid>
 
@@ -50,6 +51,9 @@
                 <DataTrigger Binding="{Binding HasError}" Value="True">
                     <Setter TargetName="HandlerName" Property="Foreground" Value="OrangeRed"/>
                     <Setter TargetName="ErrorStatus" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding OutputFilePresent}" Value="False">
+                    <Setter TargetName="ContinueButton" Property="IsEnabled" Value="False"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>

@@ -12,6 +12,7 @@ namespace ArchiveLoader.Dto {
         public  string          Name { get; }
         public  string          FileName { get; }
         public  string          ProcessOutput { get; private set; }
+        public  bool            OutputFilePresent { get; private set; }
 
         public  bool            IsRunning => CurrentState == ProcessState.Running;
         public  bool            IsPending => CurrentState == ProcessState.Pending;
@@ -47,13 +48,16 @@ namespace ArchiveLoader.Dto {
                 RaisePropertyChanged( () => IsRunning );
                 RaisePropertyChanged( () => HasCompleted );
                 RaisePropertyChanged( () => HasError );
+                RaisePropertyChanged( () => OutputFilePresent );
             }
         }
 
-        public void SetProcessOutput( string output ) {
+        public void SetProcessOutput( string output, bool outputPresent ) {
             ProcessOutput = output;
+            OutputFilePresent = outputPresent;
 
             RaisePropertyChanged( () => ProcessOutput );
+            RaisePropertyChanged( () => OutputFilePresent );
         }
 
         public void Execute_OnContinue() {

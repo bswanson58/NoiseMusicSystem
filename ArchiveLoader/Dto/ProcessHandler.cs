@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using ArchiveLoader.Interfaces;
 
 namespace ArchiveLoader.Dto {
@@ -21,6 +22,7 @@ namespace ArchiveLoader.Dto {
         public  string              ProcessStdOut { get; private set; }
         public  string              ProcessErrOut { get; private set; }
         public  int                 ExitCode { get; private set; }
+        public  bool                OutputFileCreated { get; private set; }
         public  IProcessExitHandler ExitHandler { get; }
 
         public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
@@ -53,6 +55,7 @@ namespace ArchiveLoader.Dto {
             ExitCode = exitCode;
 
             ProcessState = ExitHandler?.HandleProcessExitState( this ) ?? ProcessState.Completed;
+            OutputFileCreated = File.Exists( OutputFile );
         }
 
         public void SetProcessToCompleted() {

@@ -19,6 +19,7 @@ namespace ArchiveLoader.Models {
             var retValue = forState;
 
             if(( forState == ProcessState.Completed ) &&
+               ( File.Exists( handler.OutputFile )) &&
                ( handler.Handler.DeleteInputFileOnSuccess )) {
                 retValue = DeleteInputFile( handler );
             }
