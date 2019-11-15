@@ -73,6 +73,36 @@ namespace ArchiveLoader.Models {
             }
         }
 
+        public void AbortErroredProcess( string processKey, string handlerName ) {
+            ProcessItem processItem;
+
+            lock( mProcessList ) {
+                processItem = mProcessList.FirstOrDefault( i => i.Key.Equals(processKey ));
+                var handler = processItem?.ProcessList.FirstOrDefault( h => h.Handler.HandlerName.Equals( handlerName ));
+
+                if( handler != null ) {
+                    handler.SetProcessToAborted();
+
+                    foreach( var h in processItem.ProcessList ) {
+                        if( h.ProcessState == ProcessState.Pending ) {
+                            h.SetProcessToAborted();
+                        }
+                    }
+                }
+            }
+
+            if( processItem != null ) {
+                mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( processItem, CopyProcessEventReason.Update ));
+
+                if( processItem.HasCompletedProcessing()) {
+                    DeleteProcessingItem(processItem );
+                }
+                else {
+                    PumpProcessHandling();
+                }
+            }
+        }
+
         private async void PublishVolume( string volumeRoot, string volumeName ) {
             mEventAggregator.PublishOnUIThread( new Events.VolumeDetected( volumeName ));
 

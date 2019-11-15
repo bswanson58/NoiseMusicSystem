@@ -5,6 +5,7 @@ namespace ArchiveLoader.Dto {
     class DisplayedProcessItem : AutomaticCommandBase {
         private readonly Action<DisplayedProcessItem> mContinueOnError;
         private readonly Action<DisplayedProcessItem> mOpenAction;
+        private readonly Action<DisplayedProcessItem> mAbortAction;
 
         private string          mCurrentHandler;
         private ProcessState    mCurrentState;
@@ -18,13 +19,15 @@ namespace ArchiveLoader.Dto {
         public  bool            IsRunning => CurrentState == ProcessState.Running;
         public  bool            IsPending => CurrentState == ProcessState.Pending;
         public  bool            HasCompleted => CurrentState == ProcessState.Completed;
+        public  bool            IsAborted => CurrentState == ProcessState.Aborted;
         public  bool            HasError => CurrentState == ProcessState.Error;
 
-        public DisplayedProcessItem( ProcessItem item, Action<DisplayedProcessItem> onContinuation, Action<DisplayedProcessItem> openAction ) {
+        public DisplayedProcessItem( ProcessItem item, Action<DisplayedProcessItem> onContinuation, Action<DisplayedProcessItem> abortAction, Action<DisplayedProcessItem> openAction ) {
             Key = item.Key;
             Name = item.Name;
             FileName = item.FileName;
             mContinueOnError = onContinuation;
+            mAbortAction = abortAction;
             mOpenAction = openAction;
 
             CurrentHandler = "File Copied";
@@ -48,6 +51,7 @@ namespace ArchiveLoader.Dto {
                 RaisePropertyChanged( () => CurrentState );
                 RaisePropertyChanged( () => IsPending );
                 RaisePropertyChanged( () => IsRunning );
+                RaisePropertyChanged( () => IsAborted );
                 RaisePropertyChanged( () => HasCompleted );
                 RaisePropertyChanged( () => HasError );
                 RaisePropertyChanged( () => OutputFilePresent );
@@ -64,6 +68,10 @@ namespace ArchiveLoader.Dto {
 
         public void Execute_OnContinue() {
             mContinueOnError?.Invoke( this );
+        }
+
+        public void Execute_OnAbort() {
+            mAbortAction?.Invoke( this );
         }
 
         public void Execute_OpenFolder() {

@@ -33,6 +33,10 @@ namespace ArchiveLoader.Models {
             mCopyProcessor.ContinueErroredProcess( processKey, handlerName );
         }
 
+        public void AbortErroredProcess( string processKey, string handlerName ) {
+            mCopyProcessor.AbortErroredProcess( processKey, handlerName );
+        }
+
         private void OnJobReady( Events.JobTargets targets ) {
             mProcessRecorder.JobStarted( targets );
             mCopyProcessor.StartCopyProcess( targets );

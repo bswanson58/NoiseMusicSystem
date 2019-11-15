@@ -50,7 +50,7 @@ namespace ArchiveLoader.Dto {
         }
 
         public bool HasCompletedProcessing() {
-            return !ProcessList.Any() || ProcessList.All( h => h.ProcessState == ProcessState.Completed );
+            return !ProcessList.Any() || ProcessList.All( h => h.IsHandlerFinished );
         }
     }
 }

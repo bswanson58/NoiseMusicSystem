@@ -7,5 +7,5 @@ namespace ArchiveLoader.Interfaces {
 
         void    StartProcessing();
         void    ContinueErroredProcess( string processKey, string handlerName );
-    }
+        void    AbortErroredProcess( string processKey, string handlerName );    }
 }

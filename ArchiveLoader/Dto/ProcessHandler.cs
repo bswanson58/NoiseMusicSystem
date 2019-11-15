@@ -8,7 +8,8 @@ namespace ArchiveLoader.Dto {
         Pending,
         Running,
         Completed,
-        Error
+        Error,
+        Aborted
     }
 
     [DebuggerDisplay("Handler: {" + nameof( DebugString ) + "}" )]
@@ -24,6 +25,8 @@ namespace ArchiveLoader.Dto {
         public  int                 ExitCode { get; private set; }
         public  bool                OutputFileCreated { get; private set; }
         public  IProcessExitHandler ExitHandler { get; }
+
+        public  bool                IsHandlerFinished => ProcessState == ProcessState.Completed || ProcessState == ProcessState.Aborted;
 
         public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
 
@@ -60,6 +63,14 @@ namespace ArchiveLoader.Dto {
 
         public void SetProcessToCompleted() {
             ProcessState = ExitHandler?.OverrideExitState( this, ProcessState.Completed ) ?? ProcessState.Completed;
+        }
+
+        public void SetProcessToAborted() {
+            ProcessState = ProcessState.Aborted;
+
+            if( String.IsNullOrWhiteSpace( ProcessErrOut )) {
+                ProcessErrOut = "Process aborted.";
+            }
         }
     }
 }

@@ -48,12 +48,16 @@ namespace ArchiveLoader.ViewModels {
 
         private void AddItem( ProcessItem item ) {
             lock( mProcessItems ) {
-                mProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue, OnOpenFolder ));
+                mProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue, OnAbortProcess, OnOpenFolder ));
             }
         }
 
         private void OnProcessContinue( DisplayedProcessItem item ) {
             mProcessManager.ContinueErroredProcess( item.Key, item.CurrentHandler );
+        }
+
+        private void OnAbortProcess( DisplayedProcessItem item ) {
+            mProcessManager.AbortErroredProcess( item.Key, item.CurrentHandler );
         }
 
         private void OnOpenFolder( DisplayedProcessItem item ) {
