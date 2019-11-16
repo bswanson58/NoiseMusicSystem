@@ -106,13 +106,13 @@ namespace ArchiveLoader.ViewModels {
 
         public void Execute_OpenDrive() {
             if(!String.IsNullOrWhiteSpace( SelectedDrive )) {
-                mDriveEjector.OpenDrive( SelectedDrive[0]);
+                mDriveEjector.OpenDrive( SelectedDrive );
             }
         }
 
         public void Execute_CloseDrive() {
             if (!String.IsNullOrWhiteSpace( SelectedDrive )) {
-                mDriveEjector.CloseDrive( SelectedDrive[0]);
+                mDriveEjector.CloseDrive( SelectedDrive );
             }
         }
 

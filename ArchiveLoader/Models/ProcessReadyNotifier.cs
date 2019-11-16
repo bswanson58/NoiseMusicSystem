@@ -2,10 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
-using System.Threading.Tasks;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
-using Caliburn.Micro;
 
 namespace ArchiveLoader.Models {
     class ProcessReadyNotifier : IProcessReadyNotifier {
@@ -32,7 +30,7 @@ namespace ArchiveLoader.Models {
             mJobSubject = new Subject<Events.JobTargets>();
         }
 
-        public async void StartNotifying() {
+        public void StartNotifying() {
             StopNotifying();
 
             var preferences = mPreferences.Load<ArchiveLoaderPreferences>();
@@ -54,7 +52,7 @@ namespace ArchiveLoader.Models {
                    ( Directory.Exists(mTargetDirectory ))) {
                     mSourceDirectory = drive.Name;
 
-                    await mDriveEjector.OpenDrive( drive.Name[0]);
+                    mDriveEjector.OpenDrive( drive.Name );
 
                     mDriveNotificationKey = mDriveManager.AddDriveNotification( mSourceDirectory, OnDriveNotification );
                 }
@@ -76,13 +74,9 @@ namespace ArchiveLoader.Models {
             var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name.Equals( sourceDrive ));
 
             if( drive != null ) {
-                Task.Run( async () => {
-                    await Task.Delay( 5000 );
+                mDriveEjector.OpenDrive( drive.Name );
 
-                    await mDriveEjector.OpenDrive(drive.Name[0]);
-
-                    mLog.LogMessage( $"Ejected drive {drive.Name}" );
-                });
+                mLog.LogMessage( $"Ejected drive {drive.Name}" );
             }
         }
 

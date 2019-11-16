@@ -2,7 +2,7 @@
 
 namespace ArchiveLoader.Interfaces {
     interface IDriveEjector {
-        Task    OpenDrive( char driveLetter );
-        Task    CloseDrive( char driveLetter );
+        Task    OpenDrive( string driveRoot );
+        Task    CloseDrive( string driveRoot );
     }
 }
