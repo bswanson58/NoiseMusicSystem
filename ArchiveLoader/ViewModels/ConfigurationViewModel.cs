@@ -17,6 +17,7 @@ namespace ArchiveLoader.ViewModels {
 
     class ConfigurationViewModel : AutomaticCommandBase, IDisposable {
         private readonly IDriveManager          mDriveManager;
+        private readonly IDriveEjector          mDriveEjector;
         private readonly IPreferences           mPreferences;
         private readonly IPlatformDialogService mPlatformDialogService;
         private readonly IDialogService         mDialogService;
@@ -26,8 +27,10 @@ namespace ArchiveLoader.ViewModels {
 
         public  IEnumerable<string>             DriveList => mDriveManager.AvailableDrives;
 
-        public ConfigurationViewModel( IDriveManager driveManager, IPreferences preferences, IPlatformDialogService platformDialogService, IPlatformLog log, IDialogService dialogService ) {
+        public ConfigurationViewModel( IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, 
+                                       IPlatformDialogService platformDialogService, IPlatformLog log, IDialogService dialogService ) {
             mDriveManager = driveManager;
+            mDriveEjector = driveEjector;
             mPreferences = preferences;
             mPlatformDialogService = platformDialogService;
             mDialogService = dialogService;
@@ -100,6 +103,18 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void OnPreferencesEditCompleted( IDialogResult result ) {}
+
+        public void Execute_OpenDrive() {
+            if(!String.IsNullOrWhiteSpace( SelectedDrive )) {
+                mDriveEjector.OpenDrive( SelectedDrive[0]);
+            }
+        }
+
+        public void Execute_CloseDrive() {
+            if (!String.IsNullOrWhiteSpace( SelectedDrive )) {
+                mDriveEjector.CloseDrive( SelectedDrive[0]);
+            }
+        }
 
         public void Dispose() {
             mDriveManager?.Dispose();

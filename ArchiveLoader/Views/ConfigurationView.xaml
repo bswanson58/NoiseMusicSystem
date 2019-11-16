@@ -6,10 +6,12 @@
              xmlns:Mvvm="http://prismlibrary.com/"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             Height="45" d:DesignWidth="800">
+             Height="45" d:DesignWidth="1000">
 
     <Grid Margin="15,0">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
@@ -23,13 +25,16 @@
         
         <TextBlock Grid.Column="0" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Device:"/>
         <ComboBox Grid.Column="1" VerticalAlignment="Center" Width="60" ItemsSource="{Binding DriveList}" SelectedItem="{Binding SelectedDrive}"/>
-        
-        <TextBlock Grid.Column="2" Margin="15,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Target Directory:"/>
-        <TextBox Grid.Column="3" Width="250" VerticalAlignment="Center" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button Grid.Column="4" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Height="16" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetDirectory}"/>
-        <Button Grid.Column="5" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}"/>
 
-        <Button Grid.Column="7" Margin="0,0,10,0" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="File Handlers" Command="{Binding EditFileHandlers}"/>
-        <Button Grid.Column="8" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="Preferences" Command="{Binding EditPreferences}"/>
+        <Button Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Open Tray" Command="{Binding OpenDrive}"/>
+        <Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Close Tray" Command="{Binding CloseDrive}"/>
+
+        <TextBlock Grid.Column="4" Margin="15,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Target Directory:"/>
+        <TextBox Grid.Column="5" Width="250" VerticalAlignment="Center" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Column="6" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Height="16" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetDirectory}"/>
+        <Button Grid.Column="7" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}"/>
+
+        <Button Grid.Column="9" Margin="0,0,10,0" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="File Handlers" Command="{Binding EditFileHandlers}"/>
+        <Button Grid.Column="10" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="Preferences" Command="{Binding EditPreferences}"/>
     </Grid>
 </UserControl>

@@ -5,12 +5,12 @@ using ArchiveLoader.Interfaces;
 
 namespace ArchiveLoader.Platform {
     class DriveEjector : IDriveEjector {
-        [DllImport("winmm.dll", EntryPoint = "mciSendString")]
+        [DllImport( "winmm.dll", EntryPoint = "mciSendString" )]
         public static extern int mciSendStringA( string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback );
 
         public Task OpenDrive( char driveLetter ) {
             return Task.Run( () => {
-                if ( Char.IsLetter(driveLetter)) {
+                if( Char.IsLetter( driveLetter )) {
                     var returnString = String.Empty;
 
                     mciSendStringA( "open " + driveLetter + ": type CDaudio alias drive" + driveLetter, returnString, 0, 0 );

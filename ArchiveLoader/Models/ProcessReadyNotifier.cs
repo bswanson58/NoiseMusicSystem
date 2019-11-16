@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
+using Caliburn.Micro;
 
 namespace ArchiveLoader.Models {
     class ProcessReadyNotifier : IProcessReadyNotifier {
@@ -70,15 +72,23 @@ namespace ArchiveLoader.Models {
             }
         }
 
-        public async void JobCompleted( string sourceDrive ) {
+        public void JobCompleted( string sourceDrive ) {
             var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name.Equals( sourceDrive ));
 
             if( drive != null ) {
-                await mDriveEjector.OpenDrive( drive.Name[0]);
+                Task.Run( async () => {
+                    await Task.Delay( 5000 );
+
+                    await mDriveEjector.OpenDrive(drive.Name[0]);
+
+                    mLog.LogMessage( $"Ejected drive {drive.Name}" );
+                });
             }
         }
 
         private void OnDriveNotification( DriveInfo drive ) {
+            mLog.LogMessage( $"Drive {drive.VolumeLabel} IsReady = {drive.IsReady}" );
+
             if(( drive.Name.Equals( mSourceDirectory )) &&
                ( drive.IsReady )) {
                 mSourceVolumeName = drive.VolumeLabel;
