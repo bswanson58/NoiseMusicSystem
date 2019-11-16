@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -14,12 +15,10 @@ namespace ArchiveLoader.ViewModels {
 
         public BindableCollection<string>       VolumeList => mProcessRecorder.AvailableVolumes;
         public ICollectionView                  ProcessList { get; private set; }
-        public int                              ProcessListUpdated { get; private set; }
+        public CompletedProcessItem             LastItemAdded { get; private set; }
 
         public ProcessRecorderViewModel( IProcessRecorder processRecorder ) {
             mProcessRecorder = processRecorder;
-
-            ProcessListUpdated = 0;
 
             VolumeList.CollectionChanged += OnVolumeListChanged;
         }
@@ -54,10 +53,11 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void OnListChanged( object sender, NotifyCollectionChangedEventArgs args ) {
-            Execute.OnUIThread( () => {
-                ProcessListUpdated++;
-                RaisePropertyChanged(() => ProcessListUpdated );
-            });
+            if( args.NewItems.Count > 0 ) {
+                LastItemAdded = args.NewItems[0] as CompletedProcessItem;
+
+                RaisePropertyChanged( () => LastItemAdded );
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ArchiveLoader.Behaviours {
     public class ListBoxLastItemVisible {
@@ -19,11 +20,12 @@ namespace ArchiveLoader.Behaviours {
                 new UIPropertyMetadata( null, OnChangeTrigger ));
 
         static void OnChangeTrigger( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
-            if( depObj is ListBox list ) {
-                var lastItem = list.Items.Count - 1;
+            if(( depObj is ListBox listView ) &&
+               ( args.NewValue != null )) {
+                if( VisualTreeHelper.GetChild( listView, 0 ) is Border border ) {
+                    var scrollViewer = VisualTreeHelper.GetChild( border, 0 ) as ScrollViewer;
 
-                if( lastItem > 1 ) {
-                    list.ScrollIntoView(list.Items[lastItem]);
+                    scrollViewer?.ScrollToBottom();
                 }
             }
         }

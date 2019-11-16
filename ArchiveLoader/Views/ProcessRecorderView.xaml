@@ -37,7 +37,7 @@
             <ComboBox Width="180" ItemsSource="{Binding VolumeList}" SelectedItem="{Binding CurrentVolume}"/>
         </StackPanel>
 
-        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" Behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding ProcessListUpdated}"
+        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" Behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding LastItemAdded}"
                  ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource CompletedItemTemplate}"/>
     </Grid>
 </UserControl>
