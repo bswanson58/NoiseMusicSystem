@@ -26,15 +26,18 @@ namespace ArchiveLoader.Models {
             mPreferences = preferences;
             mLog = log;
 
+            mDriveNotificationKey = String.Empty;
             mJobSubject = new Subject<Events.JobTargets>();
         }
 
-        public async void StartProcessing() {
+        public async void StartNotifying() {
+            StopNotifying();
+
             var preferences = mPreferences.Load<ArchiveLoaderPreferences>();
 
             mTargetDirectory = preferences.TargetDirectory;
 
-            if((!String.IsNullOrWhiteSpace(preferences.SourceDirectory )) &&
+            if((!String.IsNullOrWhiteSpace( preferences.SourceDirectory )) &&
                ( Directory.Exists(preferences.SourceDirectory ))) {
                 mSourceDirectory = preferences.SourceDirectory;
                 mSourceVolumeName = preferences.SourceDirectory;
@@ -59,6 +62,14 @@ namespace ArchiveLoader.Models {
             }
         }
 
+        public void StopNotifying() {
+            if(!String.IsNullOrWhiteSpace( mDriveNotificationKey )) {
+                mDriveManager.RemoveDriveNotification( mDriveNotificationKey );
+
+                mDriveNotificationKey = String.Empty;
+            }
+        }
+
         private void OnDriveNotification( DriveInfo drive ) {
             if(( drive.Name.Equals( mSourceDirectory )) &&
                ( drive.IsReady )) {
@@ -73,11 +84,7 @@ namespace ArchiveLoader.Models {
         }
 
         public void Dispose() {
-            if(!String.IsNullOrWhiteSpace( mDriveNotificationKey )) {
-                mDriveManager?.RemoveDriveNotification( mDriveNotificationKey );
-
-                mDriveNotificationKey = String.Empty;
-            }
+            StopNotifying();
 
             mProcessQueueSubscription?.Dispose();
             mProcessQueueSubscription = null;

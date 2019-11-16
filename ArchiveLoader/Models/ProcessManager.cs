@@ -9,9 +9,11 @@ namespace ArchiveLoader.Models {
         private readonly ICopyProcessor             mCopyProcessor;
         private readonly IProcessRecorder           mProcessRecorder;
         private readonly Subject<Events.ProcessItemEvent>   mCopyEventSubject;
+        private readonly Subject<ProcessingState>           mProcessingStateSubject;
         private IDisposable                         mReadyNotifierSubscription;
         private IDisposable                         mCopyEventSubscription;
 
+        public IObservable<ProcessingState>         OnProcessingStateChanged => mProcessingStateSubject;
         public IObservable<Events.ProcessItemEvent> OnProcessingItemChanged => mCopyEventSubject;
 
         public ProcessManager( IProcessReadyNotifier readyNotifier, ICopyProcessor copyProcessor, IProcessRecorder processRecorder ) {
@@ -20,13 +22,21 @@ namespace ArchiveLoader.Models {
             mProcessRecorder = processRecorder;
 
             mCopyEventSubject = new Subject<Events.ProcessItemEvent>();
+            mProcessingStateSubject = new Subject<ProcessingState>();
         }
 
         public void StartProcessing() {
             mCopyEventSubscription = mCopyProcessor.OnProcessingItemChanged.Subscribe( OnCopyProcessEvent );
             mReadyNotifierSubscription = mReadyNotifier.OnJobReady.Subscribe( OnJobReady );
 
-            mReadyNotifier.StartProcessing();
+            mReadyNotifier.StartNotifying();
+            mProcessingStateSubject.OnNext( ProcessingState.Running );
+        }
+
+        public void StopProcessing() {
+            mReadyNotifier.StopNotifying();
+
+            mProcessingStateSubject.OnNext( ProcessingState.Stopped );
         }
 
         public void ContinueErroredProcess( string processKey, string handlerName ) {
