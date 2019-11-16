@@ -19,9 +19,12 @@ namespace ArchiveLoader.Behaviours {
                 new UIPropertyMetadata( null, OnChangeTrigger ));
 
         static void OnChangeTrigger( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
-            if(( depObj is ListBox list ) &&
-               ( list.Items.Count > 0 )) {
-                list.ScrollIntoView( list.Items[list.Items.Count - 1]);
+            if( depObj is ListBox list ) {
+                var lastItem = list.Items.Count - 1;
+
+                if( lastItem > 1 ) {
+                    list.ScrollIntoView(list.Items[lastItem]);
+                }
             }
         }
     }

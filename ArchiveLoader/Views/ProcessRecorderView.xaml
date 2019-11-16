@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Dto="clr-namespace:ArchiveLoader.Dto"
-             xmlns:Mvvm="http://prismlibrary.com/" 
+             xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Behaviours="clr-namespace:ArchiveLoader.Behaviours"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -39,6 +40,7 @@
             <ComboBox Width="180" ItemsSource="{Binding VolumeList}" SelectedItem="{Binding CurrentVolume}"/>
         </StackPanel>
 
-        <ListBox Grid.Row="2" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource CompletedItemTemplate}"/>
+        <ListBox Grid.Row="2" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" Behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding ProcessListUpdated}"
+                 ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource CompletedItemTemplate}"/>
     </Grid>
 </UserControl>
