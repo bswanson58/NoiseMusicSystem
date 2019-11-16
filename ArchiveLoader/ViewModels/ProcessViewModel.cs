@@ -13,6 +13,7 @@ namespace ArchiveLoader.ViewModels {
         private readonly IProcessManager    mProcessManager;
         private readonly IDisposable        mProcessingItemChangedSubscription;
         private readonly IPlatformLog       mLog;
+        private bool                        mHaveErroredProcess;
         private readonly BindableCollection<DisplayedProcessItem> mProcessItems;
 
         public  ICollectionView             ProcessItems { get; }
@@ -25,6 +26,8 @@ namespace ArchiveLoader.ViewModels {
             ProcessItems = CollectionViewSource.GetDefaultView( mProcessItems );
             ProcessItems.SortDescriptions.Add( new SortDescription( "FileName", ListSortDirection.Ascending ));
 
+            mHaveErroredProcess = false;
+
             mProcessingItemChangedSubscription = mProcessManager.OnProcessingItemChanged.Subscribe( OnProcessingItemEvent );
         }
 
@@ -32,8 +35,16 @@ namespace ArchiveLoader.ViewModels {
             mProcessManager.ContinueAllProcesses();
         }
 
+        public bool CanExecute_ContinueAll() {
+            return mHaveErroredProcess;
+        }
+
         public void Execute_AbortAll() {
             mProcessManager.AbortAllProcesses();
+        }
+
+        public bool CanExecute_AbortAll() {
+            return mHaveErroredProcess;
         }
 
         private void OnProcessingItemEvent( Events.ProcessItemEvent itemEvent ) {
@@ -93,6 +104,13 @@ namespace ArchiveLoader.ViewModels {
                 if( displayItem.CurrentState == ProcessState.Error ) {
                     displayItem.SetProcessOutput( handler?.ProcessErrOut, handler?.OutputFileCreated == true );
                 }
+
+                lock( mProcessItems ) {
+                    mHaveErroredProcess = mProcessItems.Any( i => i.HasError );
+                }
+
+                RaiseCanExecuteChangedEvent( "CanExecute_ContinueAll" );
+                RaiseCanExecuteChangedEvent( "CanExecute_AbortAll" );
             }
         }
 
@@ -102,7 +120,12 @@ namespace ArchiveLoader.ViewModels {
             if( displayItem != null ) {
                 lock( mProcessItems ) {
                     mProcessItems.Remove( displayItem );
+
+                    mHaveErroredProcess = mProcessItems.Any( i => i.HasError );
                 }
+
+                RaiseCanExecuteChangedEvent( "CanExecute_ContinueAll" );
+                RaiseCanExecuteChangedEvent( "CanExecute_AbortAll" );
             }
         }
 
