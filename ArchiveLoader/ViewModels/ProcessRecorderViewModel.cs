@@ -22,10 +22,7 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void OnVolumeListChanged( object sender, NotifyCollectionChangedEventArgs args ) {
-            if(( String.IsNullOrWhiteSpace( CurrentVolume )) &&
-               ( VolumeList.Any())) {
-                CurrentVolume = VolumeList.LastOrDefault();
-            }
+            CurrentVolume = VolumeList.LastOrDefault();
         }
 
         public string CurrentVolume {
@@ -37,10 +34,13 @@ namespace ArchiveLoader.ViewModels {
                     ProcessList = CollectionViewSource.GetDefaultView( mProcessRecorder.GetItemsForVolume( mCurrentVolume ));
                     ProcessList.SortDescriptions.Clear();
                     ProcessList.SortDescriptions.Add( new SortDescription( "FileName", ListSortDirection.Ascending ));
-
-                    RaisePropertyChanged( () => ProcessList );
-                    RaisePropertyChanged( () => CurrentVolume );
                 }
+                else {
+                    ProcessList = null;
+                }
+
+                RaisePropertyChanged(() => ProcessList );
+                RaisePropertyChanged(() => CurrentVolume );
             }
         }
     }
