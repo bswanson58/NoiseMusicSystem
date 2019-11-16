@@ -26,21 +26,18 @@
 
     </UserControl.Resources>
 
-    <Grid Margin="15,-20,15,0">
+    <Grid Margin="15,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Processed Items:"/>
-
-        <StackPanel Grid.Row="1" Margin="3,3,0,7" Orientation="Horizontal">
-            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="For Volume:"/>
+        <StackPanel Grid.Row="0" Margin="3,3,0,7" Orientation="Horizontal">
+            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Items Processed For Volume:"/>
             <ComboBox Width="180" ItemsSource="{Binding VolumeList}" SelectedItem="{Binding CurrentVolume}"/>
         </StackPanel>
 
-        <ListBox Grid.Row="2" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" Behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding ProcessListUpdated}"
+        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" Behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding ProcessListUpdated}"
                  ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource CompletedItemTemplate}"/>
     </Grid>
 </UserControl>

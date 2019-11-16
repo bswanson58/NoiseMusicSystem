@@ -7,13 +7,13 @@
              xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="800">
+             Height="60" d:DesignWidth="400">
 
     <UserControl.Resources>
         <ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" IsHidden="True" TriggerValue="False"/>
     </UserControl.Resources>
 
-    <Grid Visibility="{Binding IsActive, Converter={StaticResource VisibleIfTrue}}">
+    <Grid Margin="15,0" Visibility="{Binding IsActive, Converter={StaticResource VisibleIfTrue}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -26,7 +26,7 @@
 
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center" Text="Copy Progress:"/>
 
-        <ProgressBar Grid.Row="1" Grid.Column="1" Margin="0,0,15,0" Maximum="{Binding TotalFileSize}" Value="{Binding CurrentFileSize}"/>
+        <ProgressBar Grid.Row="1" Grid.Column="1" Maximum="{Binding TotalFileSize}" Value="{Binding CurrentFileSize}"/>
         <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="Black" Text="{Binding CurrentPercent}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="Black" Margin="3,0,0,0" Text="%"/>
