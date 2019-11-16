@@ -10,7 +10,8 @@ namespace ArchiveLoader.Dto {
         Add,
         Completed,
         Update,
-        CopyCompleted
+        CopyCompleted,
+        ProcessingCompleted
     }
 
     [DebuggerDisplay("ProcessItem: {" + nameof( Name ) + "}" )]

@@ -12,6 +12,7 @@ namespace ArchiveLoader.Models {
         private readonly Subject<ProcessingState>           mProcessingStateSubject;
         private IDisposable                         mReadyNotifierSubscription;
         private IDisposable                         mCopyEventSubscription;
+        private string                              mCurrentSourceVolume;
 
         public IObservable<ProcessingState>         OnProcessingStateChanged => mProcessingStateSubject;
         public IObservable<Events.ProcessItemEvent> OnProcessingItemChanged => mCopyEventSubject;
@@ -56,6 +57,8 @@ namespace ArchiveLoader.Models {
         }
 
         private void OnJobReady( Events.JobTargets targets ) {
+            mCurrentSourceVolume = targets.SourceVolumeName;
+
             mProcessRecorder.JobStarted( targets );
             mCopyProcessor.StartCopyProcess( targets );
         }
@@ -67,6 +70,9 @@ namespace ArchiveLoader.Models {
                 mProcessRecorder.ItemCompleted( args.Item );
             }
             else if( args.Reason == CopyProcessEventReason.CopyCompleted ) {
+                mReadyNotifier.JobCompleted( mCurrentSourceVolume );
+            }
+            else if( args.Reason == CopyProcessEventReason.ProcessingCompleted ) {
                 mProcessRecorder.JobCompleted( args.Item.VolumeName );
             }
         }

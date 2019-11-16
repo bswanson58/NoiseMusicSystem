@@ -144,7 +144,8 @@ namespace ArchiveLoader.Models {
             if( status.CopyCompleted ) {
                 mCopyCompleted = true;
 
-                mEventAggregator.PublishOnUIThread( new Events.VolumeCompleted( mSourceVolumeName ));
+                mProcessingEventSubject.OnNext(new Events.ProcessItemEvent( new ProcessItem( mSourceVolumeName, new FileCopyStatus( true )), CopyProcessEventReason.CopyCompleted ));
+                mEventAggregator.PublishOnUIThread(new Events.VolumeCompleted( mSourceVolumeName ));
             }
             else {
                 if( status.Success ) {
@@ -284,7 +285,7 @@ namespace ArchiveLoader.Models {
 
                 if(( mCopyCompleted ) &&
                    ( processListEmpty )) {
-                    mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( new ProcessItem( mSourceVolumeName, new FileCopyStatus( true )), CopyProcessEventReason.CopyCompleted ));
+                    mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( new ProcessItem( mSourceVolumeName, new FileCopyStatus( true )), CopyProcessEventReason.ProcessingCompleted ));
                 }
             });
         }

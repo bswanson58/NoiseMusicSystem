@@ -47,7 +47,7 @@ namespace ArchiveLoader.Models {
             else {
                 var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name.Equals( preferences.SourceDrive ));
 
-                if( (drive != null ) &&
+                if(( drive != null ) &&
                    (!String.IsNullOrWhiteSpace( mTargetDirectory )) &&
                    ( Directory.Exists(mTargetDirectory ))) {
                     mSourceDirectory = drive.Name;
@@ -67,6 +67,14 @@ namespace ArchiveLoader.Models {
                 mDriveManager.RemoveDriveNotification( mDriveNotificationKey );
 
                 mDriveNotificationKey = String.Empty;
+            }
+        }
+
+        public async void JobCompleted( string sourceDrive ) {
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name.Equals( sourceDrive ));
+
+            if( drive != null ) {
+                await mDriveEjector.OpenDrive( drive.Name[0]);
             }
         }
 

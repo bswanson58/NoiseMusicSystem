@@ -7,5 +7,6 @@ namespace ArchiveLoader.Interfaces {
         void                            StopNotifying();
 
         IObservable<Events.JobTargets>  OnJobReady { get; }
+        void                            JobCompleted( string sourceDrive );
     }
 }
