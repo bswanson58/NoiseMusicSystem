@@ -28,6 +28,14 @@ namespace ArchiveLoader.ViewModels {
             mProcessingItemChangedSubscription = mProcessManager.OnProcessingItemChanged.Subscribe( OnProcessingItemEvent );
         }
 
+        public void Execute_ContinueAll() {
+            mProcessManager.ContinueAllProcesses();
+        }
+
+        public void Execute_AbortAll() {
+            mProcessManager.AbortAllProcesses();
+        }
+
         private void OnProcessingItemEvent( Events.ProcessItemEvent itemEvent ) {
             Execute.OnUIThread( () => {
                 switch( itemEvent.Reason ) {

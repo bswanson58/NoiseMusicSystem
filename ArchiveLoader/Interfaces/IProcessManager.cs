@@ -14,6 +14,9 @@ namespace ArchiveLoader.Interfaces {
         void    StartProcessing();
         void    StopProcessing();
 
+        void    ContinueAllProcesses();
+        void    AbortAllProcesses();
+
         void    ContinueErroredProcess( string processKey, string handlerName );
         void    AbortErroredProcess( string processKey, string handlerName );    }
 }

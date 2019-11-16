@@ -39,8 +39,16 @@ namespace ArchiveLoader.Models {
             mProcessingStateSubject.OnNext( ProcessingState.Stopped );
         }
 
+        public void ContinueAllProcesses() {
+            mCopyProcessor.ContinueAllProcesses();
+        }
+
         public void ContinueErroredProcess( string processKey, string handlerName ) {
             mCopyProcessor.ContinueErroredProcess( processKey, handlerName );
+        }
+
+        public void AbortAllProcesses() {
+            mCopyProcessor.AbortAllProcesses();
         }
 
         public void AbortErroredProcess( string processKey, string handlerName ) {

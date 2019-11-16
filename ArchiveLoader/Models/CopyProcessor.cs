@@ -51,6 +51,12 @@ namespace ArchiveLoader.Models {
             PublishVolume( mSourceDirectory, mSourceVolumeName );
         }
 
+        public void ContinueAllProcesses() {
+            var continueList = CollectErroredHandlers( true );
+
+            continueList.ForEach( h => ContinueErroredProcess( h.ParentKey, h.Handler.HandlerName ));
+        }
+
         public void ContinueErroredProcess( string processKey, string handlerName ) {
             ProcessItem processItem;
 
@@ -71,6 +77,12 @@ namespace ArchiveLoader.Models {
                     PumpProcessHandling();
                 }
             }
+        }
+
+        public void AbortAllProcesses() {
+            var abortList = CollectErroredHandlers( false );
+
+            abortList.ForEach( h => AbortErroredProcess( h.ParentKey, h.Handler.HandlerName ));
         }
 
         public void AbortErroredProcess( string processKey, string handlerName ) {
@@ -101,6 +113,23 @@ namespace ArchiveLoader.Models {
                     PumpProcessHandling();
                 }
             }
+        }
+
+        private List<ProcessHandler> CollectErroredHandlers( bool withOutputPresent ) {
+            var retValue = new List<ProcessHandler>();
+
+            lock( mProcessList ) {
+                mProcessList.ForEach( p => {
+                    if( withOutputPresent ) {
+                        retValue.AddRange( from h in p.ProcessList where h.ProcessState == ProcessState.Error && h.OutputFileCreated select h );
+                    }
+                    else {
+                        retValue.AddRange( from h in p.ProcessList where h.ProcessState == ProcessState.Error select h );
+                    }
+                });
+            }
+
+            return retValue;
         }
 
         private async void PublishVolume( string volumeRoot, string volumeName ) {

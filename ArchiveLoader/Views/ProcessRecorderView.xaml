@@ -25,7 +25,7 @@
 
     </UserControl.Resources>
 
-    <Grid Margin="15,5">
+    <Grid Margin="15,-20,15,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>

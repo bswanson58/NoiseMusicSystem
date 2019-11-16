@@ -71,9 +71,15 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Items Being Processed:"/>
         <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" ItemsSource="{Binding ProcessItems}" ItemTemplate="{StaticResource ProcessItemTemplate}"/>
+        
+        <StackPanel Grid.Row="2" Margin="0,10,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Style="{StaticResource GeneralButtonStyle}" Content="Continue All" Margin="6,0" Command="{Binding ContinueAll}"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Content="Abort All" Command="{Binding AbortAll}"/>
+        </StackPanel>
     </Grid>
 </UserControl>
