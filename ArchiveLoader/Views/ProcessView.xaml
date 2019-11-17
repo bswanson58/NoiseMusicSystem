@@ -29,7 +29,7 @@
                     <TextBlock Grid.Column="2" x:Name="HandlerName" Margin="0,0,15,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding CurrentHandler}"/>
                 </Grid>
 
-                <TextBlock Grid.Row="1" Margin="10,0,0,0" Text="{Binding FileName}"/>
+                <TextBlock Grid.Row="1" Margin="10,0,0,0" Opacity=".6" Text="{Binding FileName}"/>
 
                 <Grid Grid.Row="2" Visibility="Collapsed" x:Name="ErrorStatus">
                     <TextBlock Margin="10,0,0,0" Style="{StaticResource ListViewTextStyle}" Foreground="OrangeRed" Text="{Binding ProcessOutput}"/>
