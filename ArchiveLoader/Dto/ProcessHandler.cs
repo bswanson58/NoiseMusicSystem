@@ -19,6 +19,7 @@ namespace ArchiveLoader.Dto {
         public  string              InputFile { get; }
         public  string              OutputFile { get; }
         public  string              InstanceArguments {  get; }
+        public  ProcessState        InitialProcessState {get; private set; }
         public  ProcessState        ProcessState { get; private set; }
         public  string              ProcessStdOut { get; private set; }
         public  string              ProcessErrOut { get; private set; }
@@ -42,6 +43,7 @@ namespace ArchiveLoader.Dto {
                 InstanceArguments = InstanceArguments.Replace( key.Key, item.Metadata[key.Key]);
             }
 
+            InitialProcessState = ProcessState.Pending;
             ProcessState = ProcessState.Pending;
             ProcessStdOut = String.Empty;
             ProcessErrOut = String.Empty;
@@ -58,6 +60,7 @@ namespace ArchiveLoader.Dto {
             ExitCode = exitCode;
 
             ProcessState = ExitHandler?.HandleProcessExitState( this ) ?? ProcessState.Completed;
+            InitialProcessState = ProcessState;
             OutputFileCreated = File.Exists( OutputFile );
         }
 
@@ -67,6 +70,9 @@ namespace ArchiveLoader.Dto {
 
         public void SetProcessToAborted() {
             ProcessState = ProcessState.Aborted;
+            if( InitialProcessState == ProcessState.Pending ) {
+                InitialProcessState = ProcessState.Aborted;
+            }
 
             if( String.IsNullOrWhiteSpace( ProcessErrOut )) {
                 ProcessErrOut = "Process aborted.";

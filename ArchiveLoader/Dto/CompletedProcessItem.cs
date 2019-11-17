@@ -30,7 +30,7 @@ namespace ArchiveLoader.Dto {
                                     String.Join( ", ", from handler in fromItem.ProcessList select handler.Handler.HandlerName ) : 
                                     fromItem.ProcessList[0].Handler.HandlerName;
 
-                ProcessList = new List<DisplayedStatusItem>( from p in fromItem.ProcessList select new DisplayedStatusItem( p.Handler.HandlerName, p.ProcessState ));
+                ProcessList = new List<DisplayedStatusItem>( from p in fromItem.ProcessList select new DisplayedStatusItem( p.Handler.HandlerName, p.InitialProcessState ));
                 ProcessList.LastOrDefault()?.SetLastItem( true );
             }
 
