@@ -7,7 +7,7 @@ namespace ArchiveLoader.Interfaces {
         void    ItemCompleted( ProcessItem item );
         void    JobCompleted( string volumeName );
 
-        BindableCollection<string>                  AvailableVolumes { get; }
+        BindableCollection<DisplayedStatusItem>     AvailableVolumes { get; }
         BindableCollection<CompletedProcessItem>    GetItemsForVolume( string volume );
     }
 }

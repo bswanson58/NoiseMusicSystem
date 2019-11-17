@@ -175,6 +175,7 @@
     <Compile Include="Dto\ArchiveLoaderPreferences.cs" />
     <Compile Include="Dto\CompletedProcessItem.cs" />
     <Compile Include="Dto\DisplayedProcessItem.cs" />
+    <Compile Include="Dto\DisplayedStatusItem.cs" />
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\FileHandlerStorageList.cs" />
     <Compile Include="Dto\FileTypeHandler.cs" />
