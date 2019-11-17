@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace ArchiveLoader.Dto {
     public class CompletedProcessItem {
-        public  string          Name { get; }
-        public  string          Artist { get; }
-        public  string          Album { get; }
-        public  string          Subdirectory { get; }
-        public  string          FileName { get; }
-        public  string          VolumeName { get; }
-        public  string          ProcessNames { get; }
-        public  string          Output { get; }
-        public  ProcessState    FinalState { get; }
-        public  int             Errors { get; }
+        public  string                      Name { get; }
+        public  string                      Artist { get; }
+        public  string                      Album { get; }
+        public  string                      Subdirectory { get; }
+        public  string                      FileName { get; }
+        public  string                      VolumeName { get; }
+        public  List<DisplayedStatusItem>   ProcessList { get; }
+        public  string                      ProcessNames { get; }
+        public  string                      Output { get; }
+        public  ProcessState                FinalState { get; }
+        public  int                         Errors { get; }
 
         public CompletedProcessItem( ProcessItem fromItem ) {
             Name = fromItem.Name;
@@ -27,6 +29,9 @@ namespace ArchiveLoader.Dto {
                 ProcessNames = fromItem.ProcessList.Count > 1 ? 
                                     String.Join( ", ", from handler in fromItem.ProcessList select handler.Handler.HandlerName ) : 
                                     fromItem.ProcessList[0].Handler.HandlerName;
+
+                ProcessList = new List<DisplayedStatusItem>( from p in fromItem.ProcessList select new DisplayedStatusItem( p.Handler.HandlerName, p.ProcessState ));
+                ProcessList.LastOrDefault()?.SetLastItem( true );
             }
 
             FinalState = fromItem.ProcessList.LastOrDefault()?.ProcessState ?? ProcessState.Completed;

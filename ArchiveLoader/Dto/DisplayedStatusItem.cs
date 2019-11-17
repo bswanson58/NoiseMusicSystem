@@ -4,6 +4,7 @@ namespace ArchiveLoader.Dto {
     public class DisplayedStatusItem : PropertyChangeBase {
         public  string          Name { get; }
         public  ProcessState    Status { get; private set; }
+        public  bool            IsLastItem { get; private set; }
 
         public bool             IsRunning => Status == ProcessState.Running;
         public bool             IsPending => Status == ProcessState.Pending;
@@ -15,6 +16,23 @@ namespace ArchiveLoader.Dto {
             Name = name;
 
             Status = ProcessState.Pending;
+            IsLastItem = false;
+        }
+
+        public DisplayedStatusItem( string name, ProcessState status ) :
+            this( name ) {
+            Status = status;
+        }
+
+        public DisplayedStatusItem(string name, ProcessState status, bool isLastItem ) :
+            this( name, status ) {
+            IsLastItem = isLastItem;
+        }
+
+        public void SetLastItem( bool isLastItem ) {
+            IsLastItem = isLastItem;
+
+            RaisePropertyChanged( () => IsLastItem );
         }
 
         public void UpdateStatus( ProcessState status ) {

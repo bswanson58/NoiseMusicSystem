@@ -22,13 +22,32 @@
                     <Setter TargetName="VolumeName" Property="Foreground" Value="Yellow"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsAborted}" Value="True">
-                    <Setter TargetName="VolumeName" Property="Foreground" Value="DarkRed"/>
+                    <Setter TargetName="VolumeName" Property="Foreground" Value="Red"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding HasCompleted}" Value="True">
-                    <Setter TargetName="VolumeName" Property="Foreground" Value="Green"/>
+                    <Setter TargetName="VolumeName" Property="Foreground" Value="LimeGreen"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding HasError}" Value="True">
                     <Setter TargetName="VolumeName" Property="Foreground" Value="OrangeRed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HandlerItemTemplate" DataType="Dto:DisplayedStatusItem">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="HandlerName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+                <TextBlock x:Name="HandlerSeparator" Margin="5,0" Text="-"/>
+            </StackPanel>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsAborted}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="Red"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasError}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="OrangeRed"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLastItem}" Value="True">
+                    <Setter TargetName="HandlerSeparator" Property="Visibility" Value="Collapsed"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -40,9 +59,16 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding FileName}"/>
-                <TextBlock Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Margin="0,0,15,0" Text="{Binding ProcessNames}"/>
+
+                <ItemsControl Grid.Column="2" Margin="0,0,15,0" ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource HandlerItemTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </Grid>
         </DataTemplate>
 
