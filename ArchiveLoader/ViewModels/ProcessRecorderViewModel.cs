@@ -11,6 +11,7 @@ namespace ArchiveLoader.ViewModels {
     class ProcessRecorderViewModel : PropertyChangeBase {
         private readonly IProcessRecorder       mProcessRecorder;
         private DisplayedStatusItem             mCurrentVolume;
+        private bool                            mDisplayOnlyErrors;
 
         public BindableCollection<DisplayedStatusItem>  VolumeList => mProcessRecorder.AvailableVolumes;
         public ICollectionView                          ProcessList { get; private set; }
@@ -41,6 +42,7 @@ namespace ArchiveLoader.ViewModels {
                     ProcessList.SortDescriptions.Add( new SortDescription( "FileName", ListSortDirection.Ascending ));
 
                     ProcessList.CollectionChanged += OnListChanged;
+                    ProcessList.Filter += OnProcessListFilter;
                 }
                 else {
                     ProcessList = null;
@@ -51,8 +53,31 @@ namespace ArchiveLoader.ViewModels {
             }
         }
 
+        public bool DisplayOnlyErrors {
+            get => mDisplayOnlyErrors;
+            set {
+                mDisplayOnlyErrors = value;
+
+                ProcessList.Refresh();
+            }
+
+        }
+
+        private bool OnProcessListFilter( object o ) {
+            var retValue = !mDisplayOnlyErrors;
+
+            if(( mDisplayOnlyErrors ) &&
+               ( o is CompletedProcessItem item )) {
+                if( item.FinalState == ProcessState.Aborted || item.FinalState == ProcessState.Error ) {
+                    retValue = true;
+                }
+            }
+
+            return retValue;
+        }
+
         private void OnListChanged( object sender, NotifyCollectionChangedEventArgs args ) {
-            if( args.NewItems.Count > 0 ) {
+            if( args?.NewItems?.Count > 0 ) {
                 LastItemAdded = args.NewItems[0] as CompletedProcessItem;
 
                 RaisePropertyChanged( () => LastItemAdded );
