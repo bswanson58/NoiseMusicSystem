@@ -8,6 +8,15 @@
                  ResizeMode="CanResizeWithGrip"
                  Title="Archive Loader" >
 
+    <Mah:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="5,3,0,3" Background="Transparent"
+                  RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality">
+                <Image Source="../Resources/package.ico"/>
+            </Grid>
+        </DataTemplate>
+    </Mah:MetroWindow.IconTemplate>
+
     <Mah:MetroWindow.RightWindowCommands>
         <Mah:WindowCommands>
         </Mah:WindowCommands>
