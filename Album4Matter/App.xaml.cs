@@ -7,23 +7,14 @@ using Album4Matter.Interfaces;
 using Album4Matter.Views;
 using Caliburn.Micro;
 using Prism.Ioc;
-using Prism.Modularity;
 
 namespace Album4Matter {
     public partial class App {
         private IPlatformLog    mLog;
 
-        protected override void OnStartup( StartupEventArgs e ) {
-            // Caliburn Micro dispatcher initialize.
-            PlatformProvider.Current = new XamlPlatformProvider();
-
-            base.OnStartup( e );
-
-            mLog = Container.Resolve<IPlatformLog>();
-            mLog.LogMessage( "+++ Application Started +++" );
-
+        public App() {
             DispatcherUnhandledException += AppDispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException +=CurrentDomainUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
 
 #if !DEBUG
@@ -34,13 +25,18 @@ namespace Album4Matter {
 #endif
         }
 
-        protected override void ConfigureModuleCatalog( IModuleCatalog moduleCatalog ) {
-            base.ConfigureModuleCatalog( moduleCatalog );
+        protected override void RegisterTypes( IContainerRegistry containerRegistry ) {
+            var module = new ApplicationModule();
 
-            moduleCatalog.AddModule( typeof( ApplicationModule ));
+            module.RegisterTypes( containerRegistry );
+
+            mLog = Container.Resolve<IPlatformLog>();
+//            mLog.AddLoggingSink(new MessageBoxSink(), LogEventLevel.Error);
+            mLog.LogMessage( "+++ Application Started +++" );
+
+            // Caliburn Micro dispatcher initialize.
+            PlatformProvider.Current = new XamlPlatformProvider();
         }
-
-        protected override void RegisterTypes( IContainerRegistry containerRegistry ) { }
 
         protected override Window CreateShell() {
             var retValue = Container.Resolve<Shell>();

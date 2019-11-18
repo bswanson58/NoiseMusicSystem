@@ -1,16 +1,22 @@
 ﻿using Album4Matter.Interfaces;
 using Album4Matter.Logging;
 using Album4Matter.Platform;
+using Caliburn.Micro;
 using Prism.Ioc;
 using Prism.Modularity;
+using ReusableBits.Mvvm.VersionSpinner;
 
 namespace Album4Matter {
     class ApplicationModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
-            containerRegistry.Register<IEnvironment, OperatingEnvironment>();
-            containerRegistry.Register<IFileWriter, JsonObjectWriter>();
-            containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
-            containerRegistry.Register<IPreferences, PreferencesManager>();
+            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
+
+            containerRegistry.RegisterSingleton<IEnvironment, OperatingEnvironment>();
+            containerRegistry.RegisterSingleton<IFileWriter, JsonObjectWriter>();
+            containerRegistry.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
+            containerRegistry.RegisterSingleton<IPreferences, PreferencesManager>();
+
+            containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

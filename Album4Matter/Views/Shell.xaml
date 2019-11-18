@@ -3,12 +3,18 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:Mvvm="http://prismlibrary.com/"
+                 xmlns:Views="clr-namespace:Album4Matter.Views"
                  Mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  Title="Flat Stanley - The Album 4Matter" >
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
+        <Views:StatusView Grid.Row="1"/>
     </Grid>
 </Mah:MetroWindow>
 
