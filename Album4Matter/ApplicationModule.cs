@@ -15,6 +15,7 @@ namespace Album4Matter {
             containerRegistry.RegisterSingleton<IFileWriter, JsonObjectWriter>();
             containerRegistry.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
             containerRegistry.RegisterSingleton<IPreferences, PreferencesManager>();
+            containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }

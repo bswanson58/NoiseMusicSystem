@@ -14,6 +14,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <Views:StructureWorkshopView Grid.Row="0"/>
         <Views:StatusView Grid.Row="1"/>
     </Grid>
 </Mah:MetroWindow>
