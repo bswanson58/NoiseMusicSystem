@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using ForRent.Interfaces;
+using Album4Matter.Interfaces;
 using Newtonsoft.Json;
 
-namespace ForRent.Platform {
+namespace Album4Matter.Platform {
     public class JsonObjectWriter : IFileWriter {
         public void Write<T>( string path, T item ) {
             if(!Equals( item, default( T ))) {

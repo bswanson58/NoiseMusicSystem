@@ -1,17 +1,11 @@
-﻿<Mah:MetroWindow x:Class="ForRent.Views.Shell"
+﻿<Mah:MetroWindow x:Class="Album4Matter.Views.Shell"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:Mvvm="http://prismlibrary.com/"
                  Mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
-                 Title="Shell" >
-
-    <Mah:MetroWindow.RightWindowCommands>
-        <Mah:WindowCommands>
-            <Button Content="for sale" />
-        </Mah:WindowCommands>
-    </Mah:MetroWindow.RightWindowCommands>
+                 Title="Flat Stanley - The Album 4Matter" >
 
     <Grid>
 

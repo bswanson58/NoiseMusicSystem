@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using ForRent.Properties;
-using ForRent.Support;
+using Album4Matter.Properties;
+using Album4Matter.Support;
 
-namespace ForRent.Views {
+namespace Album4Matter.Views {
     /// <summary>
     /// Interaction logic for Shell.xaml
     /// </summary>

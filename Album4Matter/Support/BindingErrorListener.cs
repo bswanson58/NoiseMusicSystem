@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ForRent.Support {
+namespace Album4Matter.Support {
     public class BindingErrorListener : TraceListener {
         private static BindingErrorListener mBindingListener;
         private static BindingErrorListener BindingListener => mBindingListener ?? ( mBindingListener = new BindingErrorListener());

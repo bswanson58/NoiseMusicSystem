@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using ForRent.Interfaces;
+using Album4Matter.Interfaces;
 using Serilog;
 
-namespace ForRent.Logging {
+namespace Album4Matter.Logging {
     public class SeriLogAdapter : IPlatformLog {
         private readonly ILogger	mLog;
 

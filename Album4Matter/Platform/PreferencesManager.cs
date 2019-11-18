@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using ForRent.Interfaces;
+using Album4Matter.Interfaces;
 
-namespace ForRent.Platform {
+namespace Album4Matter.Platform {
     public class PreferencesManager : IPreferences {
         private readonly IEnvironment	    mEnvironment;
         private readonly IFileWriter		mWriter;

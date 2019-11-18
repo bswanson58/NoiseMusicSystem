@@ -1,10 +1,10 @@
-﻿using ForRent.Interfaces;
-using ForRent.Logging;
-using ForRent.Platform;
+﻿using Album4Matter.Interfaces;
+using Album4Matter.Logging;
+using Album4Matter.Platform;
 using Prism.Ioc;
 using Prism.Modularity;
 
-namespace ForRent {
+namespace Album4Matter {
     class ApplicationModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();

@@ -6,7 +6,7 @@
 // associated with an assembly.
 //
 [assembly: AssemblyCompany("Secret Squirrel Software")]
-[assembly: AssemblyCopyright("Copyright © 2010-2018 Secret Squirrel Software")]
+[assembly: AssemblyCopyright("Copyright © 2010-2020 Secret Squirrel Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,7 +29,7 @@
 //
 //	!!! Also update the version number in the installer Version.wxi !!!
 
-// Assembly Version is only used by .Net Framework to indentify the assembly
+// Assembly Version is only used by .Net Framework to identify the assembly
 // for locating, linking and loading the assemblies.
 [assembly: AssemblyVersion( "0.1.0.0" )]
 

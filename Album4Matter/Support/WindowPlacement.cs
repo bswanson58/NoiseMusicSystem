@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 // from: http://blogs.msdn.com/b/davidrickard/archive/2010/03/09/saving-window-size-and-location-in-wpf-and-winforms.aspx
 
-namespace ForRent.Support {
+namespace Album4Matter.Support {
     // RECT structure required by WINDOWPLACEMENT structure
     [Serializable]
     [StructLayout( LayoutKind.Sequential )]

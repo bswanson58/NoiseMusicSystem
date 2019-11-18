@@ -3,13 +3,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using Album4Matter.Interfaces;
+using Album4Matter.Views;
 using Caliburn.Micro;
-using ForRent.Interfaces;
-using ForRent.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 
-namespace ForRent {
+namespace Album4Matter {
     public partial class App {
         private IPlatformLog    mLog;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using ForRent.Interfaces;
-using ForRent.Properties;
+using Album4Matter.Interfaces;
+using Album4Matter.Properties;
 
-namespace ForRent.Platform {
+namespace Album4Matter.Platform {
     class OperatingEnvironment : IEnvironment {
         private readonly string		mApplicationName;
 
@@ -38,7 +38,7 @@ namespace ForRent.Platform {
         }
 
         public string PreferencesDirectory() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory, mApplicationName );
+            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );

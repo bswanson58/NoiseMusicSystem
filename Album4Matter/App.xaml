@@ -1,4 +1,4 @@
-﻿<Unity:PrismApplication x:Class="ForRent.App"
+﻿<Unity:PrismApplication x:Class="Album4Matter.App"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:Unity="http://prismlibrary.com/">
