@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Album4Matter.Views.StructureBuilderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="400">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Album Structure"/>
+
+        <StackPanel Grid.Row="1" Margin="0,5" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Artist Name:"/>
+            <TextBox Text="{Binding ArtistName}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="0,5" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Album Name:"/>
+            <TextBox Text="{Binding AlbumName}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Margin="0,5" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Published Year/Event Date:"/>
+            <TextBox Text="{Binding PublishDate}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Margin="0,5" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Metadata:"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Remastered"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Deluxe Edition"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Radio Broadcast"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Soundboard"/>
+            <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" Text="Other:"/>
+            <TextBox Margin="3,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

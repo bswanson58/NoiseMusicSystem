@@ -16,6 +16,10 @@ namespace Album4Matter.ViewModels {
 
         public  ICollectionView                     SourceList { get; }
 
+        public  string                              ArtistName { get; set; }
+        public  string                              AlbumName { get; set; }
+        public  string                              PublishDate { get; set; }
+
         public StructureWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences ) {
             mDialogService = dialogService;
             mPreferences = preferences;

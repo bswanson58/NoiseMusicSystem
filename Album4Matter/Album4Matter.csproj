@@ -186,9 +186,19 @@
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
+    <Compile Include="ViewModels\ItemInspectionViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\StructureWorkshopViewModel.cs" />
+    <Compile Include="Views\FinalStructureView.xaml.cs">
+      <DependentUpon>FinalStructureView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemInputView.xaml.cs">
+      <DependentUpon>ItemInputView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemInspectionView.xaml.cs">
+      <DependentUpon>ItemInspectionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
@@ -200,9 +210,24 @@
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\StructureBuilderView.xaml.cs">
+      <DependentUpon>StructureBuilderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\StructureWorkshopView.xaml.cs">
       <DependentUpon>StructureWorkshopView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\FinalStructureView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemInputView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemInspectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Shell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -210,6 +235,10 @@
     <Page Include="Views\StatusView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\StructureBuilderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StructureWorkshopView.xaml">
       <SubType>Designer</SubType>
