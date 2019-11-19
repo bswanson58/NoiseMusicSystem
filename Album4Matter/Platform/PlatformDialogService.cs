@@ -1,14 +1,15 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Forms;
 using Album4Matter.Interfaces;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Album4Matter.Platform {
 	public class PlatformDialogService : IPlatformDialogService {
-		public bool? OpenFileDialog( string title, string extensions, string filter, out string fileName, string initialDirectory, bool allowMultipleFiles = false ) {
-			fileName = "";
+		public bool? OpenFileDialog( string title, string extensions, string filter, out string fileName, string initialDirectory ) {
+			fileName = String.Empty;
 
-			var dlg = new Microsoft.Win32.OpenFileDialog { Title = title, DefaultExt = extensions, Filter = filter, InitialDirectory = initialDirectory, Multiselect = allowMultipleFiles };
+			var dlg = new Microsoft.Win32.OpenFileDialog { Title = title, DefaultExt = extensions, Filter = filter, InitialDirectory = initialDirectory };
 			var	retValue = dlg.ShowDialog();
 
 			if( retValue.GetValueOrDefault( false ) ) {
@@ -18,7 +19,20 @@ namespace Album4Matter.Platform {
 			return ( retValue );
 		}
 
-		public bool? SaveFileDialog( string title, string extensions, string filter, out string fileName ) {
+        public bool? OpenFileDialog( string title, string extensions, string filter, out string[] fileNames, string initialDirectory ) {
+            fileNames = new string[0];
+
+            var dlg = new Microsoft.Win32.OpenFileDialog { Title = title, DefaultExt = extensions, Filter = filter, InitialDirectory = initialDirectory, Multiselect = true };
+            var	retValue = dlg.ShowDialog();
+
+            if( retValue.GetValueOrDefault( false ) ) {
+                fileNames = dlg.FileNames;
+            }
+
+            return ( retValue );
+        }
+
+        public bool? SaveFileDialog( string title, string extensions, string filter, out string fileName ) {
 			fileName = "";
 
 			var dlg = new Microsoft.Win32.SaveFileDialog { Title = title, DefaultExt = extensions, Filter = filter, AddExtension = true };

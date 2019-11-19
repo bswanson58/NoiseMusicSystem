@@ -4,9 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Dto="clr-namespace:Album4Matter.Dto"
+             xmlns:Views="clr-namespace:Album4Matter.Views"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Margin="0,0,10,0" Text="F"/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Margin="0,0,10,0" Text="D"/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <Views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
+
+    </UserControl.Resources>
 
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
@@ -29,7 +50,7 @@
                 <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="Add Folders..." Command="{Binding BrowseFolders}"/>
             </StackPanel>
 
-            <ListBox Grid.Row="2"/>
+            <ListBox Grid.Row="2" ItemsSource="{Binding SourceList}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
         </Grid>
     </Grid>
 </UserControl>
