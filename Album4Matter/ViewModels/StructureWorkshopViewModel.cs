@@ -11,6 +11,7 @@ namespace Album4Matter.ViewModels {
     class StructureWorkshopViewModel : AutomaticCommandBase, IDisposable {
         private readonly IPlatformDialogService         mDialogService;
         private readonly IPreferences                   mPreferences;
+        private readonly IAlbumBuilder                  mAlbumBuilder;
         private readonly BindableCollection<SourceItem> mSourceList;
         private string                                  mSourceDirectory;
         private IDisposable                             mInspectionChangedSubscription;
@@ -22,10 +23,11 @@ namespace Album4Matter.ViewModels {
         public  IFinalStructureViewModel                FinalStructureViewModel { get; }
         public  ICollectionView                         SourceList { get; }
 
-        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel,
+        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder,
                                            IPlatformDialogService dialogService, IPreferences preferences ) {
             InspectionViewModel = inspectionViewModel;
             FinalStructureViewModel = finalStructureViewModel;
+            mAlbumBuilder = albumBuilder;
             mDialogService = dialogService;
             mPreferences = preferences;
 
@@ -140,6 +142,10 @@ namespace Album4Matter.ViewModels {
 
         private void OnItemInspect( SourceItem item ) {
             InspectionViewModel.SetInspectionItem( item );
+        }
+
+        public void Execute_BuildAlbum() {
+            mAlbumBuilder.BuildAlbum( CollectAlbumLayout());
         }
 
         private void UpdateTargetStructure() {

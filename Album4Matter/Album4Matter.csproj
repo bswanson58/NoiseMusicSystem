@@ -179,11 +179,13 @@
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TargetAlbumLayout.cs" />
+    <Compile Include="Interfaces\IAlbumBuilder.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IFinalStructureViewModel.cs" />
     <Compile Include="Interfaces\IItemInspectionViewModel.cs" />
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Models\AlbumBuilder.cs" />
     <Compile Include="Models\KeyMaker.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>

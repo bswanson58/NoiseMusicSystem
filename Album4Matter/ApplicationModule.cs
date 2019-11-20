@@ -1,5 +1,6 @@
 ﻿using Album4Matter.Interfaces;
 using Album4Matter.Logging;
+using Album4Matter.Models;
 using Album4Matter.Platform;
 using Album4Matter.ViewModels;
 using Caliburn.Micro;
@@ -17,6 +18,8 @@ namespace Album4Matter {
             containerRegistry.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
             containerRegistry.RegisterSingleton<IPreferences, PreferencesManager>();
             containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
+
+            containerRegistry.Register<IAlbumBuilder, AlbumBuilder>();
 
             containerRegistry.Register<IItemInspectionViewModel, ItemInspectionViewModel>();
             containerRegistry.Register<IFinalStructureViewModel, FinalStructureViewModel>();
