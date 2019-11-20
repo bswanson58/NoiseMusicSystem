@@ -9,12 +9,23 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Final Album View"/>
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Target:"/>
 
-        <Button Grid.Row="2" HorizontalAlignment="Right" Content="Create Album"/>
+        <Grid Grid.Row="1" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" Text="{Binding TargetDirectory}"/>
+            <Button Grid.Column="1" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetFolder}"/>
+        </Grid>
+
+        <Button Grid.Row="3" HorizontalAlignment="Right" Content="Create Album"/>
     </Grid>
 </UserControl>

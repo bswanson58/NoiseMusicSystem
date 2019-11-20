@@ -153,7 +153,7 @@ namespace Album4Matter.ViewModels {
         }
 
         private TargetAlbumLayout CollectAlbumLayout() {
-            return new TargetAlbumLayout();
+            return new TargetAlbumLayout( ArtistName, AlbumName );
         }
 
         public void Dispose() {
