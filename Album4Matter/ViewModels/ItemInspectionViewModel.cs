@@ -37,19 +37,25 @@ namespace Album4Matter.ViewModels {
             }
         }
 
-        public void Execute_TextIsArtist() { }
+        public void Execute_TextIsArtist() {
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Artist, SelectedText ));
+        }
 
         public bool CanExecute_TextIsArtist() {
             return !string.IsNullOrWhiteSpace( SelectedText );
         }
 
-        public void Execute_TextIsAlbum() { }
+        public void Execute_TextIsAlbum() {
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Album, SelectedText ));
+        }
 
         public bool CanExecute_TextIsAlbum() {
             return !string.IsNullOrWhiteSpace( SelectedText );
         }
 
-        public void Execute_TextIsDate() { }
+        public void Execute_TextIsDate() {
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Date, SelectedText ));
+        }
 
         public bool CanExecute_TextIsDate() {
             return !string.IsNullOrWhiteSpace( SelectedText );
