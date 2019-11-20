@@ -36,12 +36,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Input"/>
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="..." Command="{Binding BrowseSourceFolder}"/>
-            <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="Refresh" Command="{Binding RefreshSourceFolder}"/>
-        </StackPanel>
+        <Grid Grid.Row="1" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" Text="{Binding SourceDirectory}"/>
+            <Button Grid.Column="1" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseSourceFolder}"/>
+            <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Refresh" Command="{Binding RefreshSourceFolder}"/>
+        </Grid>
 
         <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
 

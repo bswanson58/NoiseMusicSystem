@@ -1,7 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows.Data;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
@@ -30,20 +28,36 @@ namespace Album4Matter.ViewModels {
 
             var appPreferences = mPreferences.Load<Album4MatterPreferences>();
 
-            mSourceDirectory = appPreferences.SourceDirectory;
-            CollectRootFolder( mSourceDirectory );
+            SourceDirectory = appPreferences.SourceDirectory;
+            CollectRootFolder( SourceDirectory );
+        }
+
+        public string SourceDirectory {
+            get => mSourceDirectory;
+            set {
+                mSourceDirectory = value;
+
+                mSourceList.Clear();
+                RaisePropertyChanged( () => SourceDirectory );
+            }
         }
 
         public void Execute_BrowseSourceFolder() {
-            var directory = mSourceDirectory;
+            var directory = SourceDirectory;
 
             if( mDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
-                CollectRootFolder( directory );
+                SourceDirectory = directory;
+                CollectRootFolder( SourceDirectory );
+
+                var appPreferences = mPreferences.Load<Album4MatterPreferences>();
+
+                appPreferences.SourceDirectory = SourceDirectory;
+                mPreferences.Save( appPreferences );
             }
         }
 
         public void Execute_RefreshSourceFolder() {
-            CollectRootFolder( mSourceDirectory );
+            CollectRootFolder( SourceDirectory );
         }
 
         private void CollectRootFolder( string rootPath ) {
