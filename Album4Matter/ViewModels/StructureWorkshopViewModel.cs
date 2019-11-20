@@ -19,10 +19,13 @@ namespace Album4Matter.ViewModels {
         private string                                  mPublishDate;
 
         public  IItemInspectionViewModel                InspectionViewModel { get; }
+        public  IFinalStructureViewModel                FinalStructureViewModel { get; }
         public  ICollectionView                         SourceList { get; }
 
-        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IPlatformDialogService dialogService, IPreferences preferences ) {
+        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel,
+                                           IPlatformDialogService dialogService, IPreferences preferences ) {
             InspectionViewModel = inspectionViewModel;
+            FinalStructureViewModel = finalStructureViewModel;
             mDialogService = dialogService;
             mPreferences = preferences;
 
@@ -53,6 +56,7 @@ namespace Album4Matter.ViewModels {
                 mArtistName = value;
 
                 RaisePropertyChanged( () => ArtistName );
+                UpdateTargetStructure();
             }
         }
 
@@ -62,6 +66,7 @@ namespace Album4Matter.ViewModels {
                 mAlbumName = value;
 
                 RaisePropertyChanged( () => AlbumName );
+                UpdateTargetStructure();
             }
         }
 
@@ -71,6 +76,7 @@ namespace Album4Matter.ViewModels {
                 mPublishDate = value;
 
                 RaisePropertyChanged( () => PublishDate );
+                UpdateTargetStructure();
             }
         }
 
@@ -134,6 +140,14 @@ namespace Album4Matter.ViewModels {
 
         private void OnItemInspect( SourceItem item ) {
             InspectionViewModel.SetInspectionItem( item );
+        }
+
+        private void UpdateTargetStructure() {
+            FinalStructureViewModel.SetTargetLayout( CollectAlbumLayout());
+        }
+
+        private TargetAlbumLayout CollectAlbumLayout() {
+            return new TargetAlbumLayout();
         }
 
         public void Dispose() {

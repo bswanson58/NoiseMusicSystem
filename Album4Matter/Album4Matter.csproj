@@ -178,7 +178,9 @@
     <Compile Include="Dto\Album4MatterPreferences.cs" />
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
+    <Compile Include="Dto\TargetAlbumLayout.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
+    <Compile Include="Interfaces\IFinalStructureViewModel.cs" />
     <Compile Include="Interfaces\IItemInspectionViewModel.cs" />
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
@@ -197,6 +199,7 @@
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
+    <Compile Include="ViewModels\FinalStructureViewModel.cs" />
     <Compile Include="ViewModels\ItemInspectionViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
