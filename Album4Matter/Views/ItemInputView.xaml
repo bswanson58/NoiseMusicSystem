@@ -16,12 +16,12 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder">
+        <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Style="{StaticResource ListViewTextStyle}" Margin="0,0,10,0" Text="D"/>
                 <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
             </StackPanel>
-        </DataTemplate>
+        </HierarchicalDataTemplate>
 
         <Views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
 
@@ -39,11 +39,11 @@
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Input"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="Add Files..." Command="{Binding BrowseFiles}"/>
-            <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="Add Folders..." Command="{Binding BrowseFolders}"/>
+            <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="..." Command="{Binding BrowseSourceFolder}"/>
+            <Button Margin="3,5" Style="{StaticResource GeneralButtonStyle}" Content="Refresh" Command="{Binding RefreshSourceFolder}"/>
         </StackPanel>
 
-        <ListBox Grid.Row="2" ItemsSource="{Binding SourceList}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
+        <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
 
         <TextBlock Grid.Row="3" Margin="5,5,0,0" Style="{StaticResource ControlTitleStyle}" Text="Add Selected Items To:"/>
         <StackPanel Grid.Row="4" Margin="3" Orientation="Horizontal">

@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Mvvm="http://prismlibrary.com/"
-             xmlns:Dto="clr-namespace:Album4Matter.Dto"
              xmlns:Views="clr-namespace:Album4Matter.Views"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 

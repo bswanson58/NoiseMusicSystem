@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
+using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
@@ -12,7 +13,7 @@ namespace Album4Matter.ViewModels {
         private readonly IPlatformDialogService     mDialogService;
         private readonly IPreferences               mPreferences;
         private string                              mSourceDirectory;
-        private ObservableCollection<SourceItem>    mSourceList;
+        private BindableCollection<SourceItem>      mSourceList;
 
         public  ICollectionView                     SourceList { get; }
 
@@ -24,45 +25,48 @@ namespace Album4Matter.ViewModels {
             mDialogService = dialogService;
             mPreferences = preferences;
 
-            mSourceList = new ObservableCollection<SourceItem>();
+            mSourceList = new BindableCollection<SourceItem>();
             SourceList = CollectionViewSource.GetDefaultView( mSourceList );
 
             var appPreferences = mPreferences.Load<Album4MatterPreferences>();
 
             mSourceDirectory = appPreferences.SourceDirectory;
+            CollectRootFolder( mSourceDirectory );
         }
 
-        public void Execute_BrowseFolders() {
+        public void Execute_BrowseSourceFolder() {
             var directory = mSourceDirectory;
 
             if( mDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
-                CollectFolder( directory );
+                CollectRootFolder( directory );
             }
         }
 
-        private void CollectFolder( string rootPath ) {
-            var rootFolder = new SourceFolder( rootPath );
+        public void Execute_RefreshSourceFolder() {
+            CollectRootFolder( mSourceDirectory );
+        }
 
-            mSourceList.Add( rootFolder );
-            CollectFolder( rootFolder );
+        private void CollectRootFolder( string rootPath ) {
+            if( Directory.Exists( rootPath )) {
+                var rootFolder = new SourceFolder( rootPath );
+
+                CollectFolder( rootFolder );
+
+                mSourceList.Clear();
+                mSourceList.AddRange( rootFolder.Children );
+            }
         }
 
         private void CollectFolder( SourceFolder rootFolder ) {
             foreach( var directory in Directory.GetDirectories( rootFolder.FileName )) {
                 var folder = new SourceFolder( directory, rootFolder.Key );
 
-                mSourceList.Add( folder );
+                rootFolder.Children.Add( folder );
                 CollectFolder( folder );
             }
 
             foreach( var file in Directory.EnumerateFiles( rootFolder.FileName )) {
-                mSourceList.Add( new SourceFile( file, rootFolder.Key ));
-            }
-        }
-
-        public void Execute_BrowseFiles() {
-            if( mDialogService.OpenFileDialog( "Select Source Files", "*.*", "All files (*.*)|*.*", out string[] fileNames, mSourceDirectory ) == true ) {
-                mSourceList.AddRange( from f in fileNames select new SourceFile( f ));
+                rootFolder.Children.Add( new SourceFile( file, rootFolder.Key ));
             }
         }
     }
