@@ -1,6 +1,7 @@
 ﻿using Album4Matter.Interfaces;
 using Album4Matter.Logging;
 using Album4Matter.Platform;
+using Album4Matter.ViewModels;
 using Caliburn.Micro;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -17,6 +18,7 @@ namespace Album4Matter {
             containerRegistry.RegisterSingleton<IPreferences, PreferencesManager>();
             containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
 
+            containerRegistry.Register<IItemInspectionViewModel, ItemInspectionViewModel>();
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }
 

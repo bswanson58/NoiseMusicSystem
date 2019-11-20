@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
 using Album4Matter.Dto;
@@ -7,24 +8,28 @@ using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
-    class StructureWorkshopViewModel : AutomaticCommandBase {
-        private readonly IPlatformDialogService     mDialogService;
-        private readonly IPreferences               mPreferences;
-        private string                              mSourceDirectory;
-        private BindableCollection<SourceItem>      mSourceList;
+    class StructureWorkshopViewModel : AutomaticCommandBase, IDisposable {
+        private readonly IPlatformDialogService         mDialogService;
+        private readonly IPreferences                   mPreferences;
+        private readonly BindableCollection<SourceItem> mSourceList;
+        private string                                  mSourceDirectory;
+        private IDisposable                             mInspectionChangedSubscription;
+        private string                                  mArtistName;
+        private string                                  mAlbumName;
+        private string                                  mPublishDate;
 
-        public  ICollectionView                     SourceList { get; }
+        public  IItemInspectionViewModel                InspectionViewModel { get; }
+        public  ICollectionView                         SourceList { get; }
 
-        public  string                              ArtistName { get; set; }
-        public  string                              AlbumName { get; set; }
-        public  string                              PublishDate { get; set; }
-
-        public StructureWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences ) {
+        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IPlatformDialogService dialogService, IPreferences preferences ) {
+            InspectionViewModel = inspectionViewModel;
             mDialogService = dialogService;
             mPreferences = preferences;
 
             mSourceList = new BindableCollection<SourceItem>();
             SourceList = CollectionViewSource.GetDefaultView( mSourceList );
+
+            mInspectionChangedSubscription = InspectionViewModel.InspectionItemChanged.Subscribe( OnInspectionChanged);
 
             var appPreferences = mPreferences.Load<Album4MatterPreferences>();
 
@@ -39,6 +44,49 @@ namespace Album4Matter.ViewModels {
 
                 mSourceList.Clear();
                 RaisePropertyChanged( () => SourceDirectory );
+            }
+        }
+
+        public string ArtistName {
+            get => mArtistName;
+            set {
+                mArtistName = value;
+
+                RaisePropertyChanged( () => ArtistName );
+            }
+        }
+
+        public string AlbumName {
+            get => mAlbumName;
+            set {
+                mAlbumName = value;
+
+                RaisePropertyChanged( () => AlbumName );
+            }
+        }
+
+        public string PublishDate {
+            get => mPublishDate;
+            set {
+                mPublishDate = value;
+
+                RaisePropertyChanged( () => PublishDate );
+            }
+        }
+
+        private void OnInspectionChanged( InspectionItemUpdate update ) {
+            switch( update.ItemChanged ) {
+                case InspectionItem.Artist:
+                    ArtistName = update.Item;
+                    break;
+
+                case InspectionItem.Album:
+                    AlbumName = update.Item;
+                    break;
+
+                case InspectionItem.Date:
+                    PublishDate = update.Item;
+                    break;
             }
         }
 
@@ -62,7 +110,7 @@ namespace Album4Matter.ViewModels {
 
         private void CollectRootFolder( string rootPath ) {
             if( Directory.Exists( rootPath )) {
-                var rootFolder = new SourceFolder( rootPath );
+                var rootFolder = new SourceFolder( rootPath, null );
 
                 CollectFolder( rootFolder );
 
@@ -73,15 +121,24 @@ namespace Album4Matter.ViewModels {
 
         private void CollectFolder( SourceFolder rootFolder ) {
             foreach( var directory in Directory.GetDirectories( rootFolder.FileName )) {
-                var folder = new SourceFolder( directory, rootFolder.Key );
+                var folder = new SourceFolder( directory, rootFolder.Key, OnItemInspect );
 
                 rootFolder.Children.Add( folder );
                 CollectFolder( folder );
             }
 
             foreach( var file in Directory.EnumerateFiles( rootFolder.FileName )) {
-                rootFolder.Children.Add( new SourceFile( file, rootFolder.Key ));
+                rootFolder.Children.Add( new SourceFile( file, rootFolder.Key, OnItemInspect ));
             }
+        }
+
+        private void OnItemInspect( SourceItem item ) {
+            InspectionViewModel.SetInspectionItem( item );
+        }
+
+        public void Dispose() {
+            mInspectionChangedSubscription?.Dispose();
+            mInspectionChangedSubscription = null;
         }
     }
 }

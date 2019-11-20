@@ -1,14 +1,29 @@
-﻿using ReusableBits.Mvvm.ViewModelSupport;
+﻿using System;
+using System.Reactive.Subjects;
+using Album4Matter.Dto;
+using Album4Matter.Interfaces;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
-    class ItemInspectionViewModel : AutomaticCommandBase {
-        private string      mSelectedText;
+    class ItemInspectionViewModel : AutomaticCommandBase, IItemInspectionViewModel {
+        private readonly Subject<InspectionItemUpdate>  mInspectionChangedSubject;
+        private string                                  mSelectedText;
 
-        public  string      InspectionItemName { get; private set; }
-        public  string      InspectionText { get; set; }
+        public IObservable<InspectionItemUpdate>        InspectionItemChanged => mInspectionChangedSubject;
+
+        public  string                                  InspectionItemName { get; private set; }
+        public  string                                  InspectionText { get; set; }
 
         public ItemInspectionViewModel() {
+            mInspectionChangedSubject = new Subject<InspectionItemUpdate>();
+        }
 
+        public void SetInspectionItem( SourceItem item ) {
+            InspectionItemName = item.Name;
+            InspectionText = item.Name;
+
+            RaisePropertyChanged( () => InspectionItemName );
+            RaisePropertyChanged( () => InspectionText );
         }
 
         public string SelectedText {

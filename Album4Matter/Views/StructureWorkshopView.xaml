@@ -25,7 +25,7 @@
             </Grid.RowDefinitions>
 
             <Views:StructureBuilderView Grid.Row="0"/>
-            <Views:ItemInspectionView Grid.Row="1"/>
+            <Views:ItemInspectionView Grid.Row="1" DataContext="{Binding InspectionViewModel}"/>
         </Grid>
 
         <Views:FinalStructureView Grid.Column="2"/>
