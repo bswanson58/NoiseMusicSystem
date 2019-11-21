@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Data;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
@@ -22,6 +24,7 @@ namespace Album4Matter.ViewModels {
         public  IItemInspectionViewModel                InspectionViewModel { get; }
         public  IFinalStructureViewModel                FinalStructureViewModel { get; }
         public  ICollectionView                         SourceList { get; }
+        public  BindableCollection<SourceItem>          SelectedSourceItems { get; }
 
         public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder,
                                            IPlatformDialogService dialogService, IPreferences preferences ) {
@@ -33,6 +36,8 @@ namespace Album4Matter.ViewModels {
 
             mSourceList = new BindableCollection<SourceItem>();
             SourceList = CollectionViewSource.GetDefaultView( mSourceList );
+            SelectedSourceItems = new BindableCollection<SourceItem>();
+            SelectedSourceItems.CollectionChanged += OnSelectionChanged;
 
             mInspectionChangedSubscription = InspectionViewModel.InspectionItemChanged.Subscribe( OnInspectionChanged);
 
@@ -80,6 +85,16 @@ namespace Album4Matter.ViewModels {
                 RaisePropertyChanged( () => PublishDate );
                 UpdateTargetStructure();
             }
+        }
+
+        private void OnSelectionChanged( object sender, NotifyCollectionChangedEventArgs args ) {
+            RaiseCanExecuteChangedEvent( "CanExecute_CopyToAlbum" );
+        }
+
+        public void Execute_CopyToAlbum() { }
+
+        public bool CanExecute_CopyToAlbum() {
+            return SelectedSourceItems.Any();
         }
 
         private void OnInspectionChanged( InspectionItemUpdate update ) {

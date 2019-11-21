@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 using ReusableBits.Mvvm.ViewModelSupport;

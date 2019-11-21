@@ -5,34 +5,41 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Dto="clr-namespace:Album4Matter.Dto"
              xmlns:Views="clr-namespace:Album4Matter.Views"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Behaviors="clr-namespace:Album4Matter.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="400">
 
     <UserControl.Resources>
+        <Style x:Key="TreeViewItemStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+            <Style.Triggers>
+                <Trigger 
+                    Property="Behaviors:TreeViewMultipleSelectionBehavior.IsItemSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource HighlightBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Margin="0,0,10,0" Text="F"/>
-                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
-                <Button Grid.Column="2" Content="i" Command="{Binding InspectItem}"/>
+                <TextBlock x:Name="Container" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                <Button Grid.Column="1" Content="i" Command="{Binding InspectItem}"/>
             </Grid>
         </DataTemplate>
 
         <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder" ItemsSource="{Binding Children}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Margin="0,0,10,0" Text="D"/>
-                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
-                <Button Grid.Column="2" Content="i" Command="{Binding InspectItem}"/>
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                <Button Grid.Column="1" Content="i" Command="{Binding InspectItem}"/>
             </Grid>
         </HierarchicalDataTemplate>
 
@@ -63,11 +70,16 @@
             <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Refresh" Command="{Binding RefreshSourceFolder}"/>
         </Grid>
 
-        <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
+        <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" 
+                  ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}" ItemContainerStyle="{StaticResource TreeViewItemStyle}">
+            <i:Interaction.Behaviors>
+                <Behaviors:TreeViewMultipleSelectionBehavior SelectedItems="{Binding SelectedSourceItems}"/>
+            </i:Interaction.Behaviors>
+        </TreeView>
 
         <TextBlock Grid.Row="3" Margin="5,5,0,0" Style="{StaticResource ControlTitleStyle}" Text="Add Selected Items To:"/>
         <StackPanel Grid.Row="4" Margin="3" Orientation="Horizontal">
-            <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Album"/>
+            <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Album" Command="{Binding CopyToAlbum}"/>
         </StackPanel>
     </Grid>
 </UserControl>

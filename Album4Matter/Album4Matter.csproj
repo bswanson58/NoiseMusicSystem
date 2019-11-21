@@ -174,7 +174,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
+    <Compile Include="Behaviors\DependencyObjectExtensions.cs" />
     <Compile Include="Behaviors\TextBoxSelectionHelper.cs" />
+    <Compile Include="Behaviors\TreeViewMultipleSelectionBehavior.cs" />
     <Compile Include="Dto\Album4MatterPreferences.cs" />
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
