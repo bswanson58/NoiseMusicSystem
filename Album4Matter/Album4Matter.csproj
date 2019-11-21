@@ -179,6 +179,7 @@
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TargetAlbumLayout.cs" />
+    <Compile Include="Dto\TargetItem.cs" />
     <Compile Include="Interfaces\IAlbumBuilder.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IFinalStructureViewModel.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Views\StructureWorkshopView.xaml.cs">
       <DependentUpon>StructureWorkshopView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TargetItemTemplateSelector.cs" />
     <Page Include="Views\FinalStructureView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

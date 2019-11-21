@@ -1,16 +1,28 @@
-﻿using Album4Matter.Dto;
+﻿using System;
+using System.Collections.ObjectModel;
+using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
     class FinalStructureViewModel : AutomaticCommandBase, IFinalStructureViewModel {
-        private readonly IPreferences           mPreferences;
-        private readonly IPlatformDialogService mDialogService;
-        private string                          mTargetDirectory;
+        private readonly IPreferences               mPreferences;
+        private readonly IPlatformDialogService     mDialogService;
+        private readonly TargetFolder               mArtistTarget;
+        private readonly TargetFolder               mAlbumTarget;
+        private string                              mTargetDirectory;
+
+        public  ObservableCollection<TargetItem>    TargetList { get; }
 
         public FinalStructureViewModel( IPlatformDialogService dialogService, IPreferences preferences ) {
             mPreferences = preferences;
             mDialogService = dialogService;
+
+            mArtistTarget = new TargetFolder( "Unnamed" );
+            mAlbumTarget = new TargetFolder( "Unnamed" );
+            TargetList = new ObservableCollection<TargetItem> { mArtistTarget };
+
+            mArtistTarget.Children.Add( mAlbumTarget );
 
             var appPreferences = mPreferences.Load<Album4MatterPreferences>();
 
@@ -18,6 +30,8 @@ namespace Album4Matter.ViewModels {
         }
 
         public void SetTargetLayout( TargetAlbumLayout layout ) {
+            mArtistTarget.UpdateTarget( layout.ArtistName );
+            mAlbumTarget.UpdateTarget( layout.AlbumName );
         }
 
         public string TargetDirectory {
