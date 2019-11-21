@@ -24,7 +24,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Target:"/>
@@ -40,7 +39,5 @@
             <TextBox Grid.Column="0" Text="{Binding TargetDirectory}"/>
             <Button Grid.Column="1" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetFolder}"/>
         </Grid>
-
-        <Button Grid.Row="3" HorizontalAlignment="Right" Content="Create Album"/>
     </Grid>
 </UserControl>

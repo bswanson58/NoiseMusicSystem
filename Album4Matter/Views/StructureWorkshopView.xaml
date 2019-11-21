@@ -28,6 +28,14 @@
             <Views:ItemInspectionView Grid.Row="1" DataContext="{Binding InspectionViewModel}"/>
         </Grid>
 
-        <Views:FinalStructureView Grid.Column="2" DataContext="{Binding FinalStructureViewModel}"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Views:FinalStructureView Grid.Row="0" DataContext="{Binding FinalStructureViewModel}"/>
+            <Button Grid.Row="1" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Margin="0,0,15,0" Content="Create Album" Command="{Binding BuildAlbum}"/>
+        </Grid>
     </Grid>
 </UserControl>
