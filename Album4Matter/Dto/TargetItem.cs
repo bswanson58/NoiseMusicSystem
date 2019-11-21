@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.Dto {
@@ -19,6 +20,10 @@ namespace Album4Matter.Dto {
     public class TargetFile : TargetItem {
         public TargetFile( string name ) :
             base( name ) { }
+
+        public TargetFile( SourceFile source ) :
+            base( source.Name ) {
+        }
     }
 
     public class TargetFolder : TargetItem {
@@ -26,7 +31,25 @@ namespace Album4Matter.Dto {
 
         public TargetFolder( string name ) :
             base( name ) {
+
             Children = new ObservableCollection<TargetItem>();
+        }
+
+        public TargetFolder( SourceFolder source ) :
+            this( source.Name ) {
+
+            PopulateChildren( source.Children );
+        }
+
+        public void PopulateChildren( IEnumerable<SourceItem> source ) {
+            foreach( var child in source ) {
+                if( child is SourceFile file ) {
+                    Children.Add( new TargetFile( file ));
+                }
+                else if( child is SourceFolder folder ) {
+                    Children.Add( new TargetFolder( folder ));
+                }
+            }
         }
     }
 }

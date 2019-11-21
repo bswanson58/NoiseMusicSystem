@@ -32,5 +32,10 @@ namespace Album4Matter.Dto {
             ArtistName = artist;
             AlbumName = album;
         }
+
+        public TargetAlbumLayout( string artist, string album, IEnumerable<SourceItem> albumContents ) :
+            this( artist, album ) {
+            AlbumList.VolumeContents.AddRange( albumContents );
+        }
     }
 }

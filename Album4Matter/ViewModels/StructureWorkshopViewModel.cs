@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -15,6 +16,7 @@ namespace Album4Matter.ViewModels {
         private readonly IPreferences                   mPreferences;
         private readonly IAlbumBuilder                  mAlbumBuilder;
         private readonly BindableCollection<SourceItem> mSourceList;
+        private readonly List<SourceItem>               mAlbumContents;
         private string                                  mSourceDirectory;
         private IDisposable                             mInspectionChangedSubscription;
         private string                                  mArtistName;
@@ -34,6 +36,7 @@ namespace Album4Matter.ViewModels {
             mDialogService = dialogService;
             mPreferences = preferences;
 
+            mAlbumContents = new List<SourceItem>();
             mSourceList = new BindableCollection<SourceItem>();
             SourceList = CollectionViewSource.GetDefaultView( mSourceList );
             SelectedSourceItems = new BindableCollection<SourceItem>();
@@ -91,7 +94,11 @@ namespace Album4Matter.ViewModels {
             RaiseCanExecuteChangedEvent( "CanExecute_CopyToAlbum" );
         }
 
-        public void Execute_CopyToAlbum() { }
+        public void Execute_CopyToAlbum() {
+            mAlbumContents.AddRange( SelectedSourceItems );
+
+            UpdateTargetStructure();
+        }
 
         public bool CanExecute_CopyToAlbum() {
             return SelectedSourceItems.Any();
@@ -168,7 +175,7 @@ namespace Album4Matter.ViewModels {
         }
 
         private TargetAlbumLayout CollectAlbumLayout() {
-            return new TargetAlbumLayout( ArtistName, AlbumName );
+            return new TargetAlbumLayout( ArtistName, AlbumName, mAlbumContents );
         }
 
         public void Dispose() {

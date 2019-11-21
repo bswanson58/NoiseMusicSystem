@@ -31,6 +31,9 @@ namespace Album4Matter.ViewModels {
         public void SetTargetLayout( TargetAlbumLayout layout ) {
             mArtistTarget.UpdateTarget( layout.ArtistName );
             mAlbumTarget.UpdateTarget( layout.AlbumName );
+
+            mAlbumTarget.Children.Clear();
+            mAlbumTarget.PopulateChildren( layout.AlbumList.VolumeContents );
         }
 
         public string TargetDirectory {
