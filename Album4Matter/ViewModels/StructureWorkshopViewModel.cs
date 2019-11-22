@@ -178,6 +178,15 @@ namespace Album4Matter.ViewModels {
             return new TargetAlbumLayout( ArtistName, AlbumName, mAlbumContents );
         }
 
+        public void Execute_ClearMetadata() {
+            ArtistName = String.Empty;
+            AlbumName = String.Empty;
+            PublishDate = String.Empty;
+            mAlbumContents.Clear();
+
+            UpdateTargetStructure();
+        }
+
         public void Dispose() {
             mInspectionChangedSubscription?.Dispose();
             mInspectionChangedSubscription = null;

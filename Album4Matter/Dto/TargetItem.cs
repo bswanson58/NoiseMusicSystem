@@ -42,6 +42,8 @@ namespace Album4Matter.Dto {
         }
 
         public void PopulateChildren( IEnumerable<SourceItem> source ) {
+            Children.Clear();
+
             foreach( var child in source ) {
                 if( child is SourceFile file ) {
                     Children.Add( new TargetFile( file ));

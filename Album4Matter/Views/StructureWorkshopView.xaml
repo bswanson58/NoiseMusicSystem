@@ -35,6 +35,7 @@
             </Grid.RowDefinitions>
 
             <Views:FinalStructureView Grid.Row="0" DataContext="{Binding FinalStructureViewModel}"/>
+            <Button Grid.Row="1" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Left" Margin="10,0" Content="Clear" Command="{Binding ClearMetadata}"/>
             <Button Grid.Row="1" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Margin="0,0,15,0" Content="Create Album" Command="{Binding BuildAlbum}"/>
         </Grid>
     </Grid>
