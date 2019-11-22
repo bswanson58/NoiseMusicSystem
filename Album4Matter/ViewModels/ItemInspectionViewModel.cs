@@ -96,11 +96,21 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_TextIsDate() {
-            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Date, SelectedText.Trim()));
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Date, PathSanitizer.SanitizeFilename( ParseDate( SelectedText.Trim()), ' ' )));
         }
 
         public bool CanExecute_TextIsDate() {
             return !string.IsNullOrWhiteSpace( SelectedText );
+        }
+
+        private string ParseDate( string input ) {
+            var retValue = input;
+
+            if( DateTime.TryParse( input, out var result )) {
+                retValue = $"{result.Month:D2}-{result.Day:D2}-{result.Year % 100}";
+            }
+
+            return retValue;
         }
     }
 }
