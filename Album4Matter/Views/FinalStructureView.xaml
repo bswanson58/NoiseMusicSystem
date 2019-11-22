@@ -9,6 +9,10 @@
              d:DesignHeight="250" d:DesignWidth="400">
 
     <UserControl.Resources>
+        <Style x:Key="TreeViewItemStyleExpanded" TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsExpanded" Value="True"/>
+        </Style>
+
         <HierarchicalDataTemplate x:Key="TargetFolderTemplate" DataType="Dto:TargetFolder" ItemsSource="{Binding Children}">
             <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
         </HierarchicalDataTemplate>
@@ -28,7 +32,8 @@
 
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Target:"/>
 
-        <TreeView Grid.Row="2" Margin="0,5" ItemsSource="{Binding TargetList}" ItemTemplateSelector="{StaticResource TargetItemTemplateSelector}"/>
+        <TreeView Grid.Row="2" Margin="0,5" ItemsSource="{Binding TargetList}" ItemTemplateSelector="{StaticResource TargetItemTemplateSelector}"
+                  ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}"/>
 
         <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
