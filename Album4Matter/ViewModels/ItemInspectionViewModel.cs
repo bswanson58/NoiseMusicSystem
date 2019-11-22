@@ -60,6 +60,7 @@ namespace Album4Matter.ViewModels {
 
                 RaiseCanExecuteChangedEvent( "CanExecute_TextIsArtist" );
                 RaiseCanExecuteChangedEvent( "CanExecute_TextIsAlbum" );
+                RaiseCanExecuteChangedEvent( "CanExecute_TextIsLocation" );
                 RaiseCanExecuteChangedEvent( "CanExecute_TextIsDate" );
             }
         }
@@ -204,6 +205,14 @@ namespace Album4Matter.ViewModels {
             if(!String.IsNullOrWhiteSpace( date )) {
                 mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Date, PathSanitizer.SanitizeFilename( ParseDate( date.Trim()), ' ')));
             }
+        }
+
+        public void Execute_TextIsLocation() {
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Location, PathSanitizer.SanitizeFilename( SelectedText.Trim(), ' ' )));
+        }
+
+        public bool CanExecute_TextIsLocation() {
+            return !string.IsNullOrWhiteSpace( SelectedText );
         }
 
         public void Execute_UseTags() {

@@ -6,6 +6,7 @@ namespace Album4Matter.Interfaces {
         Source,
         Artist,
         Album,
+        Location,
         Date
     }
 

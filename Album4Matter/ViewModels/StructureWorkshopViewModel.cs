@@ -26,6 +26,7 @@ namespace Album4Matter.ViewModels {
         private string                                  mArtistName;
         private string                                  mAlbumName;
         private string                                  mPublishDate;
+        private string                                  mLocation;
         private bool                                    mIsSoundboard;
         private bool                                    mIsRadioBrodcast;
         private bool                                    mIsRemastered;
@@ -96,6 +97,16 @@ namespace Album4Matter.ViewModels {
                 mAlbumName = value;
 
                 RaisePropertyChanged( () => AlbumName );
+                UpdateTargetStructure();
+            }
+        }
+
+        public string Location {
+            get => mLocation;
+            set {
+                mLocation = value;
+
+                RaisePropertyChanged( () => Location );
                 UpdateTargetStructure();
             }
         }
@@ -191,6 +202,7 @@ namespace Album4Matter.ViewModels {
                 UpdateTargetStructure();
             }
         }
+
         public string VolumeNameFormat {
             get => mVolumeNameFormat;
             set {
@@ -229,6 +241,10 @@ namespace Album4Matter.ViewModels {
 
                 case InspectionItem.Album:
                     AlbumName = update.Item;
+                    break;
+
+                case InspectionItem.Location:
+                    Location = update.Item;
                     break;
 
                 case InspectionItem.Date:
@@ -349,6 +365,10 @@ namespace Album4Matter.ViewModels {
             var retValue = AlbumName;
             var metadata = String.Empty;
 
+            if(!String.IsNullOrWhiteSpace( Location )) {
+                retValue = retValue + $" - {Location}";
+            }
+
             if( IsSoundboard ) {
                 metadata = "Soundboard";
             }
@@ -421,6 +441,7 @@ namespace Album4Matter.ViewModels {
         private void ClearMetadata() {
             ArtistName = String.Empty;
             AlbumName = String.Empty;
+            Location = String.Empty;
             PublishDate = String.Empty;
 
             IsDeluxeEdition = false;
@@ -462,6 +483,12 @@ namespace Album4Matter.ViewModels {
                     if((!String.IsNullOrWhiteSpace( AlbumName )) &&
                        (!IsValidFilename( AlbumName ))) {
                         retValue = "Album Name has invalid path characters.";
+                    }
+                }
+                else if( columnName.Equals( nameof( Location ))) {
+                    if((!String.IsNullOrWhiteSpace( Location )) &&
+                       (!IsValidFilename( Location ))) {
+                        retValue = "Location has invalid path characters.";
                     }
                 }
                 else if( columnName.Equals( nameof( PublishDate ))) {
