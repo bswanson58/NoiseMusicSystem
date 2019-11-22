@@ -284,8 +284,14 @@ namespace Album4Matter.ViewModels {
             mAlbumBuilder.BuildAlbum( CollectAlbumLayout());
         }
 
+        public bool CanExecute_BuildAlbum() {
+            return !String.IsNullOrWhiteSpace( ArtistName ) && !String.IsNullOrWhiteSpace( AlbumName ) && ( VolumeList.Any() || mAlbumContents.Any());
+        }
+
         private void UpdateTargetStructure() {
             FinalStructureViewModel.SetTargetLayout( CollectAlbumLayout(), OnRemoveItem );
+
+            RaiseCanExecuteChangedEvent( "CanExecute_BuildAlbum" );
         }
 
         private void OnRemoveItem( TargetItem item ) {
