@@ -283,8 +283,19 @@ namespace Album4Matter.ViewModels {
             InspectionViewModel.SetInspectionItem( item );
         }
 
-        public void Execute_BuildAlbum() {
-            mAlbumBuilder.BuildAlbum( CollectAlbumLayout());
+        public async void Execute_BuildAlbum() {
+            var layout = CollectAlbumLayout();
+            var result = await mAlbumBuilder.BuildAlbum( layout );
+
+            if( result ) {
+                result = await mAlbumBuilder.ClearSourceDirectory( layout );
+
+                if( result ) {
+                    ClearMetadata();
+                }
+
+                CollectRootFolder( SourceDirectory );
+            }
         }
 
         public bool CanExecute_BuildAlbum() {
@@ -404,6 +415,10 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_ClearMetadata() {
+            ClearMetadata();
+        }
+
+        private void ClearMetadata() {
             ArtistName = String.Empty;
             AlbumName = String.Empty;
             PublishDate = String.Empty;
@@ -431,11 +446,6 @@ namespace Album4Matter.ViewModels {
                     mLog.LogException( $"OnLaunchRequest:Source Directory: '{SourceDirectory}'", ex );
                 }
             }
-        }
-
-        public void Dispose() {
-            mInspectionChangedSubscription?.Dispose();
-            mInspectionChangedSubscription = null;
         }
 
         public string this[ string columnName ] {
@@ -482,5 +492,10 @@ namespace Album4Matter.ViewModels {
         }
 
         public string Error => String.Empty;
+
+        public void Dispose() {
+            mInspectionChangedSubscription?.Dispose();
+            mInspectionChangedSubscription = null;
+        }
     }
 }

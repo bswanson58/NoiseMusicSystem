@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
@@ -49,7 +50,7 @@ namespace Album4Matter.Models {
             });
         }
 
-        public bool MoveVolume( IEnumerable<SourceItem> source, string targetFolder ) {
+        private bool MoveVolume( IEnumerable<SourceItem> source, string targetFolder ) {
             var retValue = true;
 
             if(!Directory.Exists( targetFolder )) {
@@ -66,7 +67,7 @@ namespace Album4Matter.Models {
                             File.Delete( destinationPath );
                         }
 
-                        File.Copy( file.FileName, destinationPath );
+                        File.Move( file.FileName, destinationPath );
                     }
                     catch( Exception ex ) {
                         mLog.LogException( $"Moving file: '{destinationPath}'", ex );
@@ -80,6 +81,55 @@ namespace Album4Matter.Models {
             }
 
             return retValue;
+        }
+
+        public Task<bool> ClearSourceDirectory( TargetAlbumLayout layout ) {
+            return Task.Run( () => {
+                var retValue = false;
+
+                try {
+                    var pathList = new List<string>();
+
+                    pathList.AddRange( CollectPaths( layout.AlbumList.VolumeContents ));
+
+                    foreach( var volume in layout.VolumeList ) {
+                        pathList.AddRange( CollectPaths( volume.VolumeContents ));
+                    }
+
+                    var rootDirectory = pathList.OrderByDescending( p => p.Length ).LastOrDefault();
+
+                    if((!String.IsNullOrWhiteSpace( rootDirectory )) &&
+                       (!DirectoryHasFiles( rootDirectory ))) {
+                        Directory.Delete( rootDirectory, true );
+
+                        retValue = true;
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "ClearSourceDirectory", ex );
+                }
+
+                return retValue;
+            });
+        }
+
+        private IEnumerable<string> CollectPaths( IEnumerable<SourceItem> list ) {
+            var retValue = new List<string>();
+
+            foreach( var item in list ) {
+                if( item is SourceFile file ) {
+                    retValue.Add( Path.GetDirectoryName( file.FileName ));
+                }
+                else if( item is SourceFolder folder ) {
+                    retValue.Add( folder.FileName );
+                }
+            }
+
+            return retValue;
+        }
+
+        private bool DirectoryHasFiles( string rootDirectory ) {
+            return Directory.GetFiles( rootDirectory, "*", SearchOption.AllDirectories ).Any();
         }
     }
 }
