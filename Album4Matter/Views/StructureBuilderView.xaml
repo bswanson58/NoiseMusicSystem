@@ -32,10 +32,10 @@
         </StackPanel>
         <StackPanel Grid.Row="4" Margin="0,5" Orientation="Vertical">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Metadata:"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Remastered"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Deluxe Edition"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Radio Broadcast"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Soundboard"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Remastered" IsChecked="{Binding IsRemastered}"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Deluxe Edition" IsChecked="{Binding IsDeluxeEdition}"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Radio Broadcast" IsChecked="{Binding IsRadioBroadcast}"/>
+            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Soundboard" IsChecked="{Binding IsSoundboard}"/>
             <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" Text="Other:"/>
             <TextBox Margin="3,0"/>
         </StackPanel>

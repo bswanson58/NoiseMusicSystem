@@ -22,6 +22,10 @@ namespace Album4Matter.ViewModels {
         private string                                  mArtistName;
         private string                                  mAlbumName;
         private string                                  mPublishDate;
+        private bool                                    mIsSoundboard;
+        private bool                                    mIsRadioBrodcast;
+        private bool                                    mIsRemastered;
+        private bool                                    mIsDeluxeEdition;
 
         public  IItemInspectionViewModel                InspectionViewModel { get; }
         public  IFinalStructureViewModel                FinalStructureViewModel { get; }
@@ -86,6 +90,46 @@ namespace Album4Matter.ViewModels {
                 mPublishDate = value;
 
                 RaisePropertyChanged( () => PublishDate );
+                UpdateTargetStructure();
+            }
+        }
+
+        public bool IsDeluxeEdition {
+            get => mIsDeluxeEdition;
+            set {
+                mIsDeluxeEdition = value;
+
+                RaisePropertyChanged( () => IsDeluxeEdition );
+                UpdateTargetStructure();
+            }
+        }
+
+        public bool IsRemastered {
+            get => mIsRemastered;
+            set {
+                mIsRemastered = value;
+
+                RaisePropertyChanged( () => IsRemastered );
+                UpdateTargetStructure();
+            }
+        }
+
+        public bool IsSoundboard {
+            get => mIsSoundboard;
+            set {
+                mIsSoundboard = value;
+
+                RaisePropertyChanged( () => IsSoundboard );
+                UpdateTargetStructure();
+            }
+        }
+
+        public bool IsRadioBroadcast {
+            get => mIsRadioBrodcast;
+            set {
+                mIsRadioBrodcast = value;
+
+                RaisePropertyChanged( () => IsRadioBroadcast );
                 UpdateTargetStructure();
             }
         }
@@ -175,13 +219,50 @@ namespace Album4Matter.ViewModels {
         }
 
         private TargetAlbumLayout CollectAlbumLayout() {
-            return new TargetAlbumLayout( ArtistName, AlbumName, mAlbumContents );
+            return new TargetAlbumLayout( ArtistName, BuildAlbumName(), mAlbumContents );
+        }
+
+        private string BuildAlbumName() {
+            var retValue = AlbumName;
+            var metadata = String.Empty;
+
+            if( IsSoundboard ) {
+                metadata = "Soundboard";
+            }
+            else if( IsDeluxeEdition && IsRemastered ) {
+                metadata = "Remastered Deluxe Edition";
+            }
+            else if( IsDeluxeEdition ) {
+                metadata = "Deluxe Edition";
+            }
+            else if( IsRadioBroadcast ) {
+                metadata = "FM Broadcast";
+            }
+            else if( IsRemastered ) {
+                metadata = "Remastered";
+            }
+
+            if(!String.IsNullOrWhiteSpace( metadata )) {
+                retValue = retValue + $" ({metadata})";
+            }
+
+            if(!String.IsNullOrWhiteSpace( PublishDate )) {
+                retValue = retValue + $" - {PublishDate}";
+            }
+
+            return retValue;
         }
 
         public void Execute_ClearMetadata() {
             ArtistName = String.Empty;
             AlbumName = String.Empty;
             PublishDate = String.Empty;
+
+            IsDeluxeEdition = false;
+            IsRadioBroadcast = false;
+            IsRemastered = false;
+            IsSoundboard = false;
+
             mAlbumContents.Clear();
 
             UpdateTargetStructure();
