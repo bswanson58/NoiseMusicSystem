@@ -195,6 +195,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Platform\JsonObjectWriter.cs" />
+    <Compile Include="Platform\PathSanitizer.cs" />
     <Compile Include="Platform\PlatformDialogService.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />

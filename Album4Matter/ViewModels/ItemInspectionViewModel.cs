@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
+using Album4Matter.Platform;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
@@ -79,7 +80,7 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_TextIsArtist() {
-            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Artist, SelectedText.Trim()));
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Artist, PathSanitizer.SanitizeFilename( SelectedText.Trim(), ' ' )));
         }
 
         public bool CanExecute_TextIsArtist() {
@@ -87,7 +88,7 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_TextIsAlbum() {
-            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Album, SelectedText.Trim()));
+            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Album, PathSanitizer.SanitizeFilename( SelectedText.Trim(), ' ' )));
         }
 
         public bool CanExecute_TextIsAlbum() {
