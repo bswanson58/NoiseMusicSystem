@@ -26,6 +26,9 @@ namespace Album4Matter.ViewModels {
         private bool                                    mIsRadioBrodcast;
         private bool                                    mIsRemastered;
         private bool                                    mIsDeluxeEdition;
+        private bool                                    mIsOtherMetadata;
+        private string                                  mOtherMetadata;
+
 
         public  IItemInspectionViewModel                InspectionViewModel { get; }
         public  IFinalStructureViewModel                FinalStructureViewModel { get; }
@@ -130,6 +133,26 @@ namespace Album4Matter.ViewModels {
                 mIsRadioBrodcast = value;
 
                 RaisePropertyChanged( () => IsRadioBroadcast );
+                UpdateTargetStructure();
+            }
+        }
+
+        public bool IsOtherMetadata {
+            get => mIsOtherMetadata;
+            set {
+                mIsOtherMetadata = value;
+
+                RaisePropertyChanged( () => IsOtherMetadata );
+                UpdateTargetStructure();
+            }
+        }
+
+        public string OtherMetadata {
+            get => mOtherMetadata;
+            set {
+                mOtherMetadata = value;
+
+                RaisePropertyChanged( () => OtherMetadata );
                 UpdateTargetStructure();
             }
         }
@@ -241,6 +264,9 @@ namespace Album4Matter.ViewModels {
             else if( IsRemastered ) {
                 metadata = "Remastered";
             }
+            else if( IsOtherMetadata && !String.IsNullOrWhiteSpace( OtherMetadata )) {
+                metadata = OtherMetadata;
+            }
 
             if(!String.IsNullOrWhiteSpace( metadata )) {
                 retValue = retValue + $" ({metadata})";
@@ -262,6 +288,8 @@ namespace Album4Matter.ViewModels {
             IsRadioBroadcast = false;
             IsRemastered = false;
             IsSoundboard = false;
+            IsOtherMetadata = false;
+            OtherMetadata = String.Empty;
 
             mAlbumContents.Clear();
 

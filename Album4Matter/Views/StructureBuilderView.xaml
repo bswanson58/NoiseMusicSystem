@@ -36,8 +36,15 @@
             <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Deluxe Edition" IsChecked="{Binding IsDeluxeEdition}"/>
             <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Radio Broadcast" IsChecked="{Binding IsRadioBroadcast}"/>
             <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Soundboard" IsChecked="{Binding IsSoundboard}"/>
-            <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" Text="Other:"/>
-            <TextBox Margin="3,0"/>
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <CheckBox Grid.Column="0" Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Other:" IsChecked="{Binding IsOtherMetadata}"/>
+                <TextBox Grid.Column="1" Text="{Binding OtherMetadata, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
         </StackPanel>
     </Grid>
 </UserControl>
