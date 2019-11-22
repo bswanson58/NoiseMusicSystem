@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
+using System.Text;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 using Album4Matter.Platform;
@@ -10,6 +11,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Album4Matter.ViewModels {
     class ItemInspectionViewModel : AutomaticCommandBase, IItemInspectionViewModel {
         private readonly string[]                       mTextFileExtensions = { ".txt", ".nfo" };
+        private readonly string[]                       mMusicFileExtensions = { ".mp3", ".flac" };
 
         private readonly Subject<InspectionItemUpdate>  mInspectionChangedSubject;
         private readonly IPlatformLog                   mLog;
@@ -49,6 +51,9 @@ namespace Album4Matter.ViewModels {
             if( ItemIsTextFile( item )) {
                 InspectionText = LoadTextFile( item.FileName );
             }
+            else if( ItemIsMusicFile( item )) {
+                InspectionText = LoadMusicTags( item );
+            }
             else {
                 InspectionText = item.Name;
             }
@@ -66,6 +71,18 @@ namespace Album4Matter.ViewModels {
             return retValue;
         }
 
+        private bool ItemIsMusicFile( SourceItem item ) {
+            var retValue = false;
+
+            if( item is SourceFile ) {
+                var extension = Path.GetExtension( item.FileName );
+
+                retValue = mMusicFileExtensions.Any( e => e.Equals( extension ));
+            }
+
+            return retValue;
+        }
+
         private string LoadTextFile( string fileName ) {
             var retValue = string.Empty;
 
@@ -77,6 +94,39 @@ namespace Album4Matter.ViewModels {
             }
 
             return retValue;
+        }
+
+        private string LoadMusicTags( SourceItem item ) {
+            var retValue = new StringBuilder();
+
+            retValue.AppendLine( item.FileName );
+
+            try {
+                var tags = TagLib.File.Create( item.FileName );
+
+                retValue.AppendLine().AppendLine( "Tags:" ).AppendLine();
+
+                if(!String.IsNullOrWhiteSpace( tags.Tag.JoinedPerformers )) {
+                    retValue.AppendLine( $"Artist:  {string.Join( ", ", tags.Tag.JoinedPerformers)}" );
+                }
+                if(!String.IsNullOrWhiteSpace( tags.Tag.Album )) {
+                    retValue.AppendLine( $"Album:  {tags.Tag.Album}" );
+                }
+                if( tags.Tag.Year != 0 ) {
+                    retValue.AppendLine( $"Date:  {tags.Tag.Year}" );
+                }
+                if(!String.IsNullOrWhiteSpace( tags.Tag.Title )) {
+                    retValue.AppendLine( $"Title:  {tags.Tag.Title}" );
+                }
+                if( tags.Tag.Track > 0 ) {
+                    retValue.AppendLine( $"Track:  {tags.Tag.Track}" );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"LoadMusicTags from: '{item.FileName}'", ex );
+            }
+
+            return retValue.ToString();
         }
 
         public void Execute_TextIsArtist() {
