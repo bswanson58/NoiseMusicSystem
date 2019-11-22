@@ -20,15 +20,15 @@
 
         <StackPanel Grid.Row="1" Margin="0,5" Orientation="Vertical">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Artist Name:"/>
-            <TextBox Text="{Binding ArtistName}"/>
+            <TextBox Text="{Binding ArtistName, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Margin="0,5" Orientation="Vertical">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Album Name:"/>
-            <TextBox Text="{Binding AlbumName}"/>
+            <TextBox Text="{Binding AlbumName, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Grid.Row="3" Margin="0,5" Orientation="Vertical">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Published Year/Event Date:"/>
-            <TextBox Text="{Binding PublishDate}"/>
+            <TextBox Text="{Binding PublishDate, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Grid.Row="4" Margin="0,5" Orientation="Vertical">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Metadata:"/>
