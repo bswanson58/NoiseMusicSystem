@@ -31,6 +31,19 @@ namespace Album4Matter.ViewModels {
             mInspectionChangedSubject = new Subject<InspectionItemUpdate>();
         }
 
+        public void ClearInspectionItem() {
+            InspectionItemName = String.Empty;
+            InspectionText = String.Empty;
+
+            RaisePropertyChanged( () => InspectionItemName );
+            RaisePropertyChanged( () => InspectionText );
+
+            SelectedText = String.Empty;
+
+            ClearTags();
+            RaiseCanExecuteChangedEvent("CanExecute_UseTags");
+        }
+
         public void SetInspectionItem( SourceItem item ) {
             InspectionItemName = item.Name;
 

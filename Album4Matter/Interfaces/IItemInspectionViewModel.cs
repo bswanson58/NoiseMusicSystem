@@ -21,6 +21,7 @@ namespace Album4Matter.Interfaces {
 
     public interface IItemInspectionViewModel {
         void    SetInspectionItem( SourceItem item );
+        void    ClearInspectionItem();
 
         IObservable<InspectionItemUpdate>   InspectionItemChanged { get; }
     }

@@ -418,6 +418,7 @@ namespace Album4Matter.ViewModels {
 
             mAlbumContents.Clear();
 
+            InspectionViewModel.ClearInspectionItem();
             UpdateTargetStructure();
         }
 
