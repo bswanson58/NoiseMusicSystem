@@ -283,7 +283,30 @@ namespace Album4Matter.ViewModels {
         }
 
         private void UpdateTargetStructure() {
-            FinalStructureViewModel.SetTargetLayout( CollectAlbumLayout());
+            FinalStructureViewModel.SetTargetLayout( CollectAlbumLayout(), OnRemoveItem );
+        }
+
+        private void OnRemoveItem( TargetItem item ) {
+            if( item is TargetFile file ) {
+                var target = mAlbumContents.FirstOrDefault( i => i.Name.Equals( file.Name ));
+
+                if( target != null ) {
+                    mAlbumContents.Remove( target );
+                }
+                else {
+                    foreach( var v in VolumeList ) {
+                        target = v.VolumeList.FirstOrDefault( i => i.Name.Equals( file.Name ));
+
+                        if( target != null ) {
+                            v.VolumeList.Remove( target );
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            UpdateTargetStructure();
         }
 
         private TargetAlbumLayout CollectAlbumLayout() {
@@ -363,7 +386,6 @@ namespace Album4Matter.ViewModels {
 
         private void OnCollectVolume( VolumeItem item ) {
             item.VolumeList.AddRange( SelectedSourceItems );
-//            item.SetVolumeList( SelectedSourceItems );
 
             UpdateTargetStructure();
         }

@@ -237,6 +237,10 @@
       <DependentUpon>StructureWorkshopView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TargetItemTemplateSelector.cs" />
+    <Page Include="Resources\Images.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\FinalStructureView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

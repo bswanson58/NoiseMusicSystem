@@ -9,15 +9,32 @@
              d:DesignHeight="250" d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Style x:Key="TreeViewItemStyleExpanded" TargetType="{x:Type TreeViewItem}">
+        <Style x:Key="TreeViewItemStyleExpanded" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
             <Setter Property="IsExpanded" Value="True"/>
         </Style>
 
         <HierarchicalDataTemplate x:Key="TargetFolderTemplate" DataType="Dto:TargetFolder" ItemsSource="{Binding Children}">
             <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
         </HierarchicalDataTemplate>
+
         <HierarchicalDataTemplate x:Key="TargetFileTemplate" DataType="Dto:TargetFile">
-            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <Button x:Name="TargetDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding RemoveItem}" Content="{StaticResource Path_Remove}" ToolTip="Remove File" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TargetDelete" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
 
         <Views:TargetItemTemplateSelector x:Key="TargetItemTemplateSelector" FileTemplate="{StaticResource TargetFileTemplate}" FolderTemplate="{StaticResource TargetFolderTemplate}"/>

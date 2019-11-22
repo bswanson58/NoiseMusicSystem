@@ -9,6 +9,8 @@
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ControlStyles.xaml" />
 
+                <ResourceDictionary Source="pack://application:,,,/Album4Matter;component/Resources/Images.xaml" />
+
                 <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -28,14 +29,14 @@ namespace Album4Matter.ViewModels {
             TargetDirectory = appPreferences.TargetDirectory;
         }
 
-        public void SetTargetLayout( TargetAlbumLayout layout ) {
+        public void SetTargetLayout( TargetAlbumLayout layout, Action<TargetItem> onRemoveItem ) {
             mArtistTarget.UpdateTarget( layout.ArtistName );
             mAlbumTarget.UpdateTarget( layout.AlbumName );
 
             mAlbumTarget.Children.Clear();
-            mAlbumTarget.PopulateChildren( layout.AlbumList.VolumeContents );
+            mAlbumTarget.PopulateChildren( layout.AlbumList.VolumeContents, onRemoveItem );
 
-            layout.VolumeList.ForEach( v => mAlbumTarget.Children.Add( new TargetFolder( v )));
+            layout.VolumeList.ForEach( v => mAlbumTarget.Children.Add( new TargetFolder( v, onRemoveItem )));
         }
 
         public string TargetDirectory {

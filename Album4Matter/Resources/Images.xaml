@@ -1,0 +1,30 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  Button Images  -->
+	<Viewbox x:Key="Path_Folder" x:Shared="False">
+		<Canvas Width="100" Height="76.217" ClipToBounds="True" Opacity="0.8">
+			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+				<Path.Data>
+					<PathGeometry Figures="M95.674,71.889C95.674,74.28,93.736,76.217,91.346,76.217L8.654,76.217C6.265,76.217,4.326,74.279,4.326,71.889L0,16.121C0,13.73,1.938,11.793,4.326,11.793L95.674,11.793C98.063,11.793,100,13.73,100,16.121L95.674,71.889z" FillRule="Nonzero" />
+				</Path.Data>
+			</Path>
+			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+				<Path.Data>
+					<PathGeometry Figures="M39.971,3.669C39.893,1.632,38.229,0,36.171,0L6.639,0C4.583,0,2.917,1.632,2.839,3.669L2.825,3.669 2.825,8.896 39.986,8.896 39.986,3.669 39.971,3.669z" FillRule="Nonzero" />
+				</Path.Data>
+			</Path>
+		</Canvas>
+	</Viewbox>
+
+    <Viewbox x:Key="Path_Remove" x:Shared="False">
+        <Canvas Width="612" Height="612" ClipToBounds="True">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <PathGeometry Figures="M387.128 170.748L306 251.915l-81.128-81.167l-54.124 54.124L251.915 306l-81.128 81.128l54.085 54.086L306 360.086     l81.128 81.128l54.086-54.086L360.086 306l81.128-81.128L387.128 170.748z M522.38 89.62     c-119.493-119.493-313.267-119.493-432.76 0c-119.493 119.493-119.493 313.267 0 432.76     c119.493 119.493 313.267 119.493 432.76 0C641.873 402.888 641.873 209.113 522.38 89.62z M468.295 468.295     c-89.62 89.619-234.932 89.619-324.551 0c-89.62-89.62-89.62-234.932 0-324.551c89.62-89.62 234.931-89.62 324.551 0     C557.914 233.363 557.914 378.637 468.295 468.295z" FillRule="NonZero"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
+
+</ResourceDictionary>
