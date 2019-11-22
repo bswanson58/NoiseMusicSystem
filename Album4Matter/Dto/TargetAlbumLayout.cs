@@ -11,6 +11,12 @@ namespace Album4Matter.Dto {
 
             VolumeContents = new List<SourceItem>();
         }
+
+        public TargetVolume( string name, IEnumerable<SourceItem> list ) :
+            this() {
+            VolumeName = name;
+            VolumeContents.AddRange( list );
+        }
     }
 
     public class TargetAlbumLayout {

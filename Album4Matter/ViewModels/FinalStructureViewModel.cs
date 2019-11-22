@@ -34,6 +34,8 @@ namespace Album4Matter.ViewModels {
 
             mAlbumTarget.Children.Clear();
             mAlbumTarget.PopulateChildren( layout.AlbumList.VolumeContents );
+
+            layout.VolumeList.ForEach( v => mAlbumTarget.Children.Add( new TargetFolder( v )));
         }
 
         public string TargetDirectory {

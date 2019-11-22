@@ -41,6 +41,12 @@ namespace Album4Matter.Dto {
             PopulateChildren( source.Children );
         }
 
+        public TargetFolder( TargetVolume source ) :
+            this( source.VolumeName ) {
+
+            PopulateChildren( source.VolumeContents );
+        }
+
         public void PopulateChildren( IEnumerable<SourceItem> source ) {
             Children.Clear();
 

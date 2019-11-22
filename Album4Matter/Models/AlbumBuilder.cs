@@ -17,7 +17,7 @@ namespace Album4Matter.Models {
 
         public Task<bool> BuildAlbum( TargetAlbumLayout layout ) {
             return Task.Run( () => {
-                var retValue = true;
+                bool retValue;
 
                 try {
                     var appPreferences = mPreferences.Load<Album4MatterPreferences>();
@@ -28,6 +28,16 @@ namespace Album4Matter.Models {
                     }
 
                     retValue = MoveVolume( layout.AlbumList.VolumeContents, albumDirectory );
+
+                    foreach( var volume in layout.VolumeList ) {
+                        var volumeDirectory = Path.Combine( albumDirectory, volume.VolumeName );
+
+                        if(!Directory.Exists( volumeDirectory )) {
+                            Directory.CreateDirectory( volumeDirectory );
+                        }
+
+                        retValue &= MoveVolume( volume.VolumeContents, volumeDirectory );
+                    }
                 }
                 catch( Exception ex ) {
                     mLog.LogException( "AlbumBuilder:BuildAlbum", ex );

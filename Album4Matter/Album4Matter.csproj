@@ -182,6 +182,7 @@
     <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TargetAlbumLayout.cs" />
     <Compile Include="Dto\TargetItem.cs" />
+    <Compile Include="Dto\VolumeItem.cs" />
     <Compile Include="Interfaces\IAlbumBuilder.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IFinalStructureViewModel.cs" />

@@ -30,12 +30,14 @@ namespace Album4Matter.ViewModels {
         private string                                  mOtherMetadata;
         private bool                                    mCreateVolumes;
         private string                                  mVolumeNameFormat;
-
+        private int                                     mVolumeCount;
 
         public  IItemInspectionViewModel                InspectionViewModel { get; }
         public  IFinalStructureViewModel                FinalStructureViewModel { get; }
         public  ICollectionView                         SourceList { get; }
         public  BindableCollection<SourceItem>          SelectedSourceItems { get; }
+        public  BindableCollection<VolumeItem>          VolumeList { get; }
+        public  List<int>                               VolumeCountList { get; }
 
         public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder,
                                            IPlatformDialogService dialogService, IPreferences preferences ) {
@@ -50,6 +52,9 @@ namespace Album4Matter.ViewModels {
             SourceList = CollectionViewSource.GetDefaultView( mSourceList );
             SelectedSourceItems = new BindableCollection<SourceItem>();
             SelectedSourceItems.CollectionChanged += OnSelectionChanged;
+            VolumeList = new BindableCollection<VolumeItem>();
+            VolumeCountList = new List<int> { 2, 3, 4, 5, 6 };
+            VolumeCount = 2;
 
             mInspectionChangedSubscription = InspectionViewModel.InspectionItemChanged.Subscribe( OnInspectionChanged);
 
@@ -166,16 +171,28 @@ namespace Album4Matter.ViewModels {
                 mCreateVolumes = value;
 
                 RaisePropertyChanged( () => CreateVolumes );
+                UpdateVolumeList();
                 UpdateTargetStructure();
             }
         }
 
+        public int VolumeCount{
+            get => mVolumeCount;
+            set {
+                mVolumeCount = value;
+
+                RaisePropertyChanged( () => VolumeCount );
+                UpdateVolumeList();
+                UpdateTargetStructure();
+            }
+        }
         public string VolumeNameFormat {
             get => mVolumeNameFormat;
             set {
                 mVolumeNameFormat = value;
 
                 RaisePropertyChanged( () => VolumeNameFormat );
+                UpdateVolumeList();
                 UpdateTargetStructure();
 
                 var appPreferences = mPreferences.Load<Album4MatterPreferences>();
@@ -270,7 +287,15 @@ namespace Album4Matter.ViewModels {
         }
 
         private TargetAlbumLayout CollectAlbumLayout() {
-            return new TargetAlbumLayout( ArtistName, BuildAlbumName(), mAlbumContents );
+            var retValue = new TargetAlbumLayout( ArtistName, BuildAlbumName(), mAlbumContents );
+
+            if( CreateVolumes ) {
+                foreach( var v in VolumeList ) {
+                    retValue.VolumeList.Add( new TargetVolume( v.Name, v.VolumeList ));
+                }
+            }
+
+            return retValue;
         }
 
         private string BuildAlbumName() {
@@ -305,6 +330,42 @@ namespace Album4Matter.ViewModels {
             }
 
             return retValue;
+        }
+
+        private void UpdateVolumeList() {
+            if( CreateVolumes ) {
+                var expectedVolumes = Enumerable.Range( 1, mVolumeCount ).ToList();
+                var volumeList = new List<VolumeItem>();
+
+                foreach( var v in VolumeList ) {
+                    if(!expectedVolumes.Contains( v.VolumeIndex )) {
+                        volumeList.Add( v );
+                    }
+                }
+                volumeList.ForEach( v => VolumeList.Remove( v ));
+
+                expectedVolumes.ForEach( e => {
+                    var volume = VolumeList.FirstOrDefault( v => v.VolumeIndex.Equals( e ));
+
+                    if( volume == null ) {
+                        VolumeList.Add( new VolumeItem( e, OnCollectVolume ));
+                    }
+                });
+
+                foreach( var v in VolumeList ) {
+                    v.SetNameFormat( VolumeNameFormat );
+                }
+            }
+            else {
+                VolumeList.Clear();
+            }
+        }
+
+        private void OnCollectVolume( VolumeItem item ) {
+            item.VolumeList.AddRange( SelectedSourceItems );
+//            item.SetVolumeList( SelectedSourceItems );
+
+            UpdateTargetStructure();
         }
 
         public void Execute_ClearMetadata() {

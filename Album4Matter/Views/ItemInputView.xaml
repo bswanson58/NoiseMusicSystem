@@ -11,6 +11,10 @@
              d:DesignHeight="200" d:DesignWidth="400">
 
     <UserControl.Resources>
+        <DataTemplate x:Key="VolumeItemTemplate" DataType="Dto:VolumeItem">
+            <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="{Binding Name}" Command="{Binding CollectVolume}"/>
+        </DataTemplate>
+
         <Style x:Key="TreeViewItemStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
             <Style.Triggers>
                 <Trigger 
@@ -80,6 +84,15 @@
         <TextBlock Grid.Row="3" Margin="5,5,0,0" Style="{StaticResource ControlTitleStyle}" Text="Add Selected Items To:"/>
         <StackPanel Grid.Row="4" Margin="3" Orientation="Horizontal">
             <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Album" Command="{Binding CopyToAlbum}"/>
+
+            <ItemsControl ItemsSource="{Binding VolumeList}" ItemTemplate="{StaticResource VolumeItemTemplate}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
         </StackPanel>
     </Grid>
 </UserControl>
