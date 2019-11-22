@@ -19,7 +19,7 @@
             <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="3,0,0,0" Text="{Binding InspectionItemName}"/>
         </StackPanel>
 
-        <TextBox Grid.Row="1" TextWrapping="Wrap" FontSize="14" Text="{Binding InspectionText}">
+        <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" FontSize="14" Text="{Binding InspectionText}">
             <i:Interaction.Behaviors>
                 <Behaviors:TextBoxSelectionHelper TextSelection="{Binding SelectedText}"/>
             </i:Interaction.Behaviors>
