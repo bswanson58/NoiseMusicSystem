@@ -32,8 +32,17 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Name="Container" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
-                <Button Grid.Column="1" Content="i" Command="{Binding InspectItem}"/>
+
+                <Button x:Name="InspectItem" Grid.Column="1" HorizontalAlignment="Right" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
             </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
 
         <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder" ItemsSource="{Binding Children}">
@@ -43,8 +52,17 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
-                <Button Grid.Column="1" Content="i" Command="{Binding InspectItem}"/>
+
+                <Button x:Name="InspectItem" Grid.Column="1" HorizontalAlignment="Right" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
             </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
 
         <Views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
@@ -74,7 +92,7 @@
             <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Refresh" Command="{Binding RefreshSourceFolder}"/>
         </Grid>
 
-        <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" 
+        <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}" ItemContainerStyle="{StaticResource TreeViewItemStyle}">
             <i:Interaction.Behaviors>
                 <Behaviors:TreeViewMultipleSelectionBehavior SelectedItems="{Binding SelectedSourceItems}"/>

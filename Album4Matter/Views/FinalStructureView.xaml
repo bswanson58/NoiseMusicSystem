@@ -50,7 +50,7 @@
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Target:"/>
 
         <TreeView Grid.Row="2" Margin="0,5" ItemsSource="{Binding TargetList}" ItemTemplateSelector="{StaticResource TargetItemTemplateSelector}"
-                  ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}"/>
+                  ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
 
         <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
