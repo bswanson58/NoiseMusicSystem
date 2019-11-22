@@ -40,7 +40,7 @@
         <Views:TargetItemTemplateSelector x:Key="TargetItemTemplateSelector" FileTemplate="{StaticResource TargetFileTemplate}" FolderTemplate="{StaticResource TargetFolderTemplate}"/>
     </UserControl.Resources>
 
-    <Grid Margin="10">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -56,10 +56,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0" Text="{Binding TargetDirectory}"/>
-            <Button Grid.Column="1" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetFolder}"/>
+            <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetFolder}" ToolTip="Browse For Directory"/>
+            <Button Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}" ToolTip="Open Directory"/>
         </Grid>
     </Grid>
 </UserControl>

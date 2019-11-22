@@ -14,6 +14,7 @@ namespace Album4Matter.ViewModels {
     class StructureWorkshopViewModel : AutomaticCommandBase, IDisposable {
         private readonly IPlatformDialogService         mDialogService;
         private readonly IPreferences                   mPreferences;
+        private readonly IPlatformLog                   mLog;
         private readonly IAlbumBuilder                  mAlbumBuilder;
         private readonly BindableCollection<SourceItem> mSourceList;
         private readonly List<SourceItem>               mAlbumContents;
@@ -40,12 +41,13 @@ namespace Album4Matter.ViewModels {
         public  List<int>                               VolumeCountList { get; }
 
         public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder,
-                                           IPlatformDialogService dialogService, IPreferences preferences ) {
+                                           IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log ) {
             InspectionViewModel = inspectionViewModel;
             FinalStructureViewModel = finalStructureViewModel;
             mAlbumBuilder = albumBuilder;
             mDialogService = dialogService;
             mPreferences = preferences;
+            mLog = log;
 
             mAlbumContents = new List<SourceItem>();
             mSourceList = new BindableCollection<SourceItem>();
@@ -406,6 +408,17 @@ namespace Album4Matter.ViewModels {
             mAlbumContents.Clear();
 
             UpdateTargetStructure();
+        }
+
+        public void Execute_OpenSourceDirectory() {
+            if( Directory.Exists( SourceDirectory )) {
+                try {
+                    System.Diagnostics.Process.Start( SourceDirectory );
+                }
+                catch (Exception ex) {
+                    mLog.LogException( $"OnLaunchRequest:Source Directory: '{SourceDirectory}'", ex );
+                }
+            }
         }
 
         public void Dispose() {

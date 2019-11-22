@@ -85,11 +85,13 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0" Text="{Binding SourceDirectory}"/>
-            <Button Grid.Column="1" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseSourceFolder}"/>
-            <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Refresh" Command="{Binding RefreshSourceFolder}"/>
+            <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseSourceFolder}" ToolTip="Browse For Directory"/>
+            <Button Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenSourceDirectory}" ToolTip="Open Directory"/>
+            <Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Padding="2" Content="{StaticResource Path_Refresh}" Command="{Binding RefreshSourceFolder}" ToolTip="Refresh Directory"/>
         </Grid>
 
         <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"

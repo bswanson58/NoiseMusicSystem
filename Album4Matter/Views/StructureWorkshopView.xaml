@@ -16,7 +16,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Views:ItemInputView Grid.Row="0"/>
+        <Views:ItemInputView Grid.Row="0" Margin="0,0,5,0"/>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
@@ -24,7 +24,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Views:StructureBuilderView Grid.Row="0"/>
+            <Views:StructureBuilderView Grid.Row="0" Margin="0,0,5,0"/>
             <Views:ItemInspectionView Grid.Row="1" DataContext="{Binding InspectionViewModel}"/>
         </Grid>
 
