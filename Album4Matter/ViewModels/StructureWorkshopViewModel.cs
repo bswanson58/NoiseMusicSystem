@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Data;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
@@ -11,7 +12,9 @@ using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
-    class StructureWorkshopViewModel : AutomaticCommandBase, IDisposable {
+    class StructureWorkshopViewModel : AutomaticCommandBase, IDataErrorInfo, IDisposable {
+        private readonly Regex                          mInvalidFilenamePattern = new Regex("[" + Regex.Escape(new string(Path.GetInvalidFileNameChars())) + "]");
+
         private readonly IPlatformDialogService         mDialogService;
         private readonly IPreferences                   mPreferences;
         private readonly IPlatformLog                   mLog;
@@ -285,7 +288,9 @@ namespace Album4Matter.ViewModels {
         }
 
         public bool CanExecute_BuildAlbum() {
-            return !String.IsNullOrWhiteSpace( ArtistName ) && !String.IsNullOrWhiteSpace( AlbumName ) && ( VolumeList.Any() || mAlbumContents.Any());
+            return !String.IsNullOrWhiteSpace( ArtistName ) && IsValidFilename( ArtistName ) &&
+                   !String.IsNullOrWhiteSpace( AlbumName ) && IsValidFilename( BuildAlbumName()) &&
+                   ( VolumeList.Any() || mAlbumContents.Any());
         }
 
         private void UpdateTargetStructure() {
@@ -431,5 +436,50 @@ namespace Album4Matter.ViewModels {
             mInspectionChangedSubscription?.Dispose();
             mInspectionChangedSubscription = null;
         }
+
+        public string this[ string columnName ] {
+            get {
+                var retValue = string.Empty;
+
+                if( columnName.Equals( nameof( ArtistName ))) {
+                    if((!String.IsNullOrWhiteSpace( ArtistName )) &&
+                       (!IsValidFilename( ArtistName ))) {
+                        retValue = "Artist Name has invalid path characters.";
+                    }
+                }
+                else if( columnName.Equals( nameof( AlbumName ))) {
+                    if((!String.IsNullOrWhiteSpace( AlbumName )) &&
+                       (!IsValidFilename( AlbumName ))) {
+                        retValue = "Album Name has invalid path characters.";
+                    }
+                }
+                else if( columnName.Equals( nameof( PublishDate ))) {
+                    if((!String.IsNullOrWhiteSpace( PublishDate )) &&
+                       (!IsValidFilename( PublishDate ))) {
+                        retValue = "Publish Date has invalid path characters.";
+                    }
+                }
+                else if( columnName.Equals(nameof( OtherMetadata ))) {
+                    if((!String.IsNullOrWhiteSpace( OtherMetadata )) &&
+                       (!IsValidFilename( OtherMetadata ))) {
+                        retValue = "Metadata has invalid path characters.";
+                    }
+                }
+                else if( columnName.Equals(nameof( VolumeNameFormat ))) {
+                    if((!String.IsNullOrWhiteSpace( VolumeNameFormat )) &&
+                       (!IsValidFilename( VolumeNameFormat ))) {
+                        retValue = "Volume Format has invalid path characters.";
+                    }
+                }
+
+                return retValue;
+            }
+        }
+
+        private bool IsValidFilename( string testName ) {
+            return !mInvalidFilenamePattern.IsMatch( testName );
+        }
+
+        public string Error => String.Empty;
     }
 }
