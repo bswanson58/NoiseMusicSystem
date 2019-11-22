@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 
@@ -14,23 +15,33 @@ namespace Album4Matter.Models {
             mLog = log;
         }
 
-        public void BuildAlbum( TargetAlbumLayout layout ) {
-            try {
-                var appPreferences = mPreferences.Load<Album4MatterPreferences>();
-                var albumDirectory = Path.Combine( appPreferences.TargetDirectory, layout.ArtistName, layout.AlbumName );
+        public Task<bool> BuildAlbum( TargetAlbumLayout layout ) {
+            return Task.Run( () => {
+                var retValue = true;
 
-                if(!Directory.Exists( albumDirectory )) {
-                    Directory.CreateDirectory( albumDirectory );
+                try {
+                    var appPreferences = mPreferences.Load<Album4MatterPreferences>();
+                    var albumDirectory = Path.Combine( appPreferences.TargetDirectory, layout.ArtistName, layout.AlbumName );
+
+                    if(!Directory.Exists( albumDirectory )) {
+                        Directory.CreateDirectory( albumDirectory );
+                    }
+
+                    retValue = MoveVolume( layout.AlbumList.VolumeContents, albumDirectory );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "AlbumBuilder:BuildAlbum", ex );
+
+                    retValue = false;
                 }
 
-                MoveVolume( layout.AlbumList.VolumeContents, albumDirectory );
-            }
-            catch( Exception ex ) {
-                mLog.LogException( "AlbumBuilder:BuildAlbum", ex );
-            }
+                return retValue;
+            });
         }
 
-        public void MoveVolume( IEnumerable<SourceItem> source, string targetFolder ) {
+        public bool MoveVolume( IEnumerable<SourceItem> source, string targetFolder ) {
+            var retValue = true;
+
             if(!Directory.Exists( targetFolder )) {
                 Directory.CreateDirectory( targetFolder );
             }
@@ -49,12 +60,16 @@ namespace Album4Matter.Models {
                     }
                     catch( Exception ex ) {
                         mLog.LogException( $"Moving file: '{destinationPath}'", ex );
+
+                        retValue = false;
                     }
                 }
                 else if( item is SourceFolder folder ) {
-                    MoveVolume( folder.Children, Path.Combine( targetFolder, folder.Name ));
+                    retValue = MoveVolume( folder.Children, Path.Combine( targetFolder, folder.Name ));
                 }
             }
+
+            return retValue;
         }
     }
 }

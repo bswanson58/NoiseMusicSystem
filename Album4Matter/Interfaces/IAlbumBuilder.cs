@@ -1,7 +1,8 @@
-﻿using Album4Matter.Dto;
+﻿using System.Threading.Tasks;
+using Album4Matter.Dto;
 
 namespace Album4Matter.Interfaces {
     public interface IAlbumBuilder {
-        void    BuildAlbum( TargetAlbumLayout layout );
+        Task<bool>  BuildAlbum( TargetAlbumLayout layout );
     }
 }
