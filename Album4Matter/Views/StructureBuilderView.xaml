@@ -30,21 +30,42 @@
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Published Year/Event Date:"/>
             <TextBox Text="{Binding PublishDate, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
-        <StackPanel Grid.Row="4" Margin="0,5" Orientation="Vertical">
-            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Metadata:"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Remastered" IsChecked="{Binding IsRemastered}"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Deluxe Edition" IsChecked="{Binding IsDeluxeEdition}"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Radio Broadcast" IsChecked="{Binding IsRadioBroadcast}"/>
-            <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Soundboard" IsChecked="{Binding IsSoundboard}"/>
-            <Grid >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.Column="0" Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Other:" IsChecked="{Binding IsOtherMetadata}"/>
-                <TextBox Grid.Column="1" Text="{Binding OtherMetadata, UpdateSourceTrigger=PropertyChanged}"/>
-            </Grid>
-        </StackPanel>
+            <StackPanel Grid.Column="0" Margin="0,5,5,0" Orientation="Vertical">
+                <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Metadata:"/>
+                <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Remastered" IsChecked="{Binding IsRemastered}"/>
+                <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Deluxe Edition" IsChecked="{Binding IsDeluxeEdition}"/>
+                <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Radio Broadcast" IsChecked="{Binding IsRadioBroadcast}"/>
+                <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Soundboard" IsChecked="{Binding IsSoundboard}"/>
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0" Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Other:" IsChecked="{Binding IsOtherMetadata}"/>
+                    <TextBox Grid.Column="1" Text="{Binding OtherMetadata, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,5,0,0">
+                <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Volumes:"/>
+                <CheckBox Margin="3" Foreground="{StaticResource BorderTextColor}" Content="Create Volumes" IsChecked="{Binding CreateVolumes}"/>
+                <StackPanel Orientation="Horizontal" Margin="3,5,0,0">
+                    <TextBlock Margin="5,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Count:"/>
+                    <ComboBox Width="60"/>
+                </StackPanel>
+                <DockPanel HorizontalAlignment="Stretch" Margin="3,5,0,0">
+                    <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Format:"/>
+                    <TextBox Text="{Binding VolumeNameFormat, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

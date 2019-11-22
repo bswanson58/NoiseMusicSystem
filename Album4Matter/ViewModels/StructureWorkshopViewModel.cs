@@ -28,6 +28,8 @@ namespace Album4Matter.ViewModels {
         private bool                                    mIsDeluxeEdition;
         private bool                                    mIsOtherMetadata;
         private string                                  mOtherMetadata;
+        private bool                                    mCreateVolumes;
+        private string                                  mVolumeNameFormat;
 
 
         public  IItemInspectionViewModel                InspectionViewModel { get; }
@@ -53,6 +55,7 @@ namespace Album4Matter.ViewModels {
 
             var appPreferences = mPreferences.Load<Album4MatterPreferences>();
 
+            VolumeNameFormat = appPreferences.VolumeNameFormat;
             SourceDirectory = appPreferences.SourceDirectory;
             CollectRootFolder( SourceDirectory );
         }
@@ -154,6 +157,31 @@ namespace Album4Matter.ViewModels {
 
                 RaisePropertyChanged( () => OtherMetadata );
                 UpdateTargetStructure();
+            }
+        }
+
+        public bool CreateVolumes {
+            get => mCreateVolumes;
+            set {
+                mCreateVolumes = value;
+
+                RaisePropertyChanged( () => CreateVolumes );
+                UpdateTargetStructure();
+            }
+        }
+
+        public string VolumeNameFormat {
+            get => mVolumeNameFormat;
+            set {
+                mVolumeNameFormat = value;
+
+                RaisePropertyChanged( () => VolumeNameFormat );
+                UpdateTargetStructure();
+
+                var appPreferences = mPreferences.Load<Album4MatterPreferences>();
+
+                appPreferences.VolumeNameFormat = VolumeNameFormat;
+                mPreferences.Save( appPreferences );
             }
         }
 
@@ -290,6 +318,7 @@ namespace Album4Matter.ViewModels {
             IsSoundboard = false;
             IsOtherMetadata = false;
             OtherMetadata = String.Empty;
+            CreateVolumes = false;
 
             mAlbumContents.Clear();
 
