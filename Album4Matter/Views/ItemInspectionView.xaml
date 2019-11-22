@@ -30,6 +30,7 @@
             <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Artist" Command="{Binding TextIsArtist}"/>
             <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Album" Command="{Binding TextIsAlbum}"/>
             <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Published" Command="{Binding TextIsDate}"/>
+            <Button Margin="10,5" Style="{StaticResource GeneralButtonStyle}" Content="Use Tags" Command="{Binding UseTags}"/>
         </StackPanel>
     </Grid>
 </UserControl>

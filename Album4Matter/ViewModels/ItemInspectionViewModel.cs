@@ -13,6 +13,10 @@ namespace Album4Matter.ViewModels {
         private readonly string[]                       mTextFileExtensions = { ".txt", ".nfo" };
         private readonly string[]                       mMusicFileExtensions = { ".mp3", ".flac" };
 
+        private string                                  mArtistTag;
+        private string                                  mAlbumTag;
+        private string                                  mDateTag;
+
         private readonly Subject<InspectionItemUpdate>  mInspectionChangedSubject;
         private readonly IPlatformLog                   mLog;
         private string                                  mSelectedText;
@@ -48,11 +52,15 @@ namespace Album4Matter.ViewModels {
         }
 
         private void InspectItem( SourceItem item ) {
+            ClearTags();
+
             if( ItemIsTextFile( item )) {
                 InspectionText = LoadTextFile( item.FileName );
             }
             else if( ItemIsMusicFile( item )) {
                 InspectionText = LoadMusicTags( item );
+
+                RaiseCanExecuteChangedEvent( "CanExecute_UseTags" );
             }
             else {
                 InspectionText = item.Name;
@@ -96,6 +104,14 @@ namespace Album4Matter.ViewModels {
             return retValue;
         }
 
+        private void ClearTags() {
+            mArtistTag = String.Empty;
+            mAlbumTag = String.Empty;
+            mDateTag = String.Empty;
+
+            RaiseCanExecuteChangedEvent( "CanExecute_UseTags" );
+        }
+
         private string LoadMusicTags( SourceItem item ) {
             var retValue = new StringBuilder();
 
@@ -107,13 +123,19 @@ namespace Album4Matter.ViewModels {
                 retValue.AppendLine().AppendLine( "Tags:" ).AppendLine();
 
                 if(!String.IsNullOrWhiteSpace( tags.Tag.JoinedPerformers )) {
-                    retValue.AppendLine( $"Artist:  {string.Join( ", ", tags.Tag.JoinedPerformers)}" );
+                    mArtistTag = string.Join(", ", tags.Tag.JoinedPerformers);
+
+                    retValue.AppendLine( $"Artist: {mArtistTag}" );
                 }
                 if(!String.IsNullOrWhiteSpace( tags.Tag.Album )) {
-                    retValue.AppendLine( $"Album:  {tags.Tag.Album}" );
+                    mAlbumTag = tags.Tag.Album;
+
+                    retValue.AppendLine( $"Album: {mAlbumTag}" );
                 }
                 if( tags.Tag.Year != 0 ) {
-                    retValue.AppendLine( $"Date:  {tags.Tag.Year}" );
+                    mDateTag = tags.Tag.Year.ToString();
+
+                    retValue.AppendLine( $"Date: {mDateTag}" );
                 }
                 if(!String.IsNullOrWhiteSpace( tags.Tag.Title )) {
                     retValue.AppendLine( $"Title:  {tags.Tag.Title}" );
@@ -130,27 +152,55 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_TextIsArtist() {
-            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Artist, PathSanitizer.SanitizeFilename( SelectedText.Trim(), ' ' )));
+            PublishArtist( SelectedText );
         }
 
         public bool CanExecute_TextIsArtist() {
             return !string.IsNullOrWhiteSpace( SelectedText );
         }
 
+        private void PublishArtist( string artist ) {
+            if(!String.IsNullOrWhiteSpace( artist )) {
+                mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Artist, PathSanitizer.SanitizeFilename( artist.Trim(), ' ' )));
+            }
+        }
+
         public void Execute_TextIsAlbum() {
-            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Album, PathSanitizer.SanitizeFilename( SelectedText.Trim(), ' ' )));
+            PublishAlbum( SelectedText );
         }
 
         public bool CanExecute_TextIsAlbum() {
             return !string.IsNullOrWhiteSpace( SelectedText );
         }
 
+        private void PublishAlbum( string album ) {
+            if(!String.IsNullOrWhiteSpace( album )) {
+                mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Album, PathSanitizer.SanitizeFilename( album.Trim(), ' ' )));
+            }
+        }
+
         public void Execute_TextIsDate() {
-            mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Date, PathSanitizer.SanitizeFilename( ParseDate( SelectedText.Trim()), ' ' )));
+            PublishDate( SelectedText );
         }
 
         public bool CanExecute_TextIsDate() {
             return !string.IsNullOrWhiteSpace( SelectedText );
+        }
+
+        private void PublishDate( string date ) {
+            if(!String.IsNullOrWhiteSpace( date )) {
+                mInspectionChangedSubject.OnNext( new InspectionItemUpdate( InspectionItem.Date, PathSanitizer.SanitizeFilename( ParseDate( date.Trim()), ' ')));
+            }
+        }
+
+        public void Execute_UseTags() {
+            PublishArtist( mArtistTag );
+            PublishAlbum( mAlbumTag );
+            PublishDate( mDateTag );
+        }
+
+        public bool CanExecute_UseTags() {
+            return !String.IsNullOrWhiteSpace( mArtistTag ) || !String.IsNullOrWhiteSpace( mAlbumTag ) || !String.IsNullOrWhiteSpace( mDateTag );
         }
 
         private string ParseDate( string input ) {
