@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Album4Matter.Models;
 using Caliburn.Micro;
@@ -27,6 +28,7 @@ namespace Album4Matter.Dto {
         }
     }
 
+    [DebuggerDisplay("SourceFile = {" + nameof( Name ) + "}")]
     public class SourceFile : SourceItem {
         public SourceFile( string fileName, Action<SourceItem> inspectAction ) :
             base( Path.GetFileName( fileName ), fileName, KeyMaker.Master.MakeKey(), KeyMaker.RootKey, inspectAction ) { }
@@ -35,6 +37,7 @@ namespace Album4Matter.Dto {
             base( Path.GetFileName( fileName ), fileName, KeyMaker.Master.MakeKey(), parentKey, inspectAction ) { }
     }
 
+    [DebuggerDisplay("SourceFolder = {" + nameof( Name ) + "}")]
     public class SourceFolder : SourceItem {
         public  BindableCollection<SourceItem>  Children { get; }
 

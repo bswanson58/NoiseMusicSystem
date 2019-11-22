@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Album4Matter.Dto {
+    [DebuggerDisplay("Volume = {" + nameof( VolumeName ) + "}")]
     public class TargetVolume {
         public  string              VolumeName;
         public  List<SourceItem>    VolumeContents;

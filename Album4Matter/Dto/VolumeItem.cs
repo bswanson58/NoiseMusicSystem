@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.Dto {
+    [DebuggerDisplay("Volume = {" + nameof( Name ) + "}")]
     public class VolumeItem : AutomaticCommandBase {
         private readonly Action<VolumeItem> mOnCollectVolume;
         private string                      mNameFormat;

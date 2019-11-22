@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.Dto {
@@ -26,6 +27,7 @@ namespace Album4Matter.Dto {
         }
     }
 
+    [DebuggerDisplay("TargetFile = {" + nameof( Name ) + "}")]
     public class TargetFile : TargetItem {
         public TargetFile( string name, Action<TargetItem> onRemoveItem ) :
             base( name, onRemoveItem ) { }
@@ -35,6 +37,7 @@ namespace Album4Matter.Dto {
         }
     }
 
+    [DebuggerDisplay("TargetFolder = {" + nameof( Name ) + "}")]
     public class TargetFolder : TargetItem {
         public  ObservableCollection<TargetItem>    Children {  get; }
 
