@@ -7,6 +7,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
     class FinalStructureViewModel : AutomaticCommandBase, IFinalStructureViewModel {
+        private const string                        cUnnamed = "(Unnamed)";
         private readonly IPreferences               mPreferences;
         private readonly IPlatformDialogService     mDialogService;
         private readonly IPlatformLog               mLog;
@@ -21,8 +22,8 @@ namespace Album4Matter.ViewModels {
             mDialogService = dialogService;
             mLog = log;
 
-            mArtistTarget = new TargetFolder( "Unnamed" );
-            mAlbumTarget = new TargetFolder( "Unnamed" );
+            mArtistTarget = new TargetFolder( cUnnamed );
+            mAlbumTarget = new TargetFolder( cUnnamed );
             TargetList = new ObservableCollection<TargetItem> { mArtistTarget };
 
             mArtistTarget.Children.Add( mAlbumTarget );
@@ -33,8 +34,8 @@ namespace Album4Matter.ViewModels {
         }
 
         public void SetTargetLayout( TargetAlbumLayout layout, Action<TargetItem> onRemoveItem ) {
-            mArtistTarget.UpdateTarget( layout.ArtistName );
-            mAlbumTarget.UpdateTarget( layout.AlbumName );
+            mArtistTarget.UpdateTarget( String.IsNullOrWhiteSpace( layout.ArtistName ) ? cUnnamed : layout.ArtistName );
+            mAlbumTarget.UpdateTarget( String.IsNullOrWhiteSpace( layout.AlbumName ) ? cUnnamed : layout.AlbumName );
 
             mAlbumTarget.Children.Clear();
             mAlbumTarget.PopulateChildren( layout.AlbumList.VolumeContents, onRemoveItem );
