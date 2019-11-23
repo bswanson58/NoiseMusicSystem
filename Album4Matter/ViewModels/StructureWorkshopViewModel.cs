@@ -276,6 +276,8 @@ namespace Album4Matter.ViewModels {
         private void CollectSource() {
             mSourceList.Clear();
             mSourceList.AddRange( mSourceScanner.CollectFolder( SourceDirectory, OnItemInspect ));
+
+            mSourceScanner.AddTags( mSourceList );
         }
 
         private void OnItemInspect( SourceItem item ) {

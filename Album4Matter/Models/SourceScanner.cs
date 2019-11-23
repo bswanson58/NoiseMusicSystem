@@ -6,6 +6,11 @@ using Album4Matter.Interfaces;
 
 namespace Album4Matter.Models {
     class SourceScanner : ISourceScanner {
+        private readonly IPlatformLog   mLog;
+
+        public SourceScanner( IPlatformLog log ) {
+            mLog = log;
+        }
 
         public IEnumerable<SourceItem> CollectFolder( string rootPath, Action<SourceItem> onItemInspect ) {
             var rootFolder = new SourceFolder( rootPath, null );
@@ -27,6 +32,48 @@ namespace Album4Matter.Models {
 
             foreach( var file in Directory.EnumerateFiles( rootFolder.FileName )) {
                 rootFolder.Children.Add( new SourceFile( file, rootFolder.Key, onItemInspect ));
+            }
+        }
+
+        public void AddTags( IEnumerable<SourceItem> items ) {
+            foreach( var item in items ) {
+                if( item is SourceFolder folder ) {
+                    AddTags( folder.Children );
+                }
+                if( item is SourceFile file ) {
+                    AddTags( file );
+                }
+            }
+        }
+
+        private void AddTags( SourceFile file ) {
+            try {
+                var tags = TagLib.File.Create( file.FileName );
+                var artist = String.Empty;
+                var album = String.Empty;
+                var track = 0;
+                var title = String.Empty;
+
+                if(!String.IsNullOrWhiteSpace( tags.Tag.JoinedPerformers )) {
+                    artist = string.Join(", ", tags.Tag.JoinedPerformers);
+                }
+                if(!String.IsNullOrWhiteSpace( tags.Tag.Album )) {
+                    album = tags.Tag.Album;
+                }
+                if(!String.IsNullOrWhiteSpace( tags.Tag.Title )) {
+                    title = tags.Tag.Title;
+                }
+                if( tags.Tag.Track > 0 ) {
+                    track = (int)tags.Tag.Track;
+                }
+
+                if(( track > 0 ) &&
+                   (!String.IsNullOrWhiteSpace( title ))) {
+                    file.SetTags( artist, album, track, title, $"{track:D2} - {title}" );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"LoadMusicTags from: '{file.FileName}'", ex );
             }
         }
     }

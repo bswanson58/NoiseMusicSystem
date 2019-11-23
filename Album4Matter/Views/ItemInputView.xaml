@@ -26,22 +26,38 @@
 
         <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock x:Name="Container" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
 
-                <Button x:Name="InspectItem" Grid.Column="1" HorizontalAlignment="Right" 
+                <Button x:Name="InspectItem" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" 
                         BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
                         Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
+
+                <StackPanel x:Name="TagInfo" Grid.Row="1" Grid.Column="0" Margin="0,0,0,3" Orientation="Horizontal" Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Tags - Artist:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagArtist}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Album:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagAlbum}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Name:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagName}"/>
+                </StackPanel>
             </Grid>
 
             <DataTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
                 </Trigger>
+                <DataTrigger Binding="{Binding HasTagName}" Value="True">
+                    <Setter TargetName="TagInfo" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
 
