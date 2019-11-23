@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 using Album4Matter.Platform;
@@ -13,14 +15,21 @@ namespace Album4Matter.Models {
             mLog = log;
         }
 
-        public IEnumerable<SourceItem> CollectFolder( string rootPath, Action<SourceItem> onItemInspect ) {
-            var rootFolder = new SourceFolder( rootPath, null );
+        public Task<IEnumerable<SourceItem>> CollectFolder( string rootPath, Action<SourceItem> onItemInspect ) {
+            return Task.Run( () => {
+                var rootFolder = new SourceFolder( rootPath, null );
 
-            if( Directory.Exists( rootPath )) {
-                CollectFolder( rootFolder, onItemInspect );
-            }
+                try {
+                    if( Directory.Exists( rootPath )) {
+                        CollectFolder( rootFolder, onItemInspect );
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( $"CollectFolder: '{rootPath}'", ex );
+                }
 
-            return rootFolder.Children;
+                return rootFolder.Children.AsEnumerable();
+            });
         }
 
         private void CollectFolder( SourceFolder rootFolder, Action<SourceItem> onItemInspect ) {
@@ -36,15 +45,17 @@ namespace Album4Matter.Models {
             }
         }
 
-        public void AddTags( IEnumerable<SourceItem> items ) {
-            foreach( var item in items ) {
-                if( item is SourceFolder folder ) {
-                    AddTags( folder.Children );
+        public Task AddTags( IEnumerable<SourceItem> items ) {
+            return Task.Run( () => {
+                foreach( var item in items ) {
+                    if( item is SourceFolder folder ) {
+                        AddTags( folder.Children );
+                    }
+                    if( item is SourceFile file ) {
+                        AddTags( file );
+                    }
                 }
-                if( item is SourceFile file ) {
-                    AddTags( file );
-                }
-            }
+            });
         }
 
         private void AddTags( SourceFile file ) {
