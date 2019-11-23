@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.Dto {
@@ -65,12 +64,7 @@ namespace Album4Matter.Dto {
 
             foreach( var child in source ) {
                 if( child is SourceFile file ) {
-                    var fileName = file.Name;
-
-                    if(( file.HasTagName ) &&
-                       ( file.UseTagNameAsTarget )) {
-                        fileName = file.TagName;
-                    }
+                    var fileName = file.HasTagName && file.UseTagNameAsTarget ? file.TagName : file.Name;
 
                     Children.Add( new TargetFile( fileName, onRemoveItem ));
                 }

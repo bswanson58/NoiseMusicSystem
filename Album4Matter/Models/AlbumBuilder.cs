@@ -59,13 +59,7 @@ namespace Album4Matter.Models {
 
             foreach( var item in source ) {
                 if( item is SourceFile file ) {
-                    var fileName = file.Name;
-
-                    if(( file.HasTagName ) &&
-                       ( file.UseTagNameAsTarget )) {
-                        fileName = file.TagName;
-                    }
-
+                    var fileName = file.HasTagName && file.UseTagNameAsTarget ? file.TagName : file.Name;
                     var destinationPath = Path.Combine( targetFolder, fileName );
 
                     try {
