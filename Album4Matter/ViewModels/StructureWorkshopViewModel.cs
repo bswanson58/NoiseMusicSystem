@@ -44,6 +44,7 @@ namespace Album4Matter.ViewModels {
         public  BindableCollection<SourceItem>          SelectedSourceItems { get; }
         public  BindableCollection<VolumeItem>          VolumeList { get; }
         public  List<int>                               VolumeCountList { get; }
+        public  bool                                    UseSourceTags {get; set; }
 
         public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder, ISourceScanner sourceScanner,
                                            IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log ) {
@@ -226,9 +227,20 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_CopyToAlbum() {
-            mAlbumContents.AddRange( SelectedSourceItems );
+            AddSelectedItemsToVolume( mAlbumContents );
 
             UpdateTargetStructure();
+        }
+
+        private void AddSelectedItemsToVolume( List<SourceItem> list ) {
+            foreach( var item in SelectedSourceItems ) {
+                if( item is SourceFile file ) {
+                    file.UseTagNameAsTarget = UseSourceTags;
+                }
+            }
+
+            list.AddRange( SelectedSourceItems );
+            SelectedSourceItems.Clear();
         }
 
         public bool CanExecute_CopyToAlbum() {
@@ -270,6 +282,7 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_RefreshSourceFolder() {
+            SelectedSourceItems.Clear();
             CollectSource();
         }
 
@@ -414,7 +427,7 @@ namespace Album4Matter.ViewModels {
         }
 
         private void OnCollectVolume( VolumeItem item ) {
-            item.VolumeList.AddRange( SelectedSourceItems );
+            AddSelectedItemsToVolume( item.VolumeList );
 
             UpdateTargetStructure();
         }

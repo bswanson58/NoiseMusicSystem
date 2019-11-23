@@ -36,6 +36,7 @@ namespace Album4Matter.Dto {
         public  string      TagTitle { get; private set; }
         public  string      TagName { get; private set; }
         public  bool        HasTagName => !String.IsNullOrWhiteSpace( TagName );
+        public  bool        UseTagNameAsTarget { get; set; }
 
         public SourceFile( string fileName, Action<SourceItem> inspectAction ) :
             base( Path.GetFileName( fileName ), fileName, KeyMaker.Master.MakeKey(), KeyMaker.RootKey, inspectAction ) { }

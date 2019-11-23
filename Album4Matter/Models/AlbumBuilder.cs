@@ -59,7 +59,14 @@ namespace Album4Matter.Models {
 
             foreach( var item in source ) {
                 if( item is SourceFile file ) {
-                    var destinationPath = Path.Combine( targetFolder, file.Name );
+                    var fileName = file.Name;
+
+                    if(( file.HasTagName ) &&
+                       ( file.UseTagNameAsTarget )) {
+                        fileName = Path.ChangeExtension( file.TagName, Path.GetExtension( file.Name ));
+                    }
+
+                    var destinationPath = Path.Combine( targetFolder, fileName );
 
                     try {
                         if( File.Exists( destinationPath )) {

@@ -118,6 +118,7 @@
         </TreeView>
 
         <TextBlock Grid.Row="3" Margin="5,5,0,0" Style="{StaticResource ControlTitleStyle}" Text="Add Selected Items To:"/>
+        <CheckBox Grid.Row="3" HorizontalAlignment="Right" Margin="0,0,10,0" Foreground="{StaticResource BorderTextColor}" Content="Use Tag Names As Target File Names." IsChecked="{Binding UseSourceTags}"/>
         <StackPanel Grid.Row="4" Margin="3" Orientation="Horizontal">
             <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Album" Command="{Binding CopyToAlbum}"/>
 
