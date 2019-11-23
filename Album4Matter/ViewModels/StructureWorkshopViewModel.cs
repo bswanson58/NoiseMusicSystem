@@ -19,6 +19,7 @@ namespace Album4Matter.ViewModels {
         private readonly IPreferences                   mPreferences;
         private readonly IPlatformLog                   mLog;
         private readonly IAlbumBuilder                  mAlbumBuilder;
+        private readonly ISourceScanner                 mSourceScanner;
         private readonly BindableCollection<SourceItem> mSourceList;
         private readonly List<SourceItem>               mAlbumContents;
         private string                                  mSourceDirectory;
@@ -44,11 +45,12 @@ namespace Album4Matter.ViewModels {
         public  BindableCollection<VolumeItem>          VolumeList { get; }
         public  List<int>                               VolumeCountList { get; }
 
-        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder,
+        public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder, ISourceScanner sourceScanner,
                                            IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log ) {
             InspectionViewModel = inspectionViewModel;
             FinalStructureViewModel = finalStructureViewModel;
             mAlbumBuilder = albumBuilder;
+            mSourceScanner = sourceScanner;
             mDialogService = dialogService;
             mPreferences = preferences;
             mLog = log;
@@ -68,7 +70,7 @@ namespace Album4Matter.ViewModels {
 
             VolumeNameFormat = appPreferences.VolumeNameFormat;
             SourceDirectory = appPreferences.SourceDirectory;
-            CollectRootFolder( SourceDirectory );
+            CollectSource();
         }
 
         public string SourceDirectory {
@@ -258,7 +260,7 @@ namespace Album4Matter.ViewModels {
 
             if( mDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
                 SourceDirectory = directory;
-                CollectRootFolder( SourceDirectory );
+                CollectSource();
 
                 var appPreferences = mPreferences.Load<Album4MatterPreferences>();
 
@@ -268,31 +270,12 @@ namespace Album4Matter.ViewModels {
         }
 
         public void Execute_RefreshSourceFolder() {
-            CollectRootFolder( SourceDirectory );
+            CollectSource();
         }
 
-        private void CollectRootFolder( string rootPath ) {
-            if( Directory.Exists( rootPath )) {
-                var rootFolder = new SourceFolder( rootPath, null );
-
-                CollectFolder( rootFolder );
-
-                mSourceList.Clear();
-                mSourceList.AddRange( rootFolder.Children );
-            }
-        }
-
-        private void CollectFolder( SourceFolder rootFolder ) {
-            foreach( var directory in Directory.GetDirectories( rootFolder.FileName )) {
-                var folder = new SourceFolder( directory, rootFolder.Key, OnItemInspect );
-
-                rootFolder.Children.Add( folder );
-                CollectFolder( folder );
-            }
-
-            foreach( var file in Directory.EnumerateFiles( rootFolder.FileName )) {
-                rootFolder.Children.Add( new SourceFile( file, rootFolder.Key, OnItemInspect ));
-            }
+        private void CollectSource() {
+            mSourceList.Clear();
+            mSourceList.AddRange( mSourceScanner.CollectFolder( SourceDirectory, OnItemInspect ));
         }
 
         private void OnItemInspect( SourceItem item ) {
@@ -310,7 +293,7 @@ namespace Album4Matter.ViewModels {
                     ClearMetadata();
                 }
 
-                CollectRootFolder( SourceDirectory );
+                CollectSource();
             }
         }
 

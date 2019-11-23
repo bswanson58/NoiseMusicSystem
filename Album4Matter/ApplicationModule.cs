@@ -20,6 +20,7 @@ namespace Album4Matter {
             containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
 
             containerRegistry.Register<IAlbumBuilder, AlbumBuilder>();
+            containerRegistry.Register<ISourceScanner, SourceScanner>();
 
             containerRegistry.Register<IItemInspectionViewModel, ItemInspectionViewModel>();
             containerRegistry.Register<IFinalStructureViewModel, FinalStructureViewModel>();

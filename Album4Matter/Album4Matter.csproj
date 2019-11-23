@@ -192,8 +192,10 @@
     <Compile Include="Interfaces\IItemInspectionViewModel.cs" />
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Interfaces\ISourceScanner.cs" />
     <Compile Include="Models\AlbumBuilder.cs" />
     <Compile Include="Models\KeyMaker.cs" />
+    <Compile Include="Models\SourceScanner.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
