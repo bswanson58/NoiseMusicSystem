@@ -69,7 +69,7 @@ namespace Album4Matter.Dto {
 
                     if(( file.HasTagName ) &&
                        ( file.UseTagNameAsTarget )) {
-                        fileName = Path.ChangeExtension( file.TagName, Path.GetExtension( file.Name ));
+                        fileName = file.TagName;
                     }
 
                     Children.Add( new TargetFile( fileName, onRemoveItem ));

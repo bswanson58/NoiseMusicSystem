@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
+using Album4Matter.Platform;
 
 namespace Album4Matter.Models {
     class SourceScanner : ISourceScanner {
@@ -55,13 +56,13 @@ namespace Album4Matter.Models {
                 var title = String.Empty;
 
                 if(!String.IsNullOrWhiteSpace( tags.Tag.JoinedPerformers )) {
-                    artist = string.Join(", ", tags.Tag.JoinedPerformers);
+                    artist = string.Join(", ", tags.Tag.JoinedPerformers).Trim();
                 }
                 if(!String.IsNullOrWhiteSpace( tags.Tag.Album )) {
-                    album = tags.Tag.Album;
+                    album = tags.Tag.Album.Trim();
                 }
                 if(!String.IsNullOrWhiteSpace( tags.Tag.Title )) {
-                    title = tags.Tag.Title;
+                    title = tags.Tag.Title.Trim();
                 }
                 if( tags.Tag.Track > 0 ) {
                     track = (int)tags.Tag.Track;
@@ -69,7 +70,13 @@ namespace Album4Matter.Models {
 
                 if(( track > 0 ) &&
                    (!String.IsNullOrWhiteSpace( title ))) {
-                    file.SetTags( artist, album, track, title, $"{track:D2} - {title}" );
+                    var extension = Path.GetExtension( file.Name );
+
+                    if(!String.IsNullOrWhiteSpace( extension )) {
+                        var fileName = PathSanitizer.SanitizeFilename( $"{track:D2} - {title}{extension}", ' ' ).Trim();
+
+                        file.SetTags( artist, album, track, title, fileName );
+                    }
                 }
             }
             catch( Exception ex ) {

@@ -63,7 +63,7 @@ namespace Album4Matter.Models {
 
                     if(( file.HasTagName ) &&
                        ( file.UseTagNameAsTarget )) {
-                        fileName = Path.ChangeExtension( file.TagName, Path.GetExtension( file.Name ));
+                        fileName = file.TagName;
                     }
 
                     var destinationPath = Path.Combine( targetFolder, fileName );
