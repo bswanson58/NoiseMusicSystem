@@ -187,6 +187,7 @@
     <Compile Include="Dto\TargetItem.cs" />
     <Compile Include="Dto\VolumeItem.cs" />
     <Compile Include="Interfaces\IAlbumBuilder.cs" />
+    <Compile Include="Interfaces\IFileTypes.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IFinalStructureViewModel.cs" />
     <Compile Include="Interfaces\IItemInspectionViewModel.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Models\AlbumBuilder.cs" />
     <Compile Include="Models\KeyMaker.cs" />
     <Compile Include="Models\SourceScanner.cs" />
+    <Compile Include="Platform\FileTypes.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>

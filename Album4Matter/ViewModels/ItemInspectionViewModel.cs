@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using Album4Matter.Dto;
@@ -10,8 +9,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
     class ItemInspectionViewModel : AutomaticCommandBase, IItemInspectionViewModel {
-        private readonly string[]                       mTextFileExtensions = { ".txt", ".nfo" };
-        private readonly string[]                       mMusicFileExtensions = { ".mp3", ".flac" };
+        private readonly IFileTypes                     mFileTypes;
 
         private string                                  mArtistTag;
         private string                                  mAlbumTag;
@@ -26,7 +24,8 @@ namespace Album4Matter.ViewModels {
         public  string                                  InspectionItemName { get; private set; }
         public  string                                  InspectionText { get; set; }
 
-        public ItemInspectionViewModel( IPlatformLog log ) {
+        public ItemInspectionViewModel( IFileTypes fileTypes, IPlatformLog log ) {
+            mFileTypes = fileTypes;
             mLog = log;
             mInspectionChangedSubject = new Subject<InspectionItemUpdate>();
         }
@@ -68,10 +67,10 @@ namespace Album4Matter.ViewModels {
         private void InspectItem( SourceItem item ) {
             ClearTags();
 
-            if( ItemIsTextFile( item )) {
+            if( mFileTypes.ItemIsTextFile( item )) {
                 InspectionText = LoadTextFile( item.FileName );
             }
-            else if( ItemIsMusicFile( item )) {
+            else if( mFileTypes.ItemIsMusicFile( item )) {
                 InspectionText = LoadMusicTags( item );
 
                 RaiseCanExecuteChangedEvent( "CanExecute_UseTags" );
@@ -79,30 +78,6 @@ namespace Album4Matter.ViewModels {
             else {
                 InspectionText = item.Name;
             }
-        }
-
-        private bool ItemIsTextFile( SourceItem item ) {
-            var retValue = false;
-
-            if( item is SourceFile ) {
-                var extension = Path.GetExtension( item.FileName );
-
-                retValue = mTextFileExtensions.Any( e => e.Equals( extension ));
-            }
-
-            return retValue;
-        }
-
-        private bool ItemIsMusicFile( SourceItem item ) {
-            var retValue = false;
-
-            if( item is SourceFile ) {
-                var extension = Path.GetExtension( item.FileName );
-
-                retValue = mMusicFileExtensions.Any( e => e.Equals( extension ));
-            }
-
-            return retValue;
         }
 
         private string LoadTextFile( string fileName ) {

@@ -10,8 +10,10 @@ using Album4Matter.Platform;
 namespace Album4Matter.Models {
     class SourceScanner : ISourceScanner {
         private readonly IPlatformLog   mLog;
+        private readonly IFileTypes     mFileTypes;
 
-        public SourceScanner( IPlatformLog log ) {
+        public SourceScanner( IFileTypes fileTypes, IPlatformLog log ) {
+            mFileTypes = fileTypes;
             mLog = log;
         }
 
@@ -51,8 +53,9 @@ namespace Album4Matter.Models {
                     if( item is SourceFolder folder ) {
                         AddTags( folder.Children );
                     }
-                    if( item is SourceFile file ) {
-                        AddTags( file );
+                    if(( item is SourceFile file ) &&
+                       ( mFileTypes.ItemIsMusicFile( item ))) {
+                       AddTags( file );
                     }
                 }
             });
