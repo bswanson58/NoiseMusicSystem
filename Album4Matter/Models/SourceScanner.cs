@@ -10,20 +10,24 @@ using Album4Matter.Platform;
 namespace Album4Matter.Models {
     class SourceScanner : ISourceScanner {
         private readonly IPlatformLog   mLog;
+        private readonly IPreferences   mPreferences;
         private readonly IFileTypes     mFileTypes;
 
-        public SourceScanner( IFileTypes fileTypes, IPlatformLog log ) {
+        public SourceScanner( IFileTypes fileTypes, IPreferences preferences, IPlatformLog log ) {
             mFileTypes = fileTypes;
+            mPreferences = preferences;
             mLog = log;
         }
 
         public Task<IEnumerable<SourceItem>> CollectFolder( string rootPath, Action<SourceItem> onItemInspect ) {
+            var appPreferences = mPreferences.Load<Album4MatterPreferences>();
+
             return Task.Run( () => {
                 var rootFolder = new SourceFolder( rootPath, null );
 
                 try {
                     if( Directory.Exists( rootPath )) {
-                        CollectFolder( rootFolder, onItemInspect );
+                        CollectFolder( rootFolder, onItemInspect, appPreferences.SkipUnderscoreDirectories );
                     }
                 }
                 catch( Exception ex ) {
@@ -34,12 +38,21 @@ namespace Album4Matter.Models {
             });
         }
 
-        private void CollectFolder( SourceFolder rootFolder, Action<SourceItem> onItemInspect ) {
+        private void CollectFolder( SourceFolder rootFolder, Action<SourceItem> onItemInspect, bool skipUnderscoredDirectories ) {
             foreach( var directory in Directory.GetDirectories( rootFolder.FileName )) {
-                var folder = new SourceFolder( directory, rootFolder.Key, onItemInspect );
+                var directoryName = Path.GetFileName( directory );
 
-                rootFolder.Children.Add( folder );
-                CollectFolder( folder, onItemInspect );
+                if(!String.IsNullOrWhiteSpace( directoryName )) {
+                    if(( skipUnderscoredDirectories ) &&
+                       ( directoryName.StartsWith( "_" ))) {
+                        continue;
+                    }
+
+                    var folder = new SourceFolder( directory, rootFolder.Key, onItemInspect );
+
+                    rootFolder.Children.Add( folder );
+                    CollectFolder( folder, onItemInspect, skipUnderscoredDirectories );
+                }
             }
 
             foreach( var file in Directory.EnumerateFiles( rootFolder.FileName )) {
