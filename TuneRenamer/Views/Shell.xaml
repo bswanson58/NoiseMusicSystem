@@ -1,0 +1,14 @@
+﻿<Mah:MetroWindow x:Class="TuneRenamer.Views.Shell"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:Mvvm="http://prismlibrary.com/"
+                 Mvvm:ViewModelLocator.AutoWireViewModel="True"
+                 ResizeMode="CanResizeWithGrip"
+                 Title="Tune Renamer" >
+
+    <Grid>
+
+    </Grid>
+</Mah:MetroWindow>
+
