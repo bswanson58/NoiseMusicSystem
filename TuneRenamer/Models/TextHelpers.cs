@@ -12,6 +12,7 @@ namespace TuneRenamer.Models {
         }
     }
 
+    // from: https://stackoverflow.com/questions/21797599/how-can-i-find-lcs-length-between-two-large-strings/21797687
     static class StringArrayEx {
         public static string GetLongestCommonSubstring( this string[] strings ) {
             var commonSubstrings = new HashSet<string>(strings[0].GetSubstrings());
