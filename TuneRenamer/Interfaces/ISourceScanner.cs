@@ -5,7 +5,7 @@ using TuneRenamer.Dto;
 
 namespace TuneRenamer.Interfaces {
     public interface ISourceScanner {
-        Task<IEnumerable<SourceItem>>   CollectFolder( string rootPath, Action<SourceItem> onItemInspect );
+        Task<IEnumerable<SourceItem>>   CollectFolder( string rootPath, Action<SourceFile> onItemInspect, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags );
         Task                            AddTags( IEnumerable<SourceItem> items );
     }
 }

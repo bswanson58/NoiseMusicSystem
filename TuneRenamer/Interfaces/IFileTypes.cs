@@ -2,7 +2,10 @@
 
 namespace TuneRenamer.Interfaces {
     public interface IFileTypes {
-        bool    ItemIsTextFile( SourceItem item );
+        bool    ItemIsMusicFile( string fileName );
         bool    ItemIsMusicFile( SourceItem item );
+
+        bool    ItemIsTextFile( string fileName );
+        bool    ItemIsTextFile( SourceItem item );
     }
 }

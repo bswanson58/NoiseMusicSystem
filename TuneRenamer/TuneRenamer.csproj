@@ -173,6 +173,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
+    <Compile Include="Behaviors\TextBoxSelectionHelper.cs" />
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TuneRenamerPreferences.cs" />
@@ -280,5 +281,6 @@
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

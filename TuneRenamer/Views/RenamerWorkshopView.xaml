@@ -6,11 +6,17 @@
              xmlns:Mvvm="http://prismlibrary.com/"
              xmlns:Dto="clr-namespace:TuneRenamer.Dto"
              xmlns:Views="clr-namespace:TuneRenamer.Views"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Behaviors="clr-namespace:TuneRenamer.Behaviors"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+        </Style>
+
         <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
             <Grid>
                 <Grid.RowDefinitions>
@@ -24,7 +30,7 @@
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
 
-                <Button x:Name="InspectItem" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" 
+                <Button x:Name="InspectItem" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Padding="8,0"
                         BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
                         Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
 
@@ -40,8 +46,11 @@
 
             <DataTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
+                    <Setter TargetName="InspectItem" Property="Opacity" Value="1"/>
                 </Trigger>
+                <DataTrigger Binding="{Binding IsInspectable}" Value="False">
+                    <Setter TargetName="InspectItem" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding HasTagName}" Value="True">
                     <Setter TargetName="TagInfo" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
@@ -54,16 +63,21 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+
                 <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
 
-                <Button x:Name="InspectItem" Grid.Column="1" HorizontalAlignment="Right" 
-                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
-                        Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
+                <StackPanel x:Name="FolderCommands" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Opacity="0.2" Visibility="Collapsed">
+                    <Button x:Name="UseNames" Padding="8,0" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False" Content="Use Names" Command="{Binding CopyNames}"/>
+                    <Button x:Name="UseTags" Padding="8,0" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False" Content="Use Tags" Command="{Binding CopyTags}"/>
+                </StackPanel>
             </Grid>
 
             <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                    <Setter TargetName="FolderCommands" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
+                    <Setter TargetName="FolderCommands" Property="Opacity" Value="1"/>
                 </Trigger>
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
@@ -103,7 +117,24 @@
                 <Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Padding="2" Content="{StaticResource Path_Refresh}" Command="{Binding RefreshSourceFolder}" ToolTip="Refresh Directory"/>
             </Grid>
 
-            <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
+            <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
+                      ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
+
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Name Source:"/>
+
+            <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" FontSize="14" Text="{Binding SourceText}">
+                <i:Interaction.Behaviors>
+                    <Behaviors:TextBoxSelectionHelper TextSelection="{Binding SelectedText}"/>
+                </i:Interaction.Behaviors>
+            </TextBox>
 
         </Grid>
     </Grid>

@@ -6,25 +6,30 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace TuneRenamer.Dto {
     public class SourceItem : AutomaticCommandBase {
-        private readonly Action<SourceItem> mInspectAction;
+        private bool                        mIsExpanded;
 
         public  string  Name { get; }
         public  string  FileName { get; }
 
-        protected SourceItem( string name, string filename, Action<SourceItem> inspectAction ) {
-            mInspectAction = inspectAction;
-
+        protected SourceItem( string name, string filename ) {
             Name = name;
             FileName = filename;
         }
 
-        public void Execute_InspectItem() {
-            mInspectAction?.Invoke( this );
+        public bool IsExpanded {
+            get => mIsExpanded;
+            set {
+                mIsExpanded = value;
+
+                RaisePropertyChanged( () => IsExpanded );
+            }
         }
     }
 
     [DebuggerDisplay("SourceFile = {" + nameof( Name ) + "}")]
     public class SourceFile : SourceItem {
+        private readonly Action<SourceFile> mInspectAction;
+
         public  string      TagArtist { get; private set; }
         public  string      TagAlbum { get; private set; }
         public  int         TagIndex { get; private set; }
@@ -32,9 +37,15 @@ namespace TuneRenamer.Dto {
         public  string      TagName { get; private set; }
         public  bool        HasTagName => !String.IsNullOrWhiteSpace( TagName );
         public  bool        UseTagNameAsTarget { get; set; }
+        public  bool        IsRenamable { get; }
+        public  bool        IsInspectable { get; }
 
-        public SourceFile( string fileName, Action<SourceItem> inspectAction ) :
-            base( Path.GetFileName( fileName ), fileName, inspectAction ) { }
+        public SourceFile( string fileName, bool isRenamable, bool isInspectable, Action<SourceFile> inspectAction ) :
+            base( Path.GetFileName( fileName ), fileName ) {
+            IsRenamable = isRenamable;
+            IsInspectable = isInspectable;
+            mInspectAction = inspectAction;
+        }
 
         public void SetTags( string artist, string album, int index, string title, string name ) {
             TagArtist = artist;
@@ -48,15 +59,33 @@ namespace TuneRenamer.Dto {
             RaisePropertyChanged( () => TagName );
             RaisePropertyChanged( () => HasTagName );
         }
+
+        public void Execute_InspectItem() {
+            mInspectAction?.Invoke( this );
+        }
     }
 
     [DebuggerDisplay("SourceFolder = {" + nameof( Name ) + "}")]
     public class SourceFolder : SourceItem {
+        private readonly Action<SourceFolder>   mCopyNames;
+        private readonly Action<SourceFolder>   mCopyTags;
+
         public  BindableCollection<SourceItem>  Children { get; }
 
-        public SourceFolder( string fileName, Action<SourceItem> inspectAction ) :
-            base( Path.GetFileName( fileName ), fileName, inspectAction ) {
+        public SourceFolder( string fileName, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags ) :
+            base( Path.GetFileName( fileName ), fileName ) {
+            mCopyNames = copyNames;
+            mCopyTags = copyTags;
+
             Children = new BindableCollection<SourceItem>();
+        }
+
+        public void Execute_CopyNames() {
+            mCopyNames?.Invoke( this );
+        }
+
+        public void Execute_CopyTags() {
+            mCopyTags?.Invoke( this );
         }
     }
 }

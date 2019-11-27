@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
@@ -13,8 +14,10 @@ namespace TuneRenamer.ViewModels {
         private readonly ISourceScanner                     mSourceScanner;
         private readonly ObservableCollection<SourceItem>   mSourceList;
         private string                                      mSourceDirectory;
+        private string                                      mSourceText;
 
         public  ObservableCollection<SourceItem>            SourceList => mSourceList;
+        public  string                                      SelectedText { get; set; }
 
         public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner ) {
             mDialogService = dialogService;
@@ -27,6 +30,7 @@ namespace TuneRenamer.ViewModels {
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
             SourceDirectory = appPreferences.SourceDirectory;
+            CollectSource();
         }
 
         public string SourceDirectory {
@@ -36,6 +40,15 @@ namespace TuneRenamer.ViewModels {
 
                 mSourceList.Clear();
                 RaisePropertyChanged( () => SourceDirectory );
+            }
+        }
+
+        public string SourceText {
+            get => mSourceText;
+            set {
+                mSourceText = value;
+
+                RaisePropertyChanged( () => SourceText );
             }
         }
 
@@ -70,11 +83,50 @@ namespace TuneRenamer.ViewModels {
 
         private async void CollectSource() {
             mSourceList.Clear();
-            mSourceList.AddRange( await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection ));
+            mSourceList.AddRange( await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection, OnCopyNames, OnCopyTags ));
 
             await mSourceScanner.AddTags( mSourceList );
         }
 
-        private void OnItemInspection( SourceItem item ) { }
+        private void OnCopyNames( SourceFolder folder ) {
+            var sourceText = new StringBuilder();
+
+            foreach( var item in folder.Children ) {
+                if( item is SourceFile file ) {
+                    sourceText.AppendLine( file.Name );
+                }
+            }
+
+            SourceText = sourceText.ToString();
+        }
+
+        private void OnCopyTags( SourceFolder folder ) {
+            var sourceText = new StringBuilder();
+
+            foreach( var item in folder.Children ) {
+                if( item is SourceFile file ) {
+                    sourceText.AppendLine( file.TagName );
+                }
+            }
+
+            SourceText = sourceText.ToString();
+        }
+
+        private void OnItemInspection( SourceFile item ) {
+            SourceText = LoadTextFile( item.FileName );
+        }
+
+        private string LoadTextFile( string fileName ) {
+            var retValue = string.Empty;
+
+            try {
+                retValue = File.ReadAllText( fileName );
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"ItemInspector:LoadTextFile: '{fileName}'", ex );
+            }
+
+            return retValue;
+        }
     }
 }

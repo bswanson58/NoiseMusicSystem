@@ -12,24 +12,28 @@ namespace TuneRenamer.Platform {
             var retValue = false;
 
             if( item is SourceFile ) {
-                var extension = Path.GetExtension( item.FileName );
-
-                retValue = mTextFileExtensions.Any( e => e.Equals( extension ));
+                retValue = ItemIsTextFile( item.FileName );
             }
 
             return retValue;
+        }
+
+        public bool ItemIsTextFile( string fileName ) {
+            return mTextFileExtensions.Any( e => e.Equals( Path.GetExtension( fileName )));
         }
 
         public bool ItemIsMusicFile( SourceItem item ) {
             var retValue = false;
 
             if( item is SourceFile ) {
-                var extension = Path.GetExtension( item.FileName );
-
-                retValue = mMusicFileExtensions.Any( e => e.Equals( extension ));
+                retValue = ItemIsMusicFile( item.FileName );
             }
 
             return retValue;
+        }
+
+        public bool ItemIsMusicFile( string fileName ) {
+            return mMusicFileExtensions.Any( e => e.Equals( Path.GetExtension( fileName )));
         }
     }
 }

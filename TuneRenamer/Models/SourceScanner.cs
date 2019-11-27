@@ -19,15 +19,15 @@ namespace TuneRenamer.Models {
             mLog = log;
         }
 
-        public Task<IEnumerable<SourceItem>> CollectFolder( string rootPath, Action<SourceItem> onItemInspect ) {
+        public Task<IEnumerable<SourceItem>> CollectFolder( string rootPath, Action<SourceFile> onItemInspect, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags ) {
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
             return Task.Run( () => {
-                var rootFolder = new SourceFolder( rootPath, null );
+                var rootFolder = new SourceFolder( rootPath, copyNames, copyTags );
 
                 try {
                     if( Directory.Exists( rootPath )) {
-                        CollectFolder( rootFolder, onItemInspect, appPreferences.SkipUnderscoreDirectories );
+                        CollectFolder( rootFolder, onItemInspect, copyNames, copyTags, appPreferences.SkipUnderscoreDirectories );
                     }
                 }
                 catch( Exception ex ) {
@@ -38,7 +38,7 @@ namespace TuneRenamer.Models {
             });
         }
 
-        private void CollectFolder( SourceFolder rootFolder, Action<SourceItem> onItemInspect, bool skipUnderscoredDirectories ) {
+        private void CollectFolder( SourceFolder rootFolder, Action<SourceFile> onItemInspect, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags, bool skipUnderscoredDirectories ) {
             foreach( var directory in Directory.GetDirectories( rootFolder.FileName )) {
                 var directoryName = Path.GetFileName( directory );
 
@@ -48,15 +48,15 @@ namespace TuneRenamer.Models {
                         continue;
                     }
 
-                    var folder = new SourceFolder( directory, onItemInspect );
+                    var folder = new SourceFolder( directory, copyNames, copyTags );
 
                     rootFolder.Children.Add( folder );
-                    CollectFolder( folder, onItemInspect, skipUnderscoredDirectories );
+                    CollectFolder( folder, onItemInspect, copyNames, copyTags, skipUnderscoredDirectories );
                 }
             }
 
             foreach( var file in Directory.EnumerateFiles( rootFolder.FileName )) {
-                rootFolder.Children.Add( new SourceFile( file, onItemInspect ));
+                rootFolder.Children.Add( new SourceFile( file, mFileTypes.ItemIsMusicFile( file ), mFileTypes.ItemIsTextFile( file ), onItemInspect ));
             }
         }
 
