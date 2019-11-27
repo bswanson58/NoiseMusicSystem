@@ -10,15 +10,23 @@ namespace TuneRenamer.ViewModels {
         private readonly IPreferences                       mPreferences;
         private readonly IPlatformDialogService             mDialogService;
         private readonly IPlatformLog                       mLog;
-        private readonly ObservableCollection<RenameItem>   mRenameList;
+        private readonly ISourceScanner                     mSourceScanner;
+        private readonly ObservableCollection<SourceItem>   mSourceList;
         private string                                      mSourceDirectory;
 
-        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log ) {
+        public  ObservableCollection<SourceItem>            SourceList => mSourceList;
+
+        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner ) {
             mDialogService = dialogService;
             mPreferences = preferences;
+            mSourceScanner = scanner;
             mLog = log;
 
-            mRenameList = new ObservableCollection<RenameItem>();
+            mSourceList = new ObservableCollection<SourceItem>();
+
+            var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
+
+            SourceDirectory = appPreferences.SourceDirectory;
         }
 
         public string SourceDirectory {
@@ -26,7 +34,7 @@ namespace TuneRenamer.ViewModels {
             set {
                 mSourceDirectory = value;
 
-                mRenameList.Clear();
+                mSourceList.Clear();
                 RaisePropertyChanged( () => SourceDirectory );
             }
         }
@@ -60,6 +68,13 @@ namespace TuneRenamer.ViewModels {
             CollectSource();
         }
 
-        private void CollectSource() { }
+        private async void CollectSource() {
+            mSourceList.Clear();
+            mSourceList.AddRange( await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection ));
+
+            await mSourceScanner.AddTags( mSourceList );
+        }
+
+        private void OnItemInspection( SourceItem item ) { }
     }
 }

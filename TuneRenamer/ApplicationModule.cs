@@ -4,6 +4,7 @@ using Prism.Modularity;
 using ReusableBits.Mvvm.VersionSpinner;
 using TuneRenamer.Interfaces;
 using TuneRenamer.Logging;
+using TuneRenamer.Models;
 using TuneRenamer.Platform;
 
 namespace TuneRenamer {
@@ -15,7 +16,9 @@ namespace TuneRenamer {
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
             containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
             containerRegistry.Register<IPreferences, PreferencesManager>();
-            containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
+            containerRegistry.Register<IFileTypes, FileTypes>();
+            containerRegistry.Register<ISourceScanner, SourceScanner>();
+            containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }

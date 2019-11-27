@@ -148,6 +148,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\taglib-sharp-netstandard2.0.2.1.0\lib\netstandard2.0\taglib-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Abstractions, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.Abstractions.5.11.1\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
@@ -165,11 +168,15 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Dto\Events.cs" />
-    <Compile Include="Dto\RenameItem.cs" />
+    <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TuneRenamerPreferences.cs" />
+    <Compile Include="Interfaces\IFileTypes.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Interfaces\ISourceScanner.cs" />
+    <Compile Include="Models\SourceScanner.cs" />
+    <Compile Include="Platform\FileTypes.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -198,6 +205,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\SourceItemTemplateSelector.cs" />
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
