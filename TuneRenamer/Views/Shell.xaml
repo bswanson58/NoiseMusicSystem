@@ -14,6 +14,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <Views:RenamerWorkshopView Grid.Row="0" Margin="10"/>
         <Views:StatusView Grid.Row="1"/>
     </Grid>
 </Mah:MetroWindow>

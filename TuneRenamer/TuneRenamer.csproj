@@ -165,6 +165,8 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Dto\Events.cs" />
+    <Compile Include="Dto\RenameItem.cs" />
+    <Compile Include="Dto\TuneRenamerPreferences.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
@@ -183,8 +185,12 @@
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
+    <Compile Include="ViewModels\RenamerWorkshopViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="Views\RenamerWorkshopView.xaml.cs">
+      <DependentUpon>RenamerWorkshopView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
@@ -195,6 +201,14 @@
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\Images.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenamerWorkshopView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Shell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
