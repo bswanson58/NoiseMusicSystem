@@ -19,6 +19,7 @@ namespace TuneRenamer {
             containerRegistry.Register<IFileTypes, FileTypes>();
             containerRegistry.Register<ISourceScanner, SourceScanner>();
             containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();
+            containerRegistry.Register<ITextHelpers, TextHelpers>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }

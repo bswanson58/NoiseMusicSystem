@@ -12,17 +12,20 @@ namespace TuneRenamer.ViewModels {
         private readonly IPlatformDialogService             mDialogService;
         private readonly IPlatformLog                       mLog;
         private readonly ISourceScanner                     mSourceScanner;
+        private readonly ITextHelpers                       mTextHelpers;
         private readonly ObservableCollection<SourceItem>   mSourceList;
         private string                                      mSourceDirectory;
         private string                                      mSourceText;
+        private string                                      mCommonText;
 
         public  ObservableCollection<SourceItem>            SourceList => mSourceList;
         public  string                                      SelectedText { get; set; }
 
-        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner ) {
+        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner, ITextHelpers textHelpers ) {
             mDialogService = dialogService;
             mPreferences = preferences;
             mSourceScanner = scanner;
+            mTextHelpers = textHelpers;
             mLog = log;
 
             mSourceList = new ObservableCollection<SourceItem>();
@@ -49,6 +52,15 @@ namespace TuneRenamer.ViewModels {
                 mSourceText = value;
 
                 RaisePropertyChanged( () => SourceText );
+            }
+        }
+
+        public string CommonText {
+            get => mCommonText;
+            set {
+                mCommonText = value;
+
+                RaisePropertyChanged( () => CommonText );
             }
         }
 
@@ -127,6 +139,12 @@ namespace TuneRenamer.ViewModels {
             }
 
             return retValue;
+        }
+
+        public void Execute_FindCommonText() {
+            if(!String.IsNullOrWhiteSpace( SourceText )) {
+                CommonText = mTextHelpers.GetCommonSubstring( SourceText );
+            }
         }
     }
 }

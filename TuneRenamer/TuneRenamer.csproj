@@ -182,7 +182,9 @@
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\ISourceScanner.cs" />
+    <Compile Include="Interfaces\ITextHelpers.cs" />
     <Compile Include="Models\SourceScanner.cs" />
+    <Compile Include="Models\TextHelpers.cs" />
     <Compile Include="Platform\FileTypes.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>

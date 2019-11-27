@@ -126,6 +126,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Name Source:"/>
@@ -136,6 +137,15 @@
                 </i:Interaction.Behaviors>
             </TextBox>
 
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" Content="Find Common Text" Command="{Binding FindCommonText}"/>
+                <TextBox Grid.Column="1" Margin="5,0,0,0" Text="{Binding CommonText}"/>
+            </Grid>
         </Grid>
     </Grid>
 
