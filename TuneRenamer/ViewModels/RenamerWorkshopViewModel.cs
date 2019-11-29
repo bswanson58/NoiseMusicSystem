@@ -20,6 +20,8 @@ namespace TuneRenamer.ViewModels {
 
         public  ObservableCollection<SourceItem>            SourceList => mSourceList;
         public  string                                      SelectedText { get; set; }
+        public  int                                         FileCount { get; private  set; }
+        public  int                                         LineCount { get; private set; }
 
         public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner, ITextHelpers textHelpers ) {
             mDialogService = dialogService;
@@ -51,6 +53,7 @@ namespace TuneRenamer.ViewModels {
             set {
                 mSourceText = value;
 
+                SetLineCount();
                 RaisePropertyChanged( () => SourceText );
             }
         }
@@ -145,6 +148,15 @@ namespace TuneRenamer.ViewModels {
             if(!String.IsNullOrWhiteSpace( SourceText )) {
                 CommonText = mTextHelpers.GetCommonSubstring( SourceText );
             }
+        }
+
+        private string CurrentText {
+            get => String.IsNullOrWhiteSpace( SelectedText ) ? SourceText : SelectedText;
+        }
+        private void SetLineCount() {
+            LineCount = mTextHelpers.LineCount( CurrentText );
+
+            RaisePropertyChanged( () => LineCount );
         }
     }
 }

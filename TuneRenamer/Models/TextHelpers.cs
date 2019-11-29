@@ -10,6 +10,10 @@ namespace TuneRenamer.Models {
 
             return strings.GetLongestCommonSubstring();
         }
+
+        public int LineCount( string text ) {
+            return text.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None ).Length;
+        }
     }
 
     // from: https://stackoverflow.com/questions/21797599/how-can-i-find-lcs-length-between-two-large-strings/21797687
