@@ -30,6 +30,7 @@ namespace TuneRenamer.Dto {
     [DebuggerDisplay("SourceFile = {" + nameof( Name ) + "}")]
     public class SourceFile : SourceItem {
         private readonly Action<SourceFile> mInspectAction;
+        private bool        mIsBeingRenamed;
 
         public  string      TagArtist { get; private set; }
         public  string      TagAlbum { get; private set; }
@@ -61,6 +62,15 @@ namespace TuneRenamer.Dto {
             RaisePropertyChanged( () => TagTitle );
             RaisePropertyChanged( () => TagName );
             RaisePropertyChanged( () => HasTagName );
+        }
+
+        public bool IsBeingRenamed {
+            get => mIsBeingRenamed;
+            set {
+                mIsBeingRenamed = value;
+
+                RaisePropertyChanged( () => IsBeingRenamed );
+            }
         }
 
         public void Execute_InspectItem() {

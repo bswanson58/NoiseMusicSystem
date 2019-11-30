@@ -1,6 +1,9 @@
-﻿namespace TuneRenamer.Interfaces {
+﻿using System.Collections.Generic;
+
+namespace TuneRenamer.Interfaces {
     public interface ITextHelpers {
-        int         LineCount( string text );
-        string      GetCommonSubstring( string text );
+        IEnumerable<string> Lines( string text );
+        int                 LineCount( string text );
+        string              GetCommonSubstring( string text );
     }
 }

@@ -58,6 +58,9 @@
                 <DataTrigger Binding="{Binding IsRenamable}" Value="True">
                     <Setter TargetName="Name" Property="FontWeight" Value="Bold"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding IsBeingRenamed}" Value="True">
+                    <Setter TargetName="Name" Property="Foreground" Value="Orange"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
 
@@ -140,7 +143,7 @@
 
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Name Source:"/>
 
-            <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" FontSize="14" Text="{Binding SourceText}">
+            <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" FontSize="14" Text="{Binding SourceText, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Behaviors>
                     <Behaviors:TextBoxSelectionHelper TextSelection="{Binding SelectedText}"/>
                 </i:Interaction.Behaviors>

@@ -11,8 +11,14 @@ namespace TuneRenamer.Models {
             return strings.GetLongestCommonSubstring();
         }
 
+        public IEnumerable<string> Lines( string text ) {
+            var split = text.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None );
+
+            return from l in split where !String.IsNullOrWhiteSpace( l ) select l;
+        }
+
         public int LineCount( string text ) {
-            return text.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None ).Length;
+            return Lines( text ).Count();
         }
     }
 
