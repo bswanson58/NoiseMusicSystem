@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+            <Setter Property="Focusable" Value="{Binding IsSelectable}"/>
         </Style>
 
         <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
@@ -28,7 +29,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                <TextBlock x:Name="Name" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
 
                 <Button x:Name="InspectItem" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Padding="8,0"
                         BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
@@ -53,6 +54,9 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding HasTagName}" Value="True">
                     <Setter TargetName="TagInfo" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsRenamable}" Value="True">
+                    <Setter TargetName="Name" Property="FontWeight" Value="Bold"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -117,8 +121,12 @@
                 <Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Padding="2" Content="{StaticResource Path_Refresh}" Command="{Binding RefreshSourceFolder}" ToolTip="Refresh Directory"/>
             </Grid>
 
-            <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
-                      ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}"/>
+            <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ItemContainerStyle="{StaticResource IsExpandedBindingStyle}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}">
+                <i:Interaction.Behaviors>
+                    <Behaviors:TreeViewSelection SelectedItem="{Binding SelectedSourceItem, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+            </TreeView>
 
         </Grid>
 

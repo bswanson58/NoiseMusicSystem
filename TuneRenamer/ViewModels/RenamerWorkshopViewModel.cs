@@ -14,6 +14,7 @@ namespace TuneRenamer.ViewModels {
         private readonly ISourceScanner                     mSourceScanner;
         private readonly ITextHelpers                       mTextHelpers;
         private readonly ObservableCollection<SourceItem>   mSourceList;
+        private SourceItem                                  mSelectedSourceItem;
         private string                                      mSourceDirectory;
         private string                                      mSourceText;
         private string                                      mCommonText;
@@ -66,6 +67,18 @@ namespace TuneRenamer.ViewModels {
                 RaisePropertyChanged( () => CommonText );
             }
         }
+
+        public SourceItem SelectedSourceItem {
+            get => mSelectedSourceItem;
+            set {
+                mSelectedSourceItem = value;
+
+                RaisePropertyChanged( () => SelectedSourceItem );
+                OnSourceItemSelected();
+            }
+        }
+
+        private void OnSourceItemSelected() {}
 
         public void Execute_BrowseSourceFolder() {
             var directory = SourceDirectory;

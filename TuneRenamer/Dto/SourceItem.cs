@@ -10,6 +10,7 @@ namespace TuneRenamer.Dto {
 
         public  string  Name { get; }
         public  string  FileName { get; }
+        public  bool    IsSelectable {get; protected set; }
 
         protected SourceItem( string name, string filename ) {
             Name = name;
@@ -45,6 +46,8 @@ namespace TuneRenamer.Dto {
             IsRenamable = isRenamable;
             IsInspectable = isInspectable;
             mInspectAction = inspectAction;
+
+            IsSelectable = false;
         }
 
         public void SetTags( string artist, string album, int index, string title, string name ) {
@@ -77,6 +80,7 @@ namespace TuneRenamer.Dto {
             mCopyNames = copyNames;
             mCopyTags = copyTags;
 
+            IsSelectable = true;
             Children = new BindableCollection<SourceItem>();
         }
 
