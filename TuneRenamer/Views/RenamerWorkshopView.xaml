@@ -161,8 +161,11 @@
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="{Binding LineCount}"/>
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Text="lines selected."/>
                 </StackPanel>
-                
-                <Button Grid.Column="1" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Isolate Text"/>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Margin="0,0,5,0" Content="Isolate" Command="{Binding IsolateText}"/>
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Restore" Command="{Binding RestoreText}"/>
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Row="3">

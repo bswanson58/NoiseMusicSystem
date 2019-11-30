@@ -18,11 +18,13 @@ namespace TuneRenamer.ViewModels {
         private readonly List<SourceFile>                   mRenameList;
         private SourceItem                                  mSelectedSourceItem;
         private string                                      mSourceDirectory;
+        private string                                      mInitialText;
         private string                                      mSourceText;
+        private string                                      mSelectedText;
         private string                                      mCommonText;
+        private string                                      CurrentText => String.IsNullOrWhiteSpace( SelectedText ) ? SourceText : SelectedText;
 
         public  ObservableCollection<SourceItem>            SourceList => mSourceList;
-        public  string                                      SelectedText { get; set; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
 
@@ -59,6 +61,15 @@ namespace TuneRenamer.ViewModels {
 
                 SetLineCount();
                 RaisePropertyChanged( () => SourceText );
+            }
+        }
+
+        public string SelectedText {
+            get => mSelectedText;
+            set {
+                mSelectedText = value;
+                
+                OnSelectedTextChanged();
             }
         }
 
@@ -99,6 +110,12 @@ namespace TuneRenamer.ViewModels {
 
             FileCount = mRenameList.Count;
             RaisePropertyChanged( () => FileCount );
+        }
+
+        private void OnSelectedTextChanged() {
+            SetLineCount();
+
+            RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
         }
 
         public void Execute_BrowseSourceFolder() {
@@ -142,11 +159,14 @@ namespace TuneRenamer.ViewModels {
 
             foreach( var item in folder.Children ) {
                 if( item is SourceFile file ) {
-                    sourceText.AppendLine( file.Name );
+                    if( file.IsRenamable ) {
+                        sourceText.AppendLine( file.Name );
+                    }
                 }
             }
 
             SourceText = sourceText.ToString();
+            mInitialText = SourceText;
         }
 
         private void OnCopyTags( SourceFolder folder ) {
@@ -154,15 +174,19 @@ namespace TuneRenamer.ViewModels {
 
             foreach( var item in folder.Children ) {
                 if( item is SourceFile file ) {
-                    sourceText.AppendLine( file.TagName );
+                    if( file.IsRenamable ) {
+                        sourceText.AppendLine( file.TagName );
+                    }
                 }
             }
 
             SourceText = sourceText.ToString();
+            mInitialText = SelectedText;
         }
 
         private void OnItemInspection( SourceFile item ) {
             SourceText = LoadTextFile( item.FileName );
+            mInitialText = SourceText;
         }
 
         private string LoadTextFile( string fileName ) {
@@ -178,15 +202,33 @@ namespace TuneRenamer.ViewModels {
             return retValue;
         }
 
+        public void Execute_IsolateText() {
+            SourceText = SelectedText;
+
+            RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
+            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+        }
+
+        public bool CanExecute_IsolateText() {
+            return !String.IsNullOrWhiteSpace( SelectedText );
+        }
+
+        public void Execute_RestoreText() {
+            SourceText = mInitialText;
+
+            RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
+        }
+
+        public bool CanExecute_RestoreText() {
+            return !String.IsNullOrWhiteSpace( mInitialText );
+        }
+
         public void Execute_FindCommonText() {
             if(!String.IsNullOrWhiteSpace( SourceText )) {
                 CommonText = mTextHelpers.GetCommonSubstring( SourceText );
             }
         }
 
-        private string CurrentText {
-            get => String.IsNullOrWhiteSpace( SelectedText ) ? SourceText : SelectedText;
-        }
         private void SetLineCount() {
             LineCount = mTextHelpers.LineCount( CurrentText );
 
