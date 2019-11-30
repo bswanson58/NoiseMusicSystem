@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
@@ -14,8 +13,6 @@ namespace TuneRenamer.ViewModels {
         private readonly IPlatformLog                       mLog;
         private readonly ISourceScanner                     mSourceScanner;
         private readonly ITextHelpers                       mTextHelpers;
-        private readonly ObservableCollection<SourceItem>   mSourceList;
-        private readonly List<SourceFile>                   mRenameList;
         private SourceItem                                  mSelectedSourceItem;
         private string                                      mSourceDirectory;
         private string                                      mInitialText;
@@ -24,7 +21,8 @@ namespace TuneRenamer.ViewModels {
         private string                                      mCommonText;
         private string                                      CurrentText => String.IsNullOrWhiteSpace( SelectedText ) ? SourceText : SelectedText;
 
-        public  ObservableCollection<SourceItem>            SourceList => mSourceList;
+        public  ObservableCollection<SourceItem>            SourceList { get; }
+        public  ObservableCollection<SourceFile>            RenameList { get; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
 
@@ -35,8 +33,8 @@ namespace TuneRenamer.ViewModels {
             mTextHelpers = textHelpers;
             mLog = log;
 
-            mSourceList = new ObservableCollection<SourceItem>();
-            mRenameList = new List<SourceFile>();
+            SourceList = new ObservableCollection<SourceItem>();
+            RenameList = new ObservableCollection<SourceFile>();
 
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
@@ -49,7 +47,7 @@ namespace TuneRenamer.ViewModels {
             set {
                 mSourceDirectory = value;
 
-                mSourceList.Clear();
+                SourceList.Clear();
                 RaisePropertyChanged( () => SourceDirectory );
             }
         }
@@ -94,14 +92,16 @@ namespace TuneRenamer.ViewModels {
         }
 
         private void OnSourceItemSelected() {
-            mRenameList.ForEach( f => f.IsBeingRenamed = false );
-            mRenameList.Clear();
+            foreach( var file in RenameList ) {
+                file.IsBeingRenamed = false;
+            }
+            RenameList.Clear();
 
             if( SelectedSourceItem is SourceFolder folder ) {
                 foreach( var item in folder.Children ) {
                     if( item is SourceFile file ) {
                         if( file.IsRenamable ) {
-                            mRenameList.Add( file );
+                            RenameList.Add( file );
 
                             file.IsBeingRenamed = true;
                         }
@@ -109,7 +109,7 @@ namespace TuneRenamer.ViewModels {
                 }
             }
 
-            FileCount = mRenameList.Count;
+            FileCount = RenameList.Count;
             RaisePropertyChanged( () => FileCount );
         }
 
@@ -149,10 +149,10 @@ namespace TuneRenamer.ViewModels {
         }
 
         private async void CollectSource() {
-            mSourceList.Clear();
-            mSourceList.AddRange( await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection, OnCopyNames, OnCopyTags ));
+            SourceList.Clear();
+            SourceList.AddRange( await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection, OnCopyNames, OnCopyTags ));
 
-            await mSourceScanner.AddTags( mSourceList );
+            await mSourceScanner.AddTags( SourceList );
         }
 
         private void OnCopyNames( SourceFolder folder ) {

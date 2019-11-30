@@ -37,10 +37,12 @@ namespace TuneRenamer.Dto {
         public  int         TagIndex { get; private set; }
         public  string      TagTitle { get; private set; }
         public  string      TagName { get; private set; }
+        public  string      ProposedName { get; private set; }
         public  bool        HasTagName => !String.IsNullOrWhiteSpace( TagName );
         public  bool        UseTagNameAsTarget { get; set; }
         public  bool        IsRenamable { get; }
         public  bool        IsInspectable { get; }
+        public  bool        WillBeRenamed { get; private set; }
 
         public SourceFile( string fileName, bool isRenamable, bool isInspectable, Action<SourceFile> inspectAction ) :
             base( Path.GetFileName( fileName ), fileName ) {
@@ -62,6 +64,12 @@ namespace TuneRenamer.Dto {
             RaisePropertyChanged( () => TagTitle );
             RaisePropertyChanged( () => TagName );
             RaisePropertyChanged( () => HasTagName );
+        }
+
+        public void SetProposedName( string proposedName ) {
+            ProposedName = proposedName;
+
+            WillBeRenamed = !Name.Equals( ProposedName );
         }
 
         public bool IsBeingRenamed {
