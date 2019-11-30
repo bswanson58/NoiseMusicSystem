@@ -241,9 +241,12 @@ namespace TuneRenamer.ViewModels {
         private void CleanText() {
             var result = new StringBuilder();
             var lines = mTextHelpers.Lines( CurrentText );
+            var defaultIndex = 1;
 
             foreach( var line in lines ) {
-                result.AppendLine( mTextHelpers.CleanText( line ));
+                result.AppendLine( mTextHelpers.CleanText( line, defaultIndex ));
+
+                defaultIndex++;
             }
 
             SourceText = result.ToString();
