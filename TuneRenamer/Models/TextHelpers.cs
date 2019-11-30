@@ -9,6 +9,7 @@ using TuneRenamer.Platform;
 
 namespace TuneRenamer.Models {
     class TextHelpers : ITextHelpers {
+        private readonly string[]       mNewLines = { "\r\n", "\r", "\n" };
         private readonly IFileTypes     mFileTypes;
 
         public TextHelpers( IFileTypes fileTypes ) {
@@ -16,13 +17,13 @@ namespace TuneRenamer.Models {
         }
 
         public string GetCommonSubstring( string text ) {
-            var strings = text.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None );
+            var strings = Lines( text ).ToArray();
 
             return strings.GetLongestCommonSubstring();
         }
 
         public IEnumerable<string> Lines( string text ) {
-            var split = text.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None );
+            var split = text.Split( mNewLines, StringSplitOptions.None );
 
             return from l in split where !String.IsNullOrWhiteSpace( l ) select l;
         }
@@ -42,7 +43,15 @@ namespace TuneRenamer.Models {
             return $"{index:D2} - {name}{extension}";
         }
 
-        public string DetermineExtension( ref string text ) {
+        public string SetExtension( string fileName, string proposedName ) {
+            var ext = DetermineExtension( ref fileName );
+
+            DetermineExtension( ref proposedName );
+
+            return  proposedName + ext;
+        }
+
+        private string DetermineExtension( ref string text ) {
             var retValue = String.Empty;
 
             if((!String.IsNullOrWhiteSpace( text )) &&
@@ -59,7 +68,7 @@ namespace TuneRenamer.Models {
             return retValue;
         }
 
-        public int DetermineTrackIndex( ref string text, int defaultIndex ) {
+        private int DetermineTrackIndex( ref string text, int defaultIndex ) {
             var retValue = defaultIndex;
             var pattern = new Regex( @"[ ([]*(?<index>[0-9]+)" );
             var match = pattern.Match( text );

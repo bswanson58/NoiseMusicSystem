@@ -17,6 +17,28 @@
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
             <Setter Property="Focusable" Value="{Binding IsSelectable}"/>
         </Style>
+        
+        <Style x:Key="RenameListItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        
+        <DataTemplate x:Key="RenameFileTemplate" DataType="Dto:SourceFile">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="ProposedName" Style="{StaticResource ListViewTextStyle}" Text="{Binding ProposedName}"/>
+                <TextBlock x:Name="OriginalName" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Name}"/>
+            </StackPanel>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding WillBeRenamed}" Value="True">
+                    <Setter TargetName="ProposedName" Property="Foreground" Value="Orange"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding WillBeRenamed}" Value="False">
+                    <Setter TargetName="ProposedName" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
 
         <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
             <Grid>
@@ -178,6 +200,20 @@
                 <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" Content="Find Common Text" Command="{Binding FindCommonText}"/>
                 <TextBox Grid.Column="1" Margin="5,0,0,0" Text="{Binding CommonText}"/>
             </Grid>
+        </Grid>
+        
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Proposed Names:"/>
+            
+            <ListBox Grid.Row="1" Margin="5,0,0,0" ItemsSource="{Binding RenameList}" ItemContainerStyle="{StaticResource RenameListItemStyle}" ItemTemplate="{StaticResource RenameFileTemplate}"/>
+            
+            <Button Grid.Row="2" HorizontalAlignment="Right" Margin="0,5,0,0" Content="Rename Files"/>
         </Grid>
     </Grid>
 

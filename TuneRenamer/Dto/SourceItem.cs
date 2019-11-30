@@ -31,13 +31,13 @@ namespace TuneRenamer.Dto {
     public class SourceFile : SourceItem {
         private readonly Action<SourceFile> mInspectAction;
         private bool        mIsBeingRenamed;
+        private string      mProposedName;
 
         public  string      TagArtist { get; private set; }
         public  string      TagAlbum { get; private set; }
         public  int         TagIndex { get; private set; }
         public  string      TagTitle { get; private set; }
         public  string      TagName { get; private set; }
-        public  string      ProposedName { get; private set; }
         public  bool        HasTagName => !String.IsNullOrWhiteSpace( TagName );
         public  bool        UseTagNameAsTarget { get; set; }
         public  bool        IsRenamable { get; }
@@ -51,6 +51,7 @@ namespace TuneRenamer.Dto {
             mInspectAction = inspectAction;
 
             IsSelectable = false;
+            mProposedName = String.Empty;
         }
 
         public void SetTags( string artist, string album, int index, string title, string name ) {
@@ -67,9 +68,24 @@ namespace TuneRenamer.Dto {
         }
 
         public void SetProposedName( string proposedName ) {
-            ProposedName = proposedName;
+            mProposedName = proposedName;
 
-            WillBeRenamed = !Name.Equals( ProposedName );
+            WillBeRenamed = !Name.Equals( mProposedName );
+
+            RaisePropertyChanged( () => ProposedName );
+            RaisePropertyChanged( () => WillBeRenamed );
+        }
+
+        public string ProposedName {
+            get {
+                var retValue = mProposedName;
+
+                if( String.IsNullOrWhiteSpace( retValue )) {
+                    retValue = "Unnamed";
+                }
+
+                return retValue;
+            }
         }
 
         public bool IsBeingRenamed {

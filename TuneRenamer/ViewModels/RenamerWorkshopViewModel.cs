@@ -110,6 +110,7 @@ namespace TuneRenamer.ViewModels {
             }
 
             FileCount = RenameList.Count;
+            UpdateProposedFiles();
             RaisePropertyChanged( () => FileCount );
         }
 
@@ -256,7 +257,25 @@ namespace TuneRenamer.ViewModels {
         private void SetLineCount() {
             LineCount = mTextHelpers.LineCount( CurrentText );
 
+            UpdateProposedFiles();
             RaisePropertyChanged( () => LineCount );
+        }
+
+        private void UpdateProposedFiles() {
+            if( LineCount == FileCount ) {
+                var prosposedNames = mTextHelpers.Lines( CurrentText );
+                var index = 0;
+
+                using( var enumerator = prosposedNames.GetEnumerator()) {
+                    foreach( var file in RenameList ) {
+                        if( enumerator.MoveNext()) {
+                            file.SetProposedName( mTextHelpers.CleanText( mTextHelpers.SetExtension( file.FileName, enumerator.Current ), index ));
+
+                            index++;
+                        }
+                    }
+                }
+            }
         }
     }
 }
