@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TuneRenamer.Interfaces;
 using TuneRenamer.Platform;
@@ -35,6 +36,7 @@ namespace TuneRenamer.Models {
             var index = DetermineTrackIndex( ref text, defaultIndex );
             var name = ReplaceCharSets( text );
 
+            name= CapitalizeText( name );
             name = PathSanitizer.SanitizeFilename( name, ' ' ).Trim();
 
             return $"{index:D2} - {name}{extension}";
@@ -86,6 +88,9 @@ namespace TuneRenamer.Models {
             retValue = retValue.Replace( " >",  " - " );
             retValue = retValue.Replace( "> ",  " - " );
             retValue = retValue.Replace( ">",   " - " );
+            retValue = retValue.Replace( "-",   " - " );
+            retValue = retValue.Replace( " -",  " - " );
+            retValue = retValue.Replace( "- ",  " - " );
 
             while( retValue.IndexOf( "  ", StringComparison.CurrentCulture ) >= 0 ) {
                 retValue = retValue.Replace( "  ",  " " );
@@ -94,6 +99,29 @@ namespace TuneRenamer.Models {
             retValue = retValue.Trim( ' ', '-' );
 
             return retValue;
+        }
+
+        private string CapitalizeText( string text ) {
+            var	toUpper = true;
+            var whiteSpace = new [] { ' ', '-', '_', '(', ')', '[', ']', '>', '.' };
+            var	newString = new StringBuilder( text.Length );
+			
+            for( int index = 0; index < text.Length; index++ ) {
+                if( toUpper ) {
+                    newString.Append( Char.ToUpper( text[index]));
+					
+                    toUpper = false;
+                }
+                else {
+                    newString.Append( Char.ToLower( text[index]));
+                }
+				
+                if( text.IndexOfAny( whiteSpace, index, 1 ) == index ) {
+                    toUpper = true;
+                }
+            }				
+		
+            return newString.ToString();
         }
     }
 
