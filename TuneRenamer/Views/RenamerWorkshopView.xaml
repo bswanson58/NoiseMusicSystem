@@ -139,6 +139,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Name Source:"/>
@@ -167,8 +168,12 @@
                     <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Restore" Command="{Binding RestoreText}"/>
                 </StackPanel>
             </Grid>
+            
+            <StackPanel Grid.Row="3" Margin="0,3" Orientation="Horizontal">
+                <Button Style="{StaticResource GeneralButtonStyle}" Content="Clean" Command="{Binding CleanText}"/>
+            </StackPanel>
 
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>

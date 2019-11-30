@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TuneRenamer.Interfaces;
+using TuneRenamer.Platform;
 
 namespace TuneRenamer.Models {
     class TextHelpers : ITextHelpers {
@@ -19,6 +20,10 @@ namespace TuneRenamer.Models {
 
         public int LineCount( string text ) {
             return Lines( text ).Count();
+        }
+
+        public string CleanText( string text ) {
+            return PathSanitizer.SanitizeFilename( text, ' ' ).Trim();
         }
     }
 

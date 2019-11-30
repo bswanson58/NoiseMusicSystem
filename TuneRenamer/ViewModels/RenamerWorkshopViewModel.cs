@@ -61,6 +61,7 @@ namespace TuneRenamer.ViewModels {
 
                 SetLineCount();
                 RaisePropertyChanged( () => SourceText );
+                RaiseCanExecuteChangedEvent( "CanExecute_CleanText" );
             }
         }
 
@@ -223,10 +224,30 @@ namespace TuneRenamer.ViewModels {
             return !String.IsNullOrWhiteSpace( mInitialText );
         }
 
+        public void Execute_CleanText() {
+            CleanText();
+        }
+
+        public bool CanExecute_CleanText() {
+            return !String.IsNullOrWhiteSpace( CurrentText );
+        }
+
         public void Execute_FindCommonText() {
             if(!String.IsNullOrWhiteSpace( SourceText )) {
                 CommonText = mTextHelpers.GetCommonSubstring( SourceText );
             }
+        }
+
+        private void CleanText() {
+            var result = new StringBuilder();
+            var lines = mTextHelpers.Lines( CurrentText );
+
+            foreach( var line in lines ) {
+                result.AppendLine( mTextHelpers.CleanText( line ));
+            }
+
+            SourceText = result.ToString();
+            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
         }
 
         private void SetLineCount() {
