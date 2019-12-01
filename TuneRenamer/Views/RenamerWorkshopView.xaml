@@ -188,7 +188,7 @@
             </Grid>
             
             <StackPanel Grid.Row="3" Margin="0,3" Orientation="Horizontal">
-                <Button Style="{StaticResource GeneralButtonStyle}" Content="Clean" Command="{Binding CleanText}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Content="Clean Text" Command="{Binding CleanText}"/>
             </StackPanel>
 
             <Grid Grid.Row="4" Margin="0,3">

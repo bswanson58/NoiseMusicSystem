@@ -11,10 +11,10 @@ namespace TuneRenamer {
     class ApplicationModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
             containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
+            containerRegistry.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
-            containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
             containerRegistry.Register<IPreferences, PreferencesManager>();
             containerRegistry.Register<IFileRenamer, FileRenamer>();
             containerRegistry.Register<IFileTypes, FileTypes>();

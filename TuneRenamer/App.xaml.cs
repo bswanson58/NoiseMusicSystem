@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using Prism.Ioc;
+using Serilog.Events;
 using TuneRenamer.Interfaces;
+using TuneRenamer.Logging;
 using TuneRenamer.Views;
 
 namespace TuneRenamer {
@@ -31,7 +33,7 @@ namespace TuneRenamer {
             module.RegisterTypes( containerRegistry );
 
             mLog = Container.Resolve<IPlatformLog>();
-//            mLog.AddLoggingSink(new MessageBoxSink(), LogEventLevel.Error);
+            mLog.AddLoggingSink( new MessageBoxSink(), LogEventLevel.Error );
             mLog.LogMessage( "+++ Application Started +++" );
 
             // Caliburn Micro dispatcher initialize.
