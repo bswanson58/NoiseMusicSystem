@@ -25,6 +25,7 @@ namespace TuneRenamer.ViewModels {
 
         public  ObservableCollection<SourceItem>            SourceList { get; }
         public  ObservableCollection<SourceFile>            RenameList { get; }
+        public  ObservableCollection<string>                CommonTextList { get; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
 
@@ -38,6 +39,7 @@ namespace TuneRenamer.ViewModels {
 
             SourceList = new ObservableCollection<SourceItem>();
             RenameList = new ObservableCollection<SourceFile>();
+            CommonTextList = new ObservableCollection<string>();
 
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
@@ -61,8 +63,10 @@ namespace TuneRenamer.ViewModels {
                 mSourceText = value;
 
                 SetLineCount();
+                ClearCommonText();
                 RaisePropertyChanged( () => SourceText );
                 RaiseCanExecuteChangedEvent( "CanExecute_CleanText" );
+                RaiseCanExecuteChangedEvent( "CanExecute_FindCommonText" );
             }
         }
 
@@ -81,6 +85,7 @@ namespace TuneRenamer.ViewModels {
                 mCommonText = value;
 
                 RaisePropertyChanged( () => CommonText );
+                RaiseCanExecuteChangedEvent( "CanExecute_DeleteCommonText" );
             }
         }
 
@@ -239,8 +244,28 @@ namespace TuneRenamer.ViewModels {
 
         public void Execute_FindCommonText() {
             if(!String.IsNullOrWhiteSpace( SourceText )) {
-                CommonText = mTextHelpers.GetCommonSubstring( SourceText );
+                CommonTextList.Clear();
+                CommonTextList.AddRange( mTextHelpers.GetCommonSubstring( SourceText, 5 ));
+
+                CommonText = CommonTextList.FirstOrDefault();
             }
+        }
+
+        public bool CanExecute_FindCommonText() {
+            return !String.IsNullOrWhiteSpace( SourceText );
+        }
+
+        private void ClearCommonText() {
+            CommonTextList.Clear();
+            CommonText = String.Empty;
+        }
+
+        public void Execute_DeleteCommonText() {
+            SourceText = mTextHelpers.DeleteText( SourceText, CommonText );
+        }
+
+        public bool CanExecute_DeleteCommonText() {
+            return !String.IsNullOrWhiteSpace( CommonText );
         }
 
         private void CleanText() {

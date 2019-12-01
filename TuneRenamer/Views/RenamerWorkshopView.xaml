@@ -150,10 +150,11 @@
 
         </Grid>
 
-        <Grid Grid.Column="1" Margin="10,0">
+        <Grid Grid.Column="1" Margin="10,0" IsSharedSizeScope="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -190,14 +191,27 @@
                 <Button Style="{StaticResource GeneralButtonStyle}" Content="Clean" Command="{Binding CleanText}"/>
             </StackPanel>
 
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="4" Margin="0,3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column0"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column2"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" Content="Find Common Text" Command="{Binding FindCommonText}"/>
-                <TextBox Grid.Column="1" Margin="5,0,0,0" Text="{Binding CommonText}"/>
+                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Find Common Text:" Command="{Binding FindCommonText}"/>
+                <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding CommonTextList}" SelectedItem="{Binding CommonText, Mode=TwoWay}"/>
+                <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Content="Delete" Command="{Binding DeleteCommonText}"/>
+            </Grid>
+            
+            <Grid Grid.Row="5" Margin="0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column0"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column2"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Delete Text:"/>
+                <ComboBox Grid.Column="1" Margin="5,0"/>
             </Grid>
         </Grid>
         

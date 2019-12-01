@@ -16,10 +16,10 @@ namespace TuneRenamer.Models {
             mFileTypes = fileTypes;
         }
 
-        public string GetCommonSubstring( string text ) {
+        public IEnumerable<string> GetCommonSubstring( string text,int returnCount ) {
             var strings = Lines( text ).ToArray();
 
-            return strings.GetLongestCommonSubstring();
+            return strings.GetLongestCommonSubstring( returnCount );
         }
 
         public IEnumerable<string> Lines( string text ) {
@@ -41,6 +41,16 @@ namespace TuneRenamer.Models {
             name = PathSanitizer.SanitizeFilename( name, ' ' ).Trim();
 
             return $"{index:D2} - {name}{extension}";
+        }
+
+        public string DeleteText( string sourceText, string textToDelete ) {
+            var retValue = sourceText;
+
+            while( retValue.Contains( textToDelete )) {
+                retValue = retValue.Replace( textToDelete, String.Empty );
+            }
+
+            return retValue;
         }
 
         public string SetExtension( string fileName, string proposedName ) {
@@ -136,16 +146,18 @@ namespace TuneRenamer.Models {
 
     // from: https://stackoverflow.com/questions/21797599/how-can-i-find-lcs-length-between-two-large-strings/21797687
     static class StringArrayEx {
-        public static string GetLongestCommonSubstring( this string[] strings ) {
+        public static IEnumerable<string> GetLongestCommonSubstring( this string[] strings, int returnCount ) {
             var commonSubstrings = new HashSet<string>(strings[0].GetSubstrings());
 
             foreach ( string str in strings.Skip( 1 ) ) {
                 commonSubstrings.IntersectWith( str.GetSubstrings());
-                if ( commonSubstrings.Count == 0 )
-                    return string.Empty;
+
+                if ( commonSubstrings.Count == 0 ) {
+                    return new List<string>();
+                }
             }
 
-            return commonSubstrings.OrderByDescending( s => s.Length ).DefaultIfEmpty( string.Empty ).First();
+            return commonSubstrings.OrderByDescending( s => s.Length ).DefaultIfEmpty( string.Empty ).Take( returnCount );
         }
 
         private static IEnumerable<string> GetSubstrings( this string str ) {
