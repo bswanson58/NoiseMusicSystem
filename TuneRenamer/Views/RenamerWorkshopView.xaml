@@ -210,8 +210,8 @@
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Column2"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Delete Text:"/>
-                <ComboBox Grid.Column="1" Margin="5,0"/>
+                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Delete Text:" Command="{Binding DeleteCharacterPair}"/>
+                <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding CharacterPairs}" DisplayMemberPath="Description" SelectedItem="{Binding SelectedCharacterPair, Mode=TwoWay}"/>
             </Grid>
         </Grid>
         

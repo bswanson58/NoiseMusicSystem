@@ -21,11 +21,13 @@ namespace TuneRenamer.ViewModels {
         private string                                      mSourceText;
         private string                                      mSelectedText;
         private string                                      mCommonText;
+        private CharacterPair                               mCharacterPair;
         private string                                      CurrentText => String.IsNullOrWhiteSpace( SelectedText ) ? SourceText : SelectedText;
 
         public  ObservableCollection<SourceItem>            SourceList { get; }
         public  ObservableCollection<SourceFile>            RenameList { get; }
         public  ObservableCollection<string>                CommonTextList { get; }
+        public  ObservableCollection<CharacterPair>         CharacterPairs { get; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
 
@@ -40,6 +42,11 @@ namespace TuneRenamer.ViewModels {
             SourceList = new ObservableCollection<SourceItem>();
             RenameList = new ObservableCollection<SourceFile>();
             CommonTextList = new ObservableCollection<string>();
+            CharacterPairs = new ObservableCollection<CharacterPair>();
+
+            CharacterPairs.Add( new CharacterPair( '[', ']', "Between '[' and ']'" ));
+            CharacterPairs.Add( new CharacterPair( '(', ')', "Between '(' and ')'" ));
+            SelectedCharacterPair = CharacterPairs.FirstOrDefault();
 
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
@@ -67,6 +74,7 @@ namespace TuneRenamer.ViewModels {
                 RaisePropertyChanged( () => SourceText );
                 RaiseCanExecuteChangedEvent( "CanExecute_CleanText" );
                 RaiseCanExecuteChangedEvent( "CanExecute_FindCommonText" );
+                RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
             }
         }
 
@@ -86,6 +94,15 @@ namespace TuneRenamer.ViewModels {
 
                 RaisePropertyChanged( () => CommonText );
                 RaiseCanExecuteChangedEvent( "CanExecute_DeleteCommonText" );
+            }
+        }
+
+        public CharacterPair SelectedCharacterPair {
+            get => mCharacterPair;
+            set {
+                mCharacterPair = value;
+
+                RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
             }
         }
 
@@ -266,6 +283,14 @@ namespace TuneRenamer.ViewModels {
 
         public bool CanExecute_DeleteCommonText() {
             return !String.IsNullOrWhiteSpace( CommonText );
+        }
+
+        public void Execute_DeleteCharacterPair() {
+            SourceText = mTextHelpers.DeleteText( SourceText, SelectedCharacterPair.StartCharacter, SelectedCharacterPair.EndCharacter );
+        }
+
+        public bool CanExecute_DeleteCharacterPair() {
+            return SelectedCharacterPair != null && !String.IsNullOrWhiteSpace( SourceText );
         }
 
         private void CleanText() {

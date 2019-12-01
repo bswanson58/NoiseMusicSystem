@@ -53,6 +53,28 @@ namespace TuneRenamer.Models {
             return retValue;
         }
 
+        public string DeleteText( string source, char startCharacter, char endCharacter ) {
+            var     retValue = source;
+            bool    textDeleted;
+
+            do {
+                var startPosition = retValue.IndexOf( startCharacter );
+                var endPosition = retValue.IndexOf( endCharacter );
+
+                if(( startPosition >= 0 ) &&
+                   ( endPosition > startPosition )) {
+                    retValue = retValue.Remove( startPosition, endPosition - startPosition + 1 );
+
+                    textDeleted = true;
+                }
+                else {
+                    textDeleted = false;
+                }
+            } while( textDeleted );
+
+            return retValue;
+        }
+
         public string SetExtension( string fileName, string proposedName ) {
             var ext = DetermineExtension( ref fileName );
 
