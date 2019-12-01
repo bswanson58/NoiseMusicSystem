@@ -16,6 +16,7 @@ namespace TuneRenamer {
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
             containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
             containerRegistry.Register<IPreferences, PreferencesManager>();
+            containerRegistry.Register<IFileRenamer, FileRenamer>();
             containerRegistry.Register<IFileTypes, FileTypes>();
             containerRegistry.Register<ISourceScanner, SourceScanner>();
             containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();

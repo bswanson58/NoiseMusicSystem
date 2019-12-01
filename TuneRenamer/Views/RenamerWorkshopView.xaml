@@ -213,7 +213,7 @@
             
             <ListBox Grid.Row="1" Margin="5,0,0,0" ItemsSource="{Binding RenameList}" ItemContainerStyle="{StaticResource RenameListItemStyle}" ItemTemplate="{StaticResource RenameFileTemplate}"/>
             
-            <Button Grid.Row="2" HorizontalAlignment="Right" Margin="0,5,0,0" Content="Rename Files"/>
+            <Button Grid.Row="2" HorizontalAlignment="Right" Margin="0,5,0,0" Content="Rename Files" Command="{Binding RenameFiles}"/>
         </Grid>
     </Grid>
 

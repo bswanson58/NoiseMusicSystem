@@ -178,12 +178,14 @@
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TuneRenamerPreferences.cs" />
+    <Compile Include="Interfaces\IFileRenamer.cs" />
     <Compile Include="Interfaces\IFileTypes.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPlatformDialogService.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\ISourceScanner.cs" />
     <Compile Include="Interfaces\ITextHelpers.cs" />
+    <Compile Include="Models\FileRenamer.cs" />
     <Compile Include="Models\SourceScanner.cs" />
     <Compile Include="Models\TextHelpers.cs" />
     <Compile Include="Platform\FileTypes.cs" />

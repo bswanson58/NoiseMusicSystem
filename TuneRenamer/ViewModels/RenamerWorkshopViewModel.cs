@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneRenamer.Dto;
@@ -13,6 +14,7 @@ namespace TuneRenamer.ViewModels {
         private readonly IPlatformLog                       mLog;
         private readonly ISourceScanner                     mSourceScanner;
         private readonly ITextHelpers                       mTextHelpers;
+        private readonly IFileRenamer                       mFileRenamer;
         private SourceItem                                  mSelectedSourceItem;
         private string                                      mSourceDirectory;
         private string                                      mInitialText;
@@ -26,11 +28,12 @@ namespace TuneRenamer.ViewModels {
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
 
-        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner, ITextHelpers textHelpers ) {
+        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner, ITextHelpers textHelpers, IFileRenamer fileRenamer ) {
             mDialogService = dialogService;
             mPreferences = preferences;
             mSourceScanner = scanner;
             mTextHelpers = textHelpers;
+            mFileRenamer = fileRenamer;
             mLog = log;
 
             SourceList = new ObservableCollection<SourceItem>();
@@ -276,6 +279,23 @@ namespace TuneRenamer.ViewModels {
                     }
                 }
             }
+
+            RaiseCanExecuteChangedEvent( "CanExecute_RenameFiles" );
+        }
+
+        public async void Execute_RenameFiles() {
+            if( await mFileRenamer.RenameFiles( from file in RenameList where file.WillBeRenamed select file )) {
+                RenameList.Clear();
+                FileCount = 0;
+
+                RaiseCanExecuteChangedEvent( "CanExecute_RenameFiles" );
+            }
+        }
+
+        public bool CanExecute_RenameFiles() {
+            return( LineCount == FileCount ) &&
+                  ( FileCount > 0 ) &&
+                  ( RenameList.Any( f => f.WillBeRenamed ));
         }
     }
 }
