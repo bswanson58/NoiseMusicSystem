@@ -97,6 +97,7 @@ namespace TuneRenamer.ViewModels {
         private void OnSourceItemSelected() {
             foreach( var file in RenameList ) {
                 file.IsBeingRenamed = false;
+                file.ClearProposedName();
             }
             RenameList.Clear();
 

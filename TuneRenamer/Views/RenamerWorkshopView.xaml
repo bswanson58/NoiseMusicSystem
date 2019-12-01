@@ -20,7 +20,6 @@
         
         <Style x:Key="RenameListItemStyle" TargetType="ListBoxItem">
             <Setter Property="Margin" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
             <Setter Property="Focusable" Value="False"/>
         </Style>
         

@@ -76,6 +76,15 @@ namespace TuneRenamer.Dto {
             RaisePropertyChanged( () => WillBeRenamed );
         }
 
+        public void ClearProposedName() {
+            mProposedName = String.Empty;
+
+            WillBeRenamed = false;
+
+            RaisePropertyChanged( () => ProposedName );
+            RaisePropertyChanged( () => WillBeRenamed );
+        }
+
         public string ProposedName {
             get {
                 var retValue = mProposedName;
