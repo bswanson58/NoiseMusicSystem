@@ -30,6 +30,7 @@ namespace TuneRenamer.ViewModels {
         public  ObservableCollection<CharacterPair>         CharacterPairs { get; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
+        public  bool                                        CountsMatch {get; private set; }
 
         public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner, ITextHelpers textHelpers, IFileRenamer fileRenamer ) {
             mDialogService = dialogService;
@@ -47,6 +48,10 @@ namespace TuneRenamer.ViewModels {
             CharacterPairs.Add( new CharacterPair( '[', ']', "Between '[' and ']'" ));
             CharacterPairs.Add( new CharacterPair( '(', ')', "Between '(' and ')'" ));
             SelectedCharacterPair = CharacterPairs.FirstOrDefault();
+
+            LineCount = 0;
+            FileCount = 0;
+            CountsMatch = true;
 
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
@@ -138,6 +143,9 @@ namespace TuneRenamer.ViewModels {
             FileCount = RenameList.Count;
             UpdateProposedFiles();
             RaisePropertyChanged( () => FileCount );
+
+            CountsMatch = LineCount == FileCount;
+            RaisePropertyChanged( () => CountsMatch );
         }
 
         private void OnSelectedTextChanged() {
@@ -310,6 +318,9 @@ namespace TuneRenamer.ViewModels {
 
         private void SetLineCount() {
             LineCount = mTextHelpers.LineCount( CurrentText );
+            
+            CountsMatch = LineCount == FileCount;
+            RaisePropertyChanged( () => CountsMatch );
 
             UpdateProposedFiles();
             RaisePropertyChanged( () => LineCount );
@@ -338,6 +349,9 @@ namespace TuneRenamer.ViewModels {
             if( await mFileRenamer.RenameFiles( from file in RenameList where file.WillBeRenamed select file )) {
                 RenameList.Clear();
                 FileCount = 0;
+
+                CountsMatch = LineCount == FileCount;
+                RaisePropertyChanged( () => CountsMatch );
 
                 RaiseCanExecuteChangedEvent( "CanExecute_RenameFiles" );
             }

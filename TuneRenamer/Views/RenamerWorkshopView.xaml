@@ -177,8 +177,19 @@
                 <StackPanel Grid.Column="0" VerticalAlignment="Stretch" Orientation="Horizontal">
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="{Binding FileCount}"/>
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="files selected. "/>
-                    <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="{Binding LineCount}"/>
+                    <TextBlock Margin="0,0,3,0" Text="{Binding LineCount}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource ControlTitleStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CountsMatch}" Value="False">
+                                        <Setter Property="Foreground" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Text="lines selected."/>
+                    
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
