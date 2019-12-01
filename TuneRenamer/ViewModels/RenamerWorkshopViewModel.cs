@@ -80,6 +80,7 @@ namespace TuneRenamer.ViewModels {
                 RaiseCanExecuteChangedEvent( "CanExecute_CleanText" );
                 RaiseCanExecuteChangedEvent( "CanExecute_FindCommonText" );
                 RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
+                RaiseCanExecuteChangedEvent( "CanExecute_RemoveTrailingDigits" );
             }
         }
 
@@ -152,6 +153,7 @@ namespace TuneRenamer.ViewModels {
             SetLineCount();
 
             RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
+            RaiseCanExecuteChangedEvent( "CanExecute_RemoveTrailingDigits" );
         }
 
         public void Execute_BrowseSourceFolder() {
@@ -314,6 +316,22 @@ namespace TuneRenamer.ViewModels {
 
             SourceText = result.ToString();
             RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+        }
+
+        public void Execute_RemoveTrailingDigits() {
+            var result = new StringBuilder();
+            var lines = mTextHelpers.Lines( CurrentText );
+
+            foreach( var line in lines ) {
+                result.AppendLine( mTextHelpers.RemoveTrailingDigits( line ));
+            }
+
+            SourceText = result.ToString();
+            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+        }
+
+        public bool CanExecute_RemoveTrailingDigits() {
+            return !String.IsNullOrWhiteSpace( CurrentText );
         }
 
         private void SetLineCount() {

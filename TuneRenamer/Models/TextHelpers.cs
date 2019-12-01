@@ -75,6 +75,15 @@ namespace TuneRenamer.Models {
             return retValue;
         }
 
+        public string RemoveTrailingDigits( string source ) {
+            var fileName = source;
+            var extension = DetermineExtension( ref fileName );
+
+            fileName = fileName.TrimEnd( '0', '1', '2', '3', '4', '4', '5', '6', '7', '8', '9', ' ', ':' );
+
+            return $"{fileName}{extension}";
+        }
+
         public string SetExtension( string fileName, string proposedName ) {
             var ext = DetermineExtension( ref fileName );
 

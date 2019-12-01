@@ -8,6 +8,7 @@ namespace TuneRenamer.Interfaces {
         string              CleanText( string text, int defaultIndex );
         string              DeleteText( string source, string textToDelete );
         string              DeleteText( string source, char startCharacter, char endCharacter );
+        string              RemoveTrailingDigits( string source );
 
         string              SetExtension( string fileName, string proposedName );
         IEnumerable<string> GetCommonSubstring( string text, int returnCount );

@@ -200,6 +200,7 @@
             
             <StackPanel Grid.Row="3" Margin="0,3" Orientation="Horizontal">
                 <Button Style="{StaticResource GeneralButtonStyle}" Content="Clean Text" Command="{Binding CleanText}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0" Content="Remove Trailing Digits" Command="{Binding RemoveTrailingDigits}"/>
             </StackPanel>
 
             <Grid Grid.Row="4" Margin="0,3">
