@@ -11,6 +11,7 @@ namespace TuneRenamer.Interfaces {
         string              RemoveTrailingDigits( string source );
 
         string              SetExtension( string fileName, string proposedName );
+        string              RenumberIndex( string fileName, int newIndex );
         IEnumerable<string> GetCommonSubstring( string text, int returnCount );
     }
 }

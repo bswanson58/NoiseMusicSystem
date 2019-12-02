@@ -82,6 +82,7 @@ namespace TuneRenamer.ViewModels {
                 RaiseCanExecuteChangedEvent( "CanExecute_FindCommonText" );
                 RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
                 RaiseCanExecuteChangedEvent( "CanExecute_RemoveTrailingDigits" );
+                RaiseCanExecuteChangedEvent( "CanExecute_Renumber" );
             }
         }
 
@@ -341,6 +342,25 @@ namespace TuneRenamer.ViewModels {
         }
 
         public bool CanExecute_RemoveTrailingDigits() {
+            return !String.IsNullOrWhiteSpace( CurrentText );
+        }
+
+        public void Execute_Renumber() {
+            var result = new StringBuilder();
+            var lines = mTextHelpers.Lines( CurrentText );
+            var index = 1;
+
+            foreach( var line in lines ) {
+                result.AppendLine( mTextHelpers.RenumberIndex( line, index ));
+
+                index++;
+            }
+
+            SourceText = result.ToString();
+            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+        }
+
+        public bool CanExecute_Renumber() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
 

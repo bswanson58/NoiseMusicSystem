@@ -84,6 +84,14 @@ namespace TuneRenamer.Models {
             return $"{fileName}{extension}";
         }
 
+        public string RenumberIndex( string source, int newIndex ) {
+            var fileName = source;
+
+            DetermineTrackIndex( ref fileName, newIndex );
+
+            return $"{newIndex:D2} - {fileName}";
+        }
+
         public string SetExtension( string fileName, string proposedName ) {
             var ext = DetermineExtension( ref fileName );
 
