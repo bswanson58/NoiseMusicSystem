@@ -107,7 +107,7 @@ namespace TuneRenamer.Models {
                 }
             }
             catch( Exception ex ) {
-                mLog.LogException( $"LoadMusicTags from: '{file.FileName}'", ex );
+                mLog.LogMessage( $"LoadMusicTags from: '{file.FileName}' - error: {ex.Message}" );
             }
         }
     }
