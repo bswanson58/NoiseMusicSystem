@@ -78,6 +78,7 @@ namespace TuneRenamer.ViewModels {
                 ClearCommonText();
                 RaisePropertyChanged( () => SourceText );
                 RaiseCanExecuteChangedEvent( "CanExecute_CleanText" );
+                RaiseCanExecuteChangedEvent( "CanExecute_ClearText" );
                 RaiseCanExecuteChangedEvent( "CanExecute_FindCommonText" );
                 RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
                 RaiseCanExecuteChangedEvent( "CanExecute_RemoveTrailingDigits" );
@@ -245,6 +246,15 @@ namespace TuneRenamer.ViewModels {
 
             RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
             RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+        }
+
+        public void Execute_ClearText() {
+            SourceText = String.Empty;
+            SetLineCount();
+        }
+
+        public bool CanExecute_ClearText() {
+            return !String.IsNullOrWhiteSpace( SourceText );
         }
 
         public bool CanExecute_IsolateText() {
