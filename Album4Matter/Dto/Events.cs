@@ -1,4 +1,6 @@
-﻿namespace Album4Matter.Dto {
+﻿using System.Windows;
+
+namespace Album4Matter.Dto {
     public class Events {
         public class StatusEvent {
             public	string			Message { get; }
@@ -6,6 +8,14 @@
 
             public StatusEvent( string message ) {
                 Message = message;
+            }
+        }
+
+        public class WindowStateEvent {
+            public  WindowState     State { get; }
+
+            public WindowStateEvent( WindowState state ) {
+                State = state;
             }
         }
     }

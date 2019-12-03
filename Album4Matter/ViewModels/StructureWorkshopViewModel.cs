@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Data;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
@@ -12,9 +13,10 @@ using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
-    class StructureWorkshopViewModel : AutomaticCommandBase, IDataErrorInfo, IDisposable {
+    class StructureWorkshopViewModel : AutomaticCommandBase, IHandle<Events.WindowStateEvent>, IDataErrorInfo, IDisposable {
         private readonly Regex                          mInvalidFilenamePattern = new Regex("[" + Regex.Escape(new string(Path.GetInvalidFileNameChars())) + "]");
 
+        private readonly IEventAggregator               mEventAggregator;
         private readonly IPlatformDialogService         mDialogService;
         private readonly IPreferences                   mPreferences;
         private readonly IPlatformLog                   mLog;
@@ -47,13 +49,14 @@ namespace Album4Matter.ViewModels {
         public  bool                                    UseSourceTags {get; set; }
 
         public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder, ISourceScanner sourceScanner,
-                                           IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log ) {
+                                           IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, IEventAggregator eventAggregator ) {
             InspectionViewModel = inspectionViewModel;
             FinalStructureViewModel = finalStructureViewModel;
             mAlbumBuilder = albumBuilder;
             mSourceScanner = sourceScanner;
             mDialogService = dialogService;
             mPreferences = preferences;
+            mEventAggregator = eventAggregator;
             mLog = log;
 
             mAlbumContents = new List<SourceItem>();
@@ -72,6 +75,10 @@ namespace Album4Matter.ViewModels {
             VolumeNameFormat = appPreferences.VolumeNameFormat;
             SourceDirectory = appPreferences.SourceDirectory;
             CollectSource();
+
+            if( appPreferences.RefreshOnWindowRestore ) {
+                mEventAggregator.Subscribe( this );
+            }
         }
 
         public string SourceDirectory {
@@ -284,6 +291,13 @@ namespace Album4Matter.ViewModels {
         public void Execute_RefreshSourceFolder() {
             SelectedSourceItems.Clear();
             CollectSource();
+        }
+
+        public void Handle( Events.WindowStateEvent args ) {
+            if( args.State != WindowState.Minimized ) {
+                SelectedSourceItems.Clear();
+                CollectSource();
+            }
         }
 
         private async void CollectSource() {
@@ -521,6 +535,8 @@ namespace Album4Matter.ViewModels {
         public void Dispose() {
             mInspectionChangedSubscription?.Dispose();
             mInspectionChangedSubscription = null;
+
+            mEventAggregator.Unsubscribe( this );
         }
     }
 }
