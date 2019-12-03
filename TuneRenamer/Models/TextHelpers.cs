@@ -4,16 +4,21 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
 using TuneRenamer.Platform;
 
 namespace TuneRenamer.Models {
     class TextHelpers : ITextHelpers {
-        private readonly string[]       mNewLines = { "\r\n", "\r", "\n" };
-        private readonly IFileTypes     mFileTypes;
+        private readonly string[]           mNewLines = { "\r\n", "\r", "\n" };
 
-        public TextHelpers( IFileTypes fileTypes ) {
+        private readonly WordReplacements   mReplacementWords;
+        private readonly IFileTypes         mFileTypes;
+
+        public TextHelpers( IFileTypes fileTypes, IPreferences preferences ) {
             mFileTypes = fileTypes;
+
+            mReplacementWords = preferences.Load<WordReplacements>();
         }
 
         public IEnumerable<string> GetCommonSubstring( string text,int returnCount ) {
@@ -32,12 +37,23 @@ namespace TuneRenamer.Models {
             return Lines( text ).Count();
         }
 
-        public string CleanText( string text, int defaultIndex ) {
+        public string BasicCleanText( string text, int defaultIndex ) {
+            var extension = DetermineExtension( ref text ).ToLower( CultureInfo.CurrentCulture );
+            var index = DetermineTrackIndex( ref text, defaultIndex );
+            var name = CapitalizeText( text );
+
+            name = PathSanitizer.SanitizeFilename( name, ' ' ).Trim();
+
+            return $"{index:D2} - {name}{extension}";
+        }
+
+        public string ExtendedCleanText( string text, int defaultIndex ) {
             var extension = DetermineExtension( ref text ).ToLower( CultureInfo.CurrentCulture );
             var index = DetermineTrackIndex( ref text, defaultIndex );
             var name = ReplaceCharSets( text );
 
-            name= CapitalizeText( name );
+            name = ReplaceWords( name );
+            name = CapitalizeText( name );
             name = PathSanitizer.SanitizeFilename( name, ' ' ).Trim();
 
             return $"{index:D2} - {name}{extension}";
@@ -159,6 +175,16 @@ namespace TuneRenamer.Models {
             return retValue;
         }
 
+        private string ReplaceWords( string text ) {
+            var retValue = text;
+
+            foreach( var replacement in mReplacementWords.ReplacementList ) {
+                retValue = retValue.ReplaceWord( replacement.Word, replacement.Replacement, RegexOptions.IgnoreCase );
+            }
+
+            return retValue;
+        }
+
         private string CapitalizeText( string text ) {
             var	toUpper = true;
             var whiteSpace = new [] { ' ', '-', '_', '(', ')', '[', ']', '>', '.' };
@@ -180,31 +206,6 @@ namespace TuneRenamer.Models {
             }				
 		
             return newString.ToString();
-        }
-    }
-
-    // from: https://stackoverflow.com/questions/21797599/how-can-i-find-lcs-length-between-two-large-strings/21797687
-    static class StringArrayEx {
-        public static IEnumerable<string> GetLongestCommonSubstring( this string[] strings, int returnCount ) {
-            var commonSubstrings = new HashSet<string>(strings[0].GetSubstrings());
-
-            foreach ( string str in strings.Skip( 1 ) ) {
-                commonSubstrings.IntersectWith( str.GetSubstrings());
-
-                if ( commonSubstrings.Count == 0 ) {
-                    return new List<string>();
-                }
-            }
-
-            return commonSubstrings.OrderByDescending( s => s.Length ).DefaultIfEmpty( string.Empty ).Take( returnCount );
-        }
-
-        private static IEnumerable<string> GetSubstrings( this string str ) {
-            for ( int c = 0; c < str.Length - 1; c++ ) {
-                for ( int cc = 1; c + cc <= str.Length; cc++ ) {
-                    yield return str.Substring( c, cc );
-                }
-            }
         }
     }
 }

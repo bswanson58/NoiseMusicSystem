@@ -180,6 +180,7 @@
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
     <Compile Include="Dto\TuneRenamerPreferences.cs" />
+    <Compile Include="Dto\WordReplacements.cs" />
     <Compile Include="Interfaces\IFileRenamer.cs" />
     <Compile Include="Interfaces\IFileTypes.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />

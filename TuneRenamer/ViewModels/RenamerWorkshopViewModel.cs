@@ -335,7 +335,7 @@ namespace TuneRenamer.ViewModels {
             var defaultIndex = 1;
 
             foreach( var line in lines ) {
-                result.AppendLine( mTextHelpers.CleanText( line, defaultIndex ));
+                result.AppendLine( mTextHelpers.ExtendedCleanText( line, defaultIndex ));
 
                 defaultIndex++;
             }
@@ -391,13 +391,13 @@ namespace TuneRenamer.ViewModels {
 
         private void UpdateProposedFiles() {
             if( LineCount == FileCount ) {
-                var prosposedNames = mTextHelpers.Lines( CurrentText );
+                var proposedNames = mTextHelpers.Lines( CurrentText );
                 var index = 0;
 
-                using( var enumerator = prosposedNames.GetEnumerator()) {
+                using( var enumerator = proposedNames.GetEnumerator()) {
                     foreach( var file in RenameList ) {
                         if( enumerator.MoveNext()) {
-                            file.SetProposedName( mTextHelpers.CleanText( mTextHelpers.SetExtension( file.FileName, enumerator.Current ), index ));
+                            file.SetProposedName( mTextHelpers.BasicCleanText( mTextHelpers.SetExtension( file.FileName, enumerator.Current ), index ));
 
                             index++;
                         }

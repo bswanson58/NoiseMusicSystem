@@ -5,7 +5,9 @@ namespace TuneRenamer.Interfaces {
         IEnumerable<string> Lines( string text );
         int                 LineCount( string text );
 
-        string              CleanText( string text, int defaultIndex );
+        string              BasicCleanText( string text, int defaultIndex );
+        string              ExtendedCleanText( string text, int defaultIndex );
+
         string              DeleteText( string source, string textToDelete );
         string              DeleteText( string source, char startCharacter, char endCharacter );
         string              RemoveTrailingDigits( string source );
