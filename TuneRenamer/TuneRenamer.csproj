@@ -199,6 +199,8 @@
     <Compile Include="Platform\PathSanitizer.cs" />
     <Compile Include="Platform\PlatformDialogService.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
+    <Compile Include="Platform\StringArrayEx.cs" />
+    <Compile Include="Platform\StringEx.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
     <Compile Include="Interfaces\IPlatformLog.cs" />
