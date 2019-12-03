@@ -3,12 +3,15 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
 
 namespace TuneRenamer.ViewModels {
-    class RenamerWorkshopViewModel : AutomaticCommandBase {
+    class RenamerWorkshopViewModel : AutomaticCommandBase, IHandle<Events.WindowStateEvent>, IDisposable {
+        private readonly IEventAggregator                   mEventAggregator;
         private readonly IPreferences                       mPreferences;
         private readonly IPlatformDialogService             mDialogService;
         private readonly IPlatformLog                       mLog;
@@ -32,12 +35,14 @@ namespace TuneRenamer.ViewModels {
         public  int                                         LineCount { get; private set; }
         public  bool                                        CountsMatch {get; private set; }
 
-        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner, ITextHelpers textHelpers, IFileRenamer fileRenamer ) {
+        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner,
+                                         ITextHelpers textHelpers, IFileRenamer fileRenamer, IEventAggregator eventAggregator ) {
             mDialogService = dialogService;
             mPreferences = preferences;
             mSourceScanner = scanner;
             mTextHelpers = textHelpers;
             mFileRenamer = fileRenamer;
+            mEventAggregator = eventAggregator;
             mLog = log;
 
             SourceList = new ObservableCollection<SourceItem>();
@@ -57,6 +62,10 @@ namespace TuneRenamer.ViewModels {
 
             SourceDirectory = appPreferences.SourceDirectory;
             CollectSource();
+
+            if( appPreferences.RefreshSourceOnRestore ) {
+                mEventAggregator.Subscribe( this );
+            }
         }
 
         public string SourceDirectory {
@@ -185,6 +194,12 @@ namespace TuneRenamer.ViewModels {
 
         public void Execute_RefreshSourceFolder() {
             CollectSource();
+        }
+
+        public void Handle( Events.WindowStateEvent state ) {
+            if( state.State != WindowState.Minimized ) {
+                CollectSource();
+            }
         }
 
         private async void CollectSource() {
@@ -409,6 +424,10 @@ namespace TuneRenamer.ViewModels {
             return( LineCount == FileCount ) &&
                   ( FileCount > 0 ) &&
                   ( RenameList.Any( f => f.WillBeRenamed ));
+        }
+
+        public void Dispose() {
+            mEventAggregator.Unsubscribe( this );
         }
     }
 }

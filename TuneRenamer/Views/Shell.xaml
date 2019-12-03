@@ -4,6 +4,8 @@
                  xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:Mvvm="http://prismlibrary.com/"
                  xmlns:Views="clr-namespace:TuneRenamer.Views"
+                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                 xmlns:Behaviors="clr-namespace:TuneRenamer.Behaviors"
                  Mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  Title="Tune Renamer" >
@@ -16,6 +18,10 @@
             </Grid>
         </DataTemplate>
     </Mah:MetroWindow.IconTemplate>
+
+    <i:Interaction.Behaviors>
+        <Behaviors:WindowStateBehavior Command="{Binding WindowStateChanged}" />
+    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.RowDefinitions>

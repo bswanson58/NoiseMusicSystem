@@ -1,4 +1,6 @@
-﻿namespace TuneRenamer.Dto {
+﻿using System.Windows;
+
+namespace TuneRenamer.Dto {
     public class Events {
         public class StatusEvent {
             public	string			Message { get; private set; }
@@ -9,5 +11,12 @@
             }
         }
 
+        public class WindowStateEvent {
+            public  WindowState     State { get; }
+
+            public WindowStateEvent( WindowState state ) {
+                State = state;
+            }
+        }
     }
 }

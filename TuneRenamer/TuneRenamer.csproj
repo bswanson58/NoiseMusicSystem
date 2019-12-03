@@ -175,6 +175,7 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Behaviors\TextBoxSelectionHelper.cs" />
     <Compile Include="Behaviors\TreeViewSelection.cs" />
+    <Compile Include="Behaviors\WindowStateBehavior.cs" />
     <Compile Include="Dto\CharacterPair.cs" />
     <Compile Include="Dto\Events.cs" />
     <Compile Include="Dto\SourceItem.cs" />
