@@ -25,7 +25,7 @@ namespace TuneRenamer.ViewModels {
         private string                                      mSelectedText;
         private string                                      mCommonText;
         private CharacterPair                               mCharacterPair;
-        private string                                      CurrentText => String.IsNullOrWhiteSpace( SelectedText ) ? SourceText : SelectedText;
+        private string                                      CurrentText => !String.IsNullOrWhiteSpace( SelectedText ) ? SelectedText : !String.IsNullOrWhiteSpace( SourceText ) ? SourceText : String.Empty;
 
         public  ObservableCollection<SourceItem>            SourceList { get; }
         public  ObservableCollection<SourceFile>            RenameList { get; }
