@@ -24,13 +24,13 @@ namespace TuneRenamer.ViewModels {
         private string                                      mSourceText;
         private string                                      mSelectedText;
         private string                                      mCommonText;
-        private CharacterPair                               mCharacterPair;
         private string                                      CurrentText => !String.IsNullOrWhiteSpace( SelectedText ) ? SelectedText : !String.IsNullOrWhiteSpace( SourceText ) ? SourceText : String.Empty;
 
         public  ObservableCollection<SourceItem>            SourceList { get; }
         public  ObservableCollection<SourceFile>            RenameList { get; }
         public  ObservableCollection<string>                CommonTextList { get; }
         public  ObservableCollection<CharacterPair>         CharacterPairs { get; }
+        public  CharacterPair                               SelectedCharacterPair { get; set; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
         public  bool                                        CountsMatch {get; private set; }
@@ -86,12 +86,6 @@ namespace TuneRenamer.ViewModels {
                 SetLineCount();
                 ClearCommonText();
                 RaisePropertyChanged( () => SourceText );
-                RaiseCanExecuteChangedEvent( "CanExecute_CleanText" );
-                RaiseCanExecuteChangedEvent( "CanExecute_ClearText" );
-                RaiseCanExecuteChangedEvent( "CanExecute_FindCommonText" );
-                RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
-                RaiseCanExecuteChangedEvent( "CanExecute_RemoveTrailingDigits" );
-                RaiseCanExecuteChangedEvent( "CanExecute_Renumber" );
             }
         }
 
@@ -110,16 +104,6 @@ namespace TuneRenamer.ViewModels {
                 mCommonText = value;
 
                 RaisePropertyChanged( () => CommonText );
-                RaiseCanExecuteChangedEvent( "CanExecute_DeleteCommonText" );
-            }
-        }
-
-        public CharacterPair SelectedCharacterPair {
-            get => mCharacterPair;
-            set {
-                mCharacterPair = value;
-
-                RaiseCanExecuteChangedEvent( "CanExecute_DeleteCharacterPair" );
             }
         }
 
@@ -269,6 +253,7 @@ namespace TuneRenamer.ViewModels {
             SetLineCount();
         }
 
+        [DependsUpon(nameof( SourceText ))]
         public bool CanExecute_ClearText() {
             return !String.IsNullOrWhiteSpace( SourceText );
         }
@@ -291,6 +276,7 @@ namespace TuneRenamer.ViewModels {
             CleanText();
         }
 
+        [DependsUpon(nameof( SourceText ))]
         public bool CanExecute_CleanText() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
@@ -304,6 +290,7 @@ namespace TuneRenamer.ViewModels {
             }
         }
 
+        [DependsUpon( nameof( SourceText ))]
         public bool CanExecute_FindCommonText() {
             return !String.IsNullOrWhiteSpace( SourceText );
         }
@@ -317,6 +304,7 @@ namespace TuneRenamer.ViewModels {
             SourceText = mTextHelpers.DeleteText( SourceText, CommonText );
         }
 
+        [DependsUpon( nameof( CommonText ))]
         public bool CanExecute_DeleteCommonText() {
             return !String.IsNullOrWhiteSpace( CommonText );
         }
@@ -325,6 +313,8 @@ namespace TuneRenamer.ViewModels {
             SourceText = mTextHelpers.DeleteText( SourceText, SelectedCharacterPair.StartCharacter, SelectedCharacterPair.EndCharacter );
         }
 
+        [DependsUpon( nameof( SourceText ))]
+        [DependsUpon( nameof( SelectedCharacterPair ))]
         public bool CanExecute_DeleteCharacterPair() {
             return SelectedCharacterPair != null && !String.IsNullOrWhiteSpace( SourceText );
         }
@@ -356,6 +346,7 @@ namespace TuneRenamer.ViewModels {
             RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
         }
 
+        [DependsUpon( nameof( SourceText ))]
         public bool CanExecute_RemoveTrailingDigits() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
@@ -375,6 +366,7 @@ namespace TuneRenamer.ViewModels {
             RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
         }
 
+        [DependsUpon( nameof( SourceText ))]
         public bool CanExecute_Renumber() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
