@@ -72,8 +72,14 @@
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
-					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,-3,3,0" Opacity="0.75"
-                               Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}" />
+					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,-3,3,0" Opacity="0.75" Cursor="Hand"
+                               Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDown">
+                                <i:InvokeCommandAction Command="{Binding GenreClicked}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>                   
+                    </TextBlock>
 				</Grid>
 			</Border>
 

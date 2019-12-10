@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
 										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
+		private const string							cDisplaySortDescriptions = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
@@ -270,7 +270,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ToggleSortDisplay() {
-			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
+			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptions : cHideSortDescriptions;
 		}
 
 		internal TaskHandler ArtistsRetrievalTaskHandler {
@@ -295,7 +295,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new UiArtist();
+			var retValue = new UiArtist( OnGenreClicked );
 
 			if( dbArtist != null ) {
 				Mapper.Map( dbArtist, retValue );
@@ -306,6 +306,10 @@ namespace Noise.UI.ViewModels {
 
 			return ( retValue );
 		}
+
+        private void OnGenreClicked( UiArtist artist ) {
+            FilterText = artist.Genre;
+        }
 
 		private void FormatSortPrefix( UiArtist artist ) {
             artist.DisplayName = mPrefixedNameHandler.FormatPrefixedName( artist.Name );
