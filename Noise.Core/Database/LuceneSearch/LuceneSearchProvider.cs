@@ -9,7 +9,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database.LuceneSearch {
-	public class LuceneSearchProvider : ISearchProvider {
+	public partial class LuceneSearchProvider : ISearchProvider {
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -19,7 +19,8 @@ namespace Noise.Core.Database.LuceneSearch {
 		private	string							mIndexLocation;
 
 		public LuceneSearchProvider( ILibraryConfiguration libraryConfiguration,
-									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) {
+									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) :
+            this() {
 			mLibraryConfiguration = libraryConfiguration;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;

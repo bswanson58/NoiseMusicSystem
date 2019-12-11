@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DynamicData;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -27,6 +28,12 @@ namespace Noise.Infrastructure.Interfaces {
 
 		IEnumerable<SearchResultItem>	Search( eSearchItemType searchType, string queryText, int maxResults );
 	}
+
+	public interface IRxSearchProvider {
+		IObservableList<SearchResultItem>	SearchResults { get; }
+
+		void								Search( eSearchItemType searchType, string queryText );
+    }
 
 	public interface ISearchBuilder : IDisposable {
 		void		DeleteArtistSearchItems();
