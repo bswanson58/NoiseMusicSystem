@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Linq;
 using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
@@ -19,7 +20,7 @@ namespace TuneRenamer.Platform {
         }
 
         public bool ItemIsTextFile( string fileName ) {
-            return mTextFileExtensions.Any( e => e.Equals( Path.GetExtension( fileName )));
+            return mTextFileExtensions.Any( e => e.Equals( Path.GetExtension( fileName )?.ToLower( CultureInfo.CurrentUICulture )));
         }
 
         public bool ItemIsMusicFile( SourceItem item ) {
@@ -33,7 +34,7 @@ namespace TuneRenamer.Platform {
         }
 
         public bool ItemIsMusicFile( string fileName ) {
-            return mMusicFileExtensions.Any( e => e.Equals( Path.GetExtension( fileName )));
+            return mMusicFileExtensions.Any( e => e.Equals( Path.GetExtension( fileName )?.ToLower( CultureInfo.CurrentUICulture )));
         }
     }
 }

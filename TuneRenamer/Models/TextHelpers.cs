@@ -113,7 +113,7 @@ namespace TuneRenamer.Models {
 
             DetermineExtension( ref proposedName );
 
-            return  proposedName + ext;
+            return  proposedName + ext.ToLower();
         }
 
         private string DetermineExtension( ref string text ) {
