@@ -61,7 +61,7 @@ namespace Noise.UI.ViewModels {
 												  new SearchType( eSearchItemType.BandMember, "Band Members" ),
 												  new SearchType( eSearchItemType.Biography, "Biographies" ),
 //												  new SearchType( eSearchItemType.Discography, "Discographies" ),
-												  new SearchType( eSearchItemType.Lyrics, "Lyrics" ),
+//												  new SearchType( eSearchItemType.Lyrics, "Lyrics" ),
 												  new SearchType( eSearchItemType.SimilarArtist, "Similar Artists" ),
 												  new SearchType( eSearchItemType.TopAlbum, "Top Albums" ) };
 
