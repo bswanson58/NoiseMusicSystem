@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using Caliburn.Micro;
+using DynamicData;
+using DynamicData.Binding;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Logging;
-using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class SearchType {
@@ -21,8 +23,7 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	internal class SearchViewModel : ViewModelBase {
-		private const int										cMaxSearchResults = 100;
+	internal class SearchViewModel : ViewModelBase, IDisposable {
 		private const int										cMaxPlayItems = 10;
 
 		private readonly IEventAggregator						mEventAggregator;
@@ -32,15 +33,14 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayCommand							mPlayCommand;
 		private readonly IPlayQueue								mPlayQueue;
 		private SearchType										mCurrentSearchType;
-		private TaskHandler<IEnumerable<SearchResultItem>>		mSearchTask; 
 		private readonly List<SearchType>						mSearchTypes;
 		private readonly List<DbTrack>							mPlayList;
 		private readonly List<DbTrack>							mApprovalList; 
-		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
         private SearchViewNode                                  mSelectedNode;
+		private IDisposable										mSearchResultsSubscription;
 
-	    public  ObservableCollectionEx<SearchViewNode>          SearchResults => mSearchResults;
 	    public  IEnumerable<SearchType>                         SearchTypes => mSearchTypes;
+		public	ObservableCollectionExtended<SearchViewNode>	SearchResults { get; }
 
         public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector,
 								IPlayCommand playCommand, IPlayQueue playQueue, IUiLog log ) {
@@ -51,7 +51,6 @@ namespace Noise.UI.ViewModels {
 			mPlayCommand = playCommand;
 			mPlayQueue = playQueue;
 
-			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
 			mPlayList = new List<DbTrack>();
 			mApprovalList = new List<DbTrack>();
 
@@ -66,6 +65,13 @@ namespace Noise.UI.ViewModels {
 												  new SearchType( eSearchItemType.Lyrics, "Lyrics" ),
 												  new SearchType( eSearchItemType.SimilarArtist, "Similar Artists" ),
 												  new SearchType( eSearchItemType.TopAlbum, "Top Albums" ) };
+
+			SearchResults = new ObservableCollectionExtended<SearchViewNode>();
+			mSearchResultsSubscription = mSearchProvider.SearchResults
+                .Transform( r => new SearchViewNode( r, OnPlay ))
+                .ObserveOnDispatcher()
+                .Bind( SearchResults )
+                .Subscribe();
 		}
 
 		public SearchType CurrentSearchType {
@@ -82,7 +88,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Search() {
-			BuildSearchList();
+			mSearchProvider.StartSearch( CurrentSearchType.ItemType, SearchText );
 		}
 
 		public void Execute_PlayRandom() {
@@ -95,41 +101,9 @@ namespace Noise.UI.ViewModels {
 			return( mPlayList.Count > 0 );
 		}
 
-		protected TaskHandler<IEnumerable<SearchResultItem>> SearchTask {
-			get {
-				if( mSearchTask == null ) {
-					Execute.OnUIThread( () => mSearchTask = new TaskHandler<IEnumerable<SearchResultItem>>());
-				}
-
-				return( mSearchTask );
-			}
-			set => mSearchTask = value;
-		} 
-
-		private void BuildSearchList() {
-			SearchTask.StartTask( () => mSearchProvider.Search( CurrentSearchType.ItemType, SearchText, cMaxSearchResults ),
-								  UpdateSearchList,
-								  error => mLog.LogException( $"Building Search List for \"{SearchText}\"", error ));
-		}
-
-		private void UpdateSearchList( IEnumerable<SearchResultItem> searchList ) {
-			mSearchResults.Clear();
-			mApprovalList.Clear();
-
-			if( searchList != null ) {
-				var searchResultItems = searchList.ToList();
-
-				mSearchResults.SuspendNotification();
-				mSearchResults.AddRange( from searchItem in searchResultItems select new SearchViewNode( searchItem, OnPlay ));
-				mSearchResults.ResumeNotification();
-			}
-
-			UpdatePlayList();
-		}
-
-		private void UpdatePlayList() {
+        private void UpdatePlayList() {
 			mPlayList.Clear();
-			mPlayList.AddRange( mTrackSelector.SelectTracks( from searchItem in mSearchResults select searchItem.SearchItem, ApproveTrack, cMaxPlayItems ));
+			mPlayList.AddRange( mTrackSelector.SelectTracks( from searchItem in SearchResults select searchItem.SearchItem, ApproveTrack, cMaxPlayItems ));
 
 			RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
 		}
@@ -169,5 +143,10 @@ namespace Noise.UI.ViewModels {
 				mPlayCommand.Play( node.Album );
 			}
 		}
-	}
+
+        public void Dispose() {
+            mSearchResultsSubscription?.Dispose();
+			mSearchResultsSubscription = null;
+        }
+    }
 }

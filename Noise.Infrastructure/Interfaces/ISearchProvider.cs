@@ -26,13 +26,10 @@ namespace Noise.Infrastructure.Interfaces {
 		ISearchBuilder	CreateIndexBuilder( DbArtist forArtist, bool createIndex );
 		DateTime		DetermineTimeStamp( DbArtist artist );
 
-		IEnumerable<SearchResultItem>	Search( eSearchItemType searchType, string queryText, int maxResults );
-	}
-
-	public interface IRxSearchProvider {
-		IObservableList<SearchResultItem>	SearchResults { get; }
-
-		void								Search( eSearchItemType searchType, string queryText );
+        IEnumerable<SearchResultItem>				Search( eSearchItemType searchType, string queryText, int maxResults );
+        
+        IObservable<IChangeSet<SearchResultItem>>	SearchResults { get; }
+		void										StartSearch( eSearchItemType searchType, string queryText );
     }
 
 	public interface ISearchBuilder : IDisposable {

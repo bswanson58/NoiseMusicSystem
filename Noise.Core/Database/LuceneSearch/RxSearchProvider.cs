@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using DynamicData;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
@@ -8,23 +10,33 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database.LuceneSearch {
-    partial class LuceneSearchProvider : IRxSearchProvider, IDisposable {
+    partial class LuceneSearchProvider : IDisposable {
 		private readonly int										mMaxResults = 1000;
         private readonly SourceList<SearchResultItem>               mSearchSource;
-        private readonly IObservable<IChangeSet<SearchResultItem>>  mSearchResults;
+		private CancellationTokenSource								mSearchCancellation;
 
-        public IObservableList<SearchResultItem>    SearchResults => mSearchResults.AsObservableList();
+        public IObservable<IChangeSet<SearchResultItem>>			SearchResults { get; }
 
         public LuceneSearchProvider() {
             mSearchSource = new SourceList<SearchResultItem>();
-            mSearchResults = mSearchSource.Connect();
+            SearchResults = mSearchSource.Connect();
         }
 
-        public void Search( eSearchItemType searchType, string queryText ) {
-			if(!mIsInitialized ) {
-				Initialize();
-			}
+		public void StartSearch( eSearchItemType searchType, string queryText ) {
+            if(!mIsInitialized ) {
+                Initialize();
+            }
 
+            mSearchCancellation?.Cancel();
+            mSearchSource.Clear();
+            mSearchCancellation = new CancellationTokenSource();
+
+			Task.Run( () => {
+				Search( searchType, queryText, mSearchCancellation );
+            });
+        }
+
+        private void Search( eSearchItemType searchType, string queryText, CancellationTokenSource cancellation ) {
 			if( mIsInitialized ) {
 				try {
 					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
@@ -47,7 +59,8 @@ namespace Noise.Core.Database.LuceneSearch {
 					var	topDocs = searcher.Search( query, mMaxResults );
 					var hits = topDocs.TotalHits;
 
-					if( hits > 0 ) {
+					if(( hits > 0 ) &&
+					   (!cancellation.IsCancellationRequested )) {
 						foreach( var hit in topDocs.ScoreDocs ) {
 							var document = searcher.Doc( hit.Doc );
 
@@ -83,10 +96,14 @@ namespace Noise.Core.Database.LuceneSearch {
 									track = mTrackProvider.GetTrack( id );
 								}
 
+								if(cancellation.IsCancellationRequested ) {
+									break;
+                                }
+
 								if(( artist != null ) ||
 								   ( album != null ) ||
 								   ( track != null )) {
-									mSearchSource.Add( new SearchResultItem( artist, album, track, itemType ) );
+									mSearchSource.Add( new SearchResultItem( artist, album, track, itemType ));
 								}
 							}
 						}
