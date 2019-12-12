@@ -60,8 +60,8 @@
 				<TextBlock Grid.Column="2" Margin="3" Text="for:" VerticalAlignment="Center"/>
 				<TextBox Grid.Column="3" Margin="3" Text="{Binding Path=SearchText, Mode=TwoWay}" Style="{StaticResource WaterMarkTextBox}"
 						 Behaviours:TextBoxHelper.Watermark="enter phrase to search for..." Behaviours:TextBoxHelper.ClearTextButton="True"/>
-				<Button Grid.Column="4" Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=Search}">Search</Button>
-			</Grid>
+                <Button Grid.Column="4" Margin="3" Style="{StaticResource GeneralButtonStyle}" Content="Search" Command="{Binding Search}"/>
+            </Grid>
 
 		    <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
 		              ItemsSource="{Binding Path=SearchResults}" SelectedItem="{Binding SelectedSearchNode}">
