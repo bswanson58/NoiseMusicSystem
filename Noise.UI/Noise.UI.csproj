@@ -172,9 +172,6 @@
     <Reference Include="ReactiveUI, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ReactiveUI.11.0.1\lib\net461\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI.WPF, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.WPF.11.0.1\lib\net461\ReactiveUI.WPF.dll</HintPath>
-    </Reference>
     <Reference Include="Splat, Version=9.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Splat.9.2.11\lib\net461\Splat.dll</HintPath>
     </Reference>
