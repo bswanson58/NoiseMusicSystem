@@ -99,9 +99,8 @@ namespace Noise.UI.ViewModels {
 
 			var canPlayRandom =
 				SearchResults
-                    .ToObservableChangeSet( x => x )
-                    .ToCollection()
-                    .Select( items => items.Count > 10 );
+                    .WhenAnyValue( x => x.Count )
+                    .Select( itemCount => itemCount > 10 );
 
             PlayRandom = ReactiveCommand.Create( OnPlayRandom, canPlayRandom );
 
