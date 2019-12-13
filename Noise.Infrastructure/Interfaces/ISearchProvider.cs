@@ -30,6 +30,7 @@ namespace Noise.Infrastructure.Interfaces {
         
         IObservable<IChangeSet<SearchResultItem>>	SearchResults { get; }
 		void										StartSearch( eSearchItemType searchType, string queryText );
+		void										ClearSearch();
     }
 
 	public interface ISearchBuilder : IDisposable {

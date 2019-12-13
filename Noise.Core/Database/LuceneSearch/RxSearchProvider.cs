@@ -27,13 +27,18 @@ namespace Noise.Core.Database.LuceneSearch {
                 Initialize();
             }
 
-            mSearchCancellation?.Cancel();
-            mSearchSource.Clear();
+			ClearSearch();
             mSearchCancellation = new CancellationTokenSource();
 
 			Task.Run( () => {
 				Search( searchType, queryText, mSearchCancellation );
             });
+        }
+
+		public void ClearSearch() {
+			mSearchCancellation?.Cancel();
+			mSearchCancellation = null;
+			mSearchSource.Clear();
         }
 
         private void Search( eSearchItemType searchType, string queryText, CancellationTokenSource cancellation ) {

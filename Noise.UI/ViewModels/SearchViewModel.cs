@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Caliburn.Micro;
 using DynamicData;
@@ -23,6 +24,16 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
+	internal class SearchParameters {
+		public	eSearchItemType	ItemType { get; }
+		public	string			QueryText { get; }
+
+		public SearchParameters( string queryText, eSearchItemType itemType ) {
+			ItemType = itemType;
+			QueryText = queryText;
+        }
+    }
+
 	internal class SearchViewModel : ReactiveObject, IDisposable {
 		private readonly int									mMaxPlayItems = 10;
 
@@ -32,16 +43,14 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayCommand							mPlayCommand;
 		private readonly IPlayQueue								mPlayQueue;
 		private SearchType										mCurrentSearchType;
-		private readonly List<SearchType>						mSearchTypes;
 		private readonly List<DbTrack>							mApprovalList; 
         private SearchViewNode                                  mSelectedNode;
 		private string											mSearchText;
-		private IDisposable										mSearchResultsSubscription;
+		private CompositeDisposable								mTrash;
 
-	    public  IEnumerable<SearchType>                         SearchTypes => mSearchTypes;
+	    public  IEnumerable<SearchType>                         SearchTypes { get; }
 		public	ObservableCollectionExtended<SearchViewNode>	SearchResults { get; }
 
-        public	ReactiveCommand<Unit, Unit>						Search { get; }
 		public	ReactiveCommand<Unit, Unit>						PlayRandom { get; }
 
         public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayCommand playCommand, IPlayQueue playQueue ) {
@@ -54,7 +63,7 @@ namespace Noise.UI.ViewModels {
 			mApprovalList = new List<DbTrack>();
 
 			mCurrentSearchType = new SearchType( eSearchItemType.Everything, "Everything" );
-			mSearchTypes = new List<SearchType> { mCurrentSearchType,
+			SearchTypes = new List<SearchType> { mCurrentSearchType,
 												  new SearchType( eSearchItemType.Artist, "Artists" ),
 												  new SearchType( eSearchItemType.Album, "Albums" ),
 												  new SearchType( eSearchItemType.Track, "Tracks" ),
@@ -66,14 +75,37 @@ namespace Noise.UI.ViewModels {
 												  new SearchType( eSearchItemType.TopAlbum, "Top Albums" ) };
 
 			SearchResults = new ObservableCollectionExtended<SearchViewNode>();
-			mSearchResultsSubscription = mSearchProvider.SearchResults
-                .Transform( r => new SearchViewNode( r, OnPlay ))
-                .ObserveOnDispatcher()
-                .Bind( SearchResults )
-                .Subscribe();
+			var searchResultsSubscription = 
+                mSearchProvider.SearchResults
+                    .Transform( r => new SearchViewNode( r, OnPlay ))
+                    .ObserveOnDispatcher()
+                    .Bind( SearchResults )
+                    .Subscribe();
 
-			Search = ReactiveCommand.Create( OnStartSearch );
-			PlayRandom = ReactiveCommand.Create( OnPlayRandom );
+			var clearSearch =
+				this
+                    .WhenAnyValue( x => x.SearchText )
+                    .Where( searchText => String.IsNullOrWhiteSpace( searchText ) || searchText.Length < 3 )
+                    .Do( _ => mSearchProvider.ClearSearch())
+                    .Subscribe();
+
+            var	startSearch =
+				this
+                    .WhenAnyValue( x => x.SearchText, x => x.CurrentSearchType, ( queryText, searchType ) => new SearchParameters( queryText, searchType.ItemType ))
+                    .Where( parameters => !String.IsNullOrWhiteSpace( parameters.QueryText ) && parameters.QueryText.Length > 2 )
+                    .Throttle( TimeSpan.FromSeconds( 0.5 ))
+                    .Do( StartSearch )
+                    .Subscribe();
+
+			var canPlayRandom =
+				SearchResults
+                    .ToObservableChangeSet( x => x )
+                    .ToCollection()
+                    .Select( items => items.Count > 10 );
+
+            PlayRandom = ReactiveCommand.Create( OnPlayRandom, canPlayRandom );
+
+			mTrash = new CompositeDisposable( searchResultsSubscription, clearSearch, startSearch );
 		}
 
 		public SearchType CurrentSearchType {
@@ -86,18 +118,14 @@ namespace Noise.UI.ViewModels {
 			set => this.RaiseAndSetIfChanged( ref mSearchText, value );
 		}
 
-		private void OnStartSearch() {
+		private void StartSearch( SearchParameters parameters ) {
 			mApprovalList.Clear();
 
-            mSearchProvider.StartSearch( CurrentSearchType.ItemType, SearchText );
+            mSearchProvider.StartSearch( parameters.ItemType, parameters.QueryText );
         }
 
 		private void OnPlayRandom() {
-			var playList = new List<DbTrack>();
-
-            playList.AddRange( mTrackSelector.SelectTracks( from searchItem in SearchResults select searchItem.SearchItem, ApproveTrack, mMaxPlayItems ));
-
-            mPlayQueue.Add( playList );
+            mPlayQueue.Add(  mTrackSelector.SelectTracks( from searchItem in SearchResults select searchItem.SearchItem, ApproveTrack, mMaxPlayItems ));
 		}
 
 		private bool ApproveTrack( DbTrack track ) {
@@ -137,8 +165,8 @@ namespace Noise.UI.ViewModels {
 		}
 
         public void Dispose() {
-            mSearchResultsSubscription?.Dispose();
-			mSearchResultsSubscription = null;
+			mTrash?.Dispose();
+			mTrash = null;
         }
     }
 }

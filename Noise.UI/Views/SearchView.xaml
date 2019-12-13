@@ -51,16 +51,14 @@
 					<ColumnDefinition Width="110"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 
 				<TextBlock Grid.Column="0" Margin="3" Text="Search:" VerticalAlignment="Center"/>
 				<ComboBox Grid.Column="1" Style="{StaticResource GeneralComboStyle}"
 						  ItemsSource="{Binding Path=SearchTypes}" SelectedItem="{Binding Path=CurrentSearchType}" DisplayMemberPath="DisplayName" Margin="0,3"/>
 				<TextBlock Grid.Column="2" Margin="3" Text="for:" VerticalAlignment="Center"/>
-				<TextBox Grid.Column="3" Margin="3" Text="{Binding Path=SearchText, Mode=TwoWay}" Style="{StaticResource WaterMarkTextBox}"
+				<TextBox Grid.Column="3" Margin="3" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource WaterMarkTextBox}"
 						 Behaviours:TextBoxHelper.Watermark="enter phrase to search for..." Behaviours:TextBoxHelper.ClearTextButton="True"/>
-                <Button Grid.Column="4" Margin="3" Style="{StaticResource GeneralButtonStyle}" Content="Search" Command="{Binding Search}"/>
             </Grid>
 
 		    <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
