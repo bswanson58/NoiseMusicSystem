@@ -38,22 +38,23 @@
     </UserControl.Resources>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Search ">
-		<Grid>
+		<Grid IsSharedSizeScope="True">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
 					<ColumnDefinition Width="110"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 
-				<TextBlock Grid.Column="0" Margin="3" Text="Search:" VerticalAlignment="Center"/>
+				<TextBlock Grid.Column="0" Margin="3" Text="Search:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 				<ComboBox Grid.Column="1" Style="{StaticResource GeneralComboStyle}"
 						  ItemsSource="{Binding Path=SearchTypes}" SelectedItem="{Binding Path=CurrentSearchType}" DisplayMemberPath="DisplayName" Margin="0,3"/>
 				<TextBlock Grid.Column="2" Margin="3" Text="for:" VerticalAlignment="Center"/>
@@ -61,7 +62,16 @@
 						 Behaviours:TextBoxHelper.Watermark="enter phrase to search for..." Behaviours:TextBoxHelper.ClearTextButton="True"/>
             </Grid>
 
-		    <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
+			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+					<ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Margin="3" HorizontalAlignment="Right" Text="Results:"/>
+            </Grid>
+
+		    <DataGrid Grid.Row="2" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
 		              ItemsSource="{Binding Path=SearchResults}" SelectedItem="{Binding SelectedSearchNode}">
 		        <DataGrid.Columns>
 		            <!-- Play -->
@@ -72,7 +82,7 @@
 		        </DataGrid.Columns>
 		    </DataGrid>
 			
-			<Grid Grid.Row="2" Margin="5,10,0,5">
+			<Grid Grid.Row="3" Margin="5,10,0,5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
