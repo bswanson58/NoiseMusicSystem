@@ -5,6 +5,7 @@ using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Configuration;
 using Noise.Core.Database;
+using Noise.Core.Database.LuceneSearch;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
 using Noise.Core.DataProviders;

@@ -21,7 +21,8 @@
 		<?include NLog.wxi ?>
 		<?include Observal.wxi ?>
 		<?include Prism.wxi ?>
-		<?include RavenDB.wxi ?>
+    <?include RavenDB.wxi ?>
+    <?include ReactiveUI.wxi ?>
 		<?include recls.wxi ?>
 		<?include Refit.wxi ?>
 		<?include ReplayGain.wxi ?>

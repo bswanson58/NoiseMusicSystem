@@ -39,14 +39,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\TuneArchiver\TuneArchiver.csproj">
-      <Name>TuneArchiver</Name>
-      <Project>{a7a76b45-6ece-487f-bab2-83e971ea3214}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\Common Files\Install - Common Files.wixproj">
       <Name>Install - Common Files</Name>
       <Project>{00bd8e1b-b1f1-43d7-bd03-bf74819e2883}</Project>

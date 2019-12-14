@@ -53,6 +53,7 @@
     <Content Include="Observal.wxi" />
     <Content Include="Prism.wxi" />
     <Content Include="RavenDB.wxi" />
+    <Content Include="ReactiveUI.wxi" />
     <Content Include="recls.wxi" />
     <Content Include="ReFit.wxi" />
     <Content Include="ReplayGain.wxi" />

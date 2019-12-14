@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Caliburn.Micro;
+using DynamicData;
+using DynamicData.Binding;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using Noise.UI.Logging;
-using ReusableBits;
+using ReactiveUI;
 
 namespace Noise.UI.ViewModels {
 	public class SearchType {
@@ -21,117 +24,107 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	internal class SearchViewModel : ViewModelBase {
-		private const int										cMaxSearchResults = 100;
-		private const int										cMaxPlayItems = 10;
+	internal class SearchParameters {
+		public	eSearchItemType	ItemType { get; }
+		public	string			QueryText { get; }
+
+		public SearchParameters( string queryText, eSearchItemType itemType ) {
+			ItemType = itemType;
+			QueryText = queryText;
+        }
+    }
+
+	internal class SearchViewModel : ReactiveObject, IDisposable {
+		private readonly int									mMaxPlayItems = 10;
 
 		private readonly IEventAggregator						mEventAggregator;
-		private readonly IUiLog									mLog;
 		private readonly ISearchProvider						mSearchProvider;
 		private readonly IRandomTrackSelector					mTrackSelector;
 		private readonly IPlayCommand							mPlayCommand;
 		private readonly IPlayQueue								mPlayQueue;
 		private SearchType										mCurrentSearchType;
-		private TaskHandler<IEnumerable<SearchResultItem>>		mSearchTask; 
-		private readonly List<SearchType>						mSearchTypes;
-		private readonly List<DbTrack>							mPlayList;
 		private readonly List<DbTrack>							mApprovalList; 
-		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
         private SearchViewNode                                  mSelectedNode;
+		private string											mSearchText;
+		private CompositeDisposable								mTrash;
 
-	    public  ObservableCollectionEx<SearchViewNode>          SearchResults => mSearchResults;
-	    public  IEnumerable<SearchType>                         SearchTypes => mSearchTypes;
+	    public  IEnumerable<SearchType>                         SearchTypes { get; }
+		public	ObservableCollectionExtended<SearchViewNode>	SearchResults { get; }
 
-        public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector,
-								IPlayCommand playCommand, IPlayQueue playQueue, IUiLog log ) {
+		public	ReactiveCommand<Unit, Unit>						PlayRandom { get; }
+
+        public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayCommand playCommand, IPlayQueue playQueue ) {
 			mEventAggregator = eventAggregator;
-			mLog = log;
 			mSearchProvider = searchProvider;
 			mTrackSelector = trackSelector;
 			mPlayCommand = playCommand;
 			mPlayQueue = playQueue;
 
-			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
-			mPlayList = new List<DbTrack>();
 			mApprovalList = new List<DbTrack>();
 
 			mCurrentSearchType = new SearchType( eSearchItemType.Everything, "Everything" );
-			mSearchTypes = new List<SearchType> { mCurrentSearchType,
+			SearchTypes = new List<SearchType> { mCurrentSearchType,
 												  new SearchType( eSearchItemType.Artist, "Artists" ),
 												  new SearchType( eSearchItemType.Album, "Albums" ),
 												  new SearchType( eSearchItemType.Track, "Tracks" ),
 												  new SearchType( eSearchItemType.BandMember, "Band Members" ),
 												  new SearchType( eSearchItemType.Biography, "Biographies" ),
 //												  new SearchType( eSearchItemType.Discography, "Discographies" ),
-												  new SearchType( eSearchItemType.Lyrics, "Lyrics" ),
+//												  new SearchType( eSearchItemType.Lyrics, "Lyrics" ),
 												  new SearchType( eSearchItemType.SimilarArtist, "Similar Artists" ),
 												  new SearchType( eSearchItemType.TopAlbum, "Top Albums" ) };
+
+			SearchResults = new ObservableCollectionExtended<SearchViewNode>();
+			var searchResultsSubscription = 
+                mSearchProvider.SearchResults
+                    .Transform( r => new SearchViewNode( r, OnPlay ))
+                    .ObserveOnDispatcher()
+                    .Bind( SearchResults )
+                    .Subscribe();
+
+			var clearSearch =
+				this
+                    .WhenAnyValue( x => x.SearchText )
+                    .Where( searchText => String.IsNullOrWhiteSpace( searchText ) || searchText.Length < 3 )
+                    .Do( _ => mSearchProvider.ClearSearch())
+                    .Subscribe();
+
+            var	startSearch =
+				this
+                    .WhenAnyValue( x => x.SearchText, x => x.CurrentSearchType, ( queryText, searchType ) => new SearchParameters( queryText, searchType.ItemType ))
+                    .Where( parameters => !String.IsNullOrWhiteSpace( parameters.QueryText ) && parameters.QueryText.Length > 2 )
+                    .Throttle( TimeSpan.FromSeconds( 0.5 ))
+                    .Do( StartSearch )
+                    .Subscribe();
+
+			var canPlayRandom =
+				SearchResults
+                    .WhenAnyValue( x => x.Count )
+                    .Select( itemCount => itemCount > 10 );
+
+            PlayRandom = ReactiveCommand.Create( OnPlayRandom, canPlayRandom );
+
+			mTrash = new CompositeDisposable( searchResultsSubscription, clearSearch, startSearch );
 		}
 
 		public SearchType CurrentSearchType {
-			get => ( mCurrentSearchType );
-		    set{ 
-				mCurrentSearchType = value;
-				RaisePropertyChanged( () => CurrentSearchType );
-			}
+			get => mCurrentSearchType;
+		    set => this.RaiseAndSetIfChanged( ref mCurrentSearchType, value );
 		}
 
 	    public string SearchText {
-			get{ return( Get( () => SearchText )); }
-			set{ Set( () => SearchText, value  ); }
+			get => mSearchText;
+			set => this.RaiseAndSetIfChanged( ref mSearchText, value );
 		}
 
-		public void Execute_Search() {
-			BuildSearchList();
-		}
-
-		public void Execute_PlayRandom() {
-			mPlayQueue.Add( mPlayList );
-
-			UpdatePlayList();
-		}
-
-		public bool CanExecute_PlayRandom() {
-			return( mPlayList.Count > 0 );
-		}
-
-		protected TaskHandler<IEnumerable<SearchResultItem>> SearchTask {
-			get {
-				if( mSearchTask == null ) {
-					Execute.OnUIThread( () => mSearchTask = new TaskHandler<IEnumerable<SearchResultItem>>());
-				}
-
-				return( mSearchTask );
-			}
-			set => mSearchTask = value;
-		} 
-
-		private void BuildSearchList() {
-			SearchTask.StartTask( () => mSearchProvider.Search( CurrentSearchType.ItemType, SearchText, cMaxSearchResults ),
-								  UpdateSearchList,
-								  error => mLog.LogException( $"Building Search List for \"{SearchText}\"", error ));
-		}
-
-		private void UpdateSearchList( IEnumerable<SearchResultItem> searchList ) {
-			mSearchResults.Clear();
+		private void StartSearch( SearchParameters parameters ) {
 			mApprovalList.Clear();
 
-			if( searchList != null ) {
-				var searchResultItems = searchList.ToList();
+            mSearchProvider.StartSearch( parameters.ItemType, parameters.QueryText );
+        }
 
-				mSearchResults.SuspendNotification();
-				mSearchResults.AddRange( from searchItem in searchResultItems select new SearchViewNode( searchItem, OnPlay ));
-				mSearchResults.ResumeNotification();
-			}
-
-			UpdatePlayList();
-		}
-
-		private void UpdatePlayList() {
-			mPlayList.Clear();
-			mPlayList.AddRange( mTrackSelector.SelectTracks( from searchItem in mSearchResults select searchItem.SearchItem, ApproveTrack, cMaxPlayItems ));
-
-			RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
+		private void OnPlayRandom() {
+            mPlayQueue.Add(  mTrackSelector.SelectTracks( from searchItem in SearchResults select searchItem.SearchItem, ApproveTrack, mMaxPlayItems ));
 		}
 
 		private bool ApproveTrack( DbTrack track ) {
@@ -169,5 +162,10 @@ namespace Noise.UI.ViewModels {
 				mPlayCommand.Play( node.Album );
 			}
 		}
-	}
+
+        public void Dispose() {
+			mTrash?.Dispose();
+			mTrash = null;
+        }
+    }
 }
