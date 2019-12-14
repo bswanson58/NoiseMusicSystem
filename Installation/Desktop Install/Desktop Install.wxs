@@ -166,7 +166,8 @@
 				<ComponentGroupRef Id="ObservalFiles"/>
 				<ComponentGroupRef Id="PrismFiles"/>
 				<ComponentGroupRef Id="RavenDBFiles"/>
-				<ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="ReactiveUIFiles"/>
+        <ComponentGroupRef Id="ReclsFiles"/>
 				<ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="ReplayGainFiles"/>
 				<ComponentGroupRef Id="SeriLogFiles"/>

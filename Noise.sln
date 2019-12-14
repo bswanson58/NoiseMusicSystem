@@ -61,8 +61,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Librarian", "Noise.Li
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Install - TuneArchiver", "Installation\Install - TuneArchiver\Install - TuneArchiver.wixproj", "{72086B9D-1639-4CD1-A07F-C2596CBBE484}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuneArchiver", "TuneArchiver\TuneArchiver.csproj", "{A7A76B45-6ECE-487F-BAB2-83E971EA3214}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -707,30 +705,6 @@ Global
 		{72086B9D-1639-4CD1-A07F-C2596CBBE484}.Release|x64.Build.0 = Release|x64
 		{72086B9D-1639-4CD1-A07F-C2596CBBE484}.Release|x86.ActiveCfg = Release|x86
 		{72086B9D-1639-4CD1-A07F-C2596CBBE484}.Release|x86.Build.0 = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|x64.ActiveCfg = Debug|x64
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|x64.Build.0 = Debug|x64
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|x86.ActiveCfg = Debug|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Debug|x86.Build.0 = Debug|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|Mixed Platforms.ActiveCfg = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|Mixed Platforms.Build.0 = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|x64.ActiveCfg = Release|x64
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|x64.Build.0 = Release|x64
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|x86.ActiveCfg = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Installers - Release|x86.Build.0 = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|Mixed Platforms.Build.0 = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|x64.ActiveCfg = Release|x64
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|x64.Build.0 = Release|x64
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|x86.ActiveCfg = Release|x86
-		{A7A76B45-6ECE-487F-BAB2-83E971EA3214}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

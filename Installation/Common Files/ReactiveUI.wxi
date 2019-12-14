@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="DynamicData.dll" Guid="75EECC76-1E17-49CD-A6A8-B1F792817AA4">
+      <File Id="DynamicData.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)DynamicData.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="ReactiveUI.dll" Guid="2ADDA10D-BD38-4ECE-8F1D-B67A7A867C3C">
+      <File Id="ReactiveUI.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ReactiveUI.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="ReactiveUI.WPF.dll" Guid="3CC2CE3C-7399-49E2-BBD3-D2D46B0D375D">
+      <File Id="ReactiveUI.WPF.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ReactiveUI.WPF.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Splat.dll" Guid="0D1D7CF6-B450-41F0-AFF9-E465B8CCE9B9">
+      <File Id="Splat.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Splat.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Splat.Drawing.dll" Guid="B3321D1A-429C-4DC8-B956-8BF51505F537">
+      <File Id="Splat.Drawing.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Splat.Drawing.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="ReactiveUIFiles">
+    <ComponentRef Id="ReactiveUI.dll" />
+    <ComponentRef Id="ReactiveUI.WPF.dll" />
+    <ComponentRef Id="Splat.dll"/>
+    <ComponentRef Id="Splat.Drawing.dll"/>
+    <ComponentRef Id="DynamicData.dll" />
+  </ComponentGroup>
+</Include>
