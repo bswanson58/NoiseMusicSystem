@@ -23,8 +23,18 @@ namespace TuneRenamer.Models {
 
         public IEnumerable<string> GetCommonSubstring( string text,int returnCount ) {
             var strings = Lines( text ).ToArray();
+            var names = new List<string>();
 
-            return strings.GetLongestCommonSubstring( returnCount );
+            // ignore the extension
+            foreach( var line in strings ) {
+                var name = line;
+
+                DetermineExtension( ref name );
+
+                names.Add( name );
+            }
+
+            return names.ToArray().GetLongestCommonSubstring( returnCount );
         }
 
         public IEnumerable<string> Lines( string text ) {
