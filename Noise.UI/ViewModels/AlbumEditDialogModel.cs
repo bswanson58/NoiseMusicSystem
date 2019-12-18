@@ -11,9 +11,10 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class UiEditChild { }
+	public class UiEditChild : AutomaticCommandBase { }
 
     public class UiTrackEdit : UiEditChild {
 		public  DbTrack				Track { get; }
@@ -31,15 +32,21 @@ namespace Noise.UI.ViewModels {
 
     public class UiVolumeEdit : UiEditChild {
 		private readonly string						mVolumeName;
+		private readonly Action<UiVolumeEdit>		mDeleteVolume;
 
 		public	ObservableCollection<UiTrackEdit>	Tracks { get; }
 		public	string								Name { get; set; }
 
-		public UiVolumeEdit( string volumeName, IEnumerable<UiTrackEdit> tracks ) {
+		public UiVolumeEdit( string volumeName, IEnumerable<UiTrackEdit> tracks, Action<UiVolumeEdit> deleteVolume ) {
 			Tracks = new ObservableCollection<UiTrackEdit>( tracks );
+			mDeleteVolume = deleteVolume;
 
 			mVolumeName = volumeName;
 			Name = volumeName;
+        }
+
+		public void Execute_DeleteVolume() {
+			mDeleteVolume?.Invoke( this );
         }
     }
 
@@ -59,16 +66,17 @@ namespace Noise.UI.ViewModels {
     }
 
 	public class AlbumEditDialogModel : DialogModelBase {
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private readonly IUiLog				mLog;
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly List<DbTrack>		mTrackList;
-		private TaskHandler					mDatabaseTaskHandler;
+		private readonly IAlbumProvider					mAlbumProvider;
+		private readonly ITrackProvider					mTrackProvider;
+		private readonly IUiLog							mLog;
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly List<DbTrack>					mTrackList;
+		private readonly Dictionary<string, List<DbTrack>>	mVolumeAssociations;
+		private TaskHandler								mDatabaseTaskHandler;
 
-        public  DbAlbum								Album { get; private set; }
-		public	ObservableCollection<UiEditChild>	EditList { get; }
-        public	string								PublishedDate => Album.PublishedYear.ToString();
+        public  DbAlbum									Album { get; private set; }
+		public	ObservableCollection<UiEditChild>		EditList { get; }
+        public	string									PublishedDate => Album.PublishedYear.ToString();
 
 		public AlbumEditDialogModel( IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log, IEventAggregator eventAggregator, long albumId ) {
 			mAlbumProvider = albumProvider;
@@ -77,6 +85,7 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator = eventAggregator;
 
 			mTrackList = new List<DbTrack>();
+			mVolumeAssociations = new Dictionary<string, List<DbTrack>>();
 			EditList = new ObservableCollection<UiEditChild>();
 
 			LoadData( albumId );
@@ -106,8 +115,22 @@ namespace Noise.UI.ViewModels {
                         }
 				    }
                 }, 
-                BuildUiList, 
+                () => {
+					BuildVolumeList();
+                    BuildUiList();
+                }, 
                 ex => mLog.LogException( "AlbumEditDialog:LoadData", ex ));
+        }
+
+		private void BuildVolumeList() {
+			foreach( var track in mTrackList ) {
+				if( mVolumeAssociations.ContainsKey( track.VolumeName )) {
+					mVolumeAssociations[track.VolumeName].Add( track );
+				}
+				else {
+					mVolumeAssociations.Add( track.VolumeName, new List<DbTrack>{ track });
+                }
+			}
         }
 
 		private void BuildUiList() {
@@ -116,17 +139,34 @@ namespace Noise.UI.ViewModels {
 			if(( Album != null ) &&
                ( mTrackList.Any())) {
 			    var album = new UiAlbumEdit( Album );
-				var volumeList = mTrackList.Select( t => t.VolumeName ).Where( v => !String.IsNullOrWhiteSpace( v )).Distinct().OrderBy( v => v );
 
-				volumeList.ForEach( v => {
-					album.Children.Add( new UiVolumeEdit( v, from t in mTrackList where t.VolumeName.Equals( v ) orderby t.TrackNumber select new UiTrackEdit( t )));
+				mVolumeAssociations.ForEach( volume => {
+					if( String.IsNullOrWhiteSpace( volume.Key )) {
+						album.Children.AddRange( from t in volume.Value orderby t.TrackNumber select new UiTrackEdit( t ));
+                    }
+					else {
+                        album.Children.Add( new UiVolumeEdit( volume.Key, from t in volume.Value orderby t.TrackNumber select new UiTrackEdit( t ), OnDeleteVolume ));
+                    }
                 });
-
-				album.Children.AddRange( from t in mTrackList where t.VolumeName.Equals( String.Empty ) orderby t.TrackNumber select new UiTrackEdit( t ));
 
 				EditList.Add( album );
 			}
         }
+
+		private void OnDeleteVolume( UiVolumeEdit volume ) {
+			if( mVolumeAssociations.ContainsKey( volume.Name )) {
+				if(!mVolumeAssociations.ContainsKey( String.Empty )) {
+					mVolumeAssociations.Add( String.Empty, new List<DbTrack>());
+				}
+
+				var albumTracks = mVolumeAssociations[String.Empty];
+
+                albumTracks?.AddRange( mVolumeAssociations[volume.Name]);
+				mVolumeAssociations.Remove( volume.Name );
+            }
+
+			BuildUiList();
+		}
 
 		public bool UpdateData() {
 			var retValue = false;
@@ -136,11 +176,11 @@ namespace Noise.UI.ViewModels {
 
 				foreach( var v in volumes ) {
 					if( v is UiVolumeEdit volume ) {
-						UpdateTracks( volume.Tracks );
+						UpdateTracks( volume.Tracks, volume.Name );
 					}
                 }
 
-				UpdateTracks( from c in album.Children where c is UiTrackEdit select c as UiTrackEdit );
+				UpdateTracks( from c in album.Children where c is UiTrackEdit select c as UiTrackEdit, String.Empty );
 
                 retValue |= UpdateAlbum( album );
             }
@@ -165,11 +205,12 @@ namespace Noise.UI.ViewModels {
 			return retValue;
         }
 
-		private void UpdateTracks( IEnumerable<UiTrackEdit> tracks ) {
+		private void UpdateTracks( IEnumerable<UiTrackEdit> tracks, string volumeName ) {
 			tracks.ForEach( track => {
 				if( track.WasEdited ) {
                     using( var updater = mTrackProvider.GetTrackForUpdate( track.Track.DbId )) {
                         updater.Item.Name = track.Name;
+						updater.Item.VolumeName = volumeName;
 
 						updater.UpdateTrackAndAlbum();
                     }
