@@ -249,7 +249,7 @@ namespace Noise.UI.ViewModels {
 			set => mAlbumRetrievalTaskHandler = value;
         }
 
-		private CancellationToken GenerateCanellationToken() {
+		private CancellationToken GenerateCancelationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
 
 			return( mCancellationTokenSource.Token );
@@ -265,7 +265,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveAlbum( long albumId ) {
 			CancelRetrievalTask();
 
-			var cancellationToken = GenerateCanellationToken();
+			var cancellationToken = GenerateCancelationToken();
 
 			AlbumRetrievalTaskHandler.StartTask( () => {
 					if(!cancellationToken.IsCancellationRequested ) {
@@ -409,9 +409,9 @@ namespace Noise.UI.ViewModels {
 		public IInteractionRequest AlbumEditRequest => ( mAlbumEditRequest );
 
         public void Execute_EditAlbum() {
-			if( CanExecute_EditAlbum()) {
-				var album = new UiAlbum { DbId = mCurrentAlbum.DbId,  Name = mCurrentAlbum.Name, PublishedYear = mCurrentAlbum.PublishedYear };
-				var dialogModel = new AlbumEditDialogModel( album );
+			if(( CanExecute_EditAlbum()) &&
+			   ( mCurrentAlbum != null )) {
+				var dialogModel = new AlbumEditDialogModel( mAlbumProvider, mTrackProvider, mLog, mEventAggregator, mCurrentAlbum.DbId );
 
 				mAlbumEditRequest.Raise( new AlbumEditRequest( dialogModel ), OnAlbumEdited );
 			}
@@ -419,25 +419,16 @@ namespace Noise.UI.ViewModels {
 
 		private void OnAlbumEdited( AlbumEditRequest confirmation ) {
 			if( confirmation.Confirmed ) {
-				using( var updater = mAlbumProvider.GetAlbumForUpdate( confirmation.ViewModel.Album.DbId )) {
-					if(( updater != null ) &&
-					   ( updater.Item != null )) {
-						updater.Item.Name = confirmation.ViewModel.Album.Name;
-						updater.Item.PublishedYear = confirmation.ViewModel.Album.PublishedYear;
+				try {
+                    if( confirmation.ViewModel.UpdateData()) {
+                        ClearCurrentAlbum();
 
-						updater.Update();
-
-						if( confirmation.ViewModel.UpdateFileTags ) {
-							GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( updater.Item ) { PublishedYear = updater.Item.PublishedYear });
-						}
-					}
-				}
-
-				if(( mCurrentAlbum != null ) &&
-				   ( mCurrentAlbum.DbId == confirmation.ViewModel.Album.DbId )) {
-					mCurrentAlbum.Name = confirmation.ViewModel.Album.Name;
-					mCurrentAlbum.PublishedYear = confirmation.ViewModel.Album.PublishedYear;
-				}
+                        RetrieveAlbum( confirmation.ViewModel.Album.DbId );
+                    }
+                }
+				catch( Exception ex ) {
+					mLog.LogException( "AlbumViewModel:EditAlbum", ex );
+                }
 			}
 		}
 

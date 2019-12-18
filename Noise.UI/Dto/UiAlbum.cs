@@ -28,7 +28,12 @@ namespace Noise.UI.Dto {
 
 		public string Name {
 			get{ return( Get( () => Name )); }
-			set{ Set( () => Name, value ); }
+			set {
+                Set( () => Name, value ); 
+
+				mDisplayName = CreateDisplayName( Name );
+				RaisePropertyChanged( () => DisplayName );
+            }
 		}
 
 	    public string DisplayName {

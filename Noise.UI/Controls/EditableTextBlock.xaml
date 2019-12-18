@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Noise.UI.Controls.EditableTextBlock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             Name="_root"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="80">
+    <Grid>
+        <Grid>
+            <TextBlock Name="_textBlock" Margin="6,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding ElementName=_root, Path=Text}" VerticalAlignment="Center" MouseDown="TextBlock_MouseDown" />
+            <TextBox Name="_textBox" VerticalAlignment="Center" FontSize="14" Text="{Binding ElementName=_root, Path=Text, UpdateSourceTrigger=PropertyChanged}" Visibility="Collapsed" 
+                     LostFocus="TextBox_LostFocus" KeyDown ="TextBox_KeyDown"/>
+        </Grid>
+    </Grid>
+</UserControl>

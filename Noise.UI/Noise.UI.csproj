@@ -259,6 +259,9 @@
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />
     <Compile Include="Behaviours\TextBoxHelper.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
+    <Compile Include="Controls\EditableTextBlock.xaml.cs">
+      <DependentUpon>EditableTextBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HorizontalVuMeter.xaml.cs">
       <DependentUpon>HorizontalVuMeter.xaml</DependentUpon>
     </Compile>
@@ -398,6 +401,7 @@
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AlbumEditTemplateSelector.cs" />
     <Compile Include="Views\AlbumInfoView.xaml.cs">
       <DependentUpon>AlbumInfoView.xaml</DependentUpon>
     </Compile>
@@ -601,6 +605,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\EditableTextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\HorizontalVuMeter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
