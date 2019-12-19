@@ -28,7 +28,7 @@ namespace Noise.UI.ViewModels {
     }
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
-										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged> {
+										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged>, IHandle<Events.AlbumStructureChanged> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
@@ -84,6 +84,15 @@ namespace Noise.UI.ViewModels {
 
 	    public void Handle( Events.UserTagsChanged message ) {
             mTracks.ForEach( SetTrackTags );
+        }
+
+		public void Handle( Events.AlbumStructureChanged message ) {
+			if( mCurrentAlbumId == message.AlbumId ) {
+                ClearTrackList();
+
+				mCurrentAlbumId = message.AlbumId;
+                RetrieveTracks( mCurrentAlbumId );
+            }
         }
 
 		private void OnAlbumChanged( DbAlbum album ) {

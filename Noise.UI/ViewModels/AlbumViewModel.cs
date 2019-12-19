@@ -424,6 +424,7 @@ namespace Noise.UI.ViewModels {
                         ClearCurrentAlbum();
 
                         RetrieveAlbum( confirmation.ViewModel.Album.DbId );
+						mEventAggregator.PublishOnUIThread( new Events.AlbumStructureChanged( confirmation.ViewModel.Album.DbId ));
                     }
                 }
 				catch( Exception ex ) {

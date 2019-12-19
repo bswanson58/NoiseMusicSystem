@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
@@ -105,6 +106,14 @@ namespace Noise.Infrastructure {
 				AlbumId = albumId;
 			}
 		}
+
+		public class AlbumStructureChanged {
+            public	long	AlbumId { get; private set; }
+
+            public AlbumStructureChanged( long albumId ) {
+                AlbumId = albumId;
+            }
+        }
 
 		public class AlbumRemoved {
 			public	long	AlbumId { get; private set; }
