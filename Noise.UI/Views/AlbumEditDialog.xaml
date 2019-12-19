@@ -6,6 +6,7 @@
              xmlns:ViewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:Controls="clr-namespace:Noise.UI.Controls"
              xmlns:Views="clr-namespace:Noise.UI.Views"
+             xmlns:Drag="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
              Width="750"
              Height="600"
              d:DesignHeight="300"
@@ -64,15 +65,23 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Album/Contents:"/>
+        <TextBlock Grid.Row="0" VerticalAlignment="Bottom" Style="{StaticResource ControlTitleStyle}" Text="Album Structure:"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Published/Event Date:"/>
+            <TextBox Margin="3,0,0,3" Width="150" Text="{Binding PublishedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
 
-        <TreeView Grid.Row="1" ItemsSource="{Binding EditList}" ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ItemTemplateSelector="{StaticResource EditTemplateSelector}" />
+        <TreeView Grid.Row="1" ItemsSource="{Binding EditList}" ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ItemTemplateSelector="{StaticResource EditTemplateSelector}"
+                  Drag:DragDrop.IsDragSource="true" Drag:DragDrop.IsDropTarget="True" Drag:DragDrop.DropHandler="{Binding}" />
 
-        <TextBlock Grid.Row="2" Margin="0,5" Style="{StaticResource ControlTitleStyle}" Text="Click names in list above to edit them."/>
-
-        <StackPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal">
-            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Published/Event Date:"/>
-            <TextBlock Margin="3,0" Width="150" Text="{Binding PublishedDate}"/>
+        <StackPanel Grid.Row="2" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Click names in list above to edit them."/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Drag tracks to volume/album headers to reassign."/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="0,5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="New Volume:" Margin="0,0,3,0"/>
+            <TextBox Width="150" VerticalAlignment="Center" Text="{Binding NewVolumeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Create" Command="{Binding CreateVolume}"/>
         </StackPanel>
     </Grid>
 </UserControl>

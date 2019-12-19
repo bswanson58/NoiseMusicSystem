@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using Caliburn.Micro;
+using GongSolutions.Wpf.DragDrop;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
@@ -16,10 +19,11 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class UiEditChild : AutomaticCommandBase { }
 
+    [DebuggerDisplay("Track = {" + nameof( Name ) + "}")]
     public class UiTrackEdit : UiEditChild {
 		public  DbTrack				Track { get; }
 
-		public	string				Name {  get; set; }
+		public	string				Name { get; set; }
 		public	string				TrackIndex => $"{Track.TrackNumber:D2} -";
 		public	bool				WasEdited => !Track.Name.Equals( Name );
 
@@ -30,19 +34,37 @@ namespace Noise.UI.ViewModels {
         }
     }
 
-    public class UiVolumeEdit : UiEditChild {
-		private readonly string						mVolumeName;
+	public class UiVolumeBase : UiEditChild {
+		public	string				VolumeKey {  get; }
+
+		protected UiVolumeBase( string volumeKey ) {
+			VolumeKey = volumeKey;
+        }
+	}
+
+    [DebuggerDisplay("Volume = {" + nameof( Name ) + "}")]
+    public class UiVolumeEdit : UiVolumeBase {
 		private readonly Action<UiVolumeEdit>		mDeleteVolume;
+		private readonly Action<UiVolumeEdit>		mChangeVolumeName;
+		private string								mVolumeName;
 
 		public	ObservableCollection<UiTrackEdit>	Tracks { get; }
-		public	string								Name { get; set; }
 
-		public UiVolumeEdit( string volumeName, IEnumerable<UiTrackEdit> tracks, Action<UiVolumeEdit> deleteVolume ) {
+		public UiVolumeEdit( string key, string volumeName, IEnumerable<UiTrackEdit> tracks, Action<UiVolumeEdit> deleteVolume, Action<UiVolumeEdit> changeVolumeName ) :
+            base( key ) {
 			Tracks = new ObservableCollection<UiTrackEdit>( tracks );
 			mDeleteVolume = deleteVolume;
-
+			mChangeVolumeName = changeVolumeName;
 			mVolumeName = volumeName;
-			Name = volumeName;
+        }
+
+        public string Name {
+			get => mVolumeName;
+			set {
+				mVolumeName = value;
+
+				mChangeVolumeName?.Invoke( this );
+            }
         }
 
 		public void Execute_DeleteVolume() {
@@ -50,14 +72,16 @@ namespace Noise.UI.ViewModels {
         }
     }
 
-	public class UiAlbumEdit : UiEditChild {
+    [DebuggerDisplay("Album = {" + nameof( Name ) + "}")]
+	public class UiAlbumEdit : UiVolumeBase {
 		public	DbAlbum								Album { get; }
 
 		public	ObservableCollection<UiEditChild>	Children { get; }
 		public	string								Name { get; set; }
 		public	bool								WasEdited => !Album.Name.Equals( Name );
 
-		public UiAlbumEdit( DbAlbum album ) {
+		public UiAlbumEdit( DbAlbum album ) :
+			base( String.Empty) {
 			Album = album;
 
 			Name = Album.Name;
@@ -65,18 +89,35 @@ namespace Noise.UI.ViewModels {
 		}
     }
 
-	public class AlbumEditDialogModel : DialogModelBase {
+	internal class VolumeInfo {
+		public	string			VolumeName { get; set; }
+		public	List<DbTrack>	Tracks { get; }
+
+		public VolumeInfo( string volumeName ) {
+			Tracks = new List<DbTrack>();
+
+			VolumeName = volumeName;
+		}
+
+		public VolumeInfo( string volumeName, DbTrack track ) :
+			this( volumeName ) {
+			Tracks.Add( track );
+        }
+    }
+
+	public class AlbumEditDialogModel : DialogModelBase, IDropTarget {
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly IUiLog							mLog;
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly List<DbTrack>					mTrackList;
-		private readonly Dictionary<string, List<DbTrack>>	mVolumeAssociations;
+		private readonly Dictionary<string, VolumeInfo>	mVolumeAssociations;
 		private TaskHandler								mDatabaseTaskHandler;
+		private string									mNewVolumeName;
 
         public  DbAlbum									Album { get; private set; }
 		public	ObservableCollection<UiEditChild>		EditList { get; }
-        public	string									PublishedDate => Album.PublishedYear.ToString();
+        public	string									PublishedDate { get; set; }
 
 		public AlbumEditDialogModel( IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log, IEventAggregator eventAggregator, long albumId ) {
 			mAlbumProvider = albumProvider;
@@ -85,8 +126,9 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator = eventAggregator;
 
 			mTrackList = new List<DbTrack>();
-			mVolumeAssociations = new Dictionary<string, List<DbTrack>>();
+			mVolumeAssociations = new Dictionary<string, VolumeInfo>();
 			EditList = new ObservableCollection<UiEditChild>();
+			mNewVolumeName = String.Empty;
 
 			LoadData( albumId );
 		}
@@ -101,6 +143,16 @@ namespace Noise.UI.ViewModels {
             }
 
             set => mDatabaseTaskHandler = value;
+        }
+
+        public string NewVolumeName {
+			get => mNewVolumeName;
+			set {
+				mNewVolumeName = value;
+
+				RaisePropertyChanged( () => NewVolumeName );
+				RaiseCanExecuteChangedEvent( "CanExecute_CreateVolume" );
+            }
         }
 
         private void LoadData( long albumId ) {
@@ -118,6 +170,9 @@ namespace Noise.UI.ViewModels {
                 () => {
 					BuildVolumeList();
                     BuildUiList();
+
+					PublishedDate = Album.PublishedYear.ToString();
+					RaisePropertyChanged( () => PublishedDate );
                 }, 
                 ex => mLog.LogException( "AlbumEditDialog:LoadData", ex ));
         }
@@ -125,12 +180,16 @@ namespace Noise.UI.ViewModels {
 		private void BuildVolumeList() {
 			foreach( var track in mTrackList ) {
 				if( mVolumeAssociations.ContainsKey( track.VolumeName )) {
-					mVolumeAssociations[track.VolumeName].Add( track );
+					mVolumeAssociations[track.VolumeName].Tracks.Add( track );
 				}
 				else {
-					mVolumeAssociations.Add( track.VolumeName, new List<DbTrack>{ track });
+					mVolumeAssociations.Add( track.VolumeName, new VolumeInfo( track.VolumeName, track ));
                 }
 			}
+
+			if(!mVolumeAssociations.ContainsKey( String.Empty )) {
+				mVolumeAssociations.Add( String.Empty, new VolumeInfo( String.Empty ));
+            }
         }
 
 		private void BuildUiList() {
@@ -139,29 +198,35 @@ namespace Noise.UI.ViewModels {
 			if(( Album != null ) &&
                ( mTrackList.Any())) {
 			    var album = new UiAlbumEdit( Album );
+                var volumeList = new List<UiVolumeEdit>();
 
 				mVolumeAssociations.ForEach( volume => {
 					if( String.IsNullOrWhiteSpace( volume.Key )) {
-						album.Children.AddRange( from t in volume.Value orderby t.TrackNumber select new UiTrackEdit( t ));
+						album.Children.AddRange( from t in volume.Value.Tracks orderby t.TrackNumber select new UiTrackEdit( t ));
                     }
 					else {
-                        album.Children.Add( new UiVolumeEdit( volume.Key, from t in volume.Value orderby t.TrackNumber select new UiTrackEdit( t ), OnDeleteVolume ));
+                        volumeList.Add( new UiVolumeEdit( volume.Key, volume.Value.VolumeName,
+                                                          from t in volume.Value.Tracks orderby t.TrackNumber select new UiTrackEdit( t ), 
+                                                          OnDeleteVolume, OnChangeVolumeName ));
                     }
                 });
 
+				album.Children.AddRange( from v in volumeList orderby v.Name select v );
 				EditList.Add( album );
 			}
         }
 
+		private void OnChangeVolumeName( UiVolumeEdit volume ) {
+			if( mVolumeAssociations.ContainsKey( volume.VolumeKey )) {
+				mVolumeAssociations[volume.VolumeKey].VolumeName = volume.Name;
+            }
+        }
+
 		private void OnDeleteVolume( UiVolumeEdit volume ) {
 			if( mVolumeAssociations.ContainsKey( volume.Name )) {
-				if(!mVolumeAssociations.ContainsKey( String.Empty )) {
-					mVolumeAssociations.Add( String.Empty, new List<DbTrack>());
-				}
+				var albumTracks = mVolumeAssociations[String.Empty].Tracks;
 
-				var albumTracks = mVolumeAssociations[String.Empty];
-
-                albumTracks?.AddRange( mVolumeAssociations[volume.Name]);
+                albumTracks?.AddRange( mVolumeAssociations[volume.Name].Tracks );
 				mVolumeAssociations.Remove( volume.Name );
             }
 
@@ -176,11 +241,11 @@ namespace Noise.UI.ViewModels {
 
 				foreach( var v in volumes ) {
 					if( v is UiVolumeEdit volume ) {
-						UpdateTracks( volume.Tracks, volume.Name );
+						retValue |= UpdateTracks( volume.Tracks, volume.Name );
 					}
                 }
 
-				UpdateTracks( from c in album.Children where c is UiTrackEdit select c as UiTrackEdit, String.Empty );
+				retValue |= UpdateTracks( from c in album.Children where c is UiTrackEdit select c as UiTrackEdit, String.Empty );
 
                 retValue |= UpdateAlbum( album );
             }
@@ -205,19 +270,81 @@ namespace Noise.UI.ViewModels {
 			return retValue;
         }
 
-		private void UpdateTracks( IEnumerable<UiTrackEdit> tracks, string volumeName ) {
+		private bool UpdateTracks( IEnumerable<UiTrackEdit> tracks, string volumeName ) {
+			var retValue = false;
+
 			tracks.ForEach( track => {
-				if( track.WasEdited ) {
+				if(( track.WasEdited ) ||
+				   (!track.Track.VolumeName.Equals( volumeName ))) {
                     using( var updater = mTrackProvider.GetTrackForUpdate( track.Track.DbId )) {
                         updater.Item.Name = track.Name;
 						updater.Item.VolumeName = volumeName;
 
-						updater.UpdateTrackAndAlbum();
+						updater.Update();
+
+						retValue = true;
                     }
 
                     mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( mTrackProvider.GetTrack( track.Track.DbId )));
                 }
             });
+
+			return retValue;
         }
-	}
+
+		public void Execute_CreateVolume() {
+			if((!String.IsNullOrWhiteSpace( NewVolumeName )) &&
+               (!mVolumeAssociations.ContainsKey( NewVolumeName ))) {
+				mVolumeAssociations.Add( NewVolumeName, new VolumeInfo( NewVolumeName ));
+
+				BuildUiList();
+				RaiseCanExecuteChangedEvent( "CanExecute_CreateVolume" );
+			}
+        }
+
+		public bool CanExecute_CreateVolume() {
+			return !String.IsNullOrWhiteSpace( NewVolumeName ) && !mVolumeAssociations.ContainsKey( NewVolumeName );
+        }
+
+        public void DragOver( DropInfo dropInfo ) {
+			if(( dropInfo.Data is UiTrackEdit ) &&
+			   ( dropInfo.TargetItem is UiVolumeEdit || dropInfo.TargetItem is UiAlbumEdit )) {
+                dropInfo.Effects = DragDropEffects.Move;
+            }
+        }
+
+        public void Drop( DropInfo dropInfo ) {
+			if(( dropInfo.Data is UiTrackEdit track ) &&
+			   ( dropInfo.TargetItem is UiVolumeBase volume )) {
+                var sourceKey = FindVolumeOfTrack( track );
+				var dbTrack = mVolumeAssociations[sourceKey].Tracks.FirstOrDefault( t => t.DbId.Equals( track.Track.DbId ));
+
+				if( dbTrack != null ) {
+					mVolumeAssociations[sourceKey].Tracks.Remove( dbTrack );
+                }
+
+				if( mVolumeAssociations.ContainsKey( volume.VolumeKey )) {
+					mVolumeAssociations[volume.VolumeKey].Tracks.Add( dbTrack );
+                }
+
+				BuildUiList();
+            }
+        }
+
+		private string FindVolumeOfTrack( UiTrackEdit track ) {
+			var retValue = string.Empty;
+
+			if( track != null ) {
+                foreach( var key in mVolumeAssociations ) {
+                    if( key.Value.Tracks.FirstOrDefault( i => i.DbId == track.Track.DbId) != null ) {
+                        retValue = key.Key;
+
+                        break;
+                    }
+                }
+			}
+
+			return retValue;
+        }
+    }
 }
