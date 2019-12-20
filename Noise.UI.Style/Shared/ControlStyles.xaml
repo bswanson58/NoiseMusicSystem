@@ -128,6 +128,10 @@
 		<Setter Property="FontSize" Value="14"></Setter>
 	</Style>
 
+    <Style x:Key="ListViewSubTextStyle" TargetType="TextBlock" BasedOn="{StaticResource ListViewTextStyle}">
+        <Setter Property="FontSize" Value="13"></Setter>
+    </Style>
+
     <Style x:Key="ListViewItemStretch" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>

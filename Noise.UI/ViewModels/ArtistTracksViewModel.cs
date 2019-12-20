@@ -168,7 +168,7 @@ namespace Noise.UI.ViewModels {
 
             if(( node is UiArtistTrackNode trackNode ) &&
                (!string.IsNullOrWhiteSpace( FilterText ))) {
-                if( trackNode.Track.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+                if( trackNode.TrackName.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
                     retValue = false;
                 }
             }
@@ -208,20 +208,17 @@ namespace Noise.UI.ViewModels {
 			using( var trackList = mTrackProvider.GetTrackList( forArtist )) {
 				foreach( var track in trackList.List ) {
 					if(!cancellationToken.IsCancellationRequested ) {
-						var item = new UiArtistTrackNode( TransformTrack( track ),
-														  TransformAlbum( albumList[track.Album]));
+						var uiTrack = TransformTrack( track );
+						var dbAlbum = albumList[track.Album];
+						var key = track.Name.ToLower();
 
-                        trackSet.TryGetValue( item.Track.Name.ToLower(), out var parent );
+                        trackSet.TryGetValue( key, out var existing );
 
-						if( parent != null ) {
-							if(!parent.Children.Any()) {
-								parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
-							}
-							parent.Children.Add( item );
+						if( existing != null ) {
+							existing.AddAlbum( dbAlbum, uiTrack );
 						}
 						else {
-							item.Level = 1;
-							trackSet.Add( item.Track.Name.ToLower(), item );
+							trackSet.Add( key, new UiArtistTrackNode( dbAlbum, uiTrack ));
 
 							UniqueTrackCount++;
 						}
@@ -239,18 +236,9 @@ namespace Noise.UI.ViewModels {
 
 		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
 			mTrackList.Clear();
-			mTrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
+			mTrackList.AddRange( from node in list orderby node.TrackName ascending select node );
 
 			TracksValid = true;
-		}
-
-		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
-			var retValue = new UiAlbum();
-
-			Mapper.Map( dbAlbum, retValue );
-//			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
-
-			return( retValue );
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
