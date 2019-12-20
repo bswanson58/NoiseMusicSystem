@@ -101,6 +101,7 @@ namespace Noise.UI.ViewModels {
 
 			AlbumCount = 0;
 			UniqueTrackCount = 0;
+			FilterText = String.Empty;
 		}
 
 		internal TaskHandler<IEnumerable<UiArtistTrackNode>>  UpdateTask {
@@ -130,6 +131,7 @@ namespace Noise.UI.ViewModels {
 		private void UpdateTrackList( DbArtist artist ) {
 			CancelRetrievalTask();
 			TracksValid = false;
+			FilterText = String.Empty;
 
 			var cancellationToken = GenerateCanellationToken();
 
@@ -166,8 +168,8 @@ namespace Noise.UI.ViewModels {
         private bool OnTrackFilter( object node ) {
             var retValue = true;
 
-            if(( node is UiArtistTrackNode trackNode ) &&
-               (!string.IsNullOrWhiteSpace( FilterText ))) {
+            if((!string.IsNullOrWhiteSpace( FilterText )) &&
+               ( node is UiArtistTrackNode trackNode )) {
                 if( trackNode.TrackName.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
                     retValue = false;
                 }
