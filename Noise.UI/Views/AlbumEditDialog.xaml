@@ -63,6 +63,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" VerticalAlignment="Bottom" Style="{StaticResource ControlTitleStyle}" Text="Album Structure:"/>
@@ -74,11 +75,13 @@
         <TreeView Grid.Row="1" ItemsSource="{Binding EditList}" ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ItemTemplateSelector="{StaticResource EditTemplateSelector}"
                   Drag:DragDrop.IsDragSource="true" Drag:DragDrop.IsDropTarget="True" Drag:DragDrop.DropHandler="{Binding}" />
 
-        <StackPanel Grid.Row="2" Orientation="Vertical">
+        <Rectangle Grid.Row="2" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
+
+        <StackPanel Grid.Row="3" Orientation="Vertical">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Click names in list above to edit them."/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Drag tracks to volume/album headers to reassign."/>
         </StackPanel>
-        <StackPanel Grid.Row="2" Margin="0,5" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal" HorizontalAlignment="Right">
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="New Volume:" Margin="0,0,3,0"/>
             <TextBox Width="150" VerticalAlignment="Center" Text="{Binding NewVolumeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Create" Command="{Binding CreateVolume}"/>

@@ -143,7 +143,7 @@
 						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
 						<Button Style="{StaticResource PathButtonStyle}"
-								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Properties" />
+								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Structure" />
 					</StackPanel>
 				</Grid>
 			</Grid>
