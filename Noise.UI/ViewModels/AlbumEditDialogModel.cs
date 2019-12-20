@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -105,7 +106,7 @@ namespace Noise.UI.ViewModels {
         }
     }
 
-	public class AlbumEditDialogModel : DialogModelBase, IDropTarget {
+	public class AlbumEditDialogModel : DialogModelBase, IDropTarget, IDataErrorInfo {
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly IUiLog							mLog;
@@ -129,6 +130,7 @@ namespace Noise.UI.ViewModels {
 			mVolumeAssociations = new Dictionary<string, VolumeInfo>();
 			EditList = new ObservableCollection<UiEditChild>();
 			mNewVolumeName = String.Empty;
+			PublishedDate = String.Empty;
 
 			LoadData( albumId );
 		}
@@ -171,8 +173,11 @@ namespace Noise.UI.ViewModels {
 					BuildVolumeList();
                     BuildUiList();
 
-					PublishedDate = Album.PublishedYear.ToString();
-					RaisePropertyChanged( () => PublishedDate );
+					if( Album.PublishedYear > Constants.cVariousYears  ) {
+                        PublishedDate = Album.PublishedYear.ToString();
+
+                        RaisePropertyChanged( () => PublishedDate );
+                    }
                 }, 
                 ex => mLog.LogException( "AlbumEditDialog:LoadData", ex ));
         }
@@ -256,9 +261,14 @@ namespace Noise.UI.ViewModels {
 		private bool UpdateAlbum( UiAlbumEdit albumEdit ) {
 			var retValue = false;
 
-			if( albumEdit.WasEdited ) {
+			if(( albumEdit.WasEdited ) ||
+			   (!albumEdit.Album.PublishedYear.ToString().Equals( PublishedDate ))) {
                 using( var updater = mAlbumProvider.GetAlbumForUpdate( albumEdit.Album.DbId )) {
                     updater.Item.Name = albumEdit.Name;
+
+                    if( Int32.TryParse( PublishedDate, out var date )) {
+                        updater.Item.PublishedYear = date;
+                    }
 
                     updater.Update();
 					retValue = true;
@@ -346,5 +356,34 @@ namespace Noise.UI.ViewModels {
 
 			return retValue;
         }
+
+        public string this[ string columnName ] {
+			get {
+				var retValue = String.Empty;
+
+                switch( columnName ) {
+                    case nameof( PublishedDate ):
+						if(!String.IsNullOrWhiteSpace( PublishedDate )) {
+							if( Int32.TryParse( PublishedDate, out var date )) {
+								if(( date != Constants.cUnknownYear ) &&
+								   ( date != Constants.cVariousYears )) {
+									if(( date <= 1900 ) ||
+                                       ( date >= 2100 )) {
+                                        retValue = "Date out of range.";
+									}
+                                }
+                            }
+							else {
+								retValue = "Date has invalid characters.";
+                            }
+                        }
+						break;
+                }
+
+				return retValue;
+            }
+        }
+
+        public string Error => null;
     }
 }

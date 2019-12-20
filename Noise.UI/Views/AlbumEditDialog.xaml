@@ -67,8 +67,8 @@
 
         <TextBlock Grid.Row="0" VerticalAlignment="Bottom" Style="{StaticResource ControlTitleStyle}" Text="Album Structure:"/>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Published/Event Date:"/>
-            <TextBox Margin="3,0,0,3" Width="150" Text="{Binding PublishedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Published/Event Year:"/>
+            <TextBox Margin="3,0,0,3" Width="150" Text="{Binding PublishedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
         </StackPanel>
 
         <TreeView Grid.Row="1" ItemsSource="{Binding EditList}" ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ItemTemplateSelector="{StaticResource EditTemplateSelector}"
