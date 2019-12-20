@@ -209,7 +209,8 @@ namespace Noise.UI.ViewModels {
 
 			using( var trackList = mTrackProvider.GetTrackList( forArtist )) {
 				foreach( var track in trackList.List ) {
-					if(!cancellationToken.IsCancellationRequested ) {
+					if((!cancellationToken.IsCancellationRequested ) &&
+					   ( albumList.ContainsKey( track.Album ))) {
 						var uiTrack = TransformTrack( track );
 						var dbAlbum = albumList[track.Album];
 						var key = track.Name.ToLower();
