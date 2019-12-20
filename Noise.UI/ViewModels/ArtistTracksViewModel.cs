@@ -16,7 +16,7 @@ using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-	internal class ArtistTracksViewModel : ViewModelBase, IActiveAware,
+	internal class ArtistTracksViewModel : ViewModelBase, IActiveAware, IDisposable,
 											IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IUiLog				mLog;
@@ -29,7 +29,7 @@ namespace Noise.UI.ViewModels {
 		private CancellationTokenSource						mCancellationTokenSource;
 
 		public	event EventHandler						IsActiveChanged = delegate { };
-		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
+		public	BindableCollection<UiArtistTrackNode>	TrackList { get; }
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
 									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
@@ -49,8 +49,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool IsActive {
-			get { return( mIsActive ); }
-			set {
+			get => ( mIsActive );
+            set {
 				mIsActive = value;
 
 				if( mIsActive ) {
@@ -108,8 +108,8 @@ namespace Noise.UI.ViewModels {
 
 				return( mUpdateTask );
 			}
-			set{ mUpdateTask = value; }
-		}
+			set => mUpdateTask = value;
+        }
 
 		private CancellationToken GenerateCanellationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
@@ -134,7 +134,7 @@ namespace Noise.UI.ViewModels {
 			   ( mIsActive )) {
 				UpdateTask.StartTask( () => BuildTrackList( artist, cancellationToken ), 
 									  SetTrackList,
-									  ex => mLog.LogException( string.Format( "UpdateTrackList for {0}", artist ), ex ),
+									  ex => mLog.LogException( $"UpdateTrackList for {artist}", ex ),
 									  cancellationToken );
 			}
 		}
@@ -173,8 +173,8 @@ namespace Noise.UI.ViewModels {
 					if(!cancellationToken.IsCancellationRequested ) {
 						var item = new UiArtistTrackNode( TransformTrack( track ),
 														  TransformAlbum( albumList[track.Album]));
-						UiArtistTrackNode	parent;
-						trackSet.TryGetValue( item.Track.Name.ToLower(), out parent );
+
+                        trackSet.TryGetValue( item.Track.Name.ToLower(), out var parent );
 
 						if( parent != null ) {
 							if(!parent.Children.Any()) {
@@ -227,5 +227,10 @@ namespace Noise.UI.ViewModels {
 		private void OnTrackPlay( long trackId ) {
 			mPlayCommand.Play( mTrackProvider.GetTrack( trackId ));
 		}
-	}
+
+        public void Dispose() {
+            mCancellationTokenSource?.Dispose();
+			mEventAggregator?.Unsubscribe( this );
+        }
+    }
 }
