@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
@@ -44,6 +45,8 @@ namespace Noise.UI.Dto {
             }
 
 			Children.Add( new UiAlbumTrack( album, track ));
+
+			Children.Sort( a => a.Album.Name, ListSortDirection.Ascending );
         }
 
         public bool IsExpanded {
