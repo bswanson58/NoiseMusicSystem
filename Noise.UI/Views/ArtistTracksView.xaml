@@ -83,7 +83,8 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<TreeView Grid.Row="0" ItemsSource="{Binding TrackList}" ItemTemplate="{StaticResource ArtistTrackTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"/>
+			<TreeView Grid.Row="0" ItemsSource="{Binding TrackList}" ItemTemplate="{StaticResource ArtistTrackTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
+                      VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
 
             <Rectangle Grid.Row="1" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
