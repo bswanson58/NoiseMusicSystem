@@ -6,7 +6,7 @@
 			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
-			 d:DesignHeight="300"
+			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
 
@@ -181,24 +181,28 @@
 				</ScrollViewer>
 			</Grid>
 
-			<StackPanel Grid.Row="1"
-						Margin="5,5,5,3"
-						Orientation="Vertical">
-				<Rectangle Height="1" StrokeThickness="0" />
-				<Rectangle Height="1" Fill="LightGray" StrokeThickness="0" />
-			</StackPanel>
+            <Rectangle Grid.Row="1" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
-			<StackPanel Grid.Row="2"
-						Margin="0,0,23,0"
-						HorizontalAlignment="Right"
-						Orientation="Horizontal">
-				<TextBlock Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
-				<TextBlock Text=" unique of " />
-				<TextBlock Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
-				<TextBlock Text=" tracks from " />
-				<TextBlock Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
-				<TextBlock Text=" albums." />
-			</StackPanel>
+            <Grid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="5" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" unique of " />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" tracks from " />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" albums." />
+                </StackPanel>
+
+                <TextBox Grid.Column="2" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         Behaviours:TextBoxHelper.Watermark="enter track filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
 		</Grid>
 	</GroupBox>
 </UserControl>

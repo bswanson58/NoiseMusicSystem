@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.ObjectBuilder2;
@@ -24,12 +26,13 @@ namespace Noise.UI.ViewModels {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly IPlayCommand		mPlayCommand;
+        private readonly BindableCollection<UiArtistTrackNode>	mTrackList;
+        private ICollectionView				mTrackView;
 		private	bool						mIsActive;
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 		private CancellationTokenSource						mCancellationTokenSource;
 
 		public	event EventHandler						IsActiveChanged = delegate { };
-		public	BindableCollection<UiArtistTrackNode>	TrackList { get; }
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
 									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
@@ -42,7 +45,7 @@ namespace Noise.UI.ViewModels {
 
 			mEventAggregator.Subscribe( this );
 
-			TrackList = new BindableCollection<UiArtistTrackNode>();
+			mTrackList = new BindableCollection<UiArtistTrackNode>();
 			TracksValid = false;
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
@@ -60,7 +63,7 @@ namespace Noise.UI.ViewModels {
 				}
 				else {
 					CancelRetrievalTask();
-					TrackList.Clear();
+					mTrackList.Clear();
 				}
 
 				IsActiveChanged( this, new EventArgs());
@@ -73,7 +76,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			TrackList.Clear();
+			mTrackList.Clear();
 			TracksValid = false;
 		}
 
@@ -93,7 +96,7 @@ namespace Noise.UI.ViewModels {
 
 		private void ClearTrackList() {
 			CancelRetrievalTask();
-			TrackList.Clear();
+			mTrackList.Clear();
 			TracksValid = false;
 
 			AlbumCount = 0;
@@ -139,7 +142,41 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public int AlbumCount {
+        public ICollectionView TrackList {
+            get{ 
+                if( mTrackView == null ) {
+                    mTrackView = CollectionViewSource.GetDefaultView( mTrackList );
+
+                    mTrackView.Filter += OnTrackFilter;
+                }
+
+                return( mTrackView );
+            }
+        }
+
+        public string FilterText {
+            get { return( Get(() => FilterText )); }
+            set {
+                Set(() => FilterText, value );
+
+                mTrackView?.Refresh();
+            }
+        }
+
+        private bool OnTrackFilter( object node ) {
+            var retValue = true;
+
+            if(( node is UiArtistTrackNode trackNode ) &&
+               (!string.IsNullOrWhiteSpace( FilterText ))) {
+                if( trackNode.Track.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+                    retValue = false;
+                }
+            }
+
+            return ( retValue );
+        }
+
+        public int AlbumCount {
 			get{ return( Get( () => AlbumCount )); }
 			set{ Set( () => AlbumCount, value ); }
 		}
@@ -201,8 +238,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
-			TrackList.Clear();
-			TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
+			mTrackList.Clear();
+			mTrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
 
 			TracksValid = true;
 		}
