@@ -4,19 +4,24 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
+			 xmlns:ViewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-             Height="85"
+			 xmlns:System="clr-namespace:System;assembly=mscorlib"
+			 Height="85"
 			 d:DesignHeight="100"
 			 d:DesignWidth="1200"
 			 mc:Ignorable="d">
 	<UserControl.Resources>
-		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
+		<ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
 		<ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
 	    <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
         <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfEmptyString" HideOnEmpty="False" IsHidden="True"/>
+
+        <!-- MahApps Slider thumb dimensions -->
+        <System:Double x:Key="HorizontalThumbHeight">13</System:Double>
+        <System:Double x:Key="HorizontalThumbWidth">25</System:Double>
 	</UserControl.Resources>
 
 	<UserControl.DataContext>
