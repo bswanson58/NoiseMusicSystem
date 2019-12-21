@@ -123,6 +123,7 @@
     <Compile Include="Configuration\ConfigurationUpdater.cs" />
     <Compile Include="ExtensionClasses\MoreLinq\DistinctBy.cs" />
     <Compile Include="ExtensionClasses\RegexExtensions.cs" />
+    <Compile Include="ExtensionClasses\StringExtensions.cs" />
     <Compile Include="FeatureToggle\AlwaysOffFeatureToggle.cs" />
     <Compile Include="FeatureToggle\AlwaysOnFeatureToggle.cs" />
     <Compile Include="FeatureToggle\AppSettingsKeys.cs" />

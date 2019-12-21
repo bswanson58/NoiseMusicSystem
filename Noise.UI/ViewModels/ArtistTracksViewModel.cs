@@ -16,6 +16,7 @@ using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using ReusableBits;
+using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.ViewModels {
 	internal class ArtistTracksViewModel : ViewModelBase, IActiveAware, IDisposable,
@@ -213,7 +214,7 @@ namespace Noise.UI.ViewModels {
 					   ( albumList.ContainsKey( track.Album ))) {
 						var uiTrack = TransformTrack( track );
 						var dbAlbum = albumList[track.Album];
-						var key = track.Name.ToLower();
+						var key = track.Name.RemoveSpecialCharacters().ToLower();
 
                         trackSet.TryGetValue( key, out var existing );
 
