@@ -5,6 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:Behaviours1="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
@@ -28,7 +29,8 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
-                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Album.Name}"/>
+                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Album.Name}"
+                           Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 <TextBlock Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
                            TextAlignment="Right" Margin="3,0,8,0"/>
             </Grid>
@@ -49,7 +51,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
-                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"/>
+                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
+                               Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 </Grid>
 
 				<Grid Grid.Row="1" Margin="60,0,0,3">
@@ -58,7 +61,8 @@
 						<ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"/>
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                               Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                     <TextBlock x:Name="FirstDuration" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
                 </Grid>
@@ -84,7 +88,7 @@
 			</Grid.RowDefinitions>
 
 			<TreeView Grid.Row="0" ItemsSource="{Binding TrackList}" ItemTemplate="{StaticResource ArtistTrackTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
-                      VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
 
             <Rectangle Grid.Row="1" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
