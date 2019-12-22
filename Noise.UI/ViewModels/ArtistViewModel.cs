@@ -33,6 +33,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ITagManager			mTagManager;
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly IPlayCommand			mPlayCommand;
+		private readonly IPlayingItemHandler    mPlayingItemHandler;
 		private readonly IRatings				mRatings;
 		private readonly Observal.Observer		mChangeObserver;
 		private UiArtist						mCurrentArtist;
@@ -54,7 +55,7 @@ namespace Noise.UI.ViewModels {
 		private readonly InteractionRequest<ArtistEditRequest>		    mArtistEditRequest;
         private readonly InteractionRequest<ArtistArtworkDisplayInfo>   mArtistArtworkDisplayRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IRatings ratings, ISelectionState selectionState,
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
 								ITagManager tagManager, IMetadataManager metadataManager, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -63,7 +64,10 @@ namespace Noise.UI.ViewModels {
 			mTagManager = tagManager;
 			mMetadataManager = metadataManager;
 			mPlayCommand = playCommand;
+			mPlayingItemHandler = playingItemHandler;
 			mRatings = ratings;
+
+			mPlayingItemHandler.StartHandler( () => mCurrentArtist );
 
 			mEventAggregator.Subscribe( this );
 
@@ -159,6 +163,8 @@ namespace Noise.UI.ViewModels {
 					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
 					RaisePropertyChanged( () => Artist );
+
+                    mPlayingItemHandler.UpdateItem();
 
 					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 					RaisePropertyChanged( () => ArtistWebsite );

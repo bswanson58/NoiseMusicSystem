@@ -21,6 +21,14 @@
 		<ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
 		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
 		<ValueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
+
+        <Style x:Key="PlayingItemStyle" TargetType="TextBlock" BasedOn="{StaticResource LargeTitleStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Album.IsPlaying}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 	</UserControl.Resources>
 	
 	<i:Interaction.Behaviors>
@@ -59,7 +67,7 @@
 
 					<!--  Album name -->
 					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
-						<TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
+						<TextBlock Style="{StaticResource PlayingItemStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->

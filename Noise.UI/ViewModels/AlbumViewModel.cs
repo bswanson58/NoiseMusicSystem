@@ -43,6 +43,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagManager				mTagManager;
 		private readonly IPlayCommand				mPlayCommand;
+		private readonly IPlayingItemHandler		mPlayingItemHandler;
 		private readonly IRatings					mRatings;
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private UiAlbum								mCurrentAlbum;
@@ -60,11 +61,13 @@ namespace Noise.UI.ViewModels {
 		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
 
+        public	UiAlbum							Album => mCurrentAlbum;
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState, IRatings ratings,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IAlbumArtworkProvider albumArtworkProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IPlayCommand playCommand, IUiLog log ) {
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IPlayCommand playCommand, IPlayingItemHandler playingItemHandler,
+                               IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
@@ -78,6 +81,9 @@ namespace Noise.UI.ViewModels {
 			mTagManager = tagManager;
 			mRatings = ratings;
 			mPlayCommand = playCommand;
+			mPlayingItemHandler = playingItemHandler;
+
+			mPlayingItemHandler.StartHandler( () => Album );
 
 			mEventAggregator.Subscribe( this );
 
@@ -159,6 +165,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 			    mCurrentAlbum = TransformAlbum( album );
+				mPlayingItemHandler.UpdateItem();
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 			else {
@@ -320,8 +327,6 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 		}
-
-		public UiAlbum Album => ( mCurrentAlbum );
 
         [DependsUpon( "Album" )]
 		public bool AlbumValid => ( mCurrentAlbum != null );
