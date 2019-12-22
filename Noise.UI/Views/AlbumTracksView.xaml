@@ -95,7 +95,12 @@
         
         <!-- Duration -->
         <DataTemplate x:Key="DurationTemplate" DataType="Dto:UiTrack">
-            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="5,0"/>
+            <TextBlock x:Name="Duration" Style="{StaticResource ListViewTextStyle}" Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="5,0"/>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="Duration" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
         
         <!-- Favorite -->
