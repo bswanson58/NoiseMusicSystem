@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Practices.ObjectBuilder2;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 
 namespace Noise.UI.Models {
