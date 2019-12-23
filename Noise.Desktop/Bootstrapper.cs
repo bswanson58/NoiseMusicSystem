@@ -38,6 +38,10 @@ namespace Noise.Desktop {
 			StopNoise();
 		}
 
+		public void ActivateInstance() {
+			mWindowManager.ActivateShell();
+        }
+
 		protected override IModuleCatalog CreateModuleCatalog() {
 			var catalog = new ModuleCatalog();
 
@@ -115,9 +119,7 @@ namespace Noise.Desktop {
 		}
 
 		public void LogException( string reason, Exception exception ) {
-			if( mLog != null ) {
-				mLog.LogException( reason, exception );
-			}
-		}
+            mLog?.LogException( reason, exception );
+        }
 	}
 }

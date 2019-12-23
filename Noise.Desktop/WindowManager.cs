@@ -183,8 +183,8 @@ namespace Noise.Desktop {
 			ActivateShell();
 		}
 
-		private void ActivateShell() {
-			if( mShell != null) {
+		public void ActivateShell() {
+			if( mShell != null ) {
 				mShell.Show();
 				mShell.WindowState = mStoredWindowState;
 				mShell.Activate();

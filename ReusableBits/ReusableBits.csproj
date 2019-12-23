@@ -113,6 +113,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -141,6 +142,7 @@
     <Compile Include="Interfaces\IIdentityProvider.cs" />
     <Compile Include="Interfaces\IResourceProvider.cs" />
     <Compile Include="Patterns\SingletonBase.cs" />
+    <Compile Include="Platform\SingleApplicationInstance.cs" />
     <Compile Include="Platform\VersionInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\IdentityProvider.cs" />
