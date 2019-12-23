@@ -204,7 +204,7 @@ namespace Album4Matter.ViewModels {
             var retValue = input;
 
             if( DateTime.TryParse( input, out var result )) {
-                retValue = $"{result.Month:D2}-{result.Day:D2}-{result.Year % 100}";
+                retValue = $"{result.Month:D2}-{result.Day:D2}-{result.Year % 100:D2}";
             }
 
             return retValue;
