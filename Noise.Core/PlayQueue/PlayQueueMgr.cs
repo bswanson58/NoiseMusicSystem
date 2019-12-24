@@ -37,6 +37,7 @@ namespace Noise.Core.PlayQueue {
 
         public	IObservable<IChangeSet<PlayQueueTrack>>	PlayQueue { get; }
         public  IEnumerable<PlayQueueTrack>             PlayList => mPlayList.Items;
+		public	ISourceList<PlayQueueTrack>				PlaySource => mPlayList;
         public  bool                                    IsQueueEmpty => mPlayList.Count == 0;
         public  int                                     UnplayedTrackCount => ( from PlayQueueTrack track in PlayList where !track.HasPlayed select track ).Count();
         public  int                                     PlayedTrackCount => GetPlayedTrackList().Count();

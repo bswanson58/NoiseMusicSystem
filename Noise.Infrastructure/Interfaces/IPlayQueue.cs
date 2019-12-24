@@ -57,5 +57,6 @@ namespace Noise.Infrastructure.Interfaces {
 
 		IEnumerable<PlayQueueTrack>				PlayList { get; }
         IObservable<IChangeSet<PlayQueueTrack>>	PlayQueue { get; }
+        ISourceList<PlayQueueTrack>				PlaySource { get; }
 	}
 }

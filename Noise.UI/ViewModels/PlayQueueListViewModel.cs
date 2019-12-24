@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
@@ -34,22 +33,20 @@ namespace Noise.UI.ViewModels {
 
 			QueueList = new ObservableCollectionExtended<UiPlayQueueTrack>();
 
-			var foo = mPlayQueue.PlayQueue.AsObservableList().Preview().OnItemRemoved( OnTrackRemoved );
 			var uiList = mPlayQueue.PlayQueue.Transform( CreateUiTrack ).AsObservableList();
-
-//            var uiList = uiList1.Preview().OnItemRemoved( OnTrackRemoved ).AsObservableList();
 
             var ratingSubscription = uiList.Connect().WhenPropertyChanged( t => t.UiRating ).Subscribe( OnRatingChanged );
 			var favoriteSubscription = uiList.Connect().WhenPropertyChanged( t => t.UiIsFavorite ).Subscribe( OnFavoriteChanged );
             var queueSubscription = uiList.Connect().ObserveOnDispatcher().Bind( QueueList ).Subscribe();
-//            var queueSubscription = uiList.Preview().OnItemRemoved( OnTrackRemoved ).ObserveOnDispatcher().Bind( QueueList ).Subscribe();
 
-            mSubscriptions = new CompositeDisposable( uiList, queueSubscription, favoriteSubscription, ratingSubscription );
+			var deleteSubscription = mPlayQueue.PlaySource.Preview().OnItemRemoved( OnTrackRemoved ).Subscribe();
+
+            mSubscriptions = new CompositeDisposable( uiList, queueSubscription, deleteSubscription, favoriteSubscription, ratingSubscription );
 
 			EventAggregator.Subscribe( this );
 		}
 
-		private void OnRatingChanged( PropertyValue<UiPlayQueueTrack, Int16> value ) {
+        private void OnRatingChanged( PropertyValue<UiPlayQueueTrack, Int16> value ) {
             mRatings.SetRating( value.Sender.QueuedTrack.Track, value.Sender.UiRating );
         }
 
@@ -57,9 +54,15 @@ namespace Noise.UI.ViewModels {
 			mRatings.SetFavorite( value.Sender.QueuedTrack.Track, value.Sender.UiIsFavorite );
         }
 
-		private void OnTrackRemoved( PlayQueueTrack track ) { 
-//            track.IsDeleting = true;
-            Thread.Sleep( new TimeSpan( 0, 0, 0, 0, 750 ));
+		private async void OnTrackRemoved( PlayQueueTrack track ) {
+			await Task.Run( () => {
+                var uiTrack = QueueList.FirstOrDefault( i => i.QueuedTrack.Track.DbId.Equals( track.Track.DbId ));
+
+                if( uiTrack != null ) {
+                    uiTrack.IsDeleting = true;
+					Task.Delay( TimeSpan.FromSeconds( 1 ));
+                }
+            } );
         }
 
 	    public UiPlayQueueTrack SelectedItem {
