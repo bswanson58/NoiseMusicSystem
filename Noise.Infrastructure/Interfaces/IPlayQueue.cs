@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using DynamicData;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -53,6 +55,7 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			DeletedPlayedTracks { get; set; }
 		int				MaximumPlayedTracks { get; set; }
 
-		IEnumerable<PlayQueueTrack>	PlayList { get; }
+		IEnumerable<PlayQueueTrack>				PlayList { get; }
+        IObservable<IChangeSet<PlayQueueTrack>>	PlayQueue { get; }
 	}
 }
