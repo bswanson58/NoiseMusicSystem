@@ -20,15 +20,6 @@
 		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
 		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
 		<ValueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
-
-		<Style x:Key="PlayingItemStyle" TargetType="TextBlock" BasedOn="{StaticResource LargeTitleStyle}">
-			<Style.Triggers>
-                <DataTrigger Binding="{Binding Artist.IsPlaying}" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource PlayingBrush}"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
 	</UserControl.Resources>
 
 	<UserControl.DataContext>
@@ -76,7 +67,7 @@
 						</Grid.RowDefinitions>
 
 						<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="400">
-                            <TextBlock Style="{StaticResource PlayingItemStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}"/>
+                            <TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}"/>
                         </Viewbox>
 
 						<!--  Rating controls  -->
