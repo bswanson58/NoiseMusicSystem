@@ -20,7 +20,15 @@
 		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
 		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
 		<ValueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
-	</UserControl.Resources>
+
+        <Style x:Key="PlayingItemStyle" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Artist.IsPlaying}" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>	
+    </UserControl.Resources>
 
 	<UserControl.DataContext>
 		<Binding Path="ArtistViewModel" Source="{StaticResource ViewModelLocator}" />
@@ -46,16 +54,18 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="7" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
-						   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" Cursor="Hand">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseLeftButtonDown" >
-                                <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Image>
-					
-					<Grid Grid.Column="3" Margin="3,7,11,0">
+					<Border Grid.Column="0" Margin="4" BorderThickness="3" Style="{StaticResource PlayingItemStyle}">
+    					<Image MinWidth="50" MinHeight="50" Margin="1" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+	    					   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" Cursor="Hand">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonDown" >
+                                    <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Image>
+                    </Border>
+
+                    <Grid Grid.Column="3" Margin="3,7,11,0">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
