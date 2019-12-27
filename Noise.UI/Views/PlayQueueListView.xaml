@@ -240,6 +240,7 @@
 				</DataTrigger>
 				<DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
 					<Setter TargetName="TrackName" Property="FontWeight" Value="Bold" />
+					<Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
 					<Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
 					<Setter TargetName="TrackDuration" Property="FontWeight" Value="Bold" />
 				</DataTrigger>
