@@ -46,8 +46,8 @@
 			<Grid Background="{StaticResource NoiseBrush}" 
 				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
 				<!--  Album cover image  -->
-                <Border Grid.Column="0" Margin="4" BorderThickness="3" Style="{StaticResource PlayingItemStyle}">
-				    <Viewbox Margin="1" MaxWidth="300" MaxHeight="200" StretchDirection="DownOnly" Stretch="Uniform">
+                <Border Grid.Column="0" Margin="3" BorderThickness="3" CornerRadius="1" Style="{StaticResource PlayingItemStyle}">
+				    <Viewbox Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform">
                         <Image RenderTransformOrigin="0.5,0.5">
 						    <Image.RenderTransform>
 							    <TransformGroup>

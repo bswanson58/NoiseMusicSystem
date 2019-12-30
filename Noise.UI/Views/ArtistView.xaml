@@ -54,8 +54,8 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<Border Grid.Column="0" Margin="4" BorderThickness="3" Style="{StaticResource PlayingItemStyle}">
-    					<Image MinWidth="50" MinHeight="50" Margin="1" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+					<Border Grid.Column="0" Margin="3" BorderThickness="3" CornerRadius="1" Style="{StaticResource PlayingItemStyle}">
+    					<Image MinWidth="50" MinHeight="50" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
 	    					   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" Cursor="Hand">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonDown" >
