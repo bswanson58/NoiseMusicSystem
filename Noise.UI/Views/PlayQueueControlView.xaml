@@ -14,8 +14,8 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel  Grid.Column="0" Margin="3,1,0,1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
-            <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ClearQueue}" Content="Clear" />
-            <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ClearPlayed}" Content="Clear Played"/>
+            <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ClearQueue}" Content="Clear" ToolTip="Clear All Tracks"/>
+            <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ClearPlayed}" Content="Clear Played" ToolTip="Clear Played Tracks"/>
         </StackPanel>
 
         <Grid Grid.Column="2" Margin="3">

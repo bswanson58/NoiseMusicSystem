@@ -86,12 +86,12 @@
 
 					<!-- Transport Controls -->
 					<StackPanel Grid.Column="1" Margin="7,0" HorizontalAlignment="Center" Orientation="Horizontal">
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}" ToolTip="Play"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}" ToolTip="Pause"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}" ToolTip="Stop"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" ToolTip="Start Previous Track"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}" ToolTip="Start Next Track"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" ToolTip="Replay Track"/>
 					</StackPanel>
 				</Grid>
 
@@ -107,12 +107,12 @@
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" />
+					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" ToolTip="Mute. Why Would You??"/>
 
 					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
-					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" />
+					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" ToolTip="Expand Player"/>
 				</Grid>
 			</Grid>
 
@@ -129,7 +129,7 @@
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
 
-					<!-- Ravorite, Rating, Support Commands -->
+					<!-- Favorite, Rating, Support Commands -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<!--  Favorites and ratings  -->
 						<StackPanel x:Name="_ratingPanel" Orientation="Horizontal">

@@ -33,9 +33,9 @@
             </Grid.ColumnDefinitions>
 
 			<Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding StartStrategy}"
-					Content="Start" ToolTip="Fill the play queue using the current strategy"/>
+					Content="Start" ToolTip="Start Play Using The Current Strategy"/>
 			<Button Grid.Column="2" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding ConfigureStrategy}" 
-					Content="{StaticResource Path_Configure}" ToolTip="Configure the play strategies"/>
+					Content="{StaticResource Path_Configure}" ToolTip="Configure Play Strategies"/>
         </Grid>
     </Grid>
 </UserControl>
