@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using DynamicData;
@@ -39,9 +38,7 @@ namespace Noise.UI.ViewModels {
 			var favoriteSubscription = uiList.Connect().WhenPropertyChanged( t => t.UiIsFavorite ).Subscribe( OnFavoriteChanged );
             var queueSubscription = uiList.Connect().ObserveOnDispatcher().Bind( QueueList ).Subscribe();
 
-			var deleteSubscription = mPlayQueue.PlaySource.Preview().OnItemRemoved( OnTrackRemoved ).Subscribe();
-
-            mSubscriptions = new CompositeDisposable( uiList, queueSubscription, deleteSubscription, favoriteSubscription, ratingSubscription );
+            mSubscriptions = new CompositeDisposable( uiList, queueSubscription, favoriteSubscription, ratingSubscription );
 
 			EventAggregator.Subscribe( this );
 		}
@@ -52,17 +49,6 @@ namespace Noise.UI.ViewModels {
 
 		private void OnFavoriteChanged( PropertyValue<UiPlayQueueTrack, bool> value ) {
 			mRatings.SetFavorite( value.Sender.QueuedTrack.Track, value.Sender.UiIsFavorite );
-        }
-
-		private async void OnTrackRemoved( PlayQueueTrack track ) {
-			await Task.Run( () => {
-                var uiTrack = QueueList.FirstOrDefault( i => i.QueuedTrack.Track.DbId.Equals( track.Track.DbId ));
-
-                if( uiTrack != null ) {
-                    uiTrack.IsDeleting = true;
-					Task.Delay( TimeSpan.FromSeconds( 1 ));
-                }
-            } );
         }
 
 	    public UiPlayQueueTrack SelectedItem {

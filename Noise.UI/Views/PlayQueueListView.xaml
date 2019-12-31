@@ -126,7 +126,7 @@
 		</Storyboard>
 
 		<DataTemplate x:Key="QueueListItem" DataType="Dto:UiPlayQueueTrack">
-			<Grid x:Name="listItemLayoutRoot" >
+			<Grid x:Name="listItemLayoutRoot">
 				<Grid.LayoutTransform>
 					<TransformGroup>
 						<ScaleTransform/>
@@ -246,11 +246,6 @@
 				<DataTrigger Binding="{Binding Path=IsStrategyQueued}" Value="true">
 					<Setter TargetName="TrackName" Property="FontStyle" Value="Italic" />
 				</DataTrigger>
-				<DataTrigger Binding="{Binding Path=IsDeleting}" Value="true">
-					<DataTrigger.EnterActions>
-						<BeginStoryboard Storyboard="{StaticResource ItemDeleteStoryboard}"/>
-					</DataTrigger.EnterActions>
-				</DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
 
@@ -274,13 +269,23 @@
 					 DragDrop:DragDrop.IsDragSource="true"
 					 DragDrop:DragDrop.IsDropTarget="true"
 					 HorizontalContentAlignment="Stretch"
-					 ItemsSource="{Binding Path=QueueList}"
+					 Behaviours:ItemsControlAnimation.ItemsSource="{Binding Path=QueueList}"
 					 ItemTemplate="{StaticResource QueueListItem}"
 					 ItemContainerStyle="{StaticResource BoldedDragListBoxItemStyle}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					 ScrollViewer.VerticalScrollBarVisibility="Auto"
 					 SelectedItem="{Binding Path=SelectedItem}">
-			<i:Interaction.Behaviors>
+            <Behaviours:ItemsControlAnimation.FadeInAnimation>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:3"/>
+                </Storyboard>
+            </Behaviours:ItemsControlAnimation.FadeInAnimation>
+            <Behaviours:ItemsControlAnimation.FadeOutAnimation>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:1"/>
+                </Storyboard>
+            </Behaviours:ItemsControlAnimation.FadeOutAnimation>
+            <i:Interaction.Behaviors>
 				<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
 				<ReusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
 			</i:Interaction.Behaviors>
