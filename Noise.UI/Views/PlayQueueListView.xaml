@@ -16,8 +16,18 @@
 		<Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
 
         <ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
-        
-		<Style x:Key="MouseOverTrigger" TargetType="{x:Type Expander}">
+
+        <Storyboard x:Key="ItemAddedAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1"/>
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="0.0" To="1.0" Duration="0:0:0.5"/>
+        </Storyboard>
+
+        <Storyboard x:Key="ItemDeletedAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.5"/>
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="1.0" To="0.0" Duration="0:0:0.5"/>
+        </Storyboard>
+
+        <Style x:Key="MouseOverTrigger" TargetType="{x:Type Expander}">
 			<Style.Triggers>
 				<Trigger Property="IsMouseOver" Value="True">
 					<Setter Property="IsExpanded" Value="True" />
@@ -25,7 +35,20 @@
 			</Style.Triggers>
 		</Style>
 
-		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+        <Style x:Key="BoldedDragListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,15,5,0">
                 <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Play Something!" />
 			</Grid>
@@ -107,23 +130,6 @@
 				</Trigger>
 			</ControlTemplate.Triggers>
 		</ControlTemplate>
-
-		<Storyboard x:Key="ItemDeleteStoryboard" >
-			<DoubleAnimation Storyboard.TargetName="listItemLayoutRoot" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetName="listItemLayoutRoot" 
-										   Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-				<EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
-					<EasingDoubleKeyFrame.EasingFunction>
-						<CubicEase EasingMode="EaseIn"/>
-					</EasingDoubleKeyFrame.EasingFunction>
-				</EasingDoubleKeyFrame>
-				<EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="0">
-					<EasingDoubleKeyFrame.EasingFunction>
-						<CubicEase EasingMode="EaseIn"/>
-					</EasingDoubleKeyFrame.EasingFunction>
-				</EasingDoubleKeyFrame>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
 
 		<DataTemplate x:Key="QueueListItem" DataType="Dto:UiPlayQueueTrack">
 			<Grid x:Name="listItemLayoutRoot">
@@ -248,14 +254,6 @@
 				</DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
-
-		<Style x:Key="BoldedDragListBoxItemStyle" BasedOn="{StaticResource AnimateOnInsertListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
-			<Style.Triggers>
-				<Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
-					<Setter Property="FontWeight" Value="Bold" />
-				</Trigger>
-			</Style.Triggers>
-		</Style>
 	</Control.Resources>
 
 	<Control.InputBindings>
@@ -270,21 +268,13 @@
 					 DragDrop:DragDrop.IsDropTarget="true"
 					 HorizontalContentAlignment="Stretch"
 					 Behaviours:ItemsControlAnimation.ItemsSource="{Binding Path=QueueList}"
-					 ItemTemplate="{StaticResource QueueListItem}"
+					 Behaviours:ItemsControlAnimation.FadeInAnimation="{StaticResource ItemAddedAnimation}"
+                     Behaviours:ItemsControlAnimation.FadeOutAnimation="{StaticResource ItemDeletedAnimation}"
+                     ItemTemplate="{StaticResource QueueListItem}"
 					 ItemContainerStyle="{StaticResource BoldedDragListBoxItemStyle}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					 ScrollViewer.VerticalScrollBarVisibility="Auto"
 					 SelectedItem="{Binding Path=SelectedItem}">
-            <Behaviours:ItemsControlAnimation.FadeInAnimation>
-                <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:3"/>
-                </Storyboard>
-            </Behaviours:ItemsControlAnimation.FadeInAnimation>
-            <Behaviours:ItemsControlAnimation.FadeOutAnimation>
-                <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:1"/>
-                </Storyboard>
-            </Behaviours:ItemsControlAnimation.FadeOutAnimation>
             <i:Interaction.Behaviors>
 				<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
 				<ReusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
