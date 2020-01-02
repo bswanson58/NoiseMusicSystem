@@ -25,6 +25,92 @@ using System.Windows.Media.Animation;
 //    </ListBox>
 
 namespace Noise.UI.Behaviours {
+    internal class ItemsControlState {
+        private readonly object     mLock;
+        private readonly Type       mListType;
+        private readonly IList      mMirrorList;
+        private readonly IList      mDeleteList;
+        private readonly IList      mSourceList;
+
+        public  ItemsControl        Control { get; }
+
+        public ItemsControlState( ItemsControl itemsControl, IList sourceList ) {
+            var itemsSourceType = sourceList.GetType();
+
+            mSourceList = sourceList;
+            mListType = typeof(ObservableCollection<>).MakeGenericType( itemsSourceType.GetGenericArguments()[0]);
+
+            Control = itemsControl;
+
+            mMirrorList = CreateList( mListType );
+            mDeleteList = CreateList( mListType );
+
+            mLock = new object();
+
+            Control.SetBinding( ItemsControl.ItemsSourceProperty, new Binding { Source = mMirrorList } );
+        }
+
+        public IList CreateDeletionList() {
+            var retValue = CreateList( mListType );
+
+            lock( mLock ) {
+                foreach( var item in mMirrorList ) {
+                    if((!mSourceList.Contains( item )) &&
+                       (!mDeleteList.Contains( item ))) {
+                        retValue.Add( item );
+                        mDeleteList.Add( item );
+                    }
+                }
+            }
+
+            return retValue;
+        }
+
+        public IList CreateAdditionList() {
+            var retValue = CreateList( mListType );
+
+            lock( mLock ) {
+                foreach( var item in mSourceList ) {
+                    if(!mMirrorList.Contains( item )) {
+                        retValue.Add( item );
+                        InsertItemInMirror( item );
+                    }
+                }
+            }
+
+            return retValue;
+        }
+
+        public void DeleteItem( object item ) {
+            lock( mLock ) {
+                if( mMirrorList.Contains( item )) {
+                    mMirrorList.Remove( item );
+                }
+                if( mDeleteList.Contains( item )) {
+                    mDeleteList.Remove( item );
+                }
+            }
+        }
+
+        private void InsertItemInMirror( object item ) {
+            var sourceIndex = mSourceList.IndexOf( item );
+            var addIndex = sourceIndex;
+            var maxIndex = Math.Min( mMirrorList.Count - 1, sourceIndex );
+
+            for( var i = 0; i <= maxIndex; i++ ) {
+                if( mDeleteList.Contains( mMirrorList[i])) {
+                    addIndex++;
+                }
+            }
+
+            mMirrorList.Insert( addIndex, item );
+        }
+
+        private static IList CreateList( Type listType ) {
+            return Activator.CreateInstance( listType ) as IList;
+        }
+    }
+
     public class ItemsControlAnimation {
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.RegisterAttached( "ItemsSource", typeof( IList ), typeof( ItemsControlAnimation ), new UIPropertyMetadata( null, ItemsSourcePropertyChanged ));
@@ -68,54 +154,21 @@ namespace Noise.UI.Behaviours {
                 return;
             }
 
-            var itemsSourceType = itemsSource.GetType();
-            var listType = typeof(ObservableCollection<>).MakeGenericType( itemsSourceType.GetGenericArguments()[0]);
-            var mirrorItemsSource = Activator.CreateInstance( listType ) as IList;
-            var deleteList = Activator.CreateInstance( listType ) as IList;
+            if( itemsSource is INotifyCollectionChanged notifySource ) {
+                var state = new ItemsControlState( itemsControl, itemsSource );
 
-            if(( mirrorItemsSource != null ) &&
-               ( deleteList != null )) {
-                itemsControl.SetBinding( ItemsControl.ItemsSourceProperty, new Binding { Source = mirrorItemsSource } );
+                notifySource.CollectionChanged += ( sender, collectionChangedArgs ) => {
+                    RemoveItems( state, state.CreateDeletionList());
 
-                AddItems( itemsControl, itemsSource, mirrorItemsSource );
-
-                if( itemsSource is INotifyCollectionChanged notifySource ) {
-                    notifySource.CollectionChanged += ( sender, collectionChangedArgs ) => {
-                        switch( collectionChangedArgs.Action ) {
-                            case NotifyCollectionChangedAction.Add:
-                                AddItems( itemsControl, collectionChangedArgs.NewItems, mirrorItemsSource );
-                                break;
-
-                            case NotifyCollectionChangedAction.Remove:
-                                RemoveItems( itemsControl, mirrorItemsSource, collectionChangedArgs.OldItems );
-                                break;
-
-                            case NotifyCollectionChangedAction.Reset:
-                                deleteList.Clear();
-                                foreach( var item in mirrorItemsSource ) {
-                                    deleteList.Add( item );
-                                }
-                                RemoveItems( itemsControl, mirrorItemsSource, deleteList );
-                                AddItems( itemsControl, itemsSource, mirrorItemsSource );
-                                break;
-                        }
-                    };
-                }
+                    FadeInContainers( state.Control, state.CreateAdditionList());
+                };
             }
         }
 
-        private static void AddItems( ItemsControl itemsControl, IList items, IList mirrorItems ) {
-            foreach( var newItem in items ) {
-                mirrorItems.Add( newItem );
-            }
-
-            FadeInContainers( itemsControl, items );
-        }
-
-        private static void RemoveItems( ItemsControl itemsControl, IList mirrorItems, IList items ) {
-            foreach( var oldItem in items ) {
-                var container = itemsControl.ItemContainerGenerator.ContainerFromItem( oldItem ) as UIElement;
-                var fadeOutAnimation = GetFadeOutAnimation(itemsControl);
+        private static void RemoveItems( ItemsControlState state, IList list ) {
+            foreach( var oldItem in list ) {
+                var container = state.Control.ItemContainerGenerator.ContainerFromItem( oldItem ) as UIElement;
+                var fadeOutAnimation = GetFadeOutAnimation( state.Control );
 
                 if(( container != null ) &&
                    ( fadeOutAnimation != null )) {
@@ -123,14 +176,14 @@ namespace Noise.UI.Behaviours {
 
                     void OnAnimationCompleted( object sender2, EventArgs e2 ) {
                         fadeOutAnimation.Completed -= OnAnimationCompleted;
-                        mirrorItems.Remove( oldItem );
+                        state.DeleteItem( oldItem );
                     }
 
                     fadeOutAnimation.Completed += OnAnimationCompleted;
                     fadeOutAnimation.Begin();
                 }
                 else {
-                    mirrorItems.Remove( oldItem );
+                    state.DeleteItem( oldItem );
                 }
             }
         }
@@ -139,12 +192,13 @@ namespace Noise.UI.Behaviours {
             void StatusChanged( object sender, EventArgs e ) {
                 if( itemsControl.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated ) {
                     itemsControl.ItemContainerGenerator.StatusChanged -= StatusChanged;
-                    foreach( object newItem in newItems ) {
+
+                    foreach( var newItem in newItems ) {
                         var container = itemsControl.ItemContainerGenerator.ContainerFromItem( newItem ) as UIElement;
                         var fadeInAnimation = GetFadeInAnimation( itemsControl );
 
-                        if( container != null &&
-                            fadeInAnimation != null ) {
+                        if(( container != null ) &&
+                           ( fadeInAnimation != null )) {
                             Storyboard.SetTarget( fadeInAnimation, container );
                             fadeInAnimation.Begin();
                         }
