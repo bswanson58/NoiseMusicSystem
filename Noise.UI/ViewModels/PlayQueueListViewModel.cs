@@ -16,7 +16,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueListViewModel : AutomaticCommandBase, IDropTarget, IDisposable,
-										  IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackStatusChanged>, IHandle<Events.TrackUserUpdate> {
+										  IHandle<Events.PlaybackStatusChanged>, IHandle<Events.TrackUserUpdate> {
 		private readonly IPlayQueue		mPlayQueue;
 		private readonly IRatings		mRatings;
 		private IDisposable				mSubscriptions;
@@ -95,10 +95,6 @@ namespace Noise.UI.ViewModels {
 			return( SelectedItem != null );
 		}
 
-		public void Handle( Events.PlayQueueChanged eventArgs ) {
-			PlayQueueChangedFlag++;
-		}
-
 		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
 			Execute.OnUIThread( () => {
 				PlayingItem = QueueList.FirstOrDefault( item => item.QueuedTrack.IsPlaying );
@@ -116,11 +112,6 @@ namespace Noise.UI.ViewModels {
 					track.UiRating = args.Track.Rating;
 				}
 			}
-		}
-
-		private int PlayQueueChangedFlag {
-			get{ return( Get( () => PlayQueueChangedFlag, 0 )); }
-			set{ Set( () => PlayQueueChangedFlag, value  ); }
 		}
 
 		private UiPlayQueueTrack CreateUiTrack( PlayQueueTrack track ) {
