@@ -245,6 +245,7 @@
     <Compile Include="Behaviours\ImageScrubber.cs" />
     <Compile Include="Behaviours\InteractionRequestData.cs" />
     <Compile Include="Behaviours\InteractionRequestDialogBehavior.cs" />
+    <Compile Include="Behaviours\ItemsControlAnimation.cs" />
     <Compile Include="Behaviours\ListViewDragDropManager.cs" />
     <Compile Include="Behaviours\ListViewEnsureVisible.cs" />
     <Compile Include="Behaviours\ListViewFirstItemVisible.cs" />

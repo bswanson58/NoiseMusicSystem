@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
+using DynamicData;
 using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -20,7 +21,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly ITrackProvider				    mTrackProvider;
 		private readonly IStorageFileProvider		    mStorageFileProvider;
 		private readonly IStorageFolderSupport		    mStorageFolderSupport;
-		private readonly List<PlayQueueTrack>		    mPlayQueue;
+		private readonly SourceList<PlayQueueTrack>		mPlayList;
 		private readonly List<PlayQueueTrack>		    mPlayHistory;
 		private readonly List<IPlayQueueSupport>	    mPlayQueueSupporters; 
 		private readonly IPlayStrategyFactory		    mPlayStrategyFactory;
@@ -34,11 +35,13 @@ namespace Noise.Core.PlayQueue {
 		private bool								    mDeleteUnplayedTracks;
 		private int									    mMaximumPlayedTracks;
 
-        public  IEnumerable<PlayQueueTrack>             PlayList => mPlayQueue;
-        public  bool                                    IsQueueEmpty => mPlayQueue.Count == 0;
-        public  int                                     UnplayedTrackCount => ( from PlayQueueTrack track in mPlayQueue where !track.HasPlayed select track ).Count();
+        public	IObservable<IChangeSet<PlayQueueTrack>>	PlayQueue { get; }
+        public  IEnumerable<PlayQueueTrack>             PlayList => mPlayList.Items;
+		public	ISourceList<PlayQueueTrack>				PlaySource => mPlayList;
+        public  bool                                    IsQueueEmpty => mPlayList.Count == 0;
+        public  int                                     UnplayedTrackCount => ( from PlayQueueTrack track in PlayList where !track.HasPlayed select track ).Count();
         public  int                                     PlayedTrackCount => GetPlayedTrackList().Count();
-        public  bool                                    StrategyRequestsQueued => ( from PlayQueueTrack track in mPlayQueue where track.IsStrategyQueued select track ).Any();
+        public  bool                                    StrategyRequestsQueued => ( from PlayQueueTrack track in PlayList where track.IsStrategyQueued select track ).Any();
 
 		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
@@ -57,7 +60,9 @@ namespace Noise.Core.PlayQueue {
             mExhaustedStrategyPlay = exhaustedStrategyPlay;
 			mPreferences = preferences;
 
-			mPlayQueue = new List<PlayQueueTrack>();
+            mPlayList = new SourceList<PlayQueueTrack>();
+			PlayQueue = mPlayList.Connect();
+
 			mPlayHistory = new List<PlayQueueTrack>();
 			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
@@ -141,16 +146,16 @@ namespace Noise.Core.PlayQueue {
 
 					// Place any user selected tracks before any unplayed strategy queued tracks.
 					if( strategySource == eStrategySource.User ) {
-						var	firstStrategyTrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
+						var	firstStrategyTrack = PlayList.FirstOrDefault( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
 						if( firstStrategyTrack != null ) {
-							mPlayQueue.Insert( mPlayQueue.IndexOf( firstStrategyTrack ), newTrack );
+							mPlayList.Insert( PlayList.IndexOf( firstStrategyTrack ), newTrack );
 						}
 						else {
-							mPlayQueue.Add( newTrack );
+							mPlayList.Add( newTrack );
 						}
 					}
 					else {
-						mPlayQueue.Add( newTrack );
+						mPlayList.Add( newTrack );
 					}
 
 					mLog.AddedTrack( newTrack );
@@ -168,9 +173,9 @@ namespace Noise.Core.PlayQueue {
 
 					if( artist != null ) {
 						var newTrack = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, eStrategySource.PlayStrategy );
-						var trackIndex = mPlayQueue.IndexOf( afterTrack );
+						var trackIndex = PlayList.IndexOf( afterTrack );
 
-						mPlayQueue.Insert( trackIndex + 1, newTrack );
+						mPlayList.Insert( trackIndex + 1, newTrack );
 
 						FirePlayQueueChanged();
 						mLog.AddedTrack( newTrack );
@@ -241,15 +246,15 @@ namespace Noise.Core.PlayQueue {
 		public void Add( DbInternetStream stream ) {
 			var newTrack = new PlayQueueTrack( stream );
 
-			mPlayQueue.Add( newTrack );
+			mPlayList.Add( newTrack );
 			mLog.AddedTrack( newTrack );
 
 			FirePlayQueueChanged();
 		}
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
-			foreach( var queueTrack in mPlayQueue.Where( queueTrack => ( queueTrack.Track != null ) &&
-																	   ( queueTrack.Track.DbId == eventArgs.Track.DbId ))) {
+			foreach( var queueTrack in PlayList.Where( queueTrack => ( queueTrack.Track != null ) && 
+                                                                     ( queueTrack.Track.DbId == eventArgs.Track.DbId ))) {
 				queueTrack.UpdateTrack( eventArgs.Track );
 
 				mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackUpdated( queueTrack ));
@@ -261,7 +266,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void ClearQueue() {
-			mPlayQueue.Clear();
+			mPlayList.Clear();
 			mPlayHistory.Clear();
 			PlayingTrackReplayCount = 0;
 			mLog.ClearedQueue();
@@ -270,11 +275,11 @@ namespace Noise.Core.PlayQueue {
 		}
 
         public bool IsTrackQueued( DbTrack track ) {
-			return( mPlayQueue.Exists( item => item.Track.DbId == track.DbId ));
+			return( PlayList.Any( item => item.Track.DbId == track.DbId ));
 		}
 
 		public void ReplayQueue() {
-			foreach( var track in mPlayQueue ) {
+			foreach( var track in PlayList ) {
 				if(!track.IsPlaying ) {
 					track.HasPlayed = false;
 
@@ -287,7 +292,7 @@ namespace Noise.Core.PlayQueue {
 
 		public bool ReplayTrack( long itemId ) {
 			var retValue = false;
-			var	track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+			var	track = PlayList.FirstOrDefault( item => item.Uid == itemId );
 
 			if( track != null ) {
 				track.HasPlayed = false;
@@ -302,7 +307,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 	    public void PromoteTrackFromStrategy( PlayQueueTrack track ) {
-            var queuedTrack = mPlayQueue.FirstOrDefault( t => t.Uid.Equals( track.Uid ));
+            var queuedTrack = PlayList.FirstOrDefault( t => t.Uid.Equals( track.Uid ));
 
             queuedTrack?.PromoteStrategy();
             FirePlayQueueChanged();
@@ -310,7 +315,7 @@ namespace Noise.Core.PlayQueue {
 
 	    public bool RemoveTrack( long itemId ) {
 			var retValue = false;
-			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+			var track = PlayList.FirstOrDefault( item => item.Uid == itemId );
 
 			if( track != null ) {
 				RemoveTrack( track );
@@ -323,10 +328,10 @@ namespace Noise.Core.PlayQueue {
 
 		public void RemoveTrack( PlayQueueTrack track ) {
 			if( track != null ) {
-				var	queuedTrack= mPlayQueue.Find( item => item.Uid.Equals( track.Uid ));
+				var	queuedTrack= PlayList.FirstOrDefault( item => item.Uid.Equals( track.Uid ));
 
 				if( queuedTrack != null ) {
-					mPlayQueue.Remove(  queuedTrack );
+					mPlayList.Remove(  queuedTrack );
 					mLog.RemovedTrack( queuedTrack );
 				}
 
@@ -341,10 +346,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void RemovePlayedTracks() {
-			var removeList = ( from track in mPlayQueue where track.HasPlayed && !track.IsPlaying select  track ).ToList();
+			var removeList = ( from track in PlayList where track.HasPlayed && !track.IsPlaying select  track ).ToList();
 
 			foreach( var track in removeList ) {
-				mPlayQueue.Remove( track );
+				mPlayList.Remove( track );
 				mLog.RemovedTrack( track );
 			}
 
@@ -354,16 +359,16 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void	ReorderQueueItem( int fromIndex, int toIndex ) {
-			if(( fromIndex < mPlayQueue.Count ) &&
-			   ( toIndex < mPlayQueue.Count )) {
-				var track = mPlayQueue[fromIndex];
+			if(( fromIndex < mPlayList.Count ) &&
+			   ( toIndex < mPlayList.Count )) {
+				var track = PlayList.ElementAt( fromIndex );
 
-				mPlayQueue.Remove( track );
-				mPlayQueue.Insert( toIndex, track );
+				mPlayList.Remove( track );
+				mPlayList.Insert( toIndex, track );
 
 				var playingTrack = PlayingTrack;
 				if( playingTrack != null ) {
-					var playingIndex = mPlayQueue.IndexOf( playingTrack );
+					var playingIndex = PlayList.IndexOf( playingTrack );
 
 					if( playingIndex > toIndex ) {
 						if(!track.HasPlayed ) {
@@ -380,8 +385,8 @@ namespace Noise.Core.PlayQueue {
 						}
 					}
 					if( playingIndex == toIndex ) {
-						foreach( var queuedTrack in mPlayQueue ) {
-							queuedTrack.HasPlayed = mPlayQueue.IndexOf( queuedTrack ) < playingIndex;
+						foreach( var queuedTrack in PlayList ) {
+							queuedTrack.HasPlayed = PlayList.IndexOf( queuedTrack ) < playingIndex;
 						}
 					}
 				}
@@ -391,7 +396,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
         private IEnumerable<PlayQueueTrack> GetPlayedTrackList() {
-			return( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track );
+			return( from PlayQueueTrack track in PlayList where track.HasPlayed && !track.IsPlaying select track );
 		}
 
         public int PlayingTrackReplayCount {
@@ -419,7 +424,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public bool CanStartPlayStrategy =>
-            (!mPlayQueue.Any()) &&
+            (!PlayList.Any()) &&
             ( mExhaustedStrategyPlay.CanQueueTracks());
 
         public PlayQueueTrack PlayNextTrack() {
@@ -520,7 +525,7 @@ namespace Noise.Core.PlayQueue {
 
 						if(( retValue == null ) &&
 						   (!mAddingMoreTracks ) &&
-						   ( mPlayQueue.Count > 0 )) {
+						   ( mPlayList.Count > 0 )) {
 							if( SelectExhaustedTracks()) {
 								retValue = mPlayStrategy.NextTrack();
 							}
@@ -551,8 +556,8 @@ namespace Noise.Core.PlayQueue {
 
 		public bool CanPlayNextTrack() {
 			return(!mStopAtEndOfTrack && 
-	              ( mPlayQueue.FirstOrDefault( track => (!track.IsPlaying ) && 
-    		                                            (!track.HasPlayed )) != null ));
+	              ( PlayList.FirstOrDefault( track => (!track.IsPlaying ) && 
+                                                      (!track.HasPlayed )) != null ));
 		}
 
 		public PlayQueueTrack PlayPreviousTrack() {
@@ -579,7 +584,7 @@ namespace Noise.Core.PlayQueue {
 
 		public bool ContinuePlayFromTrack( long itemId ) {
 			var retValue = false;
-			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+			var track = PlayList.FirstOrDefault( item => item.Uid == itemId );
 
 			if( track != null ) {
 				ContinuePlayFromTrack( track );
@@ -593,10 +598,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void ContinuePlayFromTrack( PlayQueueTrack track ) {
-			if( mPlayQueue.Contains( track )) {
+			if( PlayList.Contains( track )) {
 				bool	hasPlayedSetting = true;
 
-				foreach( var t in mPlayQueue ) {
+				foreach( var t in PlayList ) {
 					if( t == track ) {
 						hasPlayedSetting = false;
 					}
@@ -629,13 +634,13 @@ namespace Noise.Core.PlayQueue {
 		}
 			
 		public PlayQueueTrack PlayingTrack {
-			get { return( mPlayQueue.FirstOrDefault( track => ( track.IsPlaying ))); }
+			get { return( PlayList.FirstOrDefault( track => ( track.IsPlaying ))); }
 			set {
-				var currentTrack = mPlayQueue.FirstOrDefault( track => track.IsPlaying );
+				var currentTrack = PlayList.FirstOrDefault( track => track.IsPlaying );
 
 				if(( currentTrack != value ) &&
 				   ( value != null ) &&
-				   ( mPlayQueue.IndexOf( value ) != -1 )) {
+				   ( PlayList.IndexOf( value ) != -1 )) {
 					if( currentTrack != null ) {
 						currentTrack.IsPlaying = false;
 						currentTrack.HasPlayed = true;
