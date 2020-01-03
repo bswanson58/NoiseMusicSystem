@@ -27,15 +27,16 @@
             <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="1.0" To="0.0" Duration="0:0:0.5"/>
         </Storyboard>
 
-        <Style x:Key="MouseOverTrigger" TargetType="{x:Type Expander}">
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter Property="IsExpanded" Value="True" />
-				</Trigger>
-			</Style.Triggers>
-		</Style>
+		<Storyboard x:Key="MouseEnter">
+            <DoubleAnimation Storyboard.TargetName="GridRow2" Storyboard.TargetProperty="LayoutTransform.ScaleY" From="0.0" To="1.0" Duration="0:0:0.25"/>
+        </Storyboard>
 
-        <Style x:Key="BoldedDragListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+        <Storyboard x:Key="MouseLeave">
+            <DoubleAnimation Storyboard.TargetName="GridRow2" Storyboard.TargetProperty="LayoutTransform.ScaleY" From="1.0" To="0.0" Duration="0:0:0.25"/>
+        </Storyboard>
+
+        <Style x:Key="BoldedDragListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MetroListBoxItem}">
+			<Setter Property="Padding" Value="0"/>
             <Setter Property="LayoutTransform">
                 <Setter.Value>
                     <ScaleTransform/>
@@ -54,199 +55,129 @@
 			</Grid>
 		</ControlTemplate>
 
-		<ControlTemplate x:Key="MouseOverExpanderTemplate" TargetType="{x:Type Expander}">
-			<ControlTemplate.Resources>
-				<Storyboard x:Key="ExpandContent">
-					<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
-												   Duration="00:00:0.15"
-												   Storyboard.TargetName="ExpandSite"
-												   Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleY)">
-						<SplineDoubleKeyFrame KeyTime="00:00:0.15" Value="1" />
-					</DoubleAnimationUsingKeyFrames>
-				</Storyboard>
-				<Storyboard x:Key="CollapseContent">
-					<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
-												   Duration="00:00:00.15"
-												   Storyboard.TargetName="ExpandSite"
-												   Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleY)">
-						<SplineDoubleKeyFrame KeyTime="00:00:0.15" Value="0" />
-					</DoubleAnimationUsingKeyFrames>
-				</Storyboard>
-			</ControlTemplate.Resources>
-			<Border Background="{TemplateBinding Background}"
-					BorderBrush="{TemplateBinding BorderBrush}"
-					BorderThickness="{TemplateBinding BorderThickness}"
-					CornerRadius="3"
-					SnapsToDevicePixels="True">
-				<DockPanel>
-					<ContentPresenter x:Name="HeaderSite"
-									  Margin="{TemplateBinding Padding}"
-									  HorizontalAlignment="Stretch"
-									  VerticalAlignment="Center"
-									  Content="{TemplateBinding Header}"
-									  ContentStringFormat="{TemplateBinding ContentStringFormat}"
-									  ContentTemplate="{TemplateBinding ContentTemplate}"
-									  DockPanel.Dock="Top"
-									  RecognizesAccessKey="True"
-									  SnapsToDevicePixels="True" />
-					<ContentPresenter x:Name="ExpandSite"
-									  Margin="{TemplateBinding Padding}"
-									  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-									  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-									  Content="{TemplateBinding Content}"
-									  ContentStringFormat="{TemplateBinding ContentStringFormat}"
-									  ContentTemplate="{TemplateBinding ContentTemplate}"
-									  DockPanel.Dock="Bottom"
-									  Focusable="False">
-						<ContentPresenter.LayoutTransform>
-							<ScaleTransform x:Name="scaleTransform"
-											ScaleX="1"
-											ScaleY="0" />
-						</ContentPresenter.LayoutTransform>
-					</ContentPresenter>
-				</DockPanel>
-			</Border>
-			<ControlTemplate.Triggers>
-				<Trigger Property="IsExpanded" Value="True">
-					<Trigger.EnterActions>
-						<BeginStoryboard Storyboard="{StaticResource ExpandContent}" />
-					</Trigger.EnterActions>
-					<Trigger.ExitActions>
-						<BeginStoryboard Storyboard="{StaticResource CollapseContent}" />
-					</Trigger.ExitActions>
-				</Trigger>
-
-				<Trigger Property="ExpandDirection" Value="Right">
-					<Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Right" />
-					<Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Left" />
-				</Trigger>
-				<Trigger Property="ExpandDirection" Value="Up">
-					<Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Top" />
-					<Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Bottom" />
-				</Trigger>
-				<Trigger Property="ExpandDirection" Value="Left">
-					<Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Left" />
-					<Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Right" />
-				</Trigger>
-			</ControlTemplate.Triggers>
-		</ControlTemplate>
-
 		<DataTemplate x:Key="QueueListItem" DataType="Dto:UiPlayQueueTrack">
-			<Grid x:Name="listItemLayoutRoot">
-				<Grid.LayoutTransform>
-					<TransformGroup>
-						<ScaleTransform/>
-					</TransformGroup>
-				</Grid.LayoutTransform>
+            <Grid Margin="0,2,4,2" Background="Transparent">
+				<Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-				<Expander Margin="-9,0,0,0" Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
-					<Expander.Header>
-						<Grid >
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="18"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-							<Grid Grid.Column="0">
-								<TextBlock FontFamily="WebDings" FontSize="22" Foreground="{StaticResource PlayingBrush}" Text="4"
-										   Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
-								<TextBlock Margin="7,3,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
-										   Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
-							</Grid>
+                    <Grid Grid.Column="0">
+                        <TextBlock FontFamily="WebDings" FontSize="22" Foreground="{StaticResource PlayingBrush}" Text="4"
+                                   Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <TextBlock Margin="7,3,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
+                                   Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
+                    </Grid>
 
-							<Grid Grid.Column="1">
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-								</Grid.RowDefinitions>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-								<Grid Grid.Row="0" Margin="0,-3,0,0">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="48" />
-									</Grid.ColumnDefinitions>
+                        <Grid Grid.Row="0" Margin="0,-3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="48" />
+                            </Grid.ColumnDefinitions>
 
 
-									<Viewbox Grid.Column="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-										<TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
-									</Viewbox>
+                            <Viewbox Grid.Column="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
+                                <TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
+                            </Viewbox>
 
-									<TextBlock x:Name="TrackDuration" Grid.Column="1" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
-											   Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
-								</Grid>
+                            <TextBlock x:Name="TrackDuration" Grid.Column="1" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
+                                       Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
+                        </Grid>
 
-								<TextBlock x:Name="AlbumName" Grid.Row="1" Margin="5,0" FontSize="11" Foreground="Gray"
-										   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-										   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-										   Text="{Binding Path=QueuedTrack.AlbumName}" />
+                        <TextBlock x:Name="AlbumName" Grid.Row="1" Margin="5,0" FontSize="11" Foreground="Gray"
+                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                   Text="{Binding Path=QueuedTrack.AlbumName}" />
 
-							</Grid>
-						</Grid>
-					</Expander.Header>
-					<Grid Margin="12,3,0,1">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-						    <ColumnDefinition Width="Auto" />
-						    <ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
+                    </Grid>
+                </Grid>
 
-						<Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3"
-						        Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
+				<Grid Grid.Row="1" x:Name="GridRow2" Margin="15,3,0,1">
+					<Grid.LayoutTransform>
+                        <ScaleTransform ScaleY="0"/>
+                    </Grid.LayoutTransform>
 
-						<Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3"
-						        Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
+                    <Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
 
-						<Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
-								Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"
-								Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" />
+					<Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3"
+						    Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
 
-                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
-								Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"
-								Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" />
+					<Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3"
+						    Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
 
-                        <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
+					<Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
+							Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"
+							Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" />
 
-						<Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=MoveUp}" Content="▲" ToolTip="Move track up in queue" />
+                    <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
+							Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"
+							Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" />
 
-						<Button Grid.Column="5" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=MoveDown}" Content="▼" ToolTip="Move track down in queue" />
+                    <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
+							Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
 
-						<Button Grid.Column="6" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
-                        
-                        <Button Grid.Column="7" Style="{StaticResource QueueButtonStyle}"
-                                Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"
-                                Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"/>
+					<Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}"
+							Command="{Binding Path=MoveUp}" Content="▲" ToolTip="Move track up in queue" />
 
-						<!--  Favorite and Rating  -->
-						<StackPanel Grid.Column="9" HorizontalAlignment="Right" Orientation="Horizontal">
-							<CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
-								  IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
-								  Style="{StaticResource FavoriteCheckBoxStyle}" />
-							<Controls:RatingControl Rating="{Binding Path=UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
-						</StackPanel>
-					</Grid>
-				</Expander>
+					<Button Grid.Column="5" Style="{StaticResource QueueButtonStyle}"
+							Command="{Binding Path=MoveDown}" Content="▼" ToolTip="Move track down in queue" />
+
+					<Button Grid.Column="6" Style="{StaticResource QueueButtonStyle}"
+							Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
+                    
+                    <Button Grid.Column="7" Style="{StaticResource QueueButtonStyle}"
+                            Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"
+                            Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"/>
+
+					<!--  Favorite and Rating  -->
+					<StackPanel Grid.Column="9" HorizontalAlignment="Right" Orientation="Horizontal">
+						<CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
+							  IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
+							  Style="{StaticResource FavoriteCheckBoxStyle}" />
+						<Controls:RatingControl Rating="{Binding Path=UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
+					</StackPanel>
+				</Grid>
 			</Grid>
 
 			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard Storyboard="{StaticResource MouseEnter}"/>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard Storyboard="{StaticResource MouseLeave}"/>
+                </EventTrigger>
+                <DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
 					<Setter TargetName="TrackName" Property="Foreground" Value="Gray" />
 					<Setter TargetName="AlbumName" Property="Foreground" Value="Gray" />
 					<Setter TargetName="TrackDuration" Property="Foreground" Value="Gray" />
 				</DataTrigger>
 				<DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
 					<Setter TargetName="TrackName" Property="FontWeight" Value="Bold" />
-					<Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    <Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
 					<Setter TargetName="TrackDuration" Property="FontWeight" Value="Bold" />
 				</DataTrigger>
 				<DataTrigger Binding="{Binding Path=IsStrategyQueued}" Value="true">
