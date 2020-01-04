@@ -9,8 +9,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
-			 DataContext="{Binding PlayQueueListViewModel, Source={StaticResource ViewModelLocator}}"
-			 >
+			 DataContext="{Binding PlayQueueListViewModel, Source={StaticResource ViewModelLocator}}">
 	
 	<Control.Resources>
 		<Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
@@ -28,11 +27,21 @@
         </Storyboard>
 
         <Storyboard x:Key="MouseEnterItem">
-            <DoubleAnimation Storyboard.TargetName="GridRow2" Storyboard.TargetProperty="LayoutTransform.ScaleY" From="0.0" To="1.0" Duration="0:0:0.3"/>
+            <DoubleAnimation Storyboard.TargetName="Overlay" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.8"/>
+            <DoubleAnimation Storyboard.TargetName="AlbumName" Storyboard.TargetProperty="Opacity" From="0.6" To="0.0" Duration="0:0:0.3"/>
+            <DoubleAnimation Storyboard.TargetName="TrackDuration" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.5"/>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AlbumName" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0:0.3" Value="{x:Static Visibility.Hidden}"/>
+            </ObjectAnimationUsingKeyFrames>
         </Storyboard>
 
         <Storyboard x:Key="MouseLeaveItem">
-            <DoubleAnimation Storyboard.TargetName="GridRow2" Storyboard.TargetProperty="LayoutTransform.ScaleY" From="1.0" To="0.0" Duration="0:0:0.2"/>
+            <DoubleAnimation Storyboard.TargetName="Overlay" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.3"/>
+            <DoubleAnimation Storyboard.TargetName="AlbumName" Storyboard.TargetProperty="Opacity" From="0.0" To="0.6" Duration="0:0:0.5"/>
+            <DoubleAnimation Storyboard.TargetName="TrackDuration" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.5"/>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AlbumName" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+            </ObjectAnimationUsingKeyFrames>
         </Storyboard>
 
         <Style x:Key="BoldOnDragListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MetroListBoxItem}">
@@ -56,88 +65,73 @@
 		</ControlTemplate>
 
 		<DataTemplate x:Key="QueueListItem" DataType="Dto:UiPlayQueueTrack">
-            <Grid Margin="0,2,4,2" Background="Transparent">
-				<Grid.RowDefinitions>
+            <Grid Margin="0,1,4,0" Background="Transparent">
+                <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="18"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="18"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid Grid.Column="0">
-                        <TextBlock FontFamily="WebDings" FontSize="22" Foreground="{StaticResource PlayingBrush}" Text="4"
-                                   Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
-                        <TextBlock Margin="7,3,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
-                                   Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
-                    </Grid>
-
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Grid Grid.Row="0" Margin="0,-3,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="48" />
-                            </Grid.ColumnDefinitions>
-
-
-                            <Viewbox Grid.Column="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-                                <TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
-                            </Viewbox>
-
-                            <TextBlock x:Name="TrackDuration" Grid.Column="1" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
-                                       Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
-                        </Grid>
-
-                        <TextBlock x:Name="AlbumName" Grid.Row="1" Margin="5,0" FontSize="11" Opacity="0.75"
-                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                   Text="{Binding Path=QueuedTrack.AlbumName}" />
-
-                    </Grid>
+                <!-- Playing Indicators -->
+                <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+                    <TextBlock FontFamily="WebDings" FontSize="22" Foreground="{StaticResource PlayingBrush}" Text="4"
+                               Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
+                    <TextBlock Margin="7,3,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
+                               Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
                 </Grid>
 
-				<Grid Grid.Row="1" x:Name="GridRow2" Margin="15,3,0,1">
-					<Grid.LayoutTransform>
-                        <ScaleTransform ScaleY="0"/>
-                    </Grid.LayoutTransform>
-
+                <Grid Grid.Column="1" Grid.Row="0" Margin="0,-3,0,0">
                     <Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="48" />
+                    </Grid.ColumnDefinitions>
 
-					<StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" 
-                                Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"/>
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" 
-                                Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"/>
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=MoveUp}" Content="▲" ToolTip="Move track up in queue" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=MoveDown}" Content="▼" ToolTip="Move track down in queue" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"
-                                Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"/>
+                    <Viewbox Grid.Column="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
+                        <TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
+                    </Viewbox>
+
+                    <TextBlock x:Name="TrackDuration" Grid.Column="1" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
+                               Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
+                </Grid>
+
+                <TextBlock x:Name="AlbumName" Grid.Row="1" Grid.Column="1" Margin="5,1,0,0" FontSize="11" Opacity="0.6"
+                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                           Text="{Binding Path=QueuedTrack.AlbumName}" />
+
+                <!-- Overlay -->
+                <Grid x:Name="Overlay" Grid.Column="1" Grid.Row="1" Opacity="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Favorite and Rating  -->
+                    <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal">
+                        <CheckBox Width="15" Height="15" Margin="0,0,4,5" VerticalAlignment="Center"
+                              IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
+                              Style="{StaticResource FavoriteCheckBoxStyle}" />
+                        <Controls:RatingControl Rating="{Binding Path=UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
                     </StackPanel>
 
-					<!--  Favorite and Rating  -->
-					<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
-						<CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
-							  IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
-							  Style="{StaticResource FavoriteCheckBoxStyle}" />
-						<Controls:RatingControl Rating="{Binding Path=UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
-					</StackPanel>
-				</Grid>
+                    <!-- Queue Item Controls -->
+                    <StackPanel Grid.Column="2" Margin="0,0,0,1" Orientation="Horizontal">
+                        <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
+                        <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
+                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
+                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" 
+                            Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"/>
+                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" 
+                            Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"/>
+                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
+                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"
+                            Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"/>
+                    </StackPanel>
+                </Grid>
 			</Grid>
 
 			<DataTemplate.Triggers>
