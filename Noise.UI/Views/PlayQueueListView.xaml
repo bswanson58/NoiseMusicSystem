@@ -131,7 +131,7 @@
                     </StackPanel>
 
 					<!--  Favorite and Rating  -->
-					<StackPanel Grid.Column="9" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
 						<CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
 							  IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
 							  Style="{StaticResource FavoriteCheckBoxStyle}" />
