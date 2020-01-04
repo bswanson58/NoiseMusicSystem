@@ -21,13 +21,14 @@
 		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
 		<ValueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
 
-        <Style x:Key="PlayingItemStyle" TargetType="Border">
+		<Style x:Key="PlayingItemBorder" TargetType="GroupBox" BasedOn="{StaticResource SectionBorderStyle}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Artist.IsPlaying}" Value="True">
                     <Setter Property="BorderBrush" Value="{StaticResource PlayingBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
                 </DataTrigger>
             </Style.Triggers>
-        </Style>	
+        </Style>
     </UserControl.Resources>
 
 	<UserControl.DataContext>
@@ -43,7 +44,7 @@
                                                      InteractionRequest="{Binding Path=ArtistArtworkDisplayRequest}" />
 	</i:Interaction.Behaviors>
 
-	<GroupBox Margin="1,0,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Artist ">
+	<GroupBox Margin="1,0,0,0" Style="{StaticResource PlayingItemBorder}" Header=" Artist ">
 		<Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
 			<Border BorderThickness="0" CornerRadius="5">
 				<Grid Background="{StaticResource NoiseBrush}">
@@ -54,16 +55,14 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<Border Grid.Column="0" Margin="3" BorderThickness="3" CornerRadius="1" Style="{StaticResource PlayingItemStyle}">
-    					<Image MinWidth="50" MinHeight="50" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
-	    					   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" Cursor="Hand">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseLeftButtonDown" >
-                                    <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </Image>
-                    </Border>
+    				<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+	    				   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" Cursor="Hand">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseLeftButtonDown" >
+                                <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Image>
 
                     <Grid Grid.Column="3" Margin="3,7,11,0">
 						<Grid.RowDefinitions>

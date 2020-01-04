@@ -22,10 +22,11 @@
 		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
 		<ValueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
 
-        <Style x:Key="PlayingItemStyle" TargetType="Border">
+        <Style x:Key="PlayingItemBorder" TargetType="GroupBox" BasedOn="{StaticResource SectionBorderStyle}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Album.IsPlaying}" Value="True">
                     <Setter Property="BorderBrush" Value="{StaticResource PlayingBrush}"/>
+					<Setter Property="BorderThickness" Value="2"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -40,29 +41,26 @@
 													 InteractionRequest="{Binding Path=AlbumArtworkDisplayRequest}" />
 	</i:Interaction.Behaviors>
 
-	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
-		<Border BorderThickness="0" CornerRadius="5"
-				Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
+	<GroupBox Style="{StaticResource PlayingItemBorder}" Header=" Album ">
+        <Border BorderThickness="0" CornerRadius="5" Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
 			<Grid Background="{StaticResource NoiseBrush}" 
 				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
 				<!--  Album cover image  -->
-                <Border Grid.Column="0" Margin="3" BorderThickness="3" CornerRadius="1" Style="{StaticResource PlayingItemStyle}">
-				    <Viewbox Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform">
-                        <Image RenderTransformOrigin="0.5,0.5">
-						    <Image.RenderTransform>
-							    <TransformGroup>
-								    <ScaleTransform />
-								    <SkewTransform />
-								    <RotateTransform Angle="{Binding Path=AlbumCover.Rotation}" />
-								    <TranslateTransform X="{Binding Path=AlbumCover.ImageLeft}" Y="{Binding Path=AlbumCover.ImageTop}" />
-							    </TransformGroup>
-						    </Image.RenderTransform>
-						    <i:Interaction.Behaviors>
-							    <Behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
-						    </i:Interaction.Behaviors>
-					    </Image>
-				    </Viewbox>
-                </Border>
+				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform">
+                    <Image RenderTransformOrigin="0.5,0.5">
+						<Image.RenderTransform>
+							<TransformGroup>
+								<ScaleTransform />
+								<SkewTransform />
+								<RotateTransform Angle="{Binding Path=AlbumCover.Rotation}" />
+								<TranslateTransform X="{Binding Path=AlbumCover.ImageLeft}" Y="{Binding Path=AlbumCover.ImageTop}" />
+							</TransformGroup>
+						</Image.RenderTransform>
+						<i:Interaction.Behaviors>
+							<Behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
+						</i:Interaction.Behaviors>
+					</Image>
+				</Viewbox>
 
                 <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,11,5"
 					  Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
