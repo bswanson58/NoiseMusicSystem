@@ -175,6 +175,7 @@
                      Behaviours:ItemsControlAnimation.FadeOutAnimation="{StaticResource ItemDeletedAnimation}"
                      ItemTemplate="{StaticResource QueueListItem}"
 					 ItemContainerStyle="{StaticResource BoldOnDragListBoxItemStyle}"
+                     ScrollViewer.CanContentScroll="False"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					 ScrollViewer.VerticalScrollBarVisibility="Auto"
 					 SelectedItem="{Binding Path=SelectedItem}">
