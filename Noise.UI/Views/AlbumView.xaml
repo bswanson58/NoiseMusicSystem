@@ -62,7 +62,7 @@
 					</Image>
 				</Viewbox>
 
-                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,11,5"
+                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,5,3"
 					  Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
 
 					<!--  Album name -->
@@ -132,7 +132,7 @@
 					</StackPanel>
 
 					<!--  Album commands  -->
-					<StackPanel Grid.Row="5" Height="28" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="5" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" Orientation="Horizontal">
 
 						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
@@ -146,9 +146,9 @@
 							<ComboBox MinWidth="97" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
 						</StackPanel>
 						
-						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
+						<Button Margin="0,0,5,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
-						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
+						<Button Margin="0,0,5,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
 						<Button Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Structure" />
