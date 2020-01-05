@@ -119,18 +119,20 @@
                     </StackPanel>
 
                     <!-- Queue Item Controls -->
-                    <StackPanel Grid.Column="2" Margin="0,0,0,1" Orientation="Horizontal">
-                        <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" 
-                            Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"/>
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" 
-                            Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"/>
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
-                        <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"
-                            Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"/>
-                    </StackPanel>
+                    <Viewbox Grid.Column="2" Stretch="Uniform" StretchDirection="Both" Height="18pt" Margin="0,-5,0,0">
+                        <StackPanel Margin="0,0,0,1" Orientation="Horizontal">
+                            <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
+                            <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
+                            <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
+                            <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" 
+                                    Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"/>
+                            <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" 
+                                    Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"/>
+                            <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
+                            <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"
+                                    Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"/>
+                        </StackPanel>
+                    </Viewbox>
                 </Grid>
 			</Grid>
 
