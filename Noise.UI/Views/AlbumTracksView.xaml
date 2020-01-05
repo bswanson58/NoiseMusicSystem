@@ -9,6 +9,7 @@
              xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:Views="clr-namespace:Noise.UI.Views"
              xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:Behaviours1="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              d:DesignHeight="100"
              d:DesignWidth="530"
              mc:Ignorable="d">
@@ -217,6 +218,9 @@
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource AdjacentPlayHeaderTemplate}"
                                         HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource AdjacentPlayTemplate}"/>
             </DataGrid.Columns>
+            <i:Interaction.Behaviors>
+                <Behaviours1:WidgetOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            </i:Interaction.Behaviors>
         </DataGrid>
     </GroupBox>
 </UserControl>
