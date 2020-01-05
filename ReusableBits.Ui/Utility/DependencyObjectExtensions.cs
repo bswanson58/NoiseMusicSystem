@@ -47,8 +47,22 @@ namespace ReusableBits.Ui.Utility {
 					yield return foundDescendant;
 				}
 			}
-
-			yield break;
 		}
+
+        public static IEnumerable<T> FindChildren<T>( this DependencyObject depObj ) where T : DependencyObject {
+            if( depObj != null ) {
+                for( int i = 0; i < VisualTreeHelper.GetChildrenCount( depObj ); i++ ) {
+                    var child = VisualTreeHelper.GetChild( depObj, i );
+
+                    if( child is T dependencyObject ) {
+                        yield return dependencyObject;
+                    }
+
+                    foreach( T childOfChild in FindChildren<T>( child )) {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
 	}
 }

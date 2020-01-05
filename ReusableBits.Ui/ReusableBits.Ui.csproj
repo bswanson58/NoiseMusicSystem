@@ -124,6 +124,7 @@
     <Compile Include="Behaviours\ViewAttachedNotifier.cs" />
     <Compile Include="Behaviours\ViewDisplayedNotifier.cs" />
     <Compile Include="Behaviours\VisualStateAdapter.cs" />
+    <Compile Include="Behaviours\WidgetOpacity.cs" />
     <Compile Include="Controls\AnimatedContentControl.cs" />
     <Compile Include="Controls\ClipToBounds.cs" />
     <Compile Include="Controls\StatusMessage.cs" />

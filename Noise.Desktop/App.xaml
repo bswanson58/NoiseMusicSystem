@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/GroupBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/LinkLabel.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/PlayButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/StoryBoards.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/TabHeader.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/WatermarkTextBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/Images.xaml" />
