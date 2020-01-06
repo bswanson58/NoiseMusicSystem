@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Media.Animation;
@@ -8,7 +8,21 @@ using ReusableBits.Ui.Utility;
 
 namespace ReusableBits.Ui.Behaviours {
     public class WidgetOpacity : Behavior<FrameworkElement> {
-        private readonly List<UIElement>    mScrollBars;
+        private readonly List<FrameworkElement> mElements;
+
+        public static readonly DependencyProperty TagNameProperty = DependencyProperty.Register(
+            "TagName", typeof( string ), typeof( WidgetOpacity ), new PropertyMetadata( null, OnTagNameChanged ));
+
+        private static void OnTagNameChanged( DependencyObject sender, DependencyPropertyChangedEventArgs args ) {
+            if( sender is WidgetOpacity widget ) {
+                widget.OnTagNameChanged();
+            }
+        }
+
+        public string TagName {
+            get => GetValue( TagNameProperty ) as string;
+            set => SetValue( TagNameProperty, value );
+        }
 
         public static readonly DependencyProperty FadeInAnimationProperty = DependencyProperty.Register(
             "FadeInAnimation", typeof( Storyboard ), typeof( WidgetOpacity ), new PropertyMetadata( null ));
@@ -27,7 +41,7 @@ namespace ReusableBits.Ui.Behaviours {
         }
 
         public WidgetOpacity() {
-            mScrollBars = new List<UIElement>();
+            mElements = new List<FrameworkElement>();
         }
 
         protected override void OnAttached() {
@@ -39,16 +53,28 @@ namespace ReusableBits.Ui.Behaviours {
         }
 
         private void OnLoaded( object sender, RoutedEventArgs args ) {
-            mScrollBars.AddRange( AssociatedObject.FindChildren<ScrollBar>());
+            LoadElements();
 
             FadeOutWidgets();
+        }
+
+        public void OnTagNameChanged() {
+            LoadElements();
+        }
+
+        private void LoadElements() {
+            if( AssociatedObject != null ) {
+                mElements.Clear();
+
+                mElements.AddRange( AssociatedObject.FindChildren<FrameworkElement>().Where( c => c.Tag != null && c.Tag.Equals( TagName )));
+            }
         }
 
         private void OnMouseEnter( object sender, MouseEventArgs args ) {
             var animation = FadeInAnimation;
 
             if( animation != null ) {
-                foreach( var element in mScrollBars ) {
+                foreach( var element in mElements ) {
                     Storyboard.SetTarget( animation, element );
                     animation.Begin();
                 }
@@ -63,7 +89,7 @@ namespace ReusableBits.Ui.Behaviours {
             var animation = FadeOutAnimation;
 
             if( animation != null ) {
-                foreach( var element in mScrollBars ) {
+                foreach( var element in mElements ) {
                     Storyboard.SetTarget( animation, element );
                     animation.Begin();
                 }
@@ -77,7 +103,7 @@ namespace ReusableBits.Ui.Behaviours {
             AssociatedObject.MouseEnter -= OnMouseEnter;
             AssociatedObject.MouseLeave -= OnMouseLeave;
 
-            mScrollBars.Clear();
+            mElements.Clear();
         }
     }
 }

@@ -155,17 +155,18 @@
 					<ColumnDefinition Width="2*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+				<Button Grid.Column="0" Tag="dimmed" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
 						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Album Sort Order" />
 
-				<TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+				<TextBox Grid.Column="1" Tag="dimmed" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
 						 Behaviours:TextBoxHelper.Watermark="enter album filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
 						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</Grid>
         <i:Interaction.Behaviors>
             <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
         </i:Interaction.Behaviors>
 </GroupBox>
 </UserControl>
