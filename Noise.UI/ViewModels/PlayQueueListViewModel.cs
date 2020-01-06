@@ -31,14 +31,17 @@ namespace Noise.UI.ViewModels {
 			mRatings = ratings;
 
 			QueueList = new ObservableCollectionExtended<UiPlayQueueTrack>();
+			QueueEmpty = true;
 
 			var uiList = mPlayQueue.PlayQueue.Transform( CreateUiTrack ).AsObservableList();
 
             var ratingSubscription = uiList.Connect().WhenPropertyChanged( t => t.UiRating ).Subscribe( OnRatingChanged );
 			var favoriteSubscription = uiList.Connect().WhenPropertyChanged( t => t.UiIsFavorite ).Subscribe( OnFavoriteChanged );
             var queueSubscription = uiList.Connect().ObserveOnDispatcher().Bind( QueueList ).Subscribe();
+			// since we aren't based on ReactiveObject, we can't use a ObservableAsPropertyHelper:
+			var emptySubscription = uiList.Connect().ToCollection().Select( c => c.Count == 0 ).Subscribe( b => QueueEmpty = b );  //.ToProperty( this, x => x.QueueEmpty );
 
-            mSubscriptions = new CompositeDisposable( uiList, queueSubscription, favoriteSubscription, ratingSubscription );
+            mSubscriptions = new CompositeDisposable( uiList, queueSubscription, favoriteSubscription, ratingSubscription, emptySubscription );
 
 			EventAggregator.Subscribe( this );
 		}
@@ -51,6 +54,10 @@ namespace Noise.UI.ViewModels {
 			mRatings.SetFavorite( value.Sender.QueuedTrack.Track, value.Sender.UiIsFavorite );
         }
 
+		public bool QueueEmpty {
+			get => Get(() => QueueEmpty );
+			set => Set( () => QueueEmpty, value );
+		}
 	    public UiPlayQueueTrack SelectedItem {
 			get{ return( Get( () => SelectedItem )); }
 			set{ Set( () => SelectedItem, value ); }

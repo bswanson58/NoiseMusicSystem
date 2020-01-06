@@ -15,6 +15,7 @@
 		<Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
 
         <ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
+        <ValueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" TriggerValue="False" IsHidden="True"/>
 
         <Storyboard x:Key="ItemAddedAnimation">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1"/>
@@ -57,12 +58,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
-        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
-			<Grid Margin="5,15,5,0">
-                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Play Something!" />
-			</Grid>
-		</ControlTemplate>
 
 		<DataTemplate x:Key="QueueListItem" DataType="Dto:UiPlayQueueTrack">
             <Grid Margin="0,1,4,0" Background="Transparent">
@@ -166,23 +161,23 @@
 	</Control.InputBindings>
 
 	<Grid>
-		<ListBox x:Name="_playQueueListBox"
-					 BorderThickness="0"
-					 DragDrop:DragDrop.DropHandler="{Binding}"
-					 DragDrop:DragDrop.IsDragSource="true"
-					 DragDrop:DragDrop.IsDropTarget="true"
-					 HorizontalContentAlignment="Stretch"
-					 Behaviours:ItemsControlAnimation.ItemsSource="{Binding Path=QueueList}"
-					 Behaviours:ItemsControlAnimation.FadeInAnimation="{StaticResource ItemAddedAnimation}"
-                     Behaviours:ItemsControlAnimation.FadeOutAnimation="{StaticResource ItemDeletedAnimation}"
-                     ItemTemplate="{StaticResource QueueListItem}"
-					 ItemContainerStyle="{StaticResource BoldOnDragListBoxItemStyle}"
-                     ScrollViewer.CanContentScroll="False"
-					 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					 ScrollViewer.VerticalScrollBarVisibility="Auto"
-					 SelectedItem="{Binding Path=SelectedItem}">
+        <ListBox x:Name="_playQueueListBox"
+                 BorderThickness="0"
+                 DragDrop:DragDrop.DropHandler="{Binding}"
+                 DragDrop:DragDrop.IsDragSource="true"
+                 DragDrop:DragDrop.IsDropTarget="true"
+                 HorizontalContentAlignment="Stretch"
+                 Behaviours:ItemsControlAnimation.ItemsSource="{Binding Path=QueueList}"
+                 Behaviours:ItemsControlAnimation.FadeInAnimation="{StaticResource ItemAddedAnimation}"
+                 Behaviours:ItemsControlAnimation.FadeOutAnimation="{StaticResource ItemDeletedAnimation}"
+                 ItemTemplate="{StaticResource QueueListItem}"
+                 ItemContainerStyle="{StaticResource BoldOnDragListBoxItemStyle}"
+                 ScrollViewer.CanContentScroll="False"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 SelectedItem="{Binding Path=SelectedItem}">
             <i:Interaction.Behaviors>
-				<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
 				<ReusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
 			</i:Interaction.Behaviors>
 			<EventCommandTriggers:CommandSource.Trigger>
@@ -193,5 +188,8 @@
 				</EventCommandTriggers:CommandTriggerGroup>
 			</EventCommandTriggers:CommandSource.Trigger>
 		</ListBox>
+        <Grid Visibility="{Binding QueueEmpty, Converter={StaticResource HideIfFalse}}">
+            <TextBlock Margin="0,25" Style="{StaticResource EmptyListTextStyle}" Text="Play Something!" />
+        </Grid>
 	</Grid>
 </UserControl>
