@@ -16,8 +16,10 @@
 		IsDesignTimeCreatable=True}"
 	-->
 	<UserControl.Resources>
-		<ValueConverters:ByteImageConverter x:Key="imageConverter" />
-		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
+		<ValueConverters:ByteImageConverter x:Key="ImageConverter" />
+        <ValueConverters:BooleanVisibilityConverter x:Key="DisplayIfFalse" IsHidden="True" TriggerValue="True"/>
+        <ValueConverters:BooleanVisibilityConverter x:Key="DisplayIfTrue" IsHidden="True" TriggerValue="False"/>
+        <ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
 		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
 		<ValueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
 
@@ -45,120 +47,125 @@
 	</i:Interaction.Behaviors>
 
 	<GroupBox Margin="1,0,0,0" Style="{StaticResource PlayingItemBorder}" Header=" Artist ">
-		<Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
-			<Border BorderThickness="0" CornerRadius="5">
-				<Grid Background="{StaticResource NoiseBrush}">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
+		<Grid>
+            <Grid Visibility="{Binding ArtistValid, Converter={StaticResource DisplayIfFalse}}">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource EmptyListTextStyle}" Text="Select an artist!" />
+            </Grid>
+            <Grid Visibility="{Binding ArtistValid, Converter={StaticResource DisplayIfTrue}}">
+                <Border BorderThickness="0" CornerRadius="5">
+                    <Grid Background="{StaticResource NoiseBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-    				<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
-	    				   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" Cursor="Hand">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseLeftButtonDown" >
-                                <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Image>
+                        <Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+	    				   Source="{Binding ArtistImage, Converter={StaticResource ImageConverter}}" Cursor="Hand">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonDown" >
+                                    <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Image>
 
-                    <Grid Grid.Column="3" Margin="3,7,5,3">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="*" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
+                        <Grid Grid.Column="3" Margin="3,7,5,3">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-						<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="400">
-                            <TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}"/>
-                        </Viewbox>
+                            <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="400">
+                                <TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}"/>
+                            </Viewbox>
 
-						<!--  Rating controls  -->
-						<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,7" HorizontalAlignment="Right" Orientation="Horizontal">
-							<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
+                            <!--  Rating controls  -->
+                            <StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,7" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
 									  Opacity="{Binding Path=Artist.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
 									  IsChecked="{Binding Artist.FavoriteValue, Mode=TwoWay}" />
-							<Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}"
+                                <Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}"
 													Opacity="{Binding Artist.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
 													Rating="{Binding Artist.UiRating, Mode=TwoWay}" UseAlternate="{Binding Artist.UseAlternateRating}" />
-							
-							<StackPanel.Triggers>
-								<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
-									<BeginStoryboard>
-										<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
-											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-												<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
-											</DoubleAnimationUsingKeyFrames>
-										</Storyboard>
-									</BeginStoryboard>
-									<BeginStoryboard>
-										<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
-											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-												<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
-											</DoubleAnimationUsingKeyFrames>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseLeave">
-									<BeginStoryboard >
-										<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
-											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-												<LinearDoubleKeyFrame Value="{Binding Path=Artist.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
-																	  KeyTime="0:0:0.7" />
-											</DoubleAnimationUsingKeyFrames>
-										</Storyboard>
-									</BeginStoryboard>
-									<BeginStoryboard >
-										<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
-											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-												<LinearDoubleKeyFrame Value="{Binding Path=Artist.UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
-																	  KeyTime="0:0:0.7" />
-											</DoubleAnimationUsingKeyFrames>
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-							</StackPanel.Triggers>
-						</StackPanel>
 
-						<!-- Active Years -->
-						<TextBlock Grid.Row="2" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.ActiveYears}" 
+                                <StackPanel.Triggers>
+                                    <EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
+                                        <BeginStoryboard>
+                                            <Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                                    <LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                        <BeginStoryboard>
+                                            <Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                                    <LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseLeave">
+                                        <BeginStoryboard >
+                                            <Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                                    <LinearDoubleKeyFrame Value="{Binding Path=Artist.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
+																	  KeyTime="0:0:0.7" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                        <BeginStoryboard >
+                                            <Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                                    <LinearDoubleKeyFrame Value="{Binding Path=Artist.UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
+																	  KeyTime="0:0:0.7" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </StackPanel.Triggers>
+                            </StackPanel>
+
+                            <!-- Active Years -->
+                            <TextBlock Grid.Row="2" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.ActiveYears}" 
 								   Visibility="{Binding Artist.ActiveYears, Converter={StaticResource CollapseIfStringEmpty}}"/>
 
-						<!-- Genre -->
-						<TextBlock Grid.Row="3" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Genre}" />
+                            <!-- Genre -->
+                            <TextBlock Grid.Row="3" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Genre}" />
 
-						<!--  Artist website link  -->
-						<Controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,5,0,0" Padding="0"  Content="{Binding ArtistWebsite.DisplayText}"
+                            <!--  Artist website link  -->
+                            <Controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,5,0,0" Padding="0"  Content="{Binding ArtistWebsite.DisplayText}"
 											IsEnabled="{Binding ArtistWebsite.IsLinked}" LinkLabelBehavior="HoverUnderline">
-							<EventCommandTriggers:CommandSource.Trigger>
-								<EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
-							</EventCommandTriggers:CommandSource.Trigger>
-						</Controls:LinkLabel>
-						
-						<!-- Button Group -->
-						<StackPanel Grid.Row="5" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
-									d:LayoutOverrides="Width">
-							<Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
-									Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
-							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}" 
-									Command="{Binding DisplayArtistInfoPanel}" Content="{StaticResource Path_Artist}" ToolTip="Display Artist Information" />
-							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
-									Command="{Binding DisplayAlbumInfoPanel}" Content="{StaticResource Path_Album}" ToolTip="Display Album Information" />
-							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
-									Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
-							<Button Style="{StaticResource PathButtonStyle}"
-									Command="{Binding EditArtist}" Content="{StaticResource Path_Edit}" ToolTip="Edit Artist Properties" />
-						</StackPanel>
+                                <EventCommandTriggers:CommandSource.Trigger>
+                                    <EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
+                                </EventCommandTriggers:CommandSource.Trigger>
+                            </Controls:LinkLabel>
 
-					</Grid>
-				</Grid>
-			</Border>
-		</Grid>
+                            <!-- Button Group -->
+                            <StackPanel Grid.Row="5" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
+									d:LayoutOverrides="Width">
+                                <Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
+									Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
+                                <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}" 
+									Command="{Binding DisplayArtistInfoPanel}" Content="{StaticResource Path_Artist}" ToolTip="Display Artist Information" />
+                                <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
+									Command="{Binding DisplayAlbumInfoPanel}" Content="{StaticResource Path_Album}" ToolTip="Display Album Information" />
+                                <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
+									Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
+                                <Button Style="{StaticResource PathButtonStyle}"
+									Command="{Binding EditArtist}" Content="{StaticResource Path_Edit}" ToolTip="Edit Artist Properties" />
+                            </StackPanel>
+
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
 	</GroupBox>
 </UserControl>
