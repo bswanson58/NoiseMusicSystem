@@ -165,7 +165,7 @@
 			</Grid>
 		</Grid>
         <i:Interaction.Behaviors>
-            <ReusableBehaviours:WidgetOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
         </i:Interaction.Behaviors>
 </GroupBox>
 </UserControl>

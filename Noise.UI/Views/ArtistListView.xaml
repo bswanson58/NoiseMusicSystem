@@ -121,7 +121,7 @@
 					 SelectedItem="{Binding SelectedArtist}">
 				<i:Interaction.Behaviors>
 					<ReusableBehaviours:ListBoxSelectionVisible />
-                    <ReusableBehaviours:WidgetOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                    <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
 				</i:Interaction.Behaviors>
 			</ListBox>
 

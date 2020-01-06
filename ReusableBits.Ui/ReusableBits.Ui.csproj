@@ -120,6 +120,7 @@
     <Compile Include="Behaviours\ListBoxItemVisible.cs" />
     <Compile Include="Behaviours\ListBoxSelectionVisible.cs" />
     <Compile Include="Behaviours\MouseHideBehavior.cs" />
+    <Compile Include="Behaviours\ScrollBarOpacity.cs" />
     <Compile Include="Behaviours\TriggerTrace.cs" />
     <Compile Include="Behaviours\ViewAttachedNotifier.cs" />
     <Compile Include="Behaviours\ViewDisplayedNotifier.cs" />
