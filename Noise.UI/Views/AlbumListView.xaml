@@ -21,12 +21,6 @@
 		<valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
 		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
 
-		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
-			<Grid Margin="5,15,5,0">
-                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Select an artist!" />
-			</Grid>
-		</ControlTemplate>
-
 		<DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
 			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3" Margin="3">
 				<Grid>
@@ -149,7 +143,6 @@
 					 VirtualizingPanel.ScrollUnit="Pixel"
 					 >
 				<i:Interaction.Behaviors>
-					<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
 					<ReusableBehaviours:ListBoxSelectionVisible />
 				</i:Interaction.Behaviors>
 			</ListBox>
@@ -171,5 +164,8 @@
 						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</Grid>
-	</GroupBox>
+        <i:Interaction.Behaviors>
+            <ReusableBehaviours:WidgetOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
+</GroupBox>
 </UserControl>
