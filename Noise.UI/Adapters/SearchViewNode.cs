@@ -8,10 +8,10 @@ namespace Noise.UI.Adapters {
 
 	    public  SearchResultItem    SearchItem { get; }
 		public  bool				CanPlay { get; }
-	    public  DbArtist            Artist => (SearchItem.Artist);
-	    public  DbAlbum             Album => (SearchItem.Album);
-	    public  DbTrack             Track => (SearchItem.Track);
-	    public  string              Title => (SearchItem.ItemDescription);
+	    public  DbArtist            Artist => SearchItem.Artist;
+	    public  DbAlbum             Album => SearchItem.Album;
+	    public  DbTrack             Track => SearchItem.Track;
+	    public  string              Title => SearchItem.ItemDescription;
 
 		public SearchViewNode( SearchResultItem searchResult, Action<SearchViewNode> onPlay ) {
 			SearchItem = searchResult;
