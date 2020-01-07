@@ -43,7 +43,8 @@
 				<Layout:View RegionName="LeftPanel" Type="{x:Type Views:FavoritesView}" />
 			    <Layout:View RegionName="LeftPanel" Type="{x:Type Views:TagsView}" />
                 <Layout:View RegionName="LeftPanel" Type="{x:Type Views:SearchView}" />
-				<Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryAdditionsView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:PlaybackRelatedView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryAdditionsView}" />
 				<Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
 				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistInfoView}" />
 				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
