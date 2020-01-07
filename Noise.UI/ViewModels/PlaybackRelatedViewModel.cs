@@ -23,6 +23,7 @@ namespace Noise.UI.ViewModels {
         private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
 
         public	ObservableCollectionEx<RelatedTrackParent>  Tracks { get; }
+        public  ReactiveCommand<RelatedTrackNode, Unit>     TreeViewSelected { get; }
 
         public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, ITrackProvider trackProvider, IPlayCommand playCommand,
                                          IEventAggregator eventAggregator ) {
@@ -32,6 +33,7 @@ namespace Noise.UI.ViewModels {
             mEventAggregator = eventAggregator;
 
             Tracks = new ObservableCollectionEx<RelatedTrackParent>();
+            TreeViewSelected = ReactiveCommand.Create<RelatedTrackNode, Unit>( OnTreeViewSelection );
 
             var searchResultsSubscription = 
                 mSearchProvider.SearchResults
@@ -97,6 +99,21 @@ namespace Noise.UI.ViewModels {
             if( node.Track != null ) {
                 mPlayCommand.Play( node.Track );
             }
+        }
+
+        private Unit OnTreeViewSelection( RelatedTrackNode node ) {
+            if( node != null ) {
+                if( node is RelatedTrackParent parent ) {
+                    if( parent.IsPlayable ) {
+                        mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
+                    }
+                }
+                else {
+                    mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
+                }
+            }
+
+            return Unit.Default;
         }
 
         public void Dispose() {
