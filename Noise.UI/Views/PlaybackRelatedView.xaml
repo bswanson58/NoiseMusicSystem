@@ -60,12 +60,15 @@
 
                     <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding FirstAlbumName}"
                                Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                    <TextBlock x:Name="FirstPlayDuration" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Visibility="Hidden"
+                               Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
                 </Grid>
             </Grid>
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsPlayable}" Value="True">
                     <Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="FirstPlayDuration" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
