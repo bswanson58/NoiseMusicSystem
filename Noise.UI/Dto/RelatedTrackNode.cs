@@ -1,7 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
-using Caliburn.Micro;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
@@ -39,15 +40,15 @@ namespace Noise.UI.Dto {
     }
 
     public class RelatedTrackParent : RelatedTrackNode {
-        public	string		                            FirstAlbumName => MultipleTracks ? IsExpanded ? "Album List:" : $" (on {Tracks.Count} albums - expand to view list)" : AlbumName;
-        public  string                                  ParentName => Track.Name;
-        public	BindableCollection<RelatedTrackNode>    Tracks { get; }
-        public  bool                                    IsPlayable => Tracks.Count == 0;
-        public	bool		                            MultipleTracks => Tracks.Count > 0;
+        public	string		                                FirstAlbumName => MultipleTracks ? IsExpanded ? "Album List:" : $" (on {Tracks.Count} albums - expand to view list)" : AlbumName;
+        public  string                                      ParentName => Track.Name;
+        public	ObservableCollectionEx<RelatedTrackNode>    Tracks { get; }
+        public  bool                                        IsPlayable => Tracks.Count == 0;
+        public	bool		                                MultipleTracks => Tracks.Count > 0;
 
         public RelatedTrackParent( DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
             base( artist, album, track, onPlay ) {
-            Tracks = new BindableCollection<RelatedTrackNode>();
+            Tracks = new ObservableCollectionEx<RelatedTrackNode>();
         }
 
         public void AddAlbum( DbArtist artist, DbAlbum album, DbTrack track ) {
@@ -56,7 +57,7 @@ namespace Noise.UI.Dto {
             }
 
             Tracks.Add( new RelatedTrackNode( artist, album, track, OnPlay ));
-//            Tracks.OrderBy( a => a.AlbumName );
+            Tracks.Sort( a => a.AlbumName, ListSortDirection.Ascending );
 
             RaisePropertyChanged( () => IsPlayable );
             RaisePropertyChanged( () => MultipleTracks );

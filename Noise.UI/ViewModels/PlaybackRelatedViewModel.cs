@@ -8,6 +8,7 @@ using DynamicData;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using ReactiveUI;
@@ -21,7 +22,7 @@ namespace Noise.UI.ViewModels {
         private readonly IDisposable                        mSubscriptions;
         private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
 
-        public	BindableCollection<RelatedTrackParent>      Tracks { get; }
+        public	ObservableCollectionEx<RelatedTrackParent>  Tracks { get; }
 
         public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, ITrackProvider trackProvider, IPlayCommand playCommand,
                                          IEventAggregator eventAggregator ) {
@@ -30,10 +31,11 @@ namespace Noise.UI.ViewModels {
             mPlayCommand = playCommand;
             mEventAggregator = eventAggregator;
 
-            Tracks = new BindableCollection<RelatedTrackParent>();
+            Tracks = new ObservableCollectionEx<RelatedTrackParent>();
 
             var searchResultsSubscription = 
                 mSearchProvider.SearchResults
+                    .ObserveOnDispatcher()
                     .Do( AddSearchItem )
                     .Subscribe();
 
