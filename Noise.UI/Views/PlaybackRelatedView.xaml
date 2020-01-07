@@ -4,58 +4,79 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
              xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:Dto="clr-namespace:Noise.UI.Dto"
              mc:Ignorable="d" 
              Tag="Wander"
              DataContext="{Binding PlaybackRelatedViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <!-- Header Styles -->
-        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="Opacity" Value="0.7"/>
-            <Setter Property="Cursor" Value="Arrow"/>
+        <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+            <Setter Property="Focusable" Value="False"/>
         </Style>
 
-        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="5,0,0,0"/>
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="Opacity" Value="0.7"/>
-            <Setter Property="Cursor" Value="Arrow"/>
-        </Style>
+        <DataTemplate x:Key="RelatedTrackTemplate" DataType="Dto:RelatedTrackNode">
+            <Grid Margin="15,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="33"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Play -->
-        <DataTemplate x:Key="PlayTemplate" DataType="Adapters:FavoriteViewNode">
-            <Button Margin="5,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
+                <Button Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
+                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                           Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                <TextBlock Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
+                           TextAlignment="Right" Margin="3,0,8,0"/>
+            </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="NameTemplate" DataType="Adapters:SearchViewNode">
-            <TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Title}"
-                       Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+        <HierarchicalDataTemplate x:Key="RelatedParentTemplate" DataType="Dto:RelatedTrackParent" 
+                                  ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedTrackTemplate}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="33"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
+                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding ParentName}"
+                               Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="60,0,0,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding FirstAlbumName}"
+                               Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                </Grid>
+            </Grid>
+
             <DataTemplate.Triggers>
-<!--                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                    <Setter TargetName="Title" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
-                </DataTrigger -->
+                <DataTrigger Binding="{Binding IsPlayable}" Value="True">
+                    <Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
-        </DataTemplate>
+        </HierarchicalDataTemplate>
     </UserControl.Resources>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Related ">
-        <DataGrid Grid.Row="0" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" ItemsSource="{Binding Path=SearchResults}">
-            <DataGrid.Columns>
-                <!-- Play -->
-                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}"
-                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
-                <!-- Track Name -->
-                <DataGridTemplateColumn Width="*" Header="Title" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
-            </DataGrid.Columns>
+        <TreeView ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
 
-            <i:Interaction.Behaviors>
-            </i:Interaction.Behaviors>
-        </DataGrid>
-
+        <i:Interaction.Behaviors>
+            <Behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

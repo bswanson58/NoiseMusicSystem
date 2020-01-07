@@ -292,6 +292,7 @@
     <Compile Include="Dto\CombinedPlayStrategy.cs" />
     <Compile Include="Dto\NameIdPair.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
+    <Compile Include="Dto\RelatedTrackNode.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiAlbumExtra.cs" />
     <Compile Include="Dto\UiArtist.cs" />
