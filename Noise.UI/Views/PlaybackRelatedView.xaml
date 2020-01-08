@@ -6,12 +6,15 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              Tag="Wander"
              DataContext="{Binding PlaybackRelatedViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <ValueConverters:BooleanVisibilityConverter x:Key="HideIfTrue" TriggerValue="True" IsHidden="True"/>
+
         <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
         </Style>
@@ -74,14 +77,21 @@
     </UserControl.Resources>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Related ">
-        <TreeView x:Name="_treeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectedItemChanged">
-                    <i:InvokeCommandAction Command="{Binding TreeViewSelected}" CommandParameter="{Binding ElementName=_treeView, Path=SelectedItem}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </TreeView>
+        <Grid>
+            <TreeView x:Name="_treeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding TreeViewSelected}" CommandParameter="{Binding ElementName=_treeView, Path=SelectedItem}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TreeView>
+
+            <StackPanel Margin="0,25" Orientation="Vertical" HorizontalAlignment="Center" Visibility="{Binding RelatedTracksAvailable, Converter={StaticResource HideIfTrue}}">
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="When tracks are being played," />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Related tracks will be presented here." />
+            </StackPanel>
+        </Grid>
 
         <i:Interaction.Behaviors>
             <Behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>

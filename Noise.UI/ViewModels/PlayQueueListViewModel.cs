@@ -56,7 +56,7 @@ namespace Noise.UI.ViewModels {
 
 		public bool QueueEmpty {
 			get => Get(() => QueueEmpty );
-			set => Set( () => QueueEmpty, value );
+			set => Set(() => QueueEmpty, value );
 		}
 	    public UiPlayQueueTrack SelectedItem {
 			get{ return( Get( () => SelectedItem )); }

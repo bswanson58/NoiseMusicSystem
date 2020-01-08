@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -26,6 +27,7 @@ namespace Noise.UI.ViewModels {
         private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
         private IDisposable                                 mSelectionStateSubscription;
         private bool                                        mIsActive;
+        private bool                                        mRelatedTracksAvailable;
 
         public	ObservableCollectionEx<RelatedTrackParent>  Tracks { get; }
         public  ReactiveCommand<RelatedTrackNode, Unit>     TreeViewSelected { get; }
@@ -39,6 +41,7 @@ namespace Noise.UI.ViewModels {
             mEventAggregator = eventAggregator;
 
             Tracks = new ObservableCollectionEx<RelatedTrackParent>();
+            Tracks.CollectionChanged += OnCollectionChanged;
             TreeViewSelected = ReactiveCommand.Create<RelatedTrackNode, Unit>( OnTreeViewSelection );
 
             mSearchClient = searchProvider.CreateSearchClient();
@@ -54,6 +57,15 @@ namespace Noise.UI.ViewModels {
             mEventAggregator.Subscribe( this );
 
             mSubscriptions = new CompositeDisposable( searchResultsSubscription, mSearchClient );
+        }
+
+        private void OnCollectionChanged( object sender, NotifyCollectionChangedEventArgs args ) {
+            RelatedTracksAvailable = Tracks.Any();
+        }
+
+        public bool RelatedTracksAvailable {
+            get => mRelatedTracksAvailable;
+            set => this.RaiseAndSetIfChanged( ref mRelatedTracksAvailable, value, nameof( RelatedTracksAvailable ));
         }
 
         public bool IsActive {
@@ -111,7 +123,8 @@ namespace Noise.UI.ViewModels {
 
         private IObservable<Unit> OnStartSearch( PlayingItem item ) {
             return Observable.Start( () => {
-                if( item.Track != Constants.cDatabaseNullOid ) {
+                if(( item != null ) &&
+                   ( item.Track != Constants.cDatabaseNullOid )) {
                     var track = mTrackProvider.GetTrack( item.Track );
 
                     if( track != null ) {
