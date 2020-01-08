@@ -20,26 +20,30 @@ namespace Noise.Infrastructure.Interfaces {
 		Everything
 	}
 
+	public interface ISearchClient : IDisposable {
+        IObservable<IChangeSet<SearchResultItem>>	SearchResults { get; }
+
+        void			StartSearch( eSearchItemType searchType, string queryText );
+        void			ClearSearch();
+    }
+
 	public interface ISearchProvider {
 		bool			Initialize();
 
 		ISearchBuilder	CreateIndexBuilder( DbArtist forArtist, bool createIndex );
 		DateTime		DetermineTimeStamp( DbArtist artist );
 
-        IEnumerable<SearchResultItem>				Search( eSearchItemType searchType, string queryText, int maxResults );
-        
-        IObservable<IChangeSet<SearchResultItem>>	SearchResults { get; }
-		void										StartSearch( eSearchItemType searchType, string queryText );
-		void										ClearSearch();
+		ISearchClient					CreateSearchClient();
+        IEnumerable<SearchResultItem>	Search( eSearchItemType searchType, string queryText, int maxResults );
     }
 
 	public interface ISearchBuilder : IDisposable {
-		void		DeleteArtistSearchItems();
-		void		WriteTimeStamp();
+		void			DeleteArtistSearchItems();
+		void			WriteTimeStamp();
 
-		void		AddSearchItem( eSearchItemType itemType, string searchText );
-		void		AddSearchItem( eSearchItemType itemType, IEnumerable<string> searchList );
-		void		AddSearchItem( DbAlbum album, eSearchItemType itemType, string searchText );
-		void		AddSearchItem( DbAlbum album, DbTrack track, eSearchItemType itemType, string searchText );
+		void			AddSearchItem( eSearchItemType itemType, string searchText );
+		void			AddSearchItem( eSearchItemType itemType, IEnumerable<string> searchList );
+		void			AddSearchItem( DbAlbum album, eSearchItemType itemType, string searchText );
+		void			AddSearchItem( DbAlbum album, DbTrack track, eSearchItemType itemType, string searchText );
 	}
 }

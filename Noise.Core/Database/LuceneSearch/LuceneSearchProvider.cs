@@ -19,8 +19,7 @@ namespace Noise.Core.Database.LuceneSearch {
 		private	string							mIndexLocation;
 
 		public LuceneSearchProvider( ILibraryConfiguration libraryConfiguration,
-									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) :
-            this() {
+									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) {
 			mLibraryConfiguration = libraryConfiguration;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;

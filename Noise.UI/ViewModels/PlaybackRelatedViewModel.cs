@@ -16,7 +16,7 @@ using ReactiveUI;
 namespace Noise.UI.ViewModels {
     class PlaybackRelatedViewModel : ReactiveObject, IDisposable {
         private readonly ITrackProvider                     mTrackProvider;
-        private readonly ISearchProvider					mSearchProvider;
+        private readonly ISearchClient                      mSearchClient;
         private readonly IPlayCommand						mPlayCommand;
         private readonly IEventAggregator					mEventAggregator;
         private readonly IDisposable                        mSubscriptions;
@@ -27,7 +27,6 @@ namespace Noise.UI.ViewModels {
 
         public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, ITrackProvider trackProvider, IPlayCommand playCommand,
                                          IEventAggregator eventAggregator ) {
-            mSearchProvider = searchProvider;
             mTrackProvider = trackProvider;
             mPlayCommand = playCommand;
             mEventAggregator = eventAggregator;
@@ -35,8 +34,10 @@ namespace Noise.UI.ViewModels {
             Tracks = new ObservableCollectionEx<RelatedTrackParent>();
             TreeViewSelected = ReactiveCommand.Create<RelatedTrackNode, Unit>( OnTreeViewSelection );
 
+            mSearchClient = searchProvider.CreateSearchClient();
+
             var searchResultsSubscription = 
-                mSearchProvider.SearchResults
+                mSearchClient.SearchResults
                     .ObserveOnDispatcher()
                     .Do( AddSearchItem )
                     .Subscribe();
@@ -47,7 +48,7 @@ namespace Noise.UI.ViewModels {
 
             mEventAggregator.Subscribe( this );
 
-            mSubscriptions = new CompositeDisposable( selectionStateSubscription, searchResultsSubscription );
+            mSubscriptions = new CompositeDisposable( selectionStateSubscription, searchResultsSubscription, mSearchClient );
         }
 
         private void AddSearchItem( IChangeSet<SearchResultItem> items ) {
@@ -87,7 +88,7 @@ namespace Noise.UI.ViewModels {
                     var track = mTrackProvider.GetTrack( item.Track );
 
                     if( track != null ) {
-                        mSearchProvider.StartSearch( eSearchItemType.Track , track.Name );
+                        mSearchClient.StartSearch( eSearchItemType.Track , track.Name );
                     }
                 }
 

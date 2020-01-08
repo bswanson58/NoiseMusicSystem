@@ -10,38 +10,62 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database.LuceneSearch {
-    partial class LuceneSearchProvider : IDisposable {
-		private readonly int										mMaxResults = 1000;
-        private readonly SourceList<SearchResultItem>               mSearchSource;
-		private CancellationTokenSource								mSearchCancellation;
+	public class SearchClient : ISearchClient {
+		private readonly LuceneSearchProvider				mSearchProvider;
+        private readonly SourceList<SearchResultItem>       mSearchSource;
+        public	CancellationTokenSource						SearchCancellation;
 
-        public IObservable<IChangeSet<SearchResultItem>>			SearchResults { get; }
+        public IObservable<IChangeSet<SearchResultItem>>	SearchResults { get; }
 
-        public LuceneSearchProvider() {
+		public SearchClient( LuceneSearchProvider searchProvider ) {
+			mSearchProvider = searchProvider;
+
             mSearchSource = new SourceList<SearchResultItem>();
             SearchResults = mSearchSource.Connect();
         }
 
-		public void StartSearch( eSearchItemType searchType, string queryText ) {
+		public void ClearSearch() {
+            SearchCancellation?.Cancel();
+            SearchCancellation = null;
+
+			mSearchSource.Clear();
+        }
+
+        public void StartSearch( eSearchItemType searchType, string queryText ) {
+			ClearSearch();
+
+            SearchCancellation = new CancellationTokenSource();
+
+			mSearchProvider.StartSearch( this, searchType, queryText );
+        }
+
+        public void AddSearchResult( SearchResultItem item ) {
+			mSearchSource.Add( item );
+        }
+
+        public void Dispose() {
+            mSearchSource?.Dispose();
+        }
+    }
+
+    partial class LuceneSearchProvider {
+		private readonly int		mMaxResults = 1000;
+
+		public void StartSearch( SearchClient searchClient, eSearchItemType searchType, string queryText ) {
             if(!mIsInitialized ) {
                 Initialize();
             }
 
-			ClearSearch();
-            mSearchCancellation = new CancellationTokenSource();
-
 			Task.Run( () => {
-				Search( searchType, queryText, mSearchCancellation );
+				Search( searchClient, searchType, queryText  );
             });
         }
 
-		public void ClearSearch() {
-			mSearchCancellation?.Cancel();
-			mSearchCancellation = null;
-			mSearchSource.Clear();
+        public ISearchClient CreateSearchClient() {
+			return new SearchClient( this );
         }
 
-        private void Search( eSearchItemType searchType, string queryText, CancellationTokenSource cancellation ) {
+        private void Search( SearchClient searchClient, eSearchItemType searchType, string queryText ) {
 			if( mIsInitialized ) {
 				try {
 					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
@@ -65,7 +89,7 @@ namespace Noise.Core.Database.LuceneSearch {
 					var hits = topDocs.TotalHits;
 
 					if(( hits > 0 ) &&
-					   (!cancellation.IsCancellationRequested )) {
+					   (!searchClient.SearchCancellation.IsCancellationRequested )) {
 						foreach( var hit in topDocs.ScoreDocs ) {
 							var document = searcher.Doc( hit.Doc );
 
@@ -101,14 +125,14 @@ namespace Noise.Core.Database.LuceneSearch {
 									track = mTrackProvider.GetTrack( id );
 								}
 
-								if(cancellation.IsCancellationRequested ) {
+								if( searchClient.SearchCancellation.IsCancellationRequested ) {
 									break;
                                 }
 
 								if(( artist != null ) ||
 								   ( album != null ) ||
 								   ( track != null )) {
-									mSearchSource.Add( new SearchResultItem( artist, album, track, itemType ));
+									searchClient.AddSearchResult( new SearchResultItem( artist, album, track, itemType ));
 								}
 							}
 						}
@@ -120,10 +144,6 @@ namespace Noise.Core.Database.LuceneSearch {
 					mLog.LogException( "Search failed", ex );
 				}
 			}
-        }
-
-        public void Dispose() {
-            mSearchSource?.Dispose();
         }
     }
 }

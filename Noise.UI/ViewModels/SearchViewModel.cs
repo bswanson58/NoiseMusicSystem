@@ -38,10 +38,10 @@ namespace Noise.UI.ViewModels {
 		private readonly int									mMaxPlayItems = 10;
 
 		private readonly IEventAggregator						mEventAggregator;
-		private readonly ISearchProvider						mSearchProvider;
 		private readonly IRandomTrackSelector					mTrackSelector;
 		private readonly IPlayCommand							mPlayCommand;
 		private readonly IPlayQueue								mPlayQueue;
+		private readonly ISearchClient							mSearchClient;
 		private SearchType										mCurrentSearchType;
 		private readonly List<DbTrack>							mApprovalList; 
         private SearchViewNode                                  mSelectedNode;
@@ -55,12 +55,13 @@ namespace Noise.UI.ViewModels {
 
         public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayCommand playCommand, IPlayQueue playQueue ) {
 			mEventAggregator = eventAggregator;
-			mSearchProvider = searchProvider;
 			mTrackSelector = trackSelector;
 			mPlayCommand = playCommand;
 			mPlayQueue = playQueue;
 
 			mApprovalList = new List<DbTrack>();
+
+			mSearchClient = searchProvider.CreateSearchClient();
 
 			mCurrentSearchType = new SearchType( eSearchItemType.Everything, "Everything" );
 			SearchTypes = new List<SearchType> { mCurrentSearchType,
@@ -76,7 +77,7 @@ namespace Noise.UI.ViewModels {
 
 			SearchResults = new ObservableCollectionExtended<SearchViewNode>();
 			var searchResultsSubscription = 
-                mSearchProvider.SearchResults
+                mSearchClient.SearchResults
                     .Transform( r => new SearchViewNode( r, OnPlay ))
                     .ObserveOnDispatcher()
                     .Bind( SearchResults )
@@ -86,7 +87,7 @@ namespace Noise.UI.ViewModels {
 				this
                     .WhenAnyValue( x => x.SearchText )
                     .Where( searchText => String.IsNullOrWhiteSpace( searchText ) || searchText.Length < 3 )
-                    .Do( _ => mSearchProvider.ClearSearch())
+                    .Do( _ => mSearchClient.ClearSearch())
                     .Subscribe();
 
             var	startSearch =
@@ -104,7 +105,7 @@ namespace Noise.UI.ViewModels {
 
             PlayRandom = ReactiveCommand.Create( OnPlayRandom, canPlayRandom );
 
-			mTrash = new CompositeDisposable( searchResultsSubscription, clearSearch, startSearch );
+			mTrash = new CompositeDisposable( searchResultsSubscription, clearSearch, startSearch, mSearchClient );
 		}
 
 		public SearchType CurrentSearchType {
@@ -120,7 +121,7 @@ namespace Noise.UI.ViewModels {
 		private void StartSearch( SearchParameters parameters ) {
 			mApprovalList.Clear();
 
-            mSearchProvider.StartSearch( parameters.ItemType, parameters.QueryText );
+            mSearchClient.StartSearch( parameters.ItemType, parameters.QueryText );
         }
 
 		private void OnPlayRandom() {
