@@ -32,6 +32,7 @@ namespace Noise.UI.Dto {
                 mIsExpanded = value;
 
                 RaisePropertyChanged( () => IsExpanded );
+                RaisePropertyChanged( "FirstAlbumName" );
             }
         }
 
@@ -47,8 +48,10 @@ namespace Noise.UI.Dto {
         public  bool                                        IsPlayable => Tracks.Count == 0;
         public	bool		                                MultipleTracks => Tracks.Count > 0;
 
-        public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
+        public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay, bool expanded ) :
             base( key, artist, album, track, onPlay ) {
+            IsExpanded = expanded;
+
             Tracks = new ObservableCollectionEx<RelatedTrackNode>();
         }
 

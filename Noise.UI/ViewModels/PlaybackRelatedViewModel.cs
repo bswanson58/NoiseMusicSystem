@@ -113,7 +113,9 @@ namespace Noise.UI.ViewModels {
                 parent.AddAlbum( item.Artist, item.Album, item.Track );
             }
             else {
-                Tracks.Add( new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay ));
+                var expanded = !Tracks.Any();
+
+                Tracks.Add( new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded ));
             }
         }
 
