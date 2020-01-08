@@ -115,7 +115,9 @@ namespace Noise.UI.ViewModels {
                     var track = mTrackProvider.GetTrack( item.Track );
 
                     if( track != null ) {
-                        mSearchClient.StartSearch( eSearchItemType.Track , track.Name );
+                        var searchText = $"\"{track.Name}\"";
+
+                        mSearchClient.StartSearch( eSearchItemType.Track , searchText );
                     }
                 }
 
