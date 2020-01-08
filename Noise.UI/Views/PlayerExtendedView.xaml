@@ -229,7 +229,7 @@
                     </Grid>
 
 					<Grid Grid.Row="1" Margin="5,0,0,0"
-						  Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
+						  Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto">
 
 						<!--  Favorites and ratings  -->
 						<CheckBox Grid.Column="0" Margin="0,0,5,0" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"
@@ -240,20 +240,11 @@
 						<!--  Track related commands  -->
 						<Button Grid.Column="2" Margin="9,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="5"
 								Command="{Binding TrackInformation}" Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
-						<Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="4"
-								Command="{Binding RequestSimilarSongSearch}" Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
-						<!--Button Grid.Column="4"
-								Width="17"
-								Height="17"
-								Margin="5,0,0,0"
-								Command="{Binding RequestLyrics}"
-								Content="{StaticResource Path_Lyrics}"
-								ToolTip="Display Song Lyrics" /-->
 
 						<!--  Playing position  -->
-						<TextBlock Grid.Column="7" VerticalAlignment="Center" Margin="0,0,5,0" Text="Position:" />
-                        <TextBlock Grid.Column="8" Margin="0,0,7,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
-								   ToolTip="Click to change the display format of the position time"
+						<TextBlock Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,5,0" Text="Position:" />
+                        <TextBlock Grid.Column="5" Margin="0,0,7,0" VerticalAlignment="Bottom" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
+								   ToolTip="Click to change the display format of the position time" Cursor="Hand"
 								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
 							<EventCommandTriggers:CommandSource.Trigger>
 								<EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />

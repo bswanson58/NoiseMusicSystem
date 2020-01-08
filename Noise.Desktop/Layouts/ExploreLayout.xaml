@@ -96,13 +96,6 @@
 			<ContentControl Grid.Row="2" Regions:RegionManager.RegionName="Status"/>
 		</Grid>
 
-		<ContentControl Width="595"
-						Height="160"
-						Margin="50,0,0,60"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Bottom"
-						Regions:RegionManager.RegionName="SimilarSongs" />
-
 		<ContentControl Width="470"
 						Height="600"
 						Margin="120,0,0,60"

@@ -614,13 +614,6 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.PublishOnUIThread( new Events.ExtendedPlayerRequest());
 		}
 
-		public void Execute_RequestSimilarSongSearch() {
-			if(( mPlayController.CurrentTrack != null ) &&
-			   ( mPlayController.CurrentTrack.Track != null )) {
-				mEventAggregator.PublishOnUIThread( new Events.SimilarSongSearchRequest( mPlayController.CurrentTrack.Track.DbId ));
-			}
-		}
-
 		[DependsUpon("StartTrackFlag")]
 		public bool CanExecute_RequestSimilarSongSearch() {
 			return(( mPlayController.CurrentTrack != null ) &&

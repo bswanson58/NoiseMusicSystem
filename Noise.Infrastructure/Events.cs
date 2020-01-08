@@ -292,14 +292,6 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class SimilarSongSearchRequest {
-			public long		TrackId { get; private set; }
-
-			public SimilarSongSearchRequest( long trackId ) {
-				TrackId = trackId;
-			}
-		}
-
 		public class SongLyricsRequest {
 			public LyricsInfo	LyricsInfo { get; private set; }
 

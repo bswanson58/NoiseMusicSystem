@@ -384,7 +384,6 @@
     <Compile Include="ViewModels\PlayStrategyDialogModel.cs" />
     <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
-    <Compile Include="ViewModels\SimilarSongViewModel.cs" />
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StartupLibraryCreationViewModel.cs" />
     <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
@@ -554,9 +553,6 @@
     </Compile>
     <Compile Include="Views\ServerConfigurationDialog.xaml.cs">
       <DependentUpon>ServerConfigurationDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SimilarSongView.xaml.cs">
-      <DependentUpon>SimilarSongView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SmallPlayerView.xaml.cs">
       <DependentUpon>SmallPlayerView.xaml</DependentUpon>
@@ -904,10 +900,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ServerConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SimilarSongView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

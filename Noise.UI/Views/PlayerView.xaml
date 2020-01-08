@@ -182,8 +182,6 @@
 						<!--  Track related commands  -->
 						<Button Margin="9,0,0,0" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
 						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
-						<Button Margin="5,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding RequestSimilarSongSearch}" 
-						        Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
 					</StackPanel>
 
 					<!--  Playing Position  -->
@@ -194,9 +192,9 @@
 						</Grid.ColumnDefinitions>
 
 						<!-- Textual Play Position -->
-                        <StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
+                        <StackPanel Grid.Column="0" Margin="15,0,0,0" Orientation="Horizontal">
 							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Position:" />
-							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold"
+							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Cursor="Hand"
                                        Foreground="{DynamicResource SignatureBrush}"
 									   ToolTip="Click to change the display format of the position time"
 									   Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
