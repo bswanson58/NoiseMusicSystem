@@ -142,6 +142,7 @@
     <Compile Include="Interfaces\IIdentityProvider.cs" />
     <Compile Include="Interfaces\IResourceProvider.cs" />
     <Compile Include="Patterns\SingletonBase.cs" />
+    <Compile Include="Platform\ApplicationInformation.cs" />
     <Compile Include="Platform\SingleApplicationInstance.cs" />
     <Compile Include="Platform\VersionInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

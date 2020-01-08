@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
@@ -17,15 +19,25 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator		        mEventAggregator;
         private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
+        private readonly string					mCompileDate;
 		private bool							mViewAttached;
+		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}{mCompileDate}";
 
-		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}";
-
-		public StatusViewModel( IEventAggregator eventAggregator, IVersionFormatter versionFormatter ) {
+		public StatusViewModel( IEventAggregator eventAggregator, IVersionFormatter versionFormatter, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
+
+			var pref = preferences.Load<UserInterfacePreferences>();
+			if( pref.DisplayBuildDate ) {
+                var compileDate = ApplicationInformation.CompileDate;
+
+                mCompileDate = $" - {compileDate.Month:D2}/{compileDate.Day:D2}/{compileDate.Year % 100:D2}";
+            }
+			else {
+				mCompileDate = String.Empty;
+            }
 
             mVersionFormatter.SetVersion( VersionInformation.Version );
             mVersionFormatter.DisplayLevel = VersionLevel.Build;

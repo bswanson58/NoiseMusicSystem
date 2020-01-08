@@ -14,6 +14,7 @@ namespace Noise.Infrastructure.Configuration {
         public  string      ThemeName { get; set; }
         public  string      ThemeAccent { get; set; }
         public  string      ThemeSignature { get; set; }
+		public	bool		DisplayBuildDate { get; set; }
 
 		public UserInterfacePreferences() {
 			ArtistListSortOrder = string.Empty;
