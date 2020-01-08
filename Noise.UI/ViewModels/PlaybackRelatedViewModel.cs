@@ -13,6 +13,7 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using ReactiveUI;
+using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.ViewModels {
     class PlaybackRelatedViewModel : ReactiveObject, IActiveAware, IDisposable {
@@ -93,13 +94,14 @@ namespace Noise.UI.ViewModels {
         }
 
         private void AddSearchItem( SearchResultItem item ) {
-            var parent = Tracks.FirstOrDefault( i => i.Key.Equals( item.Track.Name ));
+            var key = item.Track.Name.RemoveSpecialCharacters().ToLower();
+            var parent = Tracks.FirstOrDefault( i => i.Key.Equals( key ));
 
             if( parent != null ) {
                 parent.AddAlbum( item.Artist, item.Album, item.Track );
             }
             else {
-                Tracks.Add( new RelatedTrackParent( item.Artist, item.Album, item.Track, OnPlay ));
+                Tracks.Add( new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay ));
             }
         }
 

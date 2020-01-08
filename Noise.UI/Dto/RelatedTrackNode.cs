@@ -10,14 +10,15 @@ namespace Noise.UI.Dto {
         protected readonly Action<RelatedTrackNode> OnPlay;
         private bool                                mIsExpanded;
 
+        public  string      Key { get; }
         public  DbArtist    Artist { get; }
         public  DbAlbum     Album { get; }
         public  DbTrack     Track { get; }
         public	string		TrackName => Track.Name;
-        public  string      Key => TrackName;
         public  string      AlbumName => $"{Artist.Name}/{Album.Name}";
 
-        public RelatedTrackNode( DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) {
+        public RelatedTrackNode( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) {
+            Key = key;
             Artist = artist;
             Album = album;
             Track = track;
@@ -46,17 +47,17 @@ namespace Noise.UI.Dto {
         public  bool                                        IsPlayable => Tracks.Count == 0;
         public	bool		                                MultipleTracks => Tracks.Count > 0;
 
-        public RelatedTrackParent( DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
-            base( artist, album, track, onPlay ) {
+        public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
+            base( key, artist, album, track, onPlay ) {
             Tracks = new ObservableCollectionEx<RelatedTrackNode>();
         }
 
         public void AddAlbum( DbArtist artist, DbAlbum album, DbTrack track ) {
             if(!Tracks.Any()) {
-                Tracks.Add( new RelatedTrackNode( Artist, Album, Track, OnPlay ));
+                Tracks.Add( new RelatedTrackNode( Key, Artist, Album, Track, OnPlay ));
             }
 
-            Tracks.Add( new RelatedTrackNode( artist, album, track, OnPlay ));
+            Tracks.Add( new RelatedTrackNode( Key, artist, album, track, OnPlay ));
             Tracks.Sort( a => a.AlbumName, ListSortDirection.Ascending );
 
             RaisePropertyChanged( () => IsPlayable );
