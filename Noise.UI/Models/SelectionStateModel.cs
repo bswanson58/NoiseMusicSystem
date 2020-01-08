@@ -28,6 +28,7 @@ namespace Noise.UI.Models {
 		public	DbArtist						CurrentArtist { get; private set; }
 		public	DbAlbum							CurrentAlbum { get; private set; }
         public  DbTag                           CurrentTag { get; private set; }
+		public	PlayingItem						CurrentlyPlayingItem { get; private set; }
 
         public	IObservable<DbArtist>			CurrentArtistChanged => ( mArtistSubject.AsObservable());
         public	IObservable<DbAlbum>			CurrentAlbumChanged => ( mAlbumSubject.AsObservable());
@@ -96,10 +97,15 @@ namespace Noise.UI.Models {
 				}
 			}
 
-            mPlayingSubject.OnNext( new PlayingItem( args.Track.Artist, args.Track.Album, args.Track.Track ));
+			CurrentlyPlayingItem = new PlayingItem( args.Track.Artist, args.Track.Album, args.Track.Track );
+            mPlayingSubject.OnNext( CurrentlyPlayingItem );
 		}
 
-        public void Handle( Events.PlaybackStopped args ) => mPlayingSubject.OnNext( new PlayingItem());
+        public void Handle( Events.PlaybackStopped args ) {
+			CurrentlyPlayingItem = new PlayingItem();
+
+            mPlayingSubject.OnNext( CurrentlyPlayingItem );
+		}
 
         private void ChangeToArtist( long artistId, bool notifyViewed ) {
 			if( artistId == Constants.cDatabaseNullOid ) {

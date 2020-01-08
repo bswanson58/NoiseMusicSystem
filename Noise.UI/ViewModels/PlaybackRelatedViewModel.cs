@@ -5,6 +5,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Caliburn.Micro;
 using DynamicData;
+using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,20 +15,25 @@ using Noise.UI.Interfaces;
 using ReactiveUI;
 
 namespace Noise.UI.ViewModels {
-    class PlaybackRelatedViewModel : ReactiveObject, IDisposable {
+    class PlaybackRelatedViewModel : ReactiveObject, IActiveAware, IDisposable {
         private readonly ITrackProvider                     mTrackProvider;
+        private readonly ISelectionState                    mSelectionState;
         private readonly ISearchClient                      mSearchClient;
         private readonly IPlayCommand						mPlayCommand;
         private readonly IEventAggregator					mEventAggregator;
         private readonly IDisposable                        mSubscriptions;
         private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
+        private IDisposable                                 mSelectionStateSubscription;
+        private bool                                        mIsActive;
 
         public	ObservableCollectionEx<RelatedTrackParent>  Tracks { get; }
         public  ReactiveCommand<RelatedTrackNode, Unit>     TreeViewSelected { get; }
+        public	event EventHandler				            IsActiveChanged  = delegate { };
 
         public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, ITrackProvider trackProvider, IPlayCommand playCommand,
                                          IEventAggregator eventAggregator ) {
             mTrackProvider = trackProvider;
+            mSelectionState = selectionState;
             mPlayCommand = playCommand;
             mEventAggregator = eventAggregator;
 
@@ -44,11 +50,30 @@ namespace Noise.UI.ViewModels {
 
             mStartSearch = ReactiveCommand.CreateFromObservable<PlayingItem, Unit>( item => OnStartSearch( item ).SubscribeOn( RxApp.TaskpoolScheduler ));
 
-            var selectionStateSubscription = selectionState.PlayingTrackChanged.Subscribe( OnTrackStarted );
-
             mEventAggregator.Subscribe( this );
 
-            mSubscriptions = new CompositeDisposable( selectionStateSubscription, searchResultsSubscription, mSearchClient );
+            mSubscriptions = new CompositeDisposable( searchResultsSubscription, mSearchClient );
+        }
+
+        public bool IsActive {
+            get => mIsActive;
+            set {
+                mIsActive = value;
+
+                if( mIsActive ) {
+                    if( mSelectionStateSubscription == null ) {
+                        mSelectionStateSubscription = mSelectionState.PlayingTrackChanged.Subscribe( OnTrackStarted );
+
+                        OnTrackStarted( mSelectionState.CurrentlyPlayingItem );
+                    }
+                }
+                else {
+                    mSelectionStateSubscription?.Dispose();
+                    mSelectionStateSubscription = null;
+                }
+
+                IsActiveChanged( this, new EventArgs());
+            }
         }
 
         private void AddSearchItem( IChangeSet<SearchResultItem> items ) {
@@ -119,6 +144,9 @@ namespace Noise.UI.ViewModels {
 
         public void Dispose() {
             mSubscriptions?.Dispose();
+
+            mSelectionStateSubscription?.Dispose();
+            mSelectionStateSubscription = null;
 
             mEventAggregator.Unsubscribe( this );
         }
