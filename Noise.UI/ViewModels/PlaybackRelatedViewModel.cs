@@ -20,7 +20,8 @@ using ReactiveUI;
 using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.ViewModels {
-    class PlaybackRelatedViewModel : ReactiveObject, IActiveAware, IDisposable {
+    class PlaybackRelatedViewModel : ReactiveObject, IActiveAware, IDisposable,
+                                     IHandle<Events.DatabaseClosing>{
         private readonly IArtistProvider                    mArtistProvider;
         private readonly IAlbumProvider                     mAlbumProvider;
         private readonly ITrackProvider                     mTrackProvider;
@@ -98,6 +99,11 @@ namespace Noise.UI.ViewModels {
 
                 IsActiveChanged( this, new EventArgs());
             }
+        }
+
+        public void Handle( Events.DatabaseClosing args ) {
+            mSearchClient.ClearSearch();
+            mTracks.Clear();
         }
 
         private void AddSearchItem( IChangeSet<SearchResultItem> items ) {
