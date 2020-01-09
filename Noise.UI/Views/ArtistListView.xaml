@@ -9,6 +9,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:ViewModels="clr-namespace:Noise.UI.ViewModels"
 			 ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
@@ -79,6 +80,34 @@
                 </DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
+
+		<DataTemplate x:Key="ArtistFilterText" DataType="ViewModels:IArtistFilter">
+            <TextBox Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                     Behaviours:TextBoxHelper.Watermark="enter artist filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ArtistGenreText" DataType="ViewModels:IArtistFilter">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="1" BorderThickness="0" CornerRadius="3" Background="{StaticResource TrimColor}" Margin="25,0,0,0" Padding="7">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock FontSize="14" Margin="10,0,5,0" VerticalAlignment="Center" Text="Genre:"/>
+                        <TextBlock FontSize="14" Margin="0,0,5,0" VerticalAlignment="Center" Text="{Binding FilterText}"/>
+                        <Button Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False"
+                                Command="{Binding Clear}" Content="{StaticResource Path_Unlink}" ToolTip="Clear Filter" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+		<ViewModels:ArtistFilterTemplateSelector x:Key="ArtistFilterTemplateSelector" 
+                                                 TextTemplate="{StaticResource ArtistFilterText}" 
+                                                 GenreTemplate="{StaticResource ArtistGenreText}"/>
 	</UserControl.Resources>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}">
@@ -136,9 +165,7 @@
 						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Artist Sort Order" />
 
-				<TextBox Grid.Column="1" Tag="dimmed" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
-						 Behaviours:TextBoxHelper.Watermark="enter artist filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
-						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+				<ContentControl Grid.Column="1" Tag="dimmed" ContentTemplateSelector="{StaticResource ArtistFilterTemplateSelector}" Content="{Binding ArtistFilter}"/>
 			</Grid>
 		</Grid>
         <i:Interaction.Behaviors>
