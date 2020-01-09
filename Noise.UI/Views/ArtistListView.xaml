@@ -94,11 +94,12 @@
 					<ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="1" BorderThickness="0" CornerRadius="3" Background="{StaticResource TrimColor}" Margin="25,0,0,0" Padding="7">
+                <Border Grid.Column="1" BorderThickness="0" CornerRadius="3" Background="{StaticResource TrimColor}" Margin="25,7,0,1" Padding="3">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="14" Margin="10,0,5,0" VerticalAlignment="Center" Text="Genre:"/>
-                        <TextBlock FontSize="14" Margin="0,0,5,0" VerticalAlignment="Center" Text="{Binding FilterText}"/>
-                        <Button Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False"
+						<ContentPresenter VerticalAlignment="Center" Height="15" Margin="7,0" Content="{StaticResource Path_Filter}"/>
+                        <TextBlock FontSize="14" Margin="0,0,3,0" VerticalAlignment="Center" Text="Genre:"/>
+                        <TextBlock FontSize="14" Margin="0,0,3,0" VerticalAlignment="Center" Text="{Binding FilterText}"/>
+                        <Button Margin="3,0" Width="25" Height="25" Padding="3" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False"
                                 Command="{Binding Clear}" Content="{StaticResource Path_Unlink}" ToolTip="Clear Filter" />
                     </StackPanel>
                 </Border>
