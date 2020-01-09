@@ -20,7 +20,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	internal class ArtistListViewModel : AutomaticCommandBase,
-										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
+										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistListFocusRequested>,
 										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string							cDisplaySortDescriptions = "_displaySortDescriptions";
@@ -141,6 +141,12 @@ namespace Noise.UI.ViewModels {
 	
 				RaisePropertyChanged( () => ArtistCount );
 			}
+		}
+
+		public void Handle( Events.ArtistListFocusRequested request ) {
+			SetArtistFilter( ArtistFilterType.FilterArtistList );
+
+			ArtistFilter.SetFilterList( request.ArtistList );
 		}
 
 		private void OnArtistChanged( DbArtist artist ) {

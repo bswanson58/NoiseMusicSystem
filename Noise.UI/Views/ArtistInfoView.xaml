@@ -87,6 +87,11 @@
 							</ListBox.ItemTemplate>
 						</ListBox>
 					</GroupBox>
+					<Controls:LinkLabel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,15,0" Content="Filter" LinkLabelBehavior="HoverUnderline">
+                        <EventCommandTriggers:CommandSource.Trigger>
+                            <EventCommandTriggers:EventCommandTrigger Command="{Binding FilterSimilarArtist}" RoutedEvent="Controls:LinkLabel.Click" />
+                        </EventCommandTriggers:CommandSource.Trigger>
+                    </Controls:LinkLabel>
 				</Grid>
 				<GroupBox Grid.Row="1" Margin="0" BorderThickness="1" Header=" Discography ">
 					<ListView Behaviours:GridViewSort.AutoSort="True"

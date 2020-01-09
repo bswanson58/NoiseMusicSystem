@@ -87,7 +87,7 @@
                      Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="ArtistGenreText" DataType="ViewModels:IArtistFilter">
+        <DataTemplate x:Key="ArtistFilterGenre" DataType="ViewModels:IArtistFilter">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
@@ -106,9 +106,28 @@
             </Grid>
         </DataTemplate>
 
-		<ViewModels:ArtistFilterTemplateSelector x:Key="ArtistFilterTemplateSelector" 
+        <DataTemplate x:Key="ArtistFilterList" DataType="ViewModels:IArtistFilter">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="1" BorderThickness="0" CornerRadius="3" Background="{StaticResource TrimColor}" Margin="25,7,0,1" Padding="3">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ContentPresenter VerticalAlignment="Center" Height="15" Margin="7,0" Content="{StaticResource Path_Filter}"/>
+                        <TextBlock FontSize="14" Margin="0,0,3,0" VerticalAlignment="Center" Text="Similar Artists"/>
+                        <Button Margin="3,0" Width="25" Height="25" Padding="3" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False"
+                                Command="{Binding Clear}" Content="{StaticResource Path_Unlink}" ToolTip="Clear Filter" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+		
+        <ViewModels:ArtistFilterTemplateSelector x:Key="ArtistFilterTemplateSelector" 
                                                  TextTemplate="{StaticResource ArtistFilterText}" 
-                                                 GenreTemplate="{StaticResource ArtistGenreText}"/>
+                                                 GenreTemplate="{StaticResource ArtistFilterGenre}"
+                                                 ArtistListTemplate="{StaticResource ArtistFilterList}"/>
 	</UserControl.Resources>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}">

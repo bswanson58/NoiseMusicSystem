@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,6 +55,10 @@ namespace Noise.UI.ViewModels {
                 case ArtistFilterType.FilterGenre:
                     retValue = new ArtistFilterGenre( onView );
                     break;
+
+                case ArtistFilterType.FilterArtistList:
+                    retValue = new ArtistFilterList( onView );
+                    break;
             }
 
             return retValue;
@@ -64,6 +70,8 @@ namespace Noise.UI.ViewModels {
         bool                        DoesArtistMatch( UiArtist artist );
 
         string                      FilterText { get; set; }
+        void                        SetFilterList( IEnumerable<string> filterList );
+
         ReactiveCommand<Unit, Unit> Clear { get; }
         void                        ClearFilter();
 
@@ -72,6 +80,7 @@ namespace Noise.UI.ViewModels {
 
     abstract class ArtistFilterBase : IArtistFilter {
         private readonly ICollectionView    mCollectionView;
+        private readonly List<String>       mFilterList;
         private string                      mFilterText;
 
         public  ArtistFilterType            FilterType { get; set; }
@@ -81,6 +90,7 @@ namespace Noise.UI.ViewModels {
         protected ArtistFilterBase( ICollectionView view ) {
             mCollectionView = view;
 
+            mFilterList = new List<string>();
             Clear = ReactiveCommand.Create( OnClearFilter );
         }
 
@@ -91,11 +101,21 @@ namespace Noise.UI.ViewModels {
             set => UpdateFilter( value );
         }
 
+        public void SetFilterList( IEnumerable<string> filterList ) {
+            mFilterList.Clear();
+            mFilterList.AddRange( filterList );
+
+            mCollectionView.Refresh();
+        }
+
+        protected IEnumerable<string> GetFilterList() => mFilterList;
+
         private void OnClearFilter() {
             ClearFilter();
         }
 
         public void ClearFilter() {
+            mFilterList.Clear();
             FilterText = String.Empty;
 
             FilterCleared( this, EventArgs.Empty );
@@ -142,6 +162,23 @@ namespace Noise.UI.ViewModels {
             }
 
             return ( retValue );
+        }
+    }
+
+    class ArtistFilterList : ArtistFilterBase {
+        public ArtistFilterList( ICollectionView view ) :
+            base( view ) {
+            FilterType = ArtistFilterType.FilterArtistList;
+        }
+
+        public override bool DoesArtistMatch( UiArtist artist ) {
+            var retValue = true;
+
+            if( GetFilterList().Any()) {
+                retValue = GetFilterList().Any( filter => artist.Name.Equals( filter, StringComparison.CurrentCultureIgnoreCase ));
+            }
+
+            return retValue;
         }
     }
 }

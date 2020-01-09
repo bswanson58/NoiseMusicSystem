@@ -298,5 +298,14 @@ namespace Noise.UI.ViewModels {
 			get { return( Get( () => ArtistBiography )); }
 			set { Set( () => ArtistBiography, value ); }
 		}
+
+		public void Execute_FilterSimilarArtist() {
+			if( ArtistValid ) {
+				var artistList = new List<string> { mCurrentArtistName };
+
+				artistList.AddRange( from a in mSimilarArtists select a.DisplayText );
+                mEventAggregator.PublishOnUIThread( new Events.ArtistListFocusRequested( artistList ));
+            }
+        }
     }
 }

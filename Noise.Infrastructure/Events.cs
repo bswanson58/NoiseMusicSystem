@@ -13,6 +13,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class ArtistListFocusRequested {
+			public List<string>	ArtistList { get; }
+
+			public ArtistListFocusRequested( IEnumerable<string> artistList ) {
+				ArtistList = new List<string>( artistList );
+			}
+		}
+
 		public class AlbumFocusRequested {
 			public long	ArtistId { get; private set; }
 			public long	AlbumId { get; private set; }
