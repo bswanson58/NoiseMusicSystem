@@ -21,18 +21,30 @@
 
         <DataTemplate x:Key="RelatedTrackTemplate" DataType="Dto:RelatedTrackNode">
             <Grid Margin="15,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="33"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
-                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                <Button Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
+
+                <TextBlock x:Name="TrackName" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource ListViewTextStyle}" Text="{Binding Track.Name}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
                            Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
-                <TextBlock Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
+                <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
                            TextAlignment="Right" Margin="3,0,8,0"/>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding DisplayTrackName}" Value="True">
+                    <Setter TargetName="TrackName" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
 
         <HierarchicalDataTemplate x:Key="RelatedParentTemplate" DataType="Dto:RelatedTrackParent" 
@@ -50,7 +62,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
-                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding ParentName}"
+                    <TextBlock x:Name="ParentName" Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding ParentName}"
                                Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 </Grid>
 
@@ -71,6 +83,9 @@
                 <DataTrigger Binding="{Binding IsPlayable}" Value="True">
                     <Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
                     <Setter TargetName="FirstPlayDuration" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsCategoryParent}" Value="True">
+                    <Setter TargetName="ParentName" Property="FontStyle" Value="Italic"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>

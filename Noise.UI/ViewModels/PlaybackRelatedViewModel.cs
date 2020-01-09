@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Windows.Data;
 using Caliburn.Micro;
 using DynamicData;
+using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -18,6 +21,8 @@ using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.ViewModels {
     class PlaybackRelatedViewModel : ReactiveObject, IActiveAware, IDisposable {
+        private readonly IArtistProvider                    mArtistProvider;
+        private readonly IAlbumProvider                     mAlbumProvider;
         private readonly ITrackProvider                     mTrackProvider;
         private readonly ISelectionState                    mSelectionState;
         private readonly ISearchClient                      mSearchClient;
@@ -25,24 +30,30 @@ namespace Noise.UI.ViewModels {
         private readonly IEventAggregator					mEventAggregator;
         private readonly IDisposable                        mSubscriptions;
         private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
+        private readonly ObservableCollectionEx<RelatedTrackParent> mTracks;
         private IDisposable                                 mSelectionStateSubscription;
         private bool                                        mIsActive;
         private bool                                        mRelatedTracksAvailable;
 
-        public	ObservableCollectionEx<RelatedTrackParent>  Tracks { get; }
+        public  ICollectionView                             Tracks { get; }
         public  ReactiveCommand<RelatedTrackNode, Unit>     TreeViewSelected { get; }
         public	event EventHandler				            IsActiveChanged  = delegate { };
 
-        public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, ITrackProvider trackProvider, IPlayCommand playCommand,
-                                         IEventAggregator eventAggregator ) {
+        public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, IPlayCommand playCommand,
+                                         IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IEventAggregator eventAggregator ) {
+            mArtistProvider = artistProvider;
+            mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mSelectionState = selectionState;
             mPlayCommand = playCommand;
             mEventAggregator = eventAggregator;
 
-            Tracks = new ObservableCollectionEx<RelatedTrackParent>();
-            Tracks.CollectionChanged += OnCollectionChanged;
+            mTracks = new ObservableCollectionEx<RelatedTrackParent>();
+            mTracks.CollectionChanged += OnCollectionChanged;
             TreeViewSelected = ReactiveCommand.Create<RelatedTrackNode, Unit>( OnTreeViewSelection );
+
+            Tracks = CollectionViewSource.GetDefaultView( mTracks );
+            Tracks.SortDescriptions.Add( new SortDescription( nameof( RelatedTrackParent.SortKey ), ListSortDirection.Ascending ));
 
             mSearchClient = searchProvider.CreateSearchClient();
 
@@ -60,7 +71,7 @@ namespace Noise.UI.ViewModels {
         }
 
         private void OnCollectionChanged( object sender, NotifyCollectionChangedEventArgs args ) {
-            RelatedTracksAvailable = Tracks.Any();
+            RelatedTracksAvailable = mTracks.Any();
         }
 
         public bool RelatedTracksAvailable {
@@ -92,7 +103,7 @@ namespace Noise.UI.ViewModels {
         private void AddSearchItem( IChangeSet<SearchResultItem> items ) {
             foreach( var change in items ) {
                 if( change.Reason == ListChangeReason.Clear ) {
-                    Tracks.Clear();
+                    mTracks.Clear();
                 }
                 else if( change.Reason == ListChangeReason.Add ) {
                     AddSearchItem( change.Item.Current );
@@ -107,15 +118,15 @@ namespace Noise.UI.ViewModels {
 
         private void AddSearchItem( SearchResultItem item ) {
             var key = item.Track.Name.RemoveSpecialCharacters().ToLower();
-            var parent = Tracks.FirstOrDefault( i => i.Key.Equals( key ));
+            var parent = mTracks.FirstOrDefault( i => i.Key.Equals( key ));
 
             if( parent != null ) {
                 parent.AddAlbum( item.Artist, item.Album, item.Track );
             }
             else {
-                var expanded = !Tracks.Any();
+                var expanded = !mTracks.Any();
 
-                Tracks.Add( new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded ));
+                mTracks.Add( new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded ));
             }
         }
 
@@ -133,11 +144,38 @@ namespace Noise.UI.ViewModels {
                         var searchText = $"\"{track.Name}\"";
 
                         mSearchClient.StartSearch( eSearchItemType.Track , searchText );
+
+                        AddArtistFavoriteTracks( track.Artist );
                     }
                 }
 
                 return Unit.Default;
             });
+        }
+
+        private void AddArtistFavoriteTracks( long artistId ) {
+            var parentNode = default( RelatedTrackParent );
+
+            using( var trackList = mTrackProvider.GetFavoriteTracks()) {
+                var artistTracks = from t in trackList.List where t.Artist.Equals( artistId ) select t;
+
+                artistTracks.ForEach( track => {
+                    var artist = mArtistProvider.GetArtist( track.Artist );
+                    var album = mAlbumProvider.GetAlbum( track.Album );
+
+                    if(( artist != null ) &&
+                       ( album != null )) {
+                        if( parentNode != null ) {
+                            parentNode.AddAlbum( artist, album, track );
+                        }
+                        else {
+                            parentNode = new RelatedTrackParent( "|favorites|", "Favorites", artist, album, track, OnPlay );
+                        }
+                    }
+                });
+            }
+
+            Execute.OnUIThread( () => mTracks.Add( parentNode ));
         }
 
         private void OnPlay( RelatedTrackNode node ) { 
