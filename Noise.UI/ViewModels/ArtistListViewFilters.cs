@@ -138,9 +138,7 @@ namespace Noise.UI.ViewModels {
             var retValue = true;
 
             if(!string.IsNullOrWhiteSpace( FilterText )) {
-                if( artist.Genre.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
-                    retValue = false;
-                }
+                retValue = FilterText.Equals( artist.Genre, StringComparison.OrdinalIgnoreCase );
             }
 
             return ( retValue );
