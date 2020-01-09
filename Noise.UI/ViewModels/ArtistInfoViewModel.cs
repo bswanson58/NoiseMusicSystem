@@ -36,7 +36,14 @@ namespace Noise.UI.ViewModels {
 
 		private IDisposable								mSelectionStateSubscription;
 		private bool									mIsActive;
-		public	event	EventHandler					IsActiveChanged = delegate { };
+
+        public	event	EventHandler					IsActiveChanged = delegate { };
+
+        public	IEnumerable<LinkNode>					TopAlbums => mTopAlbums;
+        public	IEnumerable<LinkNode>					TopTracks => mTopTracks;
+        public	IEnumerable<LinkNode>					SimilarArtist => mSimilarArtists;
+        public	IEnumerable<string>						BandMembers => mBandMembers;
+        public	IEnumerable<DbDiscographyRelease>		Discography => mDiscography;
 
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IMetadataManager metadataManager,
 									IArtistProvider artistProvider, ITrackProvider trackProvider, IUiLog log ) {
@@ -61,8 +68,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool IsActive {
-			get{ return( mIsActive ); }
-			set {
+			get => ( mIsActive );
+            set {
 				if( mIsActive ) {
 					if( mSelectionStateSubscription != null ) {
 						mSelectionStateSubscription.Dispose();
@@ -138,8 +145,8 @@ namespace Noise.UI.ViewModels {
 				return( mTaskHandler );
 			}
 
-			set { mTaskHandler = value; }
-		} 
+			set => mTaskHandler = value;
+        } 
 
 		private CancellationToken GenerateCanellationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
@@ -199,7 +206,7 @@ namespace Noise.UI.ViewModels {
 
 										if( !cancellationToken.IsCancellationRequested ) {
 											mSimilarArtists.Clear();
-											mSimilarArtists.AddRange( LinkSimiliarArtists( info.GetMetadataArray( eMetadataType.SimilarArtists ), cancellationToken ));
+											mSimilarArtists.AddRange( LinkSimilarArtists( info.GetMetadataArray( eMetadataType.SimilarArtists ), cancellationToken ));
 										}
 
 										if( !cancellationToken.IsCancellationRequested ) {
@@ -211,11 +218,11 @@ namespace Noise.UI.ViewModels {
 									ClearCurrentTask();
 								},
 								() => ArtistValid = true,
-								exception => mLog.LogException( string.Format( "RetrieveSupportInfo for \"{0}\"", artistName ), exception ),
+								exception => mLog.LogException( $"RetrieveSupportInfo for \"{artistName}\"", exception ),
 								cancellationToken );
 		}
 
-		private IEnumerable<LinkNode> LinkSimiliarArtists( IEnumerable<string> similarArtistList, CancellationToken cancellationToken ) {
+		private IEnumerable<LinkNode> LinkSimilarArtists( IEnumerable<string> similarArtistList, CancellationToken cancellationToken ) {
 			return( from similarArtist in similarArtistList.TakeWhile( similarArtist => !cancellationToken.IsCancellationRequested )
 					let matchingArtist = ( from artist in mArtistList where artist.Name == similarArtist select artist ).FirstOrDefault()
 					select matchingArtist != null ? new LinkNode( similarArtist, matchingArtist.DbId, OnSimilarArtistClicked ) :
@@ -291,25 +298,5 @@ namespace Noise.UI.ViewModels {
 			get { return( Get( () => ArtistBiography )); }
 			set { Set( () => ArtistBiography, value ); }
 		}
-
-		public IEnumerable<LinkNode> TopAlbums {
-			get{ return( mTopAlbums ); }
-		}
-
-		public IEnumerable<LinkNode> TopTracks {
-			get { return( mTopTracks ); }
-		} 
-
-		public IEnumerable<LinkNode> SimilarArtist {
-			get { return( mSimilarArtists ); }
-		}
-
-		public IEnumerable<string> BandMembers {
-			get { return( mBandMembers ); }
-		}
-
-		public IEnumerable<DbDiscographyRelease> Discography {
-			get{ return( mDiscography ); }
-		}
-	}
+    }
 }
