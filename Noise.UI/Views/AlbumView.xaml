@@ -48,7 +48,7 @@
 				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
 				<!--  Album cover image  -->
 				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform">
-                    <Image RenderTransformOrigin="0.5,0.5">
+                    <Image RenderTransformOrigin="0.5,0.5" Cursor="SizeWE">
 						<Image.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform />
