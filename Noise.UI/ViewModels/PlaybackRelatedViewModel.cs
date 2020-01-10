@@ -147,9 +147,7 @@ namespace Noise.UI.ViewModels {
                     var track = mTrackProvider.GetTrack( item.Track );
 
                     if( track != null ) {
-                        var searchText = $"\"{track.Name}\"";
-
-                        mSearchClient.StartSearch( eSearchItemType.Track , searchText );
+                        mSearchClient.StartSearch( eSearchItemType.Track , CreateSearchTerm( track.Name ));
 
                         AddArtistFavoriteTracks( track.Artist );
                     }
@@ -157,6 +155,38 @@ namespace Noise.UI.ViewModels {
 
                 return Unit.Default;
             });
+        }
+
+        private string CreateSearchTerm( string input ) {
+            var retValue = DeleteText( input, '(', ')' );
+
+            retValue = DeleteText( retValue, '[', ']' );
+            retValue = retValue.Trim();
+            retValue = $"\"{retValue}\"";
+
+            return String.IsNullOrWhiteSpace( retValue ) ? input : retValue;
+        }
+
+        private string DeleteText( string source, char startCharacter, char endCharacter ) {
+            var     retValue = source;
+            bool    textDeleted;
+
+            do {
+                var startPosition = retValue.IndexOf( startCharacter );
+                var endPosition = retValue.IndexOf( endCharacter );
+
+                if(( startPosition >= 0 ) &&
+                   ( endPosition > startPosition )) {
+                    retValue = retValue.Remove( startPosition, endPosition - startPosition + 1 );
+
+                    textDeleted = true;
+                }
+                else {
+                    textDeleted = false;
+                }
+            } while( textDeleted );
+
+            return retValue;
         }
 
         private void AddArtistFavoriteTracks( long artistId ) {
