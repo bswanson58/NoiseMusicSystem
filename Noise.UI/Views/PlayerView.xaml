@@ -205,7 +205,7 @@
 							</TextBlock>
 						</StackPanel>
 
-						<!-- Play Postion indicator -->
+						<!-- Play Position indicator -->
 						<Slider Grid.Column="1" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
 						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
 						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
