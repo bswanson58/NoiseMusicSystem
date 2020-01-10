@@ -7,6 +7,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 Height="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
@@ -132,7 +133,7 @@
 					</StackPanel>
 
 					<!--  Album commands  -->
-					<StackPanel Grid.Row="5" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="5" Tag="dimmed" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" Orientation="Horizontal">
 
 						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
@@ -155,6 +156,9 @@
 					</StackPanel>
 				</Grid>
 			</Grid>
+            <i:Interaction.Behaviors>
+                <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            </i:Interaction.Behaviors>
 		</Border>
 	</GroupBox>
 </UserControl>

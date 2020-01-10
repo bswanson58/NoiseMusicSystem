@@ -8,6 +8,7 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 Height="200"
 			 d:DesignWidth="800"
 			 mc:Ignorable="d">
@@ -153,8 +154,7 @@
                             </Controls:LinkLabel>
 
                             <!-- Button Group -->
-                            <StackPanel Grid.Row="5" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
-									d:LayoutOverrides="Width">
+                            <StackPanel Grid.Row="5" Tag="dimmed" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" d:LayoutOverrides="Width">
                                 <Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
 									Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
                                 <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}" 
@@ -169,6 +169,9 @@
 
                         </Grid>
                     </Grid>
+                    <i:Interaction.Behaviors>
+                        <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                    </i:Interaction.Behaviors>
                 </Border>
             </Grid>
         </Grid>
