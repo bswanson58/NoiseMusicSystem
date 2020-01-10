@@ -90,10 +90,17 @@
                     <Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
                     <Setter TargetName="FirstPlayDuration" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                    <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
-                    <Setter TargetName="FirstPlayDuration" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
-                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsPlaying}" Value="True"/>
+                        <Condition Binding="{Binding IsPlayable}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter TargetName="ParentName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                        <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                        <Setter TargetName="FirstPlayDuration" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
                 <DataTrigger Binding="{Binding IsCategoryParent}" Value="True">
                     <Setter TargetName="ParentName" Property="FontStyle" Value="Italic"/>
                 </DataTrigger>
