@@ -33,16 +33,22 @@
 
                 <Button Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
 
-                <TextBlock x:Name="TrackName" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource ListViewTextStyle}" Text="{Binding Track.Name}"/>
-
-                <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                <TextBlock x:Name="TrackName" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource ListViewTextStyle}" Text="{Binding Track.Name}"
                            Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
-                <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
+
+                <TextBlock x:Name="AlbumName" Grid.Row="1" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                           Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                <TextBlock x:Name="Duration" Grid.Row="1" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
                            TextAlignment="Right" Margin="3,0,8,0"/>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding DisplayTrackName}" Value="True">
                     <Setter TargetName="TrackName" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    <Setter TargetName="Duration" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -72,7 +78,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding FirstAlbumName}"
+                    <TextBlock x:Name="AlbumName" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding FirstAlbumName}"
                                Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                     <TextBlock x:Name="FirstPlayDuration" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Visibility="Hidden"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
@@ -84,6 +90,10 @@
                     <Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
                     <Setter TargetName="FirstPlayDuration" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    <Setter TargetName="FirstPlayDuration" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding IsCategoryParent}" Value="True">
                     <Setter TargetName="ParentName" Property="FontStyle" Value="Italic"/>
                 </DataTrigger>
@@ -91,7 +101,7 @@
         </HierarchicalDataTemplate>
     </UserControl.Resources>
 
-    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Related ">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Related Tracks ">
         <Grid>
             <TreeView x:Name="_treeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">

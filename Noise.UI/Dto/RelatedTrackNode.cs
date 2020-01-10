@@ -2,11 +2,12 @@
 using System.ComponentModel;
 using System.Linq;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-    public class RelatedTrackNode : AutomaticCommandBase {
+    public class RelatedTrackNode : AutomaticCommandBase, IPlayingItem {
         protected readonly Action<RelatedTrackNode> OnPlay;
         private bool                                mIsExpanded;
 
@@ -16,6 +17,7 @@ namespace Noise.UI.Dto {
         public  DbTrack     Track { get; }
         public  string      AlbumName => $"{Artist.Name}/{Album.Name}";
         public  bool        DisplayTrackName { get; set; }
+        public  bool        IsPlaying { get; private set; }
 
         public RelatedTrackNode( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) {
             Key = key;
@@ -38,6 +40,12 @@ namespace Noise.UI.Dto {
 
         public void Execute_Play() {
             OnPlay?.Invoke( this );
+        }
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            IsPlaying = Track.DbId.Equals( item.Track );
+
+            RaisePropertyChanged( () => IsPlaying );
         }
     }
 

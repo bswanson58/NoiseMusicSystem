@@ -19,10 +19,14 @@ namespace Noise.UI.Models {
             mPlayingItem = new PlayingItem();
         }
 
+        public void StartHandler() {
+            mPlayingTrackSubscription = mSelectionState.PlayingTrackChanged.Subscribe( OnPlayingChanged );
+        }
+
         public void StartHandler( IEnumerable<IPlayingItem> list ) {
             mList = list;
 
-            mPlayingTrackSubscription = mSelectionState.PlayingTrackChanged.Subscribe( OnPlayingTrackChanged );
+            mPlayingTrackSubscription = mSelectionState.PlayingTrackChanged.Subscribe( OnPlayingListChanged );
         }
 
         public void StartHandler( Func<IPlayingItem> forItem ) {
@@ -36,8 +40,12 @@ namespace Noise.UI.Models {
             mPlayingTrackSubscription = null;
         }
 
-        private void OnPlayingItemChanged( PlayingItem item ) {
+        private void OnPlayingChanged( PlayingItem item ) {
             mPlayingItem = item ?? new PlayingItem();
+        }
+
+        private void OnPlayingItemChanged( PlayingItem item ) {
+            OnPlayingChanged( item );
 
             UpdateItem();
         }
@@ -48,14 +56,22 @@ namespace Noise.UI.Models {
             target?.SetPlayingStatus( mPlayingItem );
         }
 
-        private void OnPlayingTrackChanged( PlayingItem item ) {
-            mPlayingItem = item ?? new PlayingItem();
+        public void UpdateItem( IPlayingItem item ) {
+            item.SetPlayingStatus( mPlayingItem );
+        }
+
+        private void OnPlayingListChanged( PlayingItem item ) {
+            OnPlayingChanged( item );
 
             UpdateList();
         }
 
         public void UpdateList() {
-            mList.ForEach( i => i.SetPlayingStatus( mPlayingItem ));
+            UpdateList( mList );
+        }
+
+        public void UpdateList( IEnumerable<IPlayingItem> list ) {
+            list.ForEach( i => i.SetPlayingStatus( mPlayingItem ));
         }
     }
 }

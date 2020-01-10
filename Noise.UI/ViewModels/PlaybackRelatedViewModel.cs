@@ -28,6 +28,7 @@ namespace Noise.UI.ViewModels {
         private readonly ISelectionState                    mSelectionState;
         private readonly ISearchClient                      mSearchClient;
         private readonly IPlayCommand						mPlayCommand;
+        private readonly IPlayingItemHandler                mPlayingItemHandler;
         private readonly IEventAggregator					mEventAggregator;
         private readonly IDisposable                        mSubscriptions;
         private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
@@ -40,13 +41,14 @@ namespace Noise.UI.ViewModels {
         public  ReactiveCommand<RelatedTrackNode, Unit>     TreeViewSelected { get; }
         public	event EventHandler				            IsActiveChanged  = delegate { };
 
-        public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, IPlayCommand playCommand,
+        public PlaybackRelatedViewModel( ISelectionState selectionState, ISearchProvider searchProvider, IPlayCommand playCommand, IPlayingItemHandler playingItemHandler,
                                          IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IEventAggregator eventAggregator ) {
             mArtistProvider = artistProvider;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mSelectionState = selectionState;
             mPlayCommand = playCommand;
+            mPlayingItemHandler = playingItemHandler;
             mEventAggregator = eventAggregator;
 
             mTracks = new ObservableCollectionEx<RelatedTrackParent>();
@@ -65,6 +67,7 @@ namespace Noise.UI.ViewModels {
                     .Subscribe();
 
             mStartSearch = ReactiveCommand.CreateFromObservable<PlayingItem, Unit>( item => OnStartSearch( item ).SubscribeOn( RxApp.TaskpoolScheduler ));
+            mPlayingItemHandler.StartHandler();
 
             mEventAggregator.Subscribe( this );
 
@@ -128,11 +131,16 @@ namespace Noise.UI.ViewModels {
 
             if( parent != null ) {
                 parent.AddAlbum( item.Artist, item.Album, item.Track );
+
+                mPlayingItemHandler.UpdateList( parent.Tracks );
             }
             else {
                 var expanded = !mTracks.Any();
+                
+                parent = new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded );
+                mPlayingItemHandler.UpdateItem( parent );
 
-                mTracks.Add( new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded ));
+                mTracks.Add( parent );
             }
         }
 
@@ -213,6 +221,8 @@ namespace Noise.UI.ViewModels {
 
             if( parentNode != null ) {
                 Execute.OnUIThread( () => mTracks.Add( parentNode ));
+
+                mPlayingItemHandler.UpdateList( parentNode.Tracks );
             }
         }
 
@@ -242,6 +252,8 @@ namespace Noise.UI.ViewModels {
 
             mSelectionStateSubscription?.Dispose();
             mSelectionStateSubscription = null;
+
+            mPlayingItemHandler.StopHandler();
 
             mEventAggregator.Unsubscribe( this );
         }
