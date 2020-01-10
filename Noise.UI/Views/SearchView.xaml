@@ -5,6 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300"
 			 Tag="Search"
@@ -82,13 +84,18 @@
 		        </DataGrid.Columns>
 		    </DataGrid>
 			
-			<Grid Grid.Row="3" Margin="5,10,0,5">
+			<Grid Grid.Row="3" Tag="dimmed" Margin="5,10,0,5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 
 				<Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
 			</Grid>
+
+            <i:Interaction.Behaviors>
+                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            </i:Interaction.Behaviors>
 		</Grid>
 	</GroupBox>
 </UserControl>

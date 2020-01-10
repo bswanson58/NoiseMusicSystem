@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              d:DesignHeight="75" d:DesignWidth="400"
              Height="55">
@@ -55,10 +56,13 @@
                 </ContentControl.ContentTemplate>
             </ContentControl>
 
-            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" ToolTip="Sync Library" Style="{StaticResource PathButtonStyle}"
+            <Button Grid.Column="2" Tag="dimmed" Height="25" Width="25" Margin="2,3" Padding="1" ToolTip="Sync Library" Style="{StaticResource PathButtonStyle}"
                     Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
-            <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" ToolTip="Configure Libraries" Style="{StaticResource PathButtonStyle}" Padding="3"
+            <Button Grid.Column="3" Tag="dimmed" Height="25" Width="25" Margin="2,3" ToolTip="Configure Libraries" Style="{StaticResource PathButtonStyle}" Padding="3"
                     Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
         </Grid>
+        <i:Interaction.Behaviors>
+            <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

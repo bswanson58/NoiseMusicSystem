@@ -9,6 +9,7 @@
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:System="clr-namespace:System;assembly=mscorlib"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 Height="85"
 			 d:DesignHeight="100"
 			 d:DesignWidth="1200"
@@ -29,7 +30,7 @@
 	</UserControl.DataContext>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
-		<Grid>
+		<Grid Background="Transparent">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
@@ -107,12 +108,12 @@
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" ToolTip="Mute. Why Would You??"/>
+					<Button Grid.Column="0" Tag="dimmed" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" ToolTip="Mute. Why Would You??"/>
 
 					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
-					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" ToolTip="Expand Player"/>
+					<Button Grid.Column="2" Tag="dimmed" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" ToolTip="Expand Player"/>
 				</Grid>
 			</Grid>
 
@@ -180,7 +181,7 @@
 						</StackPanel>
 
 						<!--  Track related commands  -->
-						<Button Margin="9,0,0,0" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
+						<Button Margin="9,0,0,0" Tag="dimmed" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
 						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
 					</StackPanel>
 
@@ -229,4 +230,7 @@
 			</Grid>
 		</Grid>
 	</GroupBox>
+    <i:Interaction.Behaviors>
+        <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+    </i:Interaction.Behaviors>
 </UserControl>

@@ -50,5 +50,9 @@
                 <Behaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
             </i:Interaction.Behaviors>
         </ListBox>
+
+        <i:Interaction.Behaviors>
+            <Behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

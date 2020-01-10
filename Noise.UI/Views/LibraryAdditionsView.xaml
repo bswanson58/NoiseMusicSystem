@@ -7,6 +7,7 @@
 			 xmlns:compMod="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 DataContext="{Binding LibraryAdditionsViewModel, Source={StaticResource ViewModelLocator}}"
 			 Tag="What's New"
 			 AllowDrop="{Binding DisplayMarker}"
@@ -76,6 +77,9 @@
 		            <DataGridTemplateColumn Width="*" Header="Artist / Album" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
 		        </DataGrid.Columns>
 		    </DataGrid>
+            <i:Interaction.Behaviors>
+                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            </i:Interaction.Behaviors>
 		</GroupBox>
 	</Grid>
 </UserControl>

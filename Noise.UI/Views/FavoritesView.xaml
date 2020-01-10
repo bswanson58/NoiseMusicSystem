@@ -76,7 +76,7 @@
 
 			<Rectangle Grid.Row="1" Margin="3,7,3,3" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
-			<Grid Grid.Row="2" Margin="3,7,3,3">
+			<Grid Grid.Row="2" Tag="dimmed" Margin="3,7,3,3">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
@@ -96,6 +96,10 @@
 				<Button Grid.Column="4" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
 				<Button Grid.Column="5" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
 			</Grid>
+            <i:Interaction.Behaviors>
+                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            </i:Interaction.Behaviors>
 		</Grid>
 	</GroupBox>
 </UserControl>
