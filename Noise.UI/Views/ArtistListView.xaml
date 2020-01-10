@@ -10,6 +10,7 @@
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:ViewModels="clr-namespace:Noise.UI.ViewModels"
+			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
 			 ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
@@ -55,14 +56,12 @@
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
-					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,-3,3,0" Opacity="0.75" Cursor="Hand"
-                               Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <i:InvokeCommandAction Command="{Binding GenreClicked}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>                   
-                    </TextBlock>
+                    <NoiseControls:LinkLabel x:Name="Genre" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,-3,3,0" Opacity="0.75" 
+                                             FontSize="12" FontFamily="Segoe UI" Content="{Binding Genre}" LinkLabelBehavior="HoverUnderline">
+                        <EventCommandTriggers:CommandSource.Trigger>
+                            <EventCommandTriggers:EventCommandTrigger Command="{Binding GenreClicked}" RoutedEvent="NoiseControls:LinkLabel.Click" />
+                        </EventCommandTriggers:CommandSource.Trigger>
+                    </NoiseControls:LinkLabel>
 				</Grid>
 			</Border>
 
