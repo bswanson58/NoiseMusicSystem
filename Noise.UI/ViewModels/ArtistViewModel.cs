@@ -325,6 +325,17 @@ namespace Noise.UI.ViewModels {
 			return( CurrentArtist != null );
 		}
 
+		public void Execute_GenreClicked() {
+			if( CurrentArtist != null ) {
+                mEventAggregator.PublishOnUIThread( new Events.GenreFocusRequested( Artist.Genre ));
+            }
+        }
+
+        [DependsUpon( "Artist" )]
+        public bool CanExecute_GenreClicked() {
+            return( CurrentArtist != null );
+        }
+
 		public IInteractionRequest ArtistEditRequest => ( mArtistEditRequest );
 
         public void Execute_EditArtist() {

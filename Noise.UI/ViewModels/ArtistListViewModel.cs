@@ -20,8 +20,8 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	internal class ArtistListViewModel : AutomaticCommandBase,
-										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistListFocusRequested>,
-										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+										 IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistListFocusRequested>, IHandle<Events.GenreFocusRequested>,
+                                         IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string							cDisplaySortDescriptions = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
@@ -148,6 +148,12 @@ namespace Noise.UI.ViewModels {
 
 			ArtistFilter.SetFilterList( request.ArtistList );
 		}
+
+		public void Handle( Events.GenreFocusRequested args ) {
+			SetArtistFilter( ArtistFilterType.FilterGenre );
+
+            ArtistFilter.FilterText = args.Genre;
+        }
 
 		private void OnArtistChanged( DbArtist artist ) {
 			Set( () => SelectedArtist, artist != null ? ( from uiArtist in mArtistList where artist.DbId == uiArtist.DbId select uiArtist ).FirstOrDefault() : null );
@@ -316,6 +322,7 @@ namespace Noise.UI.ViewModels {
 
         private void OnGenreClicked( UiArtist artist ) {
 			SetArtistFilter( ArtistFilterType.FilterGenre );
+
 			ArtistFilter.FilterText = artist.Genre;
         }
 

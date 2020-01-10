@@ -34,6 +34,14 @@ namespace Noise.Infrastructure {
 				this( album.Artist, album.DbId ) { }
 		}
 
+		public class GenreFocusRequested {
+			public string	Genre { get; }
+
+			public GenreFocusRequested( string genre ) {
+				Genre = genre;
+            }
+        }
+
         public class TagFocusRequested {
             public DbTag    Tag {  get; private set; }
 

@@ -137,7 +137,12 @@
 								   Visibility="{Binding Artist.ActiveYears, Converter={StaticResource CollapseIfStringEmpty}}"/>
 
                             <!-- Genre -->
-                            <TextBlock Grid.Row="3" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Genre}" />
+                            <Controls:LinkLabel Grid.Row="3" HorizontalAlignment="Right" 
+                                                     FontSize="16" FontFamily="Arial" Content="{Binding Artist.Genre}" LinkLabelBehavior="HoverUnderline">
+                                <EventCommandTriggers:CommandSource.Trigger>
+                                    <EventCommandTriggers:EventCommandTrigger Command="{Binding GenreClicked}" RoutedEvent="Controls:LinkLabel.Click" />
+                                </EventCommandTriggers:CommandSource.Trigger>
+                            </Controls:LinkLabel>
 
                             <!--  Artist website link  -->
                             <Controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,5,0,0" Padding="0"  Content="{Binding ArtistWebsite.DisplayText}"
