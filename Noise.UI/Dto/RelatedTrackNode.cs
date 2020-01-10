@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -50,22 +52,29 @@ namespace Noise.UI.Dto {
     }
 
     public class RelatedTrackParent : RelatedTrackNode {
-        private readonly string                             mParentName;
+        private readonly string                                     mParentName;
+        private	readonly ObservableCollectionEx<RelatedTrackNode>   mTracks;
 
-        public	string		                                FirstAlbumName => MultipleTracks ? IsExpanded ? "Album List:" : $" (on {Tracks.Count} albums - expand to view list)" : AlbumName;
-        public  string                                      ParentName => String.IsNullOrWhiteSpace( mParentName ) ? Track.Name : mParentName;
-        public  string                                      SortKey => String.IsNullOrWhiteSpace( mParentName ) ? Track.Name : $"Z - {mParentName}";
-        public	ObservableCollectionEx<RelatedTrackNode>    Tracks { get; }
-        public  bool                                        IsPlayable => Tracks.Count == 0;
-        public	bool		                                MultipleTracks => Tracks.Count > 0;
-        public  bool                                        IsCategoryParent => !String.IsNullOrWhiteSpace( mParentName );
+        public  ICollectionView                 Tracks { get; }
+        public  IReadOnlyList<RelatedTrackNode> TrackList => mTracks;
+        public	string		                    FirstAlbumName => MultipleTracks ? IsExpanded ? "Album List:" : $" (on {mTracks.Count} albums - expand to view list)" : AlbumName;
+        public  string                          ParentName => String.IsNullOrWhiteSpace( mParentName ) ? Track.Name : mParentName;
+        public  string                          SortKey => String.IsNullOrWhiteSpace( mParentName ) ? Track.Name : $"Z - {mParentName}";
+        public  bool                            IsPlayable => mTracks.Count == 0;
+        public	bool		                    MultipleTracks => mTracks.Count > 0;
+        public  bool                            IsCategoryParent => !String.IsNullOrWhiteSpace( mParentName );
 
         public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay, bool expanded ) :
             base( key, artist, album, track, onPlay ) {
             IsExpanded = expanded;
 
-            mParentName = String.Empty;
-            Tracks = new ObservableCollectionEx<RelatedTrackNode>();
+            mParentName = String.Empty; 
+            mTracks = new ObservableCollectionEx<RelatedTrackNode>();
+
+            Tracks = CollectionViewSource.GetDefaultView( mTracks );
+            Tracks.SortDescriptions.Add( new SortDescription( "Track.Name", ListSortDirection.Ascending ));
+            Tracks.SortDescriptions.Add( new SortDescription( "Artist.Name", ListSortDirection.Ascending ));
+            Tracks.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
         }
 
         public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
@@ -79,7 +88,7 @@ namespace Noise.UI.Dto {
         }
 
         public void AddAlbum( DbArtist artist, DbAlbum album, DbTrack track ) {
-            if(!Tracks.Any()) {
+            if(!mTracks.Any()) {
                 AddNode( Artist, Album, Track );
             }
 
@@ -93,8 +102,7 @@ namespace Noise.UI.Dto {
         private void AddNode( DbArtist artist, DbAlbum album, DbTrack track ) {
             var node = new RelatedTrackNode( Key, artist, album, track, OnPlay ) { DisplayTrackName = !String.IsNullOrWhiteSpace( mParentName ) };
 
-            Tracks.Add( node );
-            Tracks.Sort( a => a.AlbumName, ListSortDirection.Ascending );
+            mTracks.Add( node );
         }
     }
 

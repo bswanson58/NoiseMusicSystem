@@ -132,7 +132,7 @@ namespace Noise.UI.ViewModels {
             if( parent != null ) {
                 parent.AddAlbum( item.Artist, item.Album, item.Track );
 
-                mPlayingItemHandler.UpdateList( parent.Tracks );
+                mPlayingItemHandler.UpdateList( parent.TrackList );
             }
             else {
                 var expanded = !mTracks.Any();
@@ -222,7 +222,7 @@ namespace Noise.UI.ViewModels {
             if( parentNode != null ) {
                 Execute.OnUIThread( () => mTracks.Add( parentNode ));
 
-                mPlayingItemHandler.UpdateList( parentNode.Tracks );
+                mPlayingItemHandler.UpdateList( parentNode.TrackList );
             }
         }
 
