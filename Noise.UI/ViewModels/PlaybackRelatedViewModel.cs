@@ -181,7 +181,9 @@ namespace Noise.UI.ViewModels {
                 });
             }
 
-            Execute.OnUIThread( () => mTracks.Add( parentNode ));
+            if( parentNode != null ) {
+                Execute.OnUIThread( () => mTracks.Add( parentNode ));
+            }
         }
 
         private void OnPlay( RelatedTrackNode node ) { 
