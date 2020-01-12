@@ -26,12 +26,14 @@
 					<ColumnDefinition Width="33"/>
 					<ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
                 <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Album.Name}"
                            Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
-                <TextBlock Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
+                <ContentPresenter x:Name="Rating" Grid.Column="2" Content="{Binding Track}" Opacity="0.7" ContentTemplate="{StaticResource ReadOnlyRating}"/>
+                <TextBlock Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
                            TextAlignment="Right" Margin="3,0,8,0"/>
             </Grid>
         </DataTemplate>
@@ -58,12 +60,14 @@
 				<Grid Grid.Row="1" Margin="60,0,0,3">
 					<Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
                                Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
-                    <TextBlock x:Name="FirstDuration" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7"
+                    <ContentPresenter x:Name="FirstRating" Grid.Column="1" Opacity="0.7" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
+                    <TextBlock x:Name="FirstDuration" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
                 </Grid>
             </Grid>
@@ -73,7 +77,8 @@
 					<Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
 				<DataTrigger Binding="{Binding MultipleAlbums}" Value="True">
-					<Setter TargetName="FirstDuration" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="FirstRating" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="FirstDuration" Property="Visibility" Value="Collapsed"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>

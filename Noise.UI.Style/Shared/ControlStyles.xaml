@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui">
 
 <!-- Add in the MahApps resource so these are based on those -->
 <ResourceDictionary.MergedDictionaries>
@@ -196,4 +197,40 @@
             </Canvas>
         </Viewbox>
     </DataTemplate>
+
+    <!-- Read Only Rating Control-->
+    <!-- Usage: <ContentPresenter Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/> -->
+    <ValueConverters:NumericRangeVisibilityConverter x:Key="ROR_DisplayLowRating" LowerLimit="1" UpperLimit="3" HideOnMatch="False" IsHidden="False"/>
+    <ValueConverters:NumericRangeVisibilityConverter x:Key="ROR_DisplayHighRating" LowerLimit="4" UpperLimit="5" HideOnMatch="False" IsHidden="False"/>
+    <DataTemplate x:Key="ReadOnlyRating">
+        <Grid>
+            <ContentControl x:Name="LowRating" Height="16" Width="16" Content="{DynamicResource Path_LowRatingStar}" Visibility="Collapsed"/>
+            <ContentControl x:Name="HighRating" Height="16" Width="16" Content="{DynamicResource Path_HighRatingStar}" Visibility="Collapsed"/>
+            <TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" VerticalAlignment="Center" Foreground="{StaticResource ControlTextColor}" FontSize="16" Visibility="Collapsed"/>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                <Setter TargetName="Favorite" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsFavorite}" Value="False"/>
+                    <Condition Binding="{Binding Rating, Converter={StaticResource ROR_DisplayLowRating}}" Value="Visible"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter TargetName="LowRating" Property="Visibility" Value="Visible"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsFavorite}" Value="False"/>
+                    <Condition Binding="{Binding Rating, Converter={StaticResource ROR_DisplayHighRating}}" Value="Visible"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter TargetName="HighRating" Property="Visibility" Value="Visible"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
 </ResourceDictionary>
