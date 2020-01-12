@@ -19,6 +19,7 @@ namespace Noise.UI.Dto {
         public  DbTrack     Track { get; }
         public  string      AlbumName => $"{Artist.Name}/{Album.Name}";
         public  bool        DisplayTrackName { get; set; }
+        public  string      SortTrackName => DisplayTrackName ? Track.Name : String.Empty;
         public  bool        IsPlaying { get; private set; }
 
         public RelatedTrackNode( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) {
@@ -72,7 +73,7 @@ namespace Noise.UI.Dto {
             mTracks = new ObservableCollectionEx<RelatedTrackNode>();
 
             Tracks = CollectionViewSource.GetDefaultView( mTracks );
-            Tracks.SortDescriptions.Add( new SortDescription( "Track.Name", ListSortDirection.Ascending ));
+            Tracks.SortDescriptions.Add( new SortDescription( nameof( SortTrackName ), ListSortDirection.Ascending ));
             Tracks.SortDescriptions.Add( new SortDescription( "Artist.Name", ListSortDirection.Ascending ));
             Tracks.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
         }
