@@ -63,16 +63,23 @@
 					</Image>
 				</Viewbox>
 
-                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,5,3"
-					  Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,5,3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-					<!--  Album name -->
+                    <!--  Album name -->
 					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
 						<TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->
-					<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,11,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
 						<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
 								  Opacity="{Binding Path=Album.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
 								  IsChecked="{Binding Path=Album.FavoriteValue, Mode=TwoWay}" />
@@ -119,7 +126,7 @@
 					</StackPanel>
 
 					<!-- Published Year -->
-					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0"
+					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,7,0,0"
 								Visibility="{Binding Album.PublishedYear, Converter={StaticResource HideIfZero}}">
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Published: "/>
 						<TextBlock Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right"
@@ -127,7 +134,7 @@
 					</StackPanel>
 
 					<!--  Playing time  -->
-					<StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,7,0,0">
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Playing time: " />
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
 					</StackPanel>

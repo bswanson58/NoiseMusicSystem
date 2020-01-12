@@ -87,7 +87,7 @@
                             </Viewbox>
 
                             <!--  Rating controls  -->
-                            <StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,7" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,11,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
                                 <CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
 									  Opacity="{Binding Path=Artist.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
 									  IsChecked="{Binding Artist.FavoriteValue, Mode=TwoWay}" />
@@ -134,19 +134,19 @@
                             </StackPanel>
 
                             <!-- Active Years -->
-                            <TextBlock Grid.Row="2" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.ActiveYears}" 
+                            <TextBlock Grid.Row="2" Style="{StaticResource SmallTitleStyle}" Margin="0,7,0,0" HorizontalAlignment="Right" Text="{Binding Artist.ActiveYears}" 
 								   Visibility="{Binding Artist.ActiveYears, Converter={StaticResource CollapseIfStringEmpty}}"/>
 
                             <!-- Genre -->
-                            <Controls:LinkLabel Grid.Row="3" HorizontalAlignment="Right" 
-                                                     FontSize="16" FontFamily="Arial" Content="{Binding Artist.Genre}" LinkLabelBehavior="HoverUnderline">
+                            <Controls:LinkLabel Grid.Row="3" HorizontalAlignment="Right" Margin="0,7,0,0"
+                                                FontSize="16" FontFamily="Arial" Content="{Binding Artist.Genre}" LinkLabelBehavior="HoverUnderline">
                                 <EventCommandTriggers:CommandSource.Trigger>
                                     <EventCommandTriggers:EventCommandTrigger Command="{Binding GenreClicked}" RoutedEvent="Controls:LinkLabel.Click" />
                                 </EventCommandTriggers:CommandSource.Trigger>
                             </Controls:LinkLabel>
 
                             <!--  Artist website link  -->
-                            <Controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,5,0,0" Padding="0"  Content="{Binding ArtistWebsite.DisplayText}"
+                            <Controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,7,0,0" Padding="0"  Content="{Binding ArtistWebsite.DisplayText}"
 											IsEnabled="{Binding ArtistWebsite.IsLinked}" LinkLabelBehavior="HoverUnderline">
                                 <EventCommandTriggers:CommandSource.Trigger>
                                     <EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
@@ -154,7 +154,7 @@
                             </Controls:LinkLabel>
 
                             <!-- Button Group -->
-                            <StackPanel Grid.Row="5" Tag="dimmed" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" d:LayoutOverrides="Width">
+                            <StackPanel Grid.Row="6" Tag="dimmed" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" Orientation="Horizontal" d:LayoutOverrides="Width">
                                 <Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
 									Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
                                 <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}" 
