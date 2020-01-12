@@ -57,7 +57,7 @@ namespace Noise.UI.Dto {
 
         public  ICollectionView                 Tracks { get; }
         public  IReadOnlyList<RelatedTrackNode> TrackList => mTracks;
-        public	string		                    FirstAlbumName => MultipleTracks ? IsExpanded ? "Album List:" : $" (on {mTracks.Count} albums - expand to view list)" : AlbumName;
+        public	string		                    FirstAlbumName => MultipleTracks ? IsExpanded ? $"Album List ({mTracks.Count}):" : $" (on {mTracks.Count} albums - expand to view list)" : AlbumName;
         public  string                          ParentName => String.IsNullOrWhiteSpace( mParentName ) ? Track.Name : mParentName;
         public  string                          SortKey => String.IsNullOrWhiteSpace( mParentName ) ? Track.Name : $"Z - {mParentName}";
         public  bool                            IsPlayable => mTracks.Count == 0;
