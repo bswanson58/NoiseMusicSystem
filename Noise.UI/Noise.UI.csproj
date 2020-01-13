@@ -320,6 +320,9 @@
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ColorResources.cs" />
+    <Compile Include="Resources\DesignTimeResources.xaml.cs">
+      <DependentUpon>DesignTimeResources.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Resources\StringResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -594,6 +597,10 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
+      <Project>{da31563c-5b51-4072-af18-57e4fc5de957}</Project>
+      <Name>Noise.UI.Style</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
@@ -647,6 +654,10 @@
     <Page Include="Resources\AnimatedListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\DesignTimeResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\FavoriteCheckbox.xaml">
       <Generator>MSBuild:Compile</Generator>
