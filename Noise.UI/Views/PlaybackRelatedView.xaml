@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:vm="clr-namespace:Noise.UI.ViewModels;assembly=Noise.UI"
-             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              Tag="Wander"
              DataContext="{Binding PlaybackRelatedViewModel, Source={StaticResource ViewModelLocator}}"
@@ -15,13 +15,13 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <ValueConverters:BooleanVisibilityConverter x:Key="HideIfTrue" TriggerValue="True" IsHidden="True"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideIfTrue" TriggerValue="True" IsHidden="True"/>
 
         <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
         </Style>
 
-        <DataTemplate x:Key="RelatedTrackTemplate" DataType="Dto:RelatedTrackNode">
+        <DataTemplate x:Key="RelatedTrackTemplate" DataType="dto:RelatedTrackNode">
             <Grid Margin="15,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -37,10 +37,10 @@
                 <Button Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
 
                 <TextBlock x:Name="TrackName" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource ListViewTextStyle}" Text="{Binding Track.Name}"
-                           Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 
                 <TextBlock x:Name="AlbumName" Grid.Row="1" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
-                           Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 <ContentPresenter x:Name="Rating" Grid.Row="1" Grid.Column="2" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
                 <TextBlock x:Name="Duration" Grid.Row="1" Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
                            TextAlignment="Right" Margin="3,0,8,0"/>
@@ -57,7 +57,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <HierarchicalDataTemplate x:Key="RelatedParentTemplate" DataType="Dto:RelatedTrackParent" 
+        <HierarchicalDataTemplate x:Key="RelatedParentTemplate" DataType="dto:RelatedTrackParent" 
                                   ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedTrackTemplate}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -73,7 +73,7 @@
 
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
                     <TextBlock x:Name="ParentName" Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding ParentName}"
-                               Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                               behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 </Grid>
 
                 <Grid Grid.Row="1" Margin="60,0,0,3">
@@ -84,7 +84,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock x:Name="AlbumName" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding FirstAlbumName}"
-                               Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                               behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                     <ContentPresenter x:Name="FirstRating" Grid.Column="1" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}" Visibility="Hidden"/>
                     <TextBlock x:Name="FirstPlayDuration" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Visibility="Hidden"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
@@ -117,11 +117,11 @@
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Related Tracks ">
         <Grid>
-            <TreeView x:Name="_treeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
+            <TreeView x:Name="TreeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction Command="{Binding TreeViewSelected}" CommandParameter="{Binding ElementName=_treeView, Path=SelectedItem}"/>
+                        <i:InvokeCommandAction Command="{Binding TreeViewSelected}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TreeView>
@@ -133,7 +133,7 @@
         </Grid>
 
         <i:Interaction.Behaviors>
-            <Behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
         </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>
