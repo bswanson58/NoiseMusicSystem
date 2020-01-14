@@ -294,6 +294,16 @@ namespace Noise.Infrastructure {
             }
         }
 
+		public class LibraryBackupPressureThreshold {
+			public enum ThresholdLevel {  Exceeded, Cleared }
+
+			public ThresholdLevel	Threshold { get; }
+
+			public LibraryBackupPressureThreshold( ThresholdLevel value ) {
+				Threshold = value;
+            }
+		}
+
 		public class LibraryUpdateStarted {
 			public long	LibraryId { get; }
 

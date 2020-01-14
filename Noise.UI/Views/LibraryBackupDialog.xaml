@@ -15,7 +15,7 @@
 
         <StackPanel Grid.Row="0" Margin="10,0" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Text="Library:"/>
-            <ComboBox Width="250" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName"/>
+            <ComboBox Width="350" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName"/>
         </StackPanel>
     </Grid>
 </UserControl>

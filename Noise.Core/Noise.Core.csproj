@@ -219,6 +219,7 @@
     <Compile Include="Configuration\LibraryConfigurationManager.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
+    <Compile Include="Database\LibraryBackupManager.cs" />
     <Compile Include="Database\LuceneSearch\LuceneSearchBuilder.cs" />
     <Compile Include="Database\LuceneSearch\LuceneSearchProvider.cs" />
     <Compile Include="Database\LuceneSearch\RxSearchProvider.cs" />

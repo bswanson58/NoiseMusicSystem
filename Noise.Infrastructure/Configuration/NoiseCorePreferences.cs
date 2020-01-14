@@ -10,15 +10,17 @@ namespace Noise.Infrastructure.Configuration {
 		public	long					        LastLibraryUsed { get; set; }
 		public	bool					        LoadLastLibraryOnStartup { get; set; }
 
-		public bool						        MaintainArtistSidecars { get; set; }
-		public bool						        MaintainAlbumSidecars { get; set; }
+		public	bool					        MaintainArtistSidecars { get; set; }
+		public	bool					        MaintainAlbumSidecars { get; set; }
 
 		public	ePlayStrategy			        PlayStrategy { get; set; }
 		public	string					        PlayStrategyParameters { get; set; }
         public  ExhaustedStrategySpecification  ExhaustedStrategySpecification { get; set; }
 
-		public bool						        DeletePlayedTracks { get; set;}
-		public int						        MaximumPlayedTracks { get; set; }
+		public	bool					        DeletePlayedTracks { get; set;}
+		public	int						        MaximumPlayedTracks { get; set; }
+
+		public	int								MaximumBackupPressure { get; set; }
 
 		public NoiseCorePreferences() {
 			PlayStrategy = ePlayStrategy.Next;
@@ -36,6 +38,8 @@ namespace Noise.Infrastructure.Configuration {
 
 			EnablePlaybackScrobbling = false;
 			EnableRemoteAccess = false;
+
+			MaximumBackupPressure = 50;
 		}
 	}
 }

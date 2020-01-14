@@ -273,6 +273,7 @@
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
+    <Compile Include="Interfaces\ILibraryBackupManager.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\ILibraryConfiguration.cs" />

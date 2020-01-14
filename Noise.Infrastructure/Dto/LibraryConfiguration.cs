@@ -37,6 +37,7 @@ namespace Noise.Infrastructure.Dto {
 		public	string				DatabasePassword { get; set; }
 		public	bool				IsDefaultLibrary { get; set; }
         public  bool                IsMetadataInPlace { get; set; }
+		public	uint				BackupPressure { get; set; }
 		public	List<MediaLocation>	MediaLocations { get; set; }
 
         public  string              BlobDatabasePath => !String.IsNullOrWhiteSpace( BlobDatabaseLocation ) ? BlobDatabaseLocation : 
@@ -56,6 +57,7 @@ namespace Noise.Infrastructure.Dto {
 			DatabasePassword = string.Empty;
             BlobDatabaseLocation = string.Empty;
             IsMetadataInPlace = true;
+			BackupPressure = 0;
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {

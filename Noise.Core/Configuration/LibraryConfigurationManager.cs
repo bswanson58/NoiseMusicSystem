@@ -170,19 +170,23 @@ namespace Noise.Core.Configuration {
 		}
 
 		private void StoreLibrary( LibraryConfiguration configuration ) {
-			try {
-				configuration.Persist( Path.Combine( GetLibraryFolder( configuration ), Constants.LibraryConfigurationFile ));
+			UpdateConfiguration( configuration );
 
-				if( configuration == Current ) {
-					mEventAggregator.PublishOnUIThread( new Events.LibraryConfigurationChanged());
-				}
+			if( configuration == Current ) {
+				mEventAggregator.PublishOnUIThread( new Events.LibraryConfigurationChanged());
+			}
 
-				mEventAggregator.PublishOnUIThread( new Events.LibraryListChanged());
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Storing library", ex );
-			}
+			mEventAggregator.PublishOnUIThread( new Events.LibraryListChanged());
 		}
+
+		public void UpdateConfiguration( LibraryConfiguration configuration ) {
+            try {
+                configuration.Persist( Path.Combine( GetLibraryFolder( configuration ), Constants.LibraryConfigurationFile ));
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "Updating library configuration", ex );
+            }
+        }
 
 		public void DeleteLibrary( LibraryConfiguration configuration ) {
 			try {
