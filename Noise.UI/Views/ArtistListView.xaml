@@ -3,16 +3,17 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:noiseControls="clr-namespace:Noise.UI.Controls"
+			 xmlns:dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 xmlns:ViewModels="clr-namespace:Noise.UI.ViewModels"
-			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
-			 ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:PlaybackRelatedViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300">
 	
 	<UserControl.DataContext>
@@ -20,9 +21,9 @@
 	</UserControl.DataContext>
 	
 	<UserControl.Resources>
-		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
+		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
 
-        <DataTemplate x:Key="ArtistTemplate" DataType="{x:Type Dto:UiArtist}">
+        <DataTemplate x:Key="ArtistTemplate" DataType="{x:Type dto:UiArtist}">
 			<Border x:Name="ArtistPanel" Background="Transparent" CornerRadius="3" Padding="3">
 				<Grid>
 					<Grid.RowDefinitions>
@@ -44,7 +45,7 @@
 							  Opacity="{Binding Path=FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
 							  IsChecked="{Binding FavoriteValue, Mode=TwoWay}"
 							  Style="{DynamicResource FavoriteCheckBoxStyle}" />
-						<NoiseControls:RatingControl x:Name="ArtistRating" Margin="0,5,3,0"
+						<noiseControls:RatingControl x:Name="ArtistRating" Margin="0,5,3,0"
 												 Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
 												 Rating="{Binding Path=UiRating, Mode=TwoWay}"
 													 UseAlternate="{Binding UseAlternateRating}"
@@ -56,12 +57,12 @@
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
-                    <NoiseControls:LinkLabel x:Name="Genre" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,-3,3,0" Opacity="0.75" 
+                    <noiseControls:LinkLabel x:Name="Genre" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,-3,3,0" Opacity="0.75" 
                                              FontSize="12" FontFamily="Segoe UI" Content="{Binding Genre}" LinkLabelBehavior="HoverUnderline">
-                        <EventCommandTriggers:CommandSource.Trigger>
-                            <EventCommandTriggers:EventCommandTrigger Command="{Binding GenreClicked}" RoutedEvent="NoiseControls:LinkLabel.Click" />
-                        </EventCommandTriggers:CommandSource.Trigger>
-                    </NoiseControls:LinkLabel>
+                        <eventCommandTriggers:CommandSource.Trigger>
+                            <eventCommandTriggers:EventCommandTrigger Command="{Binding GenreClicked}" RoutedEvent="noiseControls:LinkLabel.Click" />
+                        </eventCommandTriggers:CommandSource.Trigger>
+                    </noiseControls:LinkLabel>
 				</Grid>
 			</Border>
 
@@ -80,13 +81,13 @@
 			</DataTemplate.Triggers>
 		</DataTemplate>
 
-		<DataTemplate x:Key="ArtistFilterText" DataType="ViewModels:IArtistFilter">
+		<DataTemplate x:Key="ArtistFilterText" DataType="viewModels:IArtistFilter">
             <TextBox Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
-                     Behaviours:TextBoxHelper.Watermark="enter artist filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                     behaviours:TextBoxHelper.Watermark="enter artist filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
                      Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="ArtistFilterGenre" DataType="ViewModels:IArtistFilter">
+        <DataTemplate x:Key="ArtistFilterGenre" DataType="viewModels:IArtistFilter">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
@@ -105,7 +106,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="ArtistFilterList" DataType="ViewModels:IArtistFilter">
+        <DataTemplate x:Key="ArtistFilterList" DataType="viewModels:IArtistFilter">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -123,7 +124,7 @@
             </Grid>
         </DataTemplate>
 		
-        <ViewModels:ArtistFilterTemplateSelector x:Key="ArtistFilterTemplateSelector" 
+        <viewModels:ArtistFilterTemplateSelector x:Key="ArtistFilterTemplateSelector" 
                                                  TextTemplate="{StaticResource ArtistFilterText}" 
                                                  GenreTemplate="{StaticResource ArtistFilterGenre}"
                                                  ArtistListTemplate="{StaticResource ArtistFilterList}"/>
@@ -146,10 +147,10 @@
 				<VisualState x:Name="_normal" />
 				<VisualState x:Name="_displaySortDescriptions">
 					<Storyboard>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(UIElement.Opacity)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(UIElement.Opacity)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="160" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
@@ -168,11 +169,11 @@
 					 ItemTemplate="{StaticResource ArtistTemplate}"
 					 SelectedItem="{Binding SelectedArtist}">
 				<i:Interaction.Behaviors>
-					<ReusableBehaviours:ListBoxSelectionVisible />
+					<reusableBehaviours:ListBoxSelectionVisible />
 				</i:Interaction.Behaviors>
 			</ListBox>
 
-			<NoiseControls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
+			<noiseControls:SortDescriptionList x:Name="SortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
 			
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
@@ -188,8 +189,8 @@
 			</Grid>
 		</Grid>
         <i:Interaction.Behaviors>
-            <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
-            <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
         </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>
