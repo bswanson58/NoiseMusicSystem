@@ -373,6 +373,7 @@
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
+    <Compile Include="ViewModels\LibraryBackupDialogModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
     <Compile Include="ViewModels\PlaybackContextDialogManager.cs" />
@@ -461,6 +462,9 @@
     </Compile>
     <Compile Include="Views\LibraryArtistView.xaml.cs">
       <DependentUpon>LibraryArtistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LibraryBackupDialog.xaml.cs">
+      <DependentUpon>LibraryBackupDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
       <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
@@ -784,6 +788,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LibraryArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibraryBackupDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

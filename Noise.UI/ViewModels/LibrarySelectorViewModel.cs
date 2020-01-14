@@ -16,6 +16,10 @@ namespace Noise.UI.ViewModels {
 		public LibraryConfigurationInfo( LibraryConfigurationDialogModel viewModel ) : base( viewModel ) { }
 	}
 
+	internal class LibraryBackupInfo : InteractionRequestData<LibraryBackupDialogModel> {
+		public LibraryBackupInfo( LibraryBackupDialogModel viewModel ) : base( viewModel ) { }
+    }
+
 	internal class LibrarySelectorViewModel : AutomaticCommandBase,
 											  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
 											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, IHandle<Events.DatabaseStatisticsUpdated> {
@@ -24,14 +28,17 @@ namespace Noise.UI.ViewModels {
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
+		private readonly InteractionRequest<LibraryBackupInfo>			mLibraryBackupRequest;
 		private	readonly InteractionRequest<LibraryConfigurationInfo>	mLibraryConfigurationRequest;
 		private readonly BindableCollection<LibraryConfiguration>		mLibraries;
 	    private TaskHandler						mLibraryOpenTask;  
 		private string							mDatabaseStatistics;
 
-	    public  string                                      LibraryStatistics => ( mDatabaseStatistics );
-	    public  BindableCollection<LibraryConfiguration>    LibraryList => ( mLibraries );
-	    public  IInteractionRequest                         LibraryConfigurationRequest => ( mLibraryConfigurationRequest );
+	    public  string                                      LibraryStatistics => mDatabaseStatistics;
+	    public  BindableCollection<LibraryConfiguration>    LibraryList => mLibraries;
+
+		public	IInteractionRequest							LibraryBackupRequest => mLibraryBackupRequest;
+	    public  IInteractionRequest                         LibraryConfigurationRequest => mLibraryConfigurationRequest;
 
 		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
 										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder, IUiLog log ) {
@@ -41,6 +48,7 @@ namespace Noise.UI.ViewModels {
 			mLibraryConfiguration = libraryConfiguration;
 			mLibraryBuilder = libraryBuilder;
 
+			mLibraryBackupRequest = new InteractionRequest<LibraryBackupInfo>();
 			mLibraryConfigurationRequest = new InteractionRequest<LibraryConfigurationInfo>();
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 
@@ -121,6 +129,17 @@ namespace Noise.UI.ViewModels {
 			return(( mLibraryConfiguration.Current != null ) &&
 			       (!mLibraryBuilder.LibraryUpdateInProgress ));
 		}
+
+		public void Execute_LibraryBackup() {
+			try {
+                var  dialogModel = new LibraryBackupDialogModel();
+
+				mLibraryBackupRequest.Raise( new LibraryBackupInfo( dialogModel ));
+            }
+			catch( Exception ex ) {
+                mLog.LogException( "Executing Library Backup", ex );
+            }
+        }
 
 		public void Execute_LibraryConfiguration() {
 			try {
