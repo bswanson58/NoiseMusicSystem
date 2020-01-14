@@ -20,7 +20,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
-		public long				DateAddedTicks { get; private set; }
+		public long				DateAddedTicks { get; }
 		public Int32			PlayCount { get; private set;}
 		public long				LastPlayedTicks { get; private set; }
 		public float			ReplayGainAlbumGain { get; set; }

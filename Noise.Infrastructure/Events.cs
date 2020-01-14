@@ -6,7 +6,7 @@ using Noise.Infrastructure.RemoteDto;
 namespace Noise.Infrastructure {
 	public class Events {
 		public class ArtistFocusRequested {
-			public long	ArtistId { get; private set; }
+			public long	ArtistId { get; }
 
 			public ArtistFocusRequested( long artistId ) {
 				ArtistId = artistId;
@@ -22,8 +22,8 @@ namespace Noise.Infrastructure {
 		}
 
 		public class AlbumFocusRequested {
-			public long	ArtistId { get; private set; }
-			public long	AlbumId { get; private set; }
+			public long	ArtistId { get; }
+			public long	AlbumId { get; }
 
 			public AlbumFocusRequested( long artistId, long albumId ) {
 				ArtistId = artistId;
@@ -43,7 +43,7 @@ namespace Noise.Infrastructure {
         }
 
         public class TagFocusRequested {
-            public DbTag    Tag {  get; private set; }
+            public DbTag    Tag {  get; }
 
             public TagFocusRequested( DbTag tag) {
                 Tag = tag;
@@ -51,7 +51,7 @@ namespace Noise.Infrastructure {
         }
 
 		public class ArtistContentRequest {
-			public long	ArtistId { get; private set; }
+			public long	ArtistId { get; }
 
 			public ArtistContentRequest( long artistId ) {
 				ArtistId = artistId;
@@ -59,7 +59,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistMetadataUpdated {
-			public string	ArtistName { get; private set; }
+			public string	ArtistName { get; }
 
 			public ArtistMetadataUpdated( string artistName ) {
 				ArtistName = artistName;
@@ -67,7 +67,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistContentUpdated {
-			public long	ArtistId { get; private set; }
+			public long	ArtistId { get; }
 
 			public ArtistContentUpdated( long artistId ) {
 				ArtistId = artistId;
@@ -75,7 +75,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistAdded {
-			public	long	ArtistId { get; private set; }
+			public	long	ArtistId { get; }
 
 			public ArtistAdded( long artistId ) {
 				ArtistId = artistId;
@@ -83,7 +83,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistRemoved {
-			public	long	ArtistId { get; private set; }
+			public	long	ArtistId { get; }
 
 			public ArtistRemoved( long artistId ) {
 				ArtistId = artistId;
@@ -91,7 +91,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistUserUpdate {
-			public long		ArtistId { get; private set; }
+			public long		ArtistId { get; }
 
 			public ArtistUserUpdate( long artistId ) {
 				ArtistId = artistId;
@@ -99,7 +99,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistViewed {
-			public	long	ArtistId { get; private set; }
+			public	long	ArtistId { get; }
 
 			public ArtistViewed( long artistId ) {
 				ArtistId = artistId;
@@ -107,7 +107,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ArtistPlayed {
-			public	long	ArtistId { get; private set; }
+			public	long	ArtistId { get; }
 
 			public ArtistPlayed( long artistId ) {
 				ArtistId = artistId;
@@ -115,7 +115,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class AlbumAdded {
-			public	long	AlbumId { get; private set; }
+			public	long	AlbumId { get; }
 
 			public AlbumAdded( long albumId ) {
 				AlbumId = albumId;
@@ -123,7 +123,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class AlbumStructureChanged {
-            public	long	AlbumId { get; private set; }
+            public	long	AlbumId { get; }
 
             public AlbumStructureChanged( long albumId ) {
                 AlbumId = albumId;
@@ -131,7 +131,7 @@ namespace Noise.Infrastructure {
         }
 
 		public class AlbumRemoved {
-			public	long	AlbumId { get; private set; }
+			public	long	AlbumId { get; }
 
 			public AlbumRemoved( long albumId ) {
 				AlbumId = albumId;
@@ -139,7 +139,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class AlbumUserUpdate {
-			public long		AlbumId { get; private set; }
+			public long		AlbumId { get; }
 
 			public AlbumUserUpdate( long albumId ) {
 				AlbumId = albumId;
@@ -147,7 +147,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class TrackUserUpdate {
-			public DbTrack	Track {  get; private set; }
+			public DbTrack	Track {  get; }
 
 			public TrackUserUpdate( DbTrack track ) {
 				Track = track;
@@ -155,7 +155,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayQueueChanged {
-			public IPlayQueue	PlayQueue { get; private set; }
+			public IPlayQueue	PlayQueue { get; }
 
 			public PlayQueueChanged( IPlayQueue playQueue ) {
 				PlayQueue = playQueue;
@@ -163,7 +163,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayHistoryChanged {
-			public IPlayHistory	PlayHistory { get; private set; }
+			public IPlayHistory	PlayHistory { get; }
 
 			public PlayHistoryChanged( IPlayHistory playHistory ) {
 				PlayHistory = playHistory;
@@ -171,7 +171,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayListChanged {
-			public DbPlayList	PlayList { get; private set; }
+			public DbPlayList	PlayList { get; }
 
 			public PlayListChanged( DbPlayList playList ) {
 				PlayList = playList;
@@ -179,7 +179,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayListUserUpdate {
-			public long		PlayListId	{ get; private set; }
+			public long		PlayListId	{ get; }
 
 			public PlayListUserUpdate( long playListId ) {
 				PlayListId = playListId;
@@ -187,7 +187,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayQueuedTrackRequest {
-			public PlayQueueTrack	QueuedTrack { get; private set; }
+			public PlayQueueTrack	QueuedTrack { get; }
 
 			public PlayQueuedTrackRequest( PlayQueueTrack track ) {
 				QueuedTrack = track;
@@ -195,7 +195,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class AlbumQueued {
-			public DbAlbum		QueuedAlbum { get; private set; }
+			public DbAlbum		QueuedAlbum { get; }
 
 			public AlbumQueued( DbAlbum album ) {
 				QueuedAlbum = album;
@@ -203,7 +203,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class TrackQueued {
-			public DbTrack QueuedTrack { get; private set; }
+			public DbTrack QueuedTrack { get; }
 
 			public TrackQueued( DbTrack track ) {
 				QueuedTrack = track;
@@ -211,7 +211,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayArtistTracksRandom {
-			public long		ArtistId { get; private set; }
+			public long		ArtistId { get; }
 
 			public PlayArtistTracksRandom( long artistId ) {
 				ArtistId = artistId;
@@ -219,7 +219,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlayAlbumTracksRandom {
-			public	IEnumerable<DbAlbum>	AlbumList { get; private set; }
+			public	IEnumerable<DbAlbum>	AlbumList { get; }
 
 			public PlayAlbumTracksRandom( IEnumerable<DbAlbum> albumList ) {
 				AlbumList = albumList;
@@ -227,7 +227,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlaybackStatusChanged {
-			public ePlaybackStatus	Status { get; private set; }
+			public ePlaybackStatus	Status { get; }
 
 			public PlaybackStatusChanged( ePlaybackStatus newStatus ) {
 				Status = newStatus;
@@ -235,7 +235,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class PlaybackTrackStarted {
-			public PlayQueueTrack	Track { get; private set; }
+			public PlayQueueTrack	Track { get; }
 
 			public PlaybackTrackStarted( PlayQueueTrack track ) {
 				Track = track;
@@ -244,7 +244,7 @@ namespace Noise.Infrastructure {
         public class PlaybackStopped { }
 
 		public class PlaybackTrackUpdated {
-			public PlayQueueTrack	Track { get; private set; }
+			public PlayQueueTrack	Track { get; }
 
 			public PlaybackTrackUpdated( PlayQueueTrack track ) {
 				Track = track;
@@ -257,7 +257,7 @@ namespace Noise.Infrastructure {
 		public class AudioParametersChanged { }
 
 		public class WindowLayoutRequest {
-			public string	LayoutName { get; private set; }
+			public string	LayoutName { get; }
 
 			public WindowLayoutRequest( string layoutName ) {
 				LayoutName = layoutName;
@@ -269,7 +269,7 @@ namespace Noise.Infrastructure {
 		public class StandardPlayerRequest { }
 
 		public class LaunchRequest {
-			public string	Target { get; private set; }
+			public string	Target { get; }
 
 			public LaunchRequest( string target ) {
 				Target = target;
@@ -277,15 +277,25 @@ namespace Noise.Infrastructure {
 		}
 
 		public class UrlLaunchRequest {
-			public string	Url { get; private set; }
+			public string	Url { get; }
 
 			public UrlLaunchRequest( string url ) {
 				Url = url;
 			}
 		}
 
+		public class LibraryBackupPressure {
+			public	uint	PressureAdded {  get; }
+			public	string	PressureSource { get; }
+
+			public LibraryBackupPressure( uint pressure, string source ) {
+				PressureAdded = pressure;
+				PressureSource = source;
+            }
+        }
+
 		public class LibraryUpdateStarted {
-			public long	LibraryId { get; private set; }
+			public long	LibraryId { get; }
 
 			public LibraryUpdateStarted( long libraryId ) {
 				LibraryId = libraryId;
@@ -293,7 +303,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class LibraryUpdateCompleted {
-			public	DatabaseChangeSummary	Summary { get; private set; }
+			public	DatabaseChangeSummary	Summary { get; }
 
 			public LibraryUpdateCompleted( DatabaseChangeSummary summary ) {
 				Summary = summary;
@@ -301,7 +311,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class DatabaseStatisticsUpdated {
-			public IDatabaseStatistics DatabaseStatistics {  get; private set; }
+			public IDatabaseStatistics DatabaseStatistics {  get; }
 
 			public DatabaseStatisticsUpdated( IDatabaseStatistics statistics ) {
 				DatabaseStatistics = statistics;
@@ -309,7 +319,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class SongLyricsRequest {
-			public LyricsInfo	LyricsInfo { get; private set; }
+			public LyricsInfo	LyricsInfo { get; }
 
 			public SongLyricsRequest( LyricsInfo info ) {
 				LyricsInfo = info;
@@ -317,7 +327,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class SongLyricsInfo {
-			public LyricsInfo	LyricsInfo { get; private set; }
+			public LyricsInfo	LyricsInfo { get; }
 
 			public SongLyricsInfo( LyricsInfo info ) {
 				LyricsInfo = info;
@@ -325,7 +335,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class TimeExplorerAlbumFocus {
-			public	IEnumerable<DbAlbum>	AlbumList { get; private set; }
+			public	IEnumerable<DbAlbum>	AlbumList { get; }
 
 			public TimeExplorerAlbumFocus( IEnumerable<DbAlbum> albumList ) {
 				AlbumList = new List<DbAlbum>( albumList );
@@ -333,7 +343,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class BalloonPopupOpened {
-			public string	ViewName { get; private set; }
+			public string	ViewName { get; }
 
 			public BalloonPopupOpened( string viewName ) {
 				ViewName = viewName;
@@ -341,7 +351,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class ViewDisplayRequest {
-			public string	ViewName { get; private set; }
+			public string	ViewName { get; }
 			public bool		ViewWasOpened { get; set; }
 			 
 			public ViewDisplayRequest( string viewName ) {
@@ -350,8 +360,8 @@ namespace Noise.Infrastructure {
 		}
 
 		public class NoiseSystemReady {
-			public INoiseManager	NoiseManager { get; private set; }
-			public bool				WasInitialized { get; private set; }
+			public INoiseManager	NoiseManager { get; }
+			public bool				WasInitialized { get; }
 
 			public NoiseSystemReady( INoiseManager noiseManager, bool wasInitialized ) {
 				NoiseManager = noiseManager;
@@ -360,7 +370,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class LibraryConfigurationLoaded {
-			public	ILibraryConfiguration	LibraryConfiguration { get; private set; }
+			public	ILibraryConfiguration	LibraryConfiguration { get; }
 
 			public LibraryConfigurationLoaded( ILibraryConfiguration libraryConfiguration ) {
 				LibraryConfiguration = libraryConfiguration;
@@ -378,7 +388,7 @@ namespace Noise.Infrastructure {
 		public class SystemShutdown { }
 
 		public class GlobalUserEvent {
-			public GlobalUserEventArgs	UserEvent { get; private set; }
+			public GlobalUserEventArgs	UserEvent { get; }
 
 			public GlobalUserEvent( GlobalUserEventArgs args ) {
 				UserEvent = args;
@@ -391,8 +401,8 @@ namespace Noise.Infrastructure {
 		}
 
 		public class StatusEvent {
-			public StatusEventType	StatusType { get; private set; }
-			public	string			Message { get; private set; }
+			public StatusEventType	StatusType { get; }
+			public	string			Message { get; }
 			public	bool			ExtendDisplay { get; set; }
 
 			public StatusEvent( string message ) :
@@ -405,7 +415,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public class RemoteTransportUpdate {
-			public RoTransportState	TransportState {get; private set; }
+			public RoTransportState	TransportState {get; }
 
 			public RemoteTransportUpdate( RoTransportState transportState ) {
 				TransportState = transportState;

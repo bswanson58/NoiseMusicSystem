@@ -1,7 +1,7 @@
 ﻿namespace Noise.Infrastructure.Dto {
 	public class AudioChannelStatus {
-		public int Channel { get; private set; }
-		public ePlaybackStatus Status { get; private set; }
+		public int Channel { get; }
+		public ePlaybackStatus Status { get; }
 
 		public AudioChannelStatus( int channel, ePlaybackStatus status ) {
 			Channel = channel;
@@ -9,7 +9,7 @@
 		}
 
 		public override string ToString() {
-			return( string.Format( "Audio channel:{0} status:{1}", Channel, Status ));
+			return( $"Audio channel:{Channel} status:{Status}" );
 		}
 	}
 }
