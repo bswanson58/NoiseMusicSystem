@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:PlaybackRelatedViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="75" d:DesignWidth="400"
              Height="55">
 
@@ -15,7 +17,7 @@
     </UserControl.DataContext>
 
     <i:Interaction.Behaviors>
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="LibraryConfiguration"
+        <behaviours:InteractionRequestDialogBehavior DialogClass="LibraryConfiguration"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=LibraryConfigurationRequest}" />
     </i:Interaction.Behaviors>
@@ -62,7 +64,7 @@
                     Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
         </Grid>
         <i:Interaction.Behaviors>
-            <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
         </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>
