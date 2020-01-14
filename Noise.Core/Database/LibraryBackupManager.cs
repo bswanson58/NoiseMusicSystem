@@ -6,12 +6,15 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Database {
     class LibraryBackupManager : ILibraryBackupManager, IRequireInitialization,
                                  IHandle<Events.LibraryBackupPressure> {
+        private readonly ILibrarian             mLibrarian;
         private readonly ILibraryConfiguration  mLibraryConfiguration;
         private readonly IPreferences           mPreferences;
         private readonly IEventAggregator       mEventAggregator;
         private readonly INoiseLog              mLog;
 
-        public LibraryBackupManager( ILifecycleManager lifecycleManager, ILibraryConfiguration configuration, IPreferences preferences, IEventAggregator eventAggregator, INoiseLog log ) {
+        public LibraryBackupManager( ILifecycleManager lifecycleManager, ILibrarian librarian, ILibraryConfiguration configuration,
+                                     IPreferences preferences, IEventAggregator eventAggregator, INoiseLog log ) {
+            mLibrarian = librarian;
             mLibraryConfiguration = configuration;
             mPreferences = preferences;
             mEventAggregator = eventAggregator;
