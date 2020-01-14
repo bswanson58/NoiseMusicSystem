@@ -4,6 +4,7 @@
     <!-- Removes the white border around the GroupBox border -->
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
     <Style x:Key="SectionBorderStyle" TargetType="GroupBox">
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="#D5DFE5" />
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Template">
