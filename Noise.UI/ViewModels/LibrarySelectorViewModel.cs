@@ -132,7 +132,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_LibraryBackup() {
 			try {
-                var  dialogModel = new LibraryBackupDialogModel();
+                var  dialogModel = new LibraryBackupDialogModel( mLibraryConfiguration, mLog );
 
 				mLibraryBackupRequest.Raise( new LibraryBackupInfo( dialogModel ));
             }
