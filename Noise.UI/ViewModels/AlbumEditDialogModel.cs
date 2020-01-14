@@ -255,6 +255,8 @@ namespace Noise.UI.ViewModels {
                 retValue |= UpdateAlbum( album );
             }
 
+			mEventAggregator.PublishOnUIThread( new Events.LibraryBackupPressure( 3, "AlbumEditDialog" ));
+
 			return retValue;
         }
 

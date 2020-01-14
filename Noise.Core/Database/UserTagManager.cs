@@ -79,6 +79,7 @@ namespace Noise.Core.Database {
                 }
 
                 mEventAggregator.PublishOnUIThread( new Events.UserTagsChanged());
+                mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "UpdateTagAssociations" ));
             }
         }
 
@@ -101,12 +102,14 @@ namespace Noise.Core.Database {
 
             mTagProvider.DeleteTag( tag );
             mEventAggregator.PublishOnUIThread(new Events.UserTagsChanged());
+            mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "DeleteTag" ));
         }
 
         public void DeleteAssociation( DbTagAssociation association ) {
             mAssociationProvider.RemoveAssociation( association.DbId );
 
             mEventAggregator.PublishOnUIThread(new Events.UserTagsChanged());
+            mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "DeleteAssociation" ));
         }
     }
 }

@@ -178,6 +178,7 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mEventAggregator.PublishOnUIThread( new Events.LibraryUpdateCompleted( results ));
+            mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "UpdateLibrary" ));
 		}
 
 		public void LogLibraryStatistics() {

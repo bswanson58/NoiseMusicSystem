@@ -34,12 +34,12 @@ namespace Noise.Core.DataProviders {
 
 				return( mUpdateTask );
 			}
-			set {  mUpdateTask = value; }
-		}
+			set => mUpdateTask = value;
+        }
 
 		public void SetRating( DbArtist forArtist, short rating ) {
 			UpdateTask.StartTask( () => UpdateRating( forArtist, rating ),
-								  () => {},
+								  () => mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "SetRating (Artist)" )),
 								  error => mLog.LogException( "Error running task to update artist rating.", error ));
 		}
 
@@ -60,13 +60,13 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Setting rating for {0}", forArtist ), ex );
+				mLog.LogException( $"Setting rating for {forArtist}", ex );
 			}
 		}
 
 		public void SetRating( DbAlbum forAlbum, short rating ) {
 			UpdateTask.StartTask( () => UpdateRating( forAlbum, rating ),
-								  () => {},
+								  () => mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "SetRating (Album)" )),
 								  error => mLog.LogException( "Error running task to update album rating.", error ));
 		}
 
@@ -99,13 +99,13 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Setting rating for {0}", forAlbum ), ex );
+				mLog.LogException( $"Setting rating for {forAlbum}", ex );
 			}
 		}
 
 		public void SetRating( DbTrack forTrack, short rating ) {
 			UpdateTask.StartTask( () => UpdateRating( forTrack, rating ),
-								  () => {},
+								  () => mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "SetRating (Track)" )),
 								  error => mLog.LogException( "Error running task to update track rating.", error ));
 		}
 
@@ -150,13 +150,13 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Setting rating for {0}", forTrack ), ex );
+				mLog.LogException( $"Setting rating for {forTrack}", ex );
 			}
 		}
 
 		public void SetFavorite( DbArtist forArtist, bool isFavorite ) {
 			UpdateTask.StartTask( () => UpdateFavorite( forArtist, isFavorite ),
-								  () => {},
+								  () => mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "SetFavorite (Artist)" )),
 								  error => mLog.LogException( "Error running task to update artist IsFavorite.", error ));
 		}
 
@@ -177,13 +177,13 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Setting rating for {0}", forArtist ), ex );
+				mLog.LogException( $"Setting rating for {forArtist}", ex );
 			}
 		}
 
 		public void SetFavorite( DbAlbum forAlbum, bool isFavorite ) {
 			UpdateTask.StartTask( () => UpdateFavorite( forAlbum, isFavorite ),
-								  () => {},
+								  () => mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "SetFavorite (Album)" )),
 								  error => mLog.LogException( "Error running task to update album IsFavorite.", error ));
 		}
 
@@ -216,13 +216,13 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Setting favorite for {0}", forAlbum ), ex );
+				mLog.LogException( $"Setting favorite for {forAlbum}", ex );
 			}
 		}
 
 		public void SetFavorite( DbTrack forTrack, bool isFavorite ) {
 			UpdateTask.StartTask( () => UpdateFavorite( forTrack, isFavorite ),
-								  () => {},
+								  () => mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "SetFavorite (Track)" )),
 								  error => mLog.LogException( "Error running task to update track IsFavorite.", error ));
 		}
 
@@ -269,7 +269,7 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Setting favorite for {0}", forTrack ), ex );
+				mLog.LogException( $"Setting favorite for {forTrack}", ex );
 			}
 		}
 	}

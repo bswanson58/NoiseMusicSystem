@@ -11,11 +11,14 @@ namespace Noise.Core.Database {
         private readonly IEventAggregator       mEventAggregator;
         private readonly INoiseLog              mLog;
 
-        public LibraryBackupManager( ILibraryConfiguration configuration, IPreferences preferences, IEventAggregator eventAggregator, INoiseLog log ) {
+        public LibraryBackupManager( ILifecycleManager lifecycleManager, ILibraryConfiguration configuration, IPreferences preferences, IEventAggregator eventAggregator, INoiseLog log ) {
             mLibraryConfiguration = configuration;
             mPreferences = preferences;
             mEventAggregator = eventAggregator;
             mLog = log;
+
+            lifecycleManager.RegisterForInitialize( this );
+            lifecycleManager.RegisterForShutdown( this );
         }
 
         public void Initialize() {

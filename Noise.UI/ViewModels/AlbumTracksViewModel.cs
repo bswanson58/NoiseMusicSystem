@@ -317,6 +317,8 @@ namespace Noise.UI.ViewModels {
                         track.UpdateTrackAndAlbum();
 
                         TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayAdjacentStrategy, track.Item.DoNotStrategyPlay );
+
+                        mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "TrackStrategyPlayEdited" ));
                     }
                 }
             }
