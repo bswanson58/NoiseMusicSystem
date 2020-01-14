@@ -158,13 +158,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Interfaces\IDirectoryArchiver.cs" />
-    <Compile Include="Interfaces\ILibrarian.cs" />
     <Compile Include="LibrarianModule.cs" />
     <Compile Include="Models\DirectoryArchiver.cs" />
     <Compile Include="Models\LibrarianModel.cs" />
     <Compile Include="Models\ProgressEvent.cs" />
-    <Compile Include="Models\ProgressReport.cs" />
     <Compile Include="ViewModels\BackupDatabaseViewModel.cs" />
     <Compile Include="ViewModels\DetachDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ExportDatabaseViewModel.cs" />
@@ -286,6 +283,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

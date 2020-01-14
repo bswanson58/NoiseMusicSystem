@@ -187,6 +187,7 @@
     <Compile Include="Dto\BasePlayStrategyParameters.cs" />
     <Compile Include="Dto\CommandRequest.cs" />
     <Compile Include="Dto\ExhaustedStrategySpecification.cs" />
+    <Compile Include="Dto\LibrarianProgressReport.cs" />
     <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\PlayingItem.cs" />
     <Compile Include="Dto\PlayStrategyOptions.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Interfaces\IDataProviderList.cs" />
     <Compile Include="Interfaces\IDataUpdateShell.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
+    <Compile Include="Interfaces\IDirectoryArchiver.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
     <Compile Include="Interfaces\IExhaustedPlayHandler.cs" />
     <Compile Include="Interfaces\IExhaustedSelectionContext.cs" />
@@ -273,6 +275,7 @@
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
+    <Compile Include="Interfaces\ILibrarian.cs" />
     <Compile Include="Interfaces\ILibraryBackupManager.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />

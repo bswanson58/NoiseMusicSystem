@@ -3,7 +3,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Librarian.Interfaces;
 using Noise.Librarian.Models;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -61,7 +60,7 @@ namespace Noise.Librarian.ViewModels {
 			CurrentBackup = mLibraryBackups.FirstOrDefault();
 		}
 
-		private void OnRestoreProgress( ProgressReport args ) {
+		private void OnRestoreProgress( LibrarianProgressReport args ) {
 			ProgressPhase = args.CurrentPhase;
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;
@@ -115,13 +114,11 @@ namespace Noise.Librarian.ViewModels {
 				   ( CurrentBackup != null ));
 		}
 
-		public BindableCollection<LibraryConfiguration> LibraryList {
-			get {  return( mLibraries ); }
-		}
+		public BindableCollection<LibraryConfiguration> LibraryList => mLibraries;
 
-		public LibraryConfiguration CurrentLibrary {
-			get {  return( mCurrentLibrary ); }
-			set {
+        public LibraryConfiguration CurrentLibrary {
+			get => mCurrentLibrary;
+            set {
 				mCurrentLibrary = value;
 
 				LoadBackups();
@@ -130,13 +127,11 @@ namespace Noise.Librarian.ViewModels {
 			}
 		}
 
-		public BindableCollection<LibraryBackup> BackupList {
-			get {  return( mLibraryBackups ); }
-		}
+		public BindableCollection<LibraryBackup> BackupList => mLibraryBackups;
 
-		public LibraryBackup CurrentBackup {
-			get {  return( mCurrentBackup ); }
-			set {
+        public LibraryBackup CurrentBackup {
+			get => mCurrentBackup;
+            set {
 				mCurrentBackup = value;
 
 				RaisePropertyChanged( () => CurrentBackup );

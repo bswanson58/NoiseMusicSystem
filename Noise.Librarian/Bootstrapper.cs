@@ -7,7 +7,6 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.Infrastructure.Interfaces;
-using Noise.Librarian.Interfaces;
 using Noise.Librarian.ViewModels;
 using Noise.Librarian.Views;
 using Noise.UI.Support;
@@ -81,10 +80,8 @@ namespace Noise.Librarian {
 		}
 
 		private void Shutdown() {
-			if( mLibrarian != null ) {
-				mLibrarian.Shutdown();
-			}
-		}
+            mLibrarian?.Shutdown();
+        }
 
 		private Type ViewModelTypeResolver( Type viewType ) {
 			var viewModelName = viewType.Name.Replace( "View", "ViewModel" );
@@ -98,9 +95,7 @@ namespace Noise.Librarian {
 		}
 
 		public void LogException( string reason, Exception exception ) {
-			if( mLog != null ) {
-				mLog.LogException( reason, exception );
-			}
-		}
+            mLog?.LogException( reason, exception );
+        }
 	}
 }

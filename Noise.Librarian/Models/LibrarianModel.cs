@@ -6,7 +6,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Librarian.Interfaces;
 using ReusableBits;
 
 namespace Noise.Librarian.Models {
@@ -67,26 +66,26 @@ namespace Noise.Librarian.Models {
 
 				return( mBackupTaskHandler );
 			}
-			set {  mBackupTaskHandler = value; }
-		}
+			set => mBackupTaskHandler = value;
+        }
 
-		public void BackupLibrary( LibraryConfiguration library, Action<ProgressReport> progressCallback ) {
+		public void BackupLibrary( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
 			if(( library != null ) &&
 			   ( progressCallback != null )) {
 				BackupTaskHandler.StartTask( () => BackupLibraryTask( library, progressCallback ),
-											 () => progressCallback( new ProgressReport( "Backup Completed - Success", library.LibraryName )),
-											 error => progressCallback( new ProgressReport( "Backup Failed.", library.LibraryName )));
+											 () => progressCallback( new LibrarianProgressReport( "Backup Completed - Success", library.LibraryName )),
+											 error => progressCallback( new LibrarianProgressReport( "Backup Failed.", library.LibraryName )));
 			}
 		}
 
-		private void BackupLibraryTask( LibraryConfiguration library, Action<ProgressReport> progressCallback ) {
+		private void BackupLibraryTask( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryBackup( library );
 
 				try {
 					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
 
-					progressCallback( new ProgressReport( "Starting Library backup", library.DatabaseName, 0 ));
+					progressCallback( new LibrarianProgressReport( "Starting Library backup", library.DatabaseName, 0 ));
 
 					if(!string.IsNullOrEmpty( databaseName )) {
 						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
@@ -96,7 +95,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 
-						progressCallback( new ProgressReport( "Starting database backup", library.DatabaseName, 250 ));
+						progressCallback( new LibrarianProgressReport( "Starting database backup", library.DatabaseName, 250 ));
 						mDatabaseUtility.BackupDatabase( databaseName, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
@@ -106,7 +105,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 
-						progressCallback( new ProgressReport( "Starting Metadata backup", library.LibraryName, 500 ));
+						progressCallback( new LibrarianProgressReport( "Starting Metadata backup", library.LibraryName, 500 ));
 						mMetadataManager.ExportMetadata( backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
@@ -114,7 +113,7 @@ namespace Noise.Librarian.Models {
 						if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-						progressCallback( new ProgressReport( "Starting Search Database backup", library.LibraryName, 750 ));
+						progressCallback( new LibrarianProgressReport( "Starting Search Database backup", library.LibraryName, 750 ));
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
@@ -125,19 +124,19 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
-						mLog.LogMessage( string.Format( "Backup of {0} was completed ('{1}')", library, libraryBackup.BackupDate ));
+						mLog.LogMessage( $"Backup of {library} was completed ('{libraryBackup.BackupDate}')" );
 					}
 				}
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryBackup( library, libraryBackup );
 
-					progressCallback( new ProgressReport( "Completed Library backup.", "Failed" ));
-					mLog.LogException( string.Format( "Database backup failed. {0}", library ), ex );
+					progressCallback( new LibrarianProgressReport( "Completed Library backup.", "Failed" ));
+					mLog.LogException( $"Database backup failed. {library}", ex );
 				}
 			}
 			catch( Exception ex ) {
-				progressCallback( new ProgressReport( "Completed Library backup.", "Failed" ));
-				mLog.LogException( string.Format( "Could not open library backup. {0}", library ), ex );
+				progressCallback( new LibrarianProgressReport( "Completed Library backup.", "Failed" ));
+				mLog.LogException( $"Could not open library backup. {library}", ex );
 			}
 		}
 
@@ -149,25 +148,25 @@ namespace Noise.Librarian.Models {
 
 				return( mRestoreTaskHandler );
 			}
-			set {  mRestoreTaskHandler = value; }
-		}
+			set => mRestoreTaskHandler = value;
+        }
 
-		public void RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<ProgressReport> progressCallback ) {
+		public void RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
 			if(( library != null ) &&
 			   ( progressCallback != null )) {
 				RestoreTaskHandler.StartTask( () => RestoreLibraryTask( library, libraryBackup, progressCallback ),
-											 () => progressCallback( new ProgressReport( "Restore Completed - Success", library.LibraryName )),
-											 error => progressCallback( new ProgressReport( "Restore Failed.", library.LibraryName )));
+											 () => progressCallback( new LibrarianProgressReport( "Restore Completed - Success", library.LibraryName )),
+											 error => progressCallback( new LibrarianProgressReport( "Restore Failed.", library.LibraryName )));
 			}
 		}
 
-		private void RestoreLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<ProgressReport> progressCallback ) {
+		private void RestoreLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
 					var backupDatabaseName = Path.Combine( backupDatabasePath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
 					
-					progressCallback( new ProgressReport( "Starting Library restore.", library.LibraryName, 0 ));
+					progressCallback( new LibrarianProgressReport( "Starting Library restore.", library.LibraryName, 0 ));
 					mLibraryConfiguration.OpenLibraryRestore( library, libraryBackup );
 
 					if( File.Exists( backupDatabaseName )) {
@@ -191,7 +190,7 @@ namespace Noise.Librarian.Models {
 							}
 						}
 
-						progressCallback( new ProgressReport( "Starting Database restore.", library.DatabaseName, 250 ));
+						progressCallback( new LibrarianProgressReport( "Starting Database restore.", library.DatabaseName, 250 ));
 						mDatabaseUtility.RestoreDatabase( databaseName, backupDatabaseName );
 
 						var backupMetadataName = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory, Constants.MetadataBackupName );
@@ -203,7 +202,7 @@ namespace Noise.Librarian.Models {
 						var backupSearchName = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory, Constants.SearchDatabaseBackupName );
 
 						if( File.Exists( backupSearchName )) {
-						progressCallback( new ProgressReport( "Starting Search Database restore.", library.LibraryName, 500 ));
+						    progressCallback( new LibrarianProgressReport( "Starting Search Database restore.", library.LibraryName, 500 ));
 
 							mDirectoryArchiver.RestoreDirectory( backupSearchName, library.SearchDatabasePath );
 						}
@@ -213,15 +212,14 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
-						mLog.LogMessage( string.Format( "Restore of {0} was completed ('{1} - {2}')", library,
-														libraryBackup.BackupDate.ToShortDateString(), libraryBackup.BackupDate.ToShortTimeString()));
+						mLog.LogMessage( $"Restore of {library} was completed ('{libraryBackup.BackupDate.ToShortDateString()} - {libraryBackup.BackupDate.ToShortTimeString()}')" );
 					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Restoring {0}", library ), ex );
+				mLog.LogException( $"Restoring {library}", ex );
 
-				progressCallback( new ProgressReport( "Completed Library restore.", "Failed" ));
+				progressCallback( new LibrarianProgressReport( "Completed Library restore.", "Failed" ));
 				mLibraryConfiguration.AbortLibraryRestore( library, libraryBackup );
 			}
 		}
@@ -234,26 +232,26 @@ namespace Noise.Librarian.Models {
 
 				return( mExportTaskHandler );
 			}
-			set {  mExportTaskHandler = value; }
-		}
+			set => mExportTaskHandler = value;
+        }
 
-		public void ExportLibrary( LibraryConfiguration library, string exportPath, Action<ProgressReport> progressCallback ) {
+		public void ExportLibrary( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
 			if(( library != null ) &&
 			   ( progressCallback != null )) {
 				ExportTaskHandler.StartTask( () => ExportLibraryTask( library, exportPath, progressCallback ),
-											 () => progressCallback( new ProgressReport( "Export Completed - Success", library.LibraryName )),
-											 error => progressCallback( new ProgressReport( "Export Failed.", library.LibraryName )));
+											 () => progressCallback( new LibrarianProgressReport( "Export Completed - Success", library.LibraryName )),
+											 error => progressCallback( new LibrarianProgressReport( "Export Failed.", library.LibraryName )));
 			}
 		}
 
-		private void ExportLibraryTask( LibraryConfiguration library, string exportPath, Action<ProgressReport> progressCallback ) {
+		private void ExportLibraryTask( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryExport( library, exportPath );
 
 				try {
 					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
 
-					progressCallback( new ProgressReport( "Starting Library export", library.LibraryName, 0 ));
+					progressCallback( new LibrarianProgressReport( "Starting Library export", library.LibraryName, 0 ));
 
 					if(!string.IsNullOrEmpty( databaseName )) {
 						var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
@@ -263,7 +261,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupDatabasePath );
 						}
 
-						progressCallback( new ProgressReport( "Starting database export", library.DatabaseName, 0 ));
+						progressCallback( new LibrarianProgressReport( "Starting database export", library.DatabaseName, 0 ));
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
 
 						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
@@ -273,7 +271,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 		
-						progressCallback( new ProgressReport( "Starting Metadata export", library.LibraryName, 0 ));
+						progressCallback( new LibrarianProgressReport( "Starting Metadata export", library.LibraryName, 0 ));
 						mMetadataManager.ExportMetadata( backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
@@ -283,7 +281,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 
-						progressCallback( new ProgressReport( "Starting Search Database export", library.LibraryName, 0 ));
+						progressCallback( new LibrarianProgressReport( "Starting Search Database export", library.LibraryName, 0 ));
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
@@ -294,19 +292,19 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
-						mLog.LogMessage( string.Format( "Export of {0} was completed to ('{1}')", library, libraryBackup.BackupPath ));
+						mLog.LogMessage( $"Export of {library} was completed to ('{libraryBackup.BackupPath}')" );
 					}
 				}
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryExport( library, libraryBackup );
 
-					progressCallback( new ProgressReport( "Export library failed.", library.LibraryName ));
-					mLog.LogException( string.Format( "Export library failed. {0}", library ), ex );
+					progressCallback( new LibrarianProgressReport( "Export library failed.", library.LibraryName ));
+					mLog.LogException( $"Export library failed. {library}", ex );
 				}
 			}
 			catch( Exception ex ) {
-				progressCallback( new ProgressReport( "Export library failed.", library.LibraryName ));
-				mLog.LogException( string.Format( "Export of {0}", library ), ex );
+				progressCallback( new LibrarianProgressReport( "Export library failed.", library.LibraryName ));
+				mLog.LogException( $"Export of {library}", ex );
 			}
 		}
 
@@ -318,19 +316,19 @@ namespace Noise.Librarian.Models {
 
 				return( mImportTaskHandler );
 			}
-			set {  mImportTaskHandler = value; }
-		}
+			set => mImportTaskHandler = value;
+        }
 
-		public void ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<ProgressReport> progressCallback ) {
+		public void ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
 			if(( library != null ) &&
 			   ( progressCallback != null )) {
 				ImportTaskHandler.StartTask( () => ImportLibraryTask( library, libraryBackup, progressCallback ),
-											 () => progressCallback( new ProgressReport( "Import Completed - Success", library.LibraryName )),
-											 error => progressCallback( new ProgressReport( "Import Failed.", library.LibraryName )));
+											 () => progressCallback( new LibrarianProgressReport( "Import Completed - Success", library.LibraryName )),
+											 error => progressCallback( new LibrarianProgressReport( "Import Failed.", library.LibraryName )));
 			}
 		}
 
-		private void ImportLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<ProgressReport> progressCallback ) {
+		private void ImportLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var newLibrary = mLibraryConfiguration.OpenLibraryImport( library, libraryBackup );
@@ -338,7 +336,7 @@ namespace Noise.Librarian.Models {
 					var	databaseName = library.DatabaseName.Replace( ' ', '_' );
 					var importDatabaseName = Directory.EnumerateFiles( importDatabasePath, "*" + Constants.Ef_DatabaseBackupExtension ).FirstOrDefault();
 
-					progressCallback( new ProgressReport( "Starting Library import.", library.LibraryName, 0 ));
+					progressCallback( new LibrarianProgressReport( "Starting Library import.", library.LibraryName, 0 ));
 					if(!string.IsNullOrWhiteSpace( importDatabaseName )) {
 						var restoreList = mDatabaseUtility.RestoreFileList( importDatabaseName );
 						var fileList = new List<string>();
@@ -353,13 +351,13 @@ namespace Noise.Librarian.Models {
 							}
 						}
 
-						progressCallback( new ProgressReport( "Starting database import.", library.DatabaseName, 250 ));
+						progressCallback( new LibrarianProgressReport( "Starting database import.", library.DatabaseName, 250 ));
 						mDatabaseUtility.RestoreDatabase( databaseName, importDatabaseName, fileList, locationList );
 		
 						var backupMetadataName = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory, Constants.MetadataBackupName );
 						
 						if( File.Exists( backupMetadataName )) {
-							progressCallback( new ProgressReport( "Starting Metadata import.", library.LibraryName, 500 ));
+							progressCallback( new LibrarianProgressReport( "Starting Metadata import.", library.LibraryName, 500 ));
 
 							mMetadataManager.ImportMetadata( backupMetadataName );
 						}
@@ -367,7 +365,7 @@ namespace Noise.Librarian.Models {
 						var backupSearchName = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory, Constants.SearchDatabaseBackupName );
 
 						if( File.Exists( backupSearchName )) {
-							progressCallback( new ProgressReport( "Starting Search Database import.", library.LibraryName, 750 ));
+							progressCallback( new LibrarianProgressReport( "Starting Search Database import.", library.LibraryName, 750 ));
 
 							mDirectoryArchiver.RestoreDirectory( backupSearchName, newLibrary.SearchDatabasePath );
 						}
@@ -377,14 +375,14 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 
-						mLog.LogMessage( string.Format( "Imported {0}", library ));
+						mLog.LogMessage( $"Imported {library}" );
 					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Import library from '{0}'", libraryBackup.BackupPath ), ex );
+				mLog.LogException( $"Import library from '{libraryBackup.BackupPath}'", ex );
 
-				progressCallback( new ProgressReport( "Completed Library import - Failed", library.LibraryName ));
+				progressCallback( new LibrarianProgressReport( "Completed Library import - Failed", library.LibraryName ));
 				mLibraryConfiguration.AbortLibraryImport( library );
 			}
 		}

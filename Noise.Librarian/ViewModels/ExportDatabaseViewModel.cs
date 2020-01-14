@@ -4,7 +4,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Librarian.Interfaces;
 using Noise.Librarian.Models;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -46,13 +45,11 @@ namespace Noise.Librarian.ViewModels {
 			CurrentLibrary = mLibraries.FirstOrDefault();
 		}
 
-		public BindableCollection<LibraryConfiguration> LibraryList {
-			get {  return( mLibraries ); }
-		}
+		public BindableCollection<LibraryConfiguration> LibraryList => ( mLibraries );
 
-		public LibraryConfiguration CurrentLibrary {
-			get {  return( mCurrentLibrary ); }
-			set {
+        public LibraryConfiguration CurrentLibrary {
+			get => ( mCurrentLibrary );
+            set {
 				mCurrentLibrary = value;
 
 				RaisePropertyChanged( () => CurrentLibrary );
@@ -82,7 +79,7 @@ namespace Noise.Librarian.ViewModels {
 				   ( Directory.Exists( ExportPath )));
 		}
 
-		private void OnExportProgress( ProgressReport args ) {
+		private void OnExportProgress( LibrarianProgressReport args ) {
 			ProgressPhase = args.CurrentPhase;
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;

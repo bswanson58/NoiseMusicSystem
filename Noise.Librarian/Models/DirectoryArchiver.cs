@@ -2,7 +2,8 @@
 using System.IO;
 using System.Linq;
 using Ionic.Zip;
-using Noise.Librarian.Interfaces;
+using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Librarian.Models {
 	public class DirectoryArchiver : IDirectoryArchiver {
@@ -23,10 +24,10 @@ namespace Noise.Librarian.Models {
 			}
 		}
 
-		public void BackupSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback ) {
+		public void BackupSubdirectories( string sourcePath, string destinationPath, Action<LibrarianProgressReport> progressCallback ) {
 			if( Directory.Exists( sourcePath )) {
 				var directoryList = Directory.EnumerateDirectories( sourcePath ).ToArray();
-				var perDirectoryMultiplier = (float)1000 / directoryList.Count();
+				var perDirectoryMultiplier = (float)1000 / directoryList.Length;
 				var progressBase = 0f;
 
 				foreach( var directory in directoryList ) {
@@ -41,7 +42,7 @@ namespace Noise.Librarian.Models {
 
 							zipFile.SaveProgress += ( sender, args ) => {
 								if( args.EventType == ZipProgressEventType.Saving_AfterWriteEntry ) {
-									progressCallback( new ProgressReport( "Archiving Directory", directoryName,
+									progressCallback( new LibrarianProgressReport( "Archiving Directory", directoryName,
 																			(int)(( perDirectoryMultiplier * ((float)args.EntriesSaved / args.EntriesTotal )) + @base )));
 								}
 							};
@@ -57,10 +58,10 @@ namespace Noise.Librarian.Models {
 			}
 		}
 
-		public void RestoreSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback ) {
+		public void RestoreSubdirectories( string sourcePath, string destinationPath, Action<LibrarianProgressReport> progressCallback ) {
 			if( Directory.Exists( sourcePath )) {
 				var archiveList = Directory.EnumerateFiles( sourcePath ).ToArray();
-				var perDirectoryMultiplier = (float)1000 / archiveList.Count();
+				var perDirectoryMultiplier = (float)1000 / archiveList.Length;
 				var progressBase = 0f;
 
 				foreach( var archiveFile in archiveList ) {
@@ -73,7 +74,7 @@ namespace Noise.Librarian.Models {
 
 							zipFile.ExtractProgress += ( sender, args ) => {
 								if( args.EventType == ZipProgressEventType.Extracting_AfterExtractEntry ) {
-									progressCallback( new ProgressReport( "Restoring Directory", @archive,
+									progressCallback( new LibrarianProgressReport( "Restoring Directory", @archive,
 																			(int)(( perDirectoryMultiplier * ((float)args.EntriesExtracted / args.EntriesTotal )) + @base )));
 								}
 							};

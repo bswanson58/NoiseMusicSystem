@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
-using Noise.Librarian.Interfaces;
+using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Models;
 
 namespace Noise.Librarian {
