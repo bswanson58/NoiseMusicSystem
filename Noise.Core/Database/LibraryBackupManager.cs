@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -34,7 +35,7 @@ namespace Noise.Core.Database {
             mEventAggregator.Unsubscribe( this );
         }
 
-        public async void BackupLibrary( Action<LibrarianProgressReport> progress ) {
+        public async Task BackupLibrary( Action<LibrarianProgressReport> progress ) {
             var library = mLibraryConfiguration.Current;
 
             if( library != null ) {

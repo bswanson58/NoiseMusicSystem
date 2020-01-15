@@ -4,23 +4,67 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LibraryBackupDialogModel, IsDesignTimeCreatable=False}"
              Tag="Library Backup"
-             Height="350" Width="500">
+             Height="180" Width="450">
+
+    <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="True"/>
+    </UserControl.Resources>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="10,0" Orientation="Horizontal">
-            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Text="Library:"/>
+            <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
             <ComboBox Width="350" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName"/>
         </StackPanel>
 
-        <Button Grid.Row="1" Margin="15" HorizontalAlignment="Left" Content="Backup Library Now" Command="{Binding BackupLibrary}"/>
-        <TextBlock Grid.Row="2" Margin="10,0" Text="{Binding BackupProgress}"/>
+        <Grid Grid.Row="1" Margin="55,15,25,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Current Backup Pressure:"/>
+
+            <Grid Grid.Column="1" Margin="5,0,0,0">
+                <Rectangle StrokeThickness="0" RenderTransformOrigin="0.5,0.5">
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
+                    <Rectangle.Fill>
+                        <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                            <GradientStop Color="LimeGreen" Offset="{Binding CurrentBackupPressurePercentage}"/>
+                            <GradientStop Color="Transparent" Offset="{Binding CurrentBackupPressurePercentage}"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </Grid>
+
+        <Button Grid.Row="3" Margin="10,5" HorizontalAlignment="Left" Style="{StaticResource GeneralButtonStyle}" Padding="10,3" Content="Backup Library Now" Command="{Binding BackupLibrary}"/>
+
+        <Grid Grid.Row="4" Margin="10,5,10,15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{Binding ProgressStatus}"/>
+
+            <ProgressBar Grid.Row="1" Minimum="0" Maximum="1000" Value="{Binding ProgressAmount}"
+                         Visibility="{Binding BackupActive, Converter={StaticResource VisibleOnTrue}}"/>
+        </Grid>
     </Grid>
 </UserControl>

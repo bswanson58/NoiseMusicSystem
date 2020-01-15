@@ -170,7 +170,7 @@ namespace Noise.Librarian.Models {
 			if(( library != null ) &&
 			   ( progressCallback != null )) {
 				RestoreTaskHandler.StartTask( () => RestoreLibraryTask( library, libraryBackup, progressCallback ),
-											 () => progressCallback( new LibrarianProgressReport( "Restore Completed - Success", library.LibraryName )),
+											 () => { },
 											 error => progressCallback( new LibrarianProgressReport( "Restore Failed.", library.LibraryName )));
 			}
 		}
@@ -232,6 +232,7 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
+                        progressCallback( new LibrarianProgressReport(  "Restore Completed - Success", library.LibraryName ));
 						mLog.LogMessage( $"Restore of {library} was completed ('{libraryBackup.BackupDate.ToShortDateString()} - {libraryBackup.BackupDate.ToShortTimeString()}')" );
 					}
 				}

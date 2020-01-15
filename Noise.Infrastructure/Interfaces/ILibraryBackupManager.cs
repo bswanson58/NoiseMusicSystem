@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
     public interface ILibraryBackupManager {
-        void    BackupLibrary( Action<LibrarianProgressReport> progress );
+        Task    BackupLibrary( Action<LibrarianProgressReport> progress );
     }
 }
