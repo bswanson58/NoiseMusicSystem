@@ -1,6 +1,8 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
@@ -30,6 +32,21 @@ namespace Noise.Core.Database {
 
         public void Shutdown() {
             mEventAggregator.Unsubscribe( this );
+        }
+
+        public async void BackupLibrary( Action<LibrarianProgressReport> progress ) {
+            var library = mLibraryConfiguration.Current;
+
+            if( library != null ) {
+                mLibraryConfiguration.Close( library );
+
+                await mLibrarian.BackupLibraryAsync( library, progress );
+
+                library.BackupPressure = 0;
+                mLibraryConfiguration.UpdateConfiguration( library );
+
+                mLibraryConfiguration.Open( library );
+            }
         }
 
         public void Handle( Events.LibraryBackupPressure args ) {

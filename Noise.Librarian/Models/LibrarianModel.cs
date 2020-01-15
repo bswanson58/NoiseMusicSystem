@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -73,10 +74,16 @@ namespace Noise.Librarian.Models {
 			if(( library != null ) &&
 			   ( progressCallback != null )) {
 				BackupTaskHandler.StartTask( () => BackupLibraryTask( library, progressCallback ),
-											 () => progressCallback( new LibrarianProgressReport( "Backup Completed - Success", library.LibraryName )),
+											 () => { },
 											 error => progressCallback( new LibrarianProgressReport( "Backup Failed.", library.LibraryName )));
 			}
 		}
+
+		public Task BackupLibraryAsync( LibraryConfiguration configuration, Action<LibrarianProgressReport> progressCallback ) {
+			return Task.Run( () => {
+				BackupLibraryTask( configuration, progressCallback );
+            });
+        }
 
 		private void BackupLibraryTask( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
 			try {
@@ -91,41 +98,49 @@ namespace Noise.Librarian.Models {
 						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
 						var backupName = Path.Combine( backupPath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
 
-						if(!Directory.Exists( backupPath )) {
+                        progressCallback( new LibrarianProgressReport( "Starting database backup", library.DatabaseName, 250 ));
+
+                        if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-
-						progressCallback( new LibrarianProgressReport( "Starting database backup", library.DatabaseName, 250 ));
 						mDatabaseUtility.BackupDatabase( databaseName, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
 						backupName = Path.Combine( backupPath, Constants.MetadataBackupName );
 
-						if(!Directory.Exists( backupPath )) {
+                        progressCallback( new LibrarianProgressReport( "Starting Metadata backup", library.LibraryName, 500 ));
+
+                        if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-
-						progressCallback( new LibrarianProgressReport( "Starting Metadata backup", library.LibraryName, 500 ));
 						mMetadataManager.ExportMetadata( backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
 						backupName = Path.Combine( backupPath, Constants.SearchDatabaseBackupName );
-						if(!Directory.Exists( backupPath )) {
+
+                        progressCallback( new LibrarianProgressReport( "Starting Search Database backup", library.LibraryName, 750 ));
+
+                        if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-						progressCallback( new LibrarianProgressReport( "Starting Search Database backup", library.LibraryName, 750 ));
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
-						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
-						if(!Directory.Exists( backupPath )) {
-							Directory.CreateDirectory( backupPath );
-						}
-						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, progressCallback );
+						if(!library.IsMetadataInPlace ) {
+                            backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+
+                            progressCallback( new LibrarianProgressReport( "Starting Blob Database backup", library.LibraryName, 800 ));
+
+                            if(!Directory.Exists( backupPath )) {
+                                Directory.CreateDirectory( backupPath );
+                            }
+                            mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, progressCallback );
+                        }
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
 						mLog.LogMessage( $"Backup of {library} was completed ('{libraryBackup.BackupDate}')" );
-					}
+                        progressCallback( new LibrarianProgressReport( "Backup Completed - Success", library.LibraryName ));
+                    }
 				}
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryBackup( library, libraryBackup );
@@ -207,8 +222,13 @@ namespace Noise.Librarian.Models {
 							mDirectoryArchiver.RestoreDirectory( backupSearchName, library.SearchDatabasePath );
 						}
 
-						var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
-						mDirectoryArchiver.RestoreSubdirectories( backupBlobPath, library.BlobDatabasePath, progressCallback );
+						if(!library.IsMetadataInPlace ) {
+                            var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+
+                            progressCallback( new LibrarianProgressReport( "Starting Blob Database restore.", library.LibraryName, 600 ));
+
+                            mDirectoryArchiver.RestoreSubdirectories( backupBlobPath, library.BlobDatabasePath, progressCallback );
+                        }
 
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 

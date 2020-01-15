@@ -26,6 +26,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IUiLog					mLog;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private readonly ILibraryBackupManager	mLibraryBackup;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
 		private readonly InteractionRequest<LibraryBackupInfo>			mLibraryBackupRequest;
@@ -40,11 +41,12 @@ namespace Noise.UI.ViewModels {
 		public	IInteractionRequest							LibraryBackupRequest => mLibraryBackupRequest;
 	    public  IInteractionRequest                         LibraryConfigurationRequest => mLibraryConfigurationRequest;
 
-		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
+		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService, ILibraryBackupManager libraryBackup,
 										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mDialogService = dialogService;
+			mLibraryBackup = libraryBackup;
 			mLibraryConfiguration = libraryConfiguration;
 			mLibraryBuilder = libraryBuilder;
 
@@ -132,7 +134,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_LibraryBackup() {
 			try {
-                var  dialogModel = new LibraryBackupDialogModel( mLibraryConfiguration, mLog );
+                var  dialogModel = new LibraryBackupDialogModel( mLibraryBackup, mLibraryConfiguration, mLog );
 
 				mLibraryBackupRequest.Raise( new LibraryBackupInfo( dialogModel ));
             }

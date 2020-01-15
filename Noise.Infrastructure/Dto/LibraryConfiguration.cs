@@ -82,7 +82,8 @@ namespace Noise.Infrastructure.Dto {
 			serializer.WriteObject( stream, this );
 			stream.Close();
 
-			SetConfigurationPath( Path.GetDirectoryName( toPath ));
+			// this would change the configuration path to a backup location during a database backup...
+//			SetConfigurationPath( Path.GetDirectoryName( toPath ));
 		}
 
         public override string ToString() {
