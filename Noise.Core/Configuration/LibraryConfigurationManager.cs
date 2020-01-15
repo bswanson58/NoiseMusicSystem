@@ -23,6 +23,8 @@ namespace Noise.Core.Configuration {
 		private	readonly List<LibraryConfiguration>	mLibraries;
 		private LibraryConfiguration				mCurrentLibrary;
 
+        public	IEnumerable<LibraryConfiguration>	Libraries => mLibraries;
+
 		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
 											INoiseEnvironment noiseEnvironment, IPreferences preferences,
 											ILogUserStatus userStatus, ILogLibraryConfiguration log ) {
@@ -37,11 +39,7 @@ namespace Noise.Core.Configuration {
 			lifecycleManager.RegisterForShutdown( this );
 		}
 
-		public IEnumerable<LibraryConfiguration> Libraries {
-			get{ return( mLibraries ); }
-		}
-
-		public void Initialize() {
+        public void Initialize() {
 			LoadLibraries();
 
 			mEventAggregator.PublishOnUIThread( new Events.LibraryConfigurationLoaded( this ));
@@ -52,8 +50,8 @@ namespace Noise.Core.Configuration {
 		}
 
 		public LibraryConfiguration	Current {
-			get { return( mCurrentLibrary ); }
-			private set {
+			get => mCurrentLibrary;
+            private set {
 				if( mCurrentLibrary != value ) {
 					if( mCurrentLibrary != null ) {
 						mLog.LibraryClosed( mCurrentLibrary );
@@ -236,10 +234,9 @@ namespace Noise.Core.Configuration {
 				var backupDirectories = Directory.EnumerateDirectories( backupPath );
 
 				foreach( var directory in backupDirectories ) {
-					DateTime	backupTime;
-					var			directoryName = Path.GetFileName( directory );
+                    var			directoryName = Path.GetFileName( directory );
 
-					if( DateTime.TryParseExact( directoryName, cBackupDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out backupTime )) {
+					if( DateTime.TryParseExact( directoryName, cBackupDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var backupTime )) {
 						retValue.Add( new LibraryBackup( backupTime, directory ));
 					}
 				}
@@ -252,8 +249,8 @@ namespace Noise.Core.Configuration {
 			var backupDate = DateTime.Now;
 			var backupFolder = backupDate.ToString( cBackupDateFormat );
 			var backupPath = Path.Combine( mNoiseEnvironment.BackupDirectory(),
-											libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
-											backupFolder );
+										   libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
+                                           backupFolder );
 			var	retValue = new LibraryBackup( backupDate, backupPath );
 
 			if(!Directory.Exists( retValue.BackupPath )) {
@@ -268,7 +265,7 @@ namespace Noise.Core.Configuration {
 				libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
+				mLog.LogException( $"Persisting library configuration to \"{backup.BackupPath}\"", exception );
 			}
 
 			mEventAggregator.PublishOnUIThread( new Events.LibraryBackupsChanged());
@@ -295,7 +292,7 @@ namespace Noise.Core.Configuration {
 				libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
+				mLog.LogException( $"Persisting library configuration to \"{backup.BackupPath}\"", exception );
 			}
 		}
 
