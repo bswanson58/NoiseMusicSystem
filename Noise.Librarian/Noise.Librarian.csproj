@@ -158,9 +158,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="LibrarianModule.cs" />
-    <Compile Include="Models\DirectoryArchiver.cs" />
-    <Compile Include="Models\LibrarianModel.cs" />
     <Compile Include="Models\ProgressEvent.cs" />
     <Compile Include="ViewModels\BackupDatabaseViewModel.cs" />
     <Compile Include="ViewModels\DetachDatabaseViewModel.cs" />

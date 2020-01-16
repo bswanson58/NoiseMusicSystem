@@ -4,9 +4,6 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface ILibrarian {
-		bool	Initialize();
-		void	Shutdown();
-
         Task	BackupLibraryAsync( LibraryConfiguration configuration, Action<LibrarianProgressReport> progressCallback );
         void	BackupLibrary( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback );
 		void	RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback );

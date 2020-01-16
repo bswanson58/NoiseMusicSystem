@@ -9,11 +9,8 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits;
 
-namespace Noise.Librarian.Models {
+namespace Noise.Core.Database {
 	public class LibrarianModel : ILibrarian {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly ILifecycleManager		mLifecycleManager;
-		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IDatabaseUtility		mDatabaseUtility;
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly IDirectoryArchiver		mDirectoryArchiver;
@@ -24,39 +21,16 @@ namespace Noise.Librarian.Models {
 		private TaskHandler						mExportTaskHandler;
 		private TaskHandler						mImportTaskHandler;
 
-		public LibrarianModel( IEventAggregator eventAggregator,
-							   ILifecycleManager lifecycleManager,
-							   IDatabaseManager databaseManager,
-							   IDatabaseUtility databaseUtility,
+		public LibrarianModel( IDatabaseUtility databaseUtility,
 							   IMetadataManager metadataManager,
 							   IDirectoryArchiver directoryArchiver,
 							   ILibraryConfiguration libraryConfiguration,
 							   INoiseLog log ) {
-			mEventAggregator = eventAggregator;
-			mLifecycleManager = lifecycleManager;
-			mDatabaseManager = databaseManager;
 			mDatabaseUtility = databaseUtility;
 			mMetadataManager = metadataManager;
 			mDirectoryArchiver = directoryArchiver;
 			mLibraryConfiguration = libraryConfiguration;
 			mLog = log;
-		}
-
-		public bool Initialize() {
-			mLog.LogMessage( "Initializing Noise Music System - Librarian" );
-
-			try {
-				mLifecycleManager.Initialize();
-
-				mLog.LogMessage( "Initialized LibrarianModel." );
-
-				mEventAggregator.PublishOnUIThread( new Events.SystemInitialized());
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Failed to Initialize", ex );
-			}
-
-			return( true );
 		}
 
 		protected TaskHandler BackupTaskHandler {
@@ -406,15 +380,6 @@ namespace Noise.Librarian.Models {
 				progressCallback( new LibrarianProgressReport( "Completed Library import - Failed", library.LibraryName ));
 				mLibraryConfiguration.AbortLibraryImport( library );
 			}
-		}
-
-		public void Shutdown() {
-			mEventAggregator.PublishOnUIThread( new Events.SystemShutdown());
-
-			mLifecycleManager.Shutdown();
-			mDatabaseManager.Shutdown();
-
-			mLog.LogMessage( "Shutdown LibrarianModel." );
 		}
 	}
 }

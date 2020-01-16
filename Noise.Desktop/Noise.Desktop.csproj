@@ -362,10 +362,6 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.Librarian\Noise.Librarian.csproj">
-      <Project>{37156bd4-8e37-4f2c-85c8-4e48359efed9}</Project>
-      <Name>Noise.Librarian</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Noise.Metadata\Noise.Metadata.csproj">
       <Project>{983d3c18-8012-48ae-ae21-b6503fc0f5b8}</Project>
       <Name>Noise.Metadata</Name>

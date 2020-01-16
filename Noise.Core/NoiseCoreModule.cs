@@ -12,6 +12,7 @@ using Noise.Core.DataProviders;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.Logging;
+using Noise.Core.Platform;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
@@ -72,8 +73,10 @@ namespace Noise.Core {
             mContainer.RegisterType<IUserTagManager, UserTagManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRatings, RatingsUpdater>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
+            mContainer.RegisterType<ILibrarian, LibrarianModel>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
+            mContainer.RegisterType<IDirectoryArchiver, DirectoryArchiver>();
 
 			mContainer.RegisterType<IPipelineStep, FileTypePipelineStep>( "FileTypePipelineStep" );
 			mContainer.RegisterType<IPipelineStep, CompletedPipelineStep>( "CompletedPipelineStep" );

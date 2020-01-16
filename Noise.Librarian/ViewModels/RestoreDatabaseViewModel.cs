@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using Noise.Librarian.Models;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -12,18 +13,21 @@ namespace Noise.Librarian.ViewModels {
 		private readonly IEventAggregator							mEventAggregator;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibrarian									mLibrarian;
-		private readonly BindableCollection<LibraryConfiguration>	mLibraries; 
-		private readonly BindableCollection<LibraryBackup>			mLibraryBackups; 
+		private readonly ObservableCollectionEx<LibraryConfiguration>	mLibraries; 
+		private readonly ObservableCollectionEx<LibraryBackup>		mLibraryBackups; 
 		private LibraryConfiguration								mCurrentLibrary;
 		private LibraryBackup										mCurrentBackup;
+
+        public ObservableCollectionEx<LibraryBackup>				BackupList => mLibraryBackups;
+        public ObservableCollectionEx<LibraryConfiguration>			LibraryList => mLibraries;
 
 		public RestoreDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration ) {
 			mEventAggregator = eventAggregator;
 			mLibrarian = librarian;
 			mLibraryConfiguration = libraryConfiguration;
 
-			mLibraries = new BindableCollection<LibraryConfiguration>();
-			mLibraryBackups = new BindableCollection<LibraryBackup>();
+			mLibraries = new ObservableCollectionEx<LibraryConfiguration>();
+			mLibraryBackups = new ObservableCollectionEx<LibraryBackup>();
 			ProgressActive = false;
 
 			mEventAggregator.Subscribe( this );
@@ -50,14 +54,16 @@ namespace Noise.Librarian.ViewModels {
 		}
 
 		private void LoadBackups() {
-			mLibraryBackups.Clear();
-			if( CurrentLibrary != null ) {
-				mLibraryBackups.AddRange( from backup in mLibraryConfiguration.GetLibraryBackups( CurrentLibrary )
-										  orderby backup.BackupDate descending 
-										  select backup );
-			}
+			Execute.OnUIThread( () => {
+                mLibraryBackups.Clear();
+                if( CurrentLibrary != null ) {
+                    mLibraryBackups.AddRange( from backup in mLibraryConfiguration.GetLibraryBackups( CurrentLibrary )
+                        orderby backup.BackupDate descending 
+                        select backup );
+                }
 
-			CurrentBackup = mLibraryBackups.FirstOrDefault();
+                CurrentBackup = mLibraryBackups.FirstOrDefault();
+            } );
 		}
 
 		private void OnRestoreProgress( LibrarianProgressReport args ) {
@@ -114,8 +120,6 @@ namespace Noise.Librarian.ViewModels {
 				   ( CurrentBackup != null ));
 		}
 
-		public BindableCollection<LibraryConfiguration> LibraryList => mLibraries;
-
         public LibraryConfiguration CurrentLibrary {
 			get => mCurrentLibrary;
             set {
@@ -126,8 +130,6 @@ namespace Noise.Librarian.ViewModels {
 				RaisePropertyChanged( () => CurrentLibrary );
 			}
 		}
-
-		public BindableCollection<LibraryBackup> BackupList => mLibraryBackups;
 
         public LibraryBackup CurrentBackup {
 			get => mCurrentBackup;

@@ -5,7 +5,7 @@ using Ionic.Zip;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Librarian.Models {
+namespace Noise.Core.Platform {
 	public class DirectoryArchiver : IDirectoryArchiver {
 		public void BackupDirectory( string sourcePath, string destinationName ) {
 			using( var zipFile = new ZipFile( destinationName ) ) {
