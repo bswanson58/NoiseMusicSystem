@@ -41,7 +41,7 @@ namespace Noise.Core.Database {
             if( library != null ) {
                 mLibraryConfiguration.Close( library );
 
-                await mLibrarian.BackupLibraryAsync( library, progress );
+                await mLibrarian.BackupLibrary( library, progress );
 
                 library.BackupPressure = 0;
                 mLibraryConfiguration.UpdateConfiguration( library );

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using ReusableBits;
 
 namespace Noise.Core.Database {
 	public class LibrarianModel : ILibrarian {
@@ -16,10 +14,6 @@ namespace Noise.Core.Database {
 		private readonly IDirectoryArchiver		mDirectoryArchiver;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly INoiseLog				mLog;
-		private TaskHandler						mBackupTaskHandler;
-		private TaskHandler						mRestoreTaskHandler;
-		private TaskHandler						mExportTaskHandler;
-		private TaskHandler						mImportTaskHandler;
 
 		public LibrarianModel( IDatabaseUtility databaseUtility,
 							   IMetadataManager metadataManager,
@@ -33,29 +27,12 @@ namespace Noise.Core.Database {
 			mLog = log;
 		}
 
-		protected TaskHandler BackupTaskHandler {
-			get {
-				if( mBackupTaskHandler == null ) {
-					Execute.OnUIThread( () => mBackupTaskHandler = new TaskHandler());
-				}
-
-				return( mBackupTaskHandler );
-			}
-			set => mBackupTaskHandler = value;
-        }
-
-		public void BackupLibrary( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
-			if(( library != null ) &&
-			   ( progressCallback != null )) {
-				BackupTaskHandler.StartTask( () => BackupLibraryTask( library, progressCallback ),
-											 () => { },
-											 error => progressCallback( new LibrarianProgressReport( "Backup Failed.", library.LibraryName )));
-			}
-		}
-
-		public Task BackupLibraryAsync( LibraryConfiguration configuration, Action<LibrarianProgressReport> progressCallback ) {
+		public Task BackupLibrary( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
 			return Task.Run( () => {
-				BackupLibraryTask( configuration, progressCallback );
+				if(( library != null ) &&
+                   ( progressCallback != null )) {
+                    BackupLibraryTask( library, progressCallback );
+				}
             });
         }
 
@@ -129,24 +106,13 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		protected TaskHandler RestoreTaskHandler {
-			get {
-				if( mRestoreTaskHandler == null ) {
-					Execute.OnUIThread( () => mRestoreTaskHandler = new TaskHandler());
-				}
-
-				return( mRestoreTaskHandler );
-			}
-			set => mRestoreTaskHandler = value;
-        }
-
-		public void RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
-			if(( library != null ) &&
-			   ( progressCallback != null )) {
-				RestoreTaskHandler.StartTask( () => RestoreLibraryTask( library, libraryBackup, progressCallback ),
-											 () => { },
-											 error => progressCallback( new LibrarianProgressReport( "Restore Failed.", library.LibraryName )));
-			}
+		public Task RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+			return Task.Run( () => {
+                if(( library != null ) &&
+                   ( progressCallback != null )) {
+                    RestoreLibraryTask( library, libraryBackup, progressCallback );
+                }
+            });
 		}
 
 		private void RestoreLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
@@ -219,24 +185,13 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		protected TaskHandler ExportTaskHandler {
-			get {
-				if( mExportTaskHandler == null ) {
-					Execute.OnUIThread( () => mExportTaskHandler = new TaskHandler());
-				}
-
-				return( mExportTaskHandler );
-			}
-			set => mExportTaskHandler = value;
-        }
-
-		public void ExportLibrary( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
-			if(( library != null ) &&
-			   ( progressCallback != null )) {
-				ExportTaskHandler.StartTask( () => ExportLibraryTask( library, exportPath, progressCallback ),
-											 () => progressCallback( new LibrarianProgressReport( "Export Completed - Success", library.LibraryName )),
-											 error => progressCallback( new LibrarianProgressReport( "Export Failed.", library.LibraryName )));
-			}
+		public Task ExportLibrary( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
+			return Task.Run( () => {
+                if(( library != null ) &&
+                   ( progressCallback != null )) {
+                    ExportLibraryTask( library, exportPath, progressCallback );
+                }
+            });
 		}
 
 		private void ExportLibraryTask( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
@@ -279,15 +234,19 @@ namespace Noise.Core.Database {
 						progressCallback( new LibrarianProgressReport( "Starting Search Database export", library.LibraryName, 0 ));
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
-						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
-						if(!Directory.Exists( backupPath )) {
-							Directory.CreateDirectory( backupPath );
-						}
-						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, progressCallback );
+						if(!library.IsMetadataInPlace ) {
+                            backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+
+                            if(!Directory.Exists( backupPath )) {
+                                Directory.CreateDirectory( backupPath );
+                            }
+                            mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, progressCallback );
+                        }
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
 						mLog.LogMessage( $"Export of {library} was completed to ('{libraryBackup.BackupPath}')" );
+                        progressCallback( new LibrarianProgressReport( "Export Completed - Success", library.LibraryName ));
 					}
 				}
 				catch( Exception ex ) {
@@ -303,24 +262,13 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		protected TaskHandler ImportTaskHandler {
-			get {
-				if( mImportTaskHandler == null ) {
-					Execute.OnUIThread( () => mImportTaskHandler = new TaskHandler());
-				}
-
-				return( mImportTaskHandler );
-			}
-			set => mImportTaskHandler = value;
-        }
-
-		public void ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
-			if(( library != null ) &&
-			   ( progressCallback != null )) {
-				ImportTaskHandler.StartTask( () => ImportLibraryTask( library, libraryBackup, progressCallback ),
-											 () => progressCallback( new LibrarianProgressReport( "Import Completed - Success", library.LibraryName )),
-											 error => progressCallback( new LibrarianProgressReport( "Import Failed.", library.LibraryName )));
-			}
+		public Task ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+			return Task.Run( () => {
+                if(( library != null ) &&
+                   ( progressCallback != null )) {
+                    ImportLibraryTask( library, libraryBackup, progressCallback );
+                }
+            });
 		}
 
 		private void ImportLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
@@ -365,12 +313,15 @@ namespace Noise.Core.Database {
 							mDirectoryArchiver.RestoreDirectory( backupSearchName, newLibrary.SearchDatabasePath );
 						}
 
-						var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
-						mDirectoryArchiver.RestoreSubdirectories( backupBlobPath, newLibrary.BlobDatabasePath, progressCallback );
+						if(!library.IsMetadataInPlace ) {
+                            var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+                            mDirectoryArchiver.RestoreSubdirectories( backupBlobPath, newLibrary.BlobDatabasePath, progressCallback );
+                        }
 
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 
-						mLog.LogMessage( $"Imported {library}" );
+                        progressCallback( new LibrarianProgressReport( "Import Completed - Success", library.LibraryName ));
+                        mLog.LogMessage( $"Imported {library}" );
 					}
 				}
 			}

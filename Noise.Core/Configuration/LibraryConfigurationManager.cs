@@ -145,6 +145,7 @@ namespace Noise.Core.Configuration {
 				}
 
 				Directory.CreateDirectory( libraryPath );
+                configuration.SetConfigurationPath( libraryPath );
 				configuration.Persist( Path.Combine( libraryPath, Constants.LibraryConfigurationFile ));
 
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.LibraryDatabaseDirectory ));
