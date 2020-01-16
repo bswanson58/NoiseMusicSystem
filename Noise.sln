@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Core", "Noise.Core\Noise.Core.csproj", "{33A45442-71E5-4BFE-B37F-129EDB4F18E8}"
 EndProject
@@ -564,9 +564,7 @@ Global
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Installers - Release|Mixed Platforms.ActiveCfg = Release|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Installers - Release|Mixed Platforms.Build.0 = Release|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Installers - Release|x64.ActiveCfg = Release|x64
-		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Installers - Release|x64.Build.0 = Release|x64
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Installers - Release|x86.ActiveCfg = Release|x86
-		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Installers - Release|x86.Build.0 = Release|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Release|Any CPU.ActiveCfg = Release|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Release|Mixed Platforms.Build.0 = Release|x86
@@ -631,9 +629,7 @@ Global
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Installers - Release|Mixed Platforms.ActiveCfg = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Installers - Release|Mixed Platforms.Build.0 = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Installers - Release|x64.ActiveCfg = Release|x64
-		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Installers - Release|x64.Build.0 = Release|x64
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Installers - Release|x86.ActiveCfg = Release|x86
-		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Installers - Release|x86.Build.0 = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|Any CPU.ActiveCfg = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|Mixed Platforms.Build.0 = Release|x86

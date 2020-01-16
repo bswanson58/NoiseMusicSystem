@@ -154,6 +154,7 @@
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
 				<ComponentGroupRef Id="ConfigurationFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
+        <ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
@@ -177,7 +178,6 @@
 		</Feature>
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
-			<ComponentGroupRef Id="DotNetZipFiles"/>
 		</Feature>
 
 		<UIRef Id="InstallUI" />
