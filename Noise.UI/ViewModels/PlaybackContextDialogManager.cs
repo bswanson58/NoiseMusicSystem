@@ -5,8 +5,8 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ContextType {
-		public string	ContextName { get; private set; }
-		public bool		IsAlbumContext { get; private set; }
+		public string	ContextName { get; }
+		public bool		IsAlbumContext { get; }
 
 		public ContextType( string name, bool isAlbumContext ) {
 			ContextName = name;
@@ -17,7 +17,7 @@ namespace Noise.UI.ViewModels {
 	public class PlaybackContextDialogManager : DialogModelBase {
 		private readonly IAudioController		mAudioController;
 		private readonly IPlaybackContextWriter	mContextWriter;
-		private DbAlbum							mCurentAlbum;
+		private DbAlbum							mCurrentAlbum;
 		private	DbTrack							mCurrentTrack;
 		private PlaybackContext					mTrackContext;
 		private PlaybackContext					mAlbumContext;
@@ -26,6 +26,10 @@ namespace Noise.UI.ViewModels {
 		private readonly ContextType			mAlbumContextType;
 		private readonly ContextType			mTrackContextType;
 		private ContextType						mCurrentContext;
+
+        public	IList<ContextType>				ContextTypes => mContextTypes;
+        public	ScPlayContext					PlaybackContext => mIsAlbumContext ? mAlbumContext : mTrackContext;
+        public	string							ContextDescription => mIsAlbumContext ? mCurrentAlbum.Name : mCurrentTrack.Name;
 
 		public PlaybackContextDialogManager( IAudioController audioController, IPlaybackContextWriter contextWriter ) {
 			mAudioController = audioController;
@@ -37,7 +41,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void SetTrack( DbAlbum album, DbTrack track ) {
-			mCurentAlbum = album;
+			mCurrentAlbum = album;
 			mCurrentTrack = track;
 
 			mTrackContext = mContextWriter.GetTrackContext( mCurrentTrack ) ?? new PlaybackContext();
@@ -59,17 +63,9 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IList<ContextType> ContextTypes {
-			get { return(mContextTypes); }
-		}
-
-		public ScPlayContext PlaybackContext {
-			get { return( mIsAlbumContext ? mAlbumContext : mTrackContext ); }
-		}
-
-		public ContextType CurrentContext {
-			get { return( mCurrentContext ); }
-			set {
+        public ContextType CurrentContext {
+			get => ( mCurrentContext );
+            set {
 				mCurrentContext = value;
 				mIsAlbumContext = mCurrentContext.IsAlbumContext;
 				
@@ -78,11 +74,5 @@ namespace Noise.UI.ViewModels {
 				RaisePropertyChanged( () => ContextDescription );
 			}
 		}
-
-		public string ContextDescription {
-			get {
-				return( mIsAlbumContext ? mCurentAlbum.Name : mCurrentTrack.Name );
-			}
-		}
-	}
+    }
 }
