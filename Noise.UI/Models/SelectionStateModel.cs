@@ -10,7 +10,7 @@ using Noise.UI.Interfaces;
 
 namespace Noise.UI.Models {
 	public class SelectionStateModel : ISelectionState,
-									   IHandle<Events.WindowLayoutRequest>,
+									   IHandle<Events.WindowLayoutRequest>, IHandle<Events.DatabaseClosing>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TagFocusRequested>,
                                        IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackStopped> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -67,6 +67,14 @@ namespace Noise.UI.Models {
 			ClearArtist();
 			ClearAlbum();
 		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearArtist();
+			ClearAlbum();
+
+			CurrentTag = new DbTag( eTagGroup.User, String.Empty );
+			CurrentlyPlayingItem = new PlayingItem();
+        }
 
 		public void Handle( Events.ArtistFocusRequested args ) {
 			ChangeToArtist( args.ArtistId, true );
