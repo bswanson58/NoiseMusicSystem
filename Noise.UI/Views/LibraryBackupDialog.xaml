@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LibraryBackupDialogModel, IsDesignTimeCreatable=False}"
              Tag="Library Backup"
-             Height="180" Width="450">
+             Height="185" Width="450">
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="True"/>
@@ -36,8 +36,9 @@
 
             <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Current Backup Pressure:"/>
 
-            <Grid Grid.Column="1" Margin="5,0,0,0">
-                <Rectangle StrokeThickness="0" RenderTransformOrigin="0.5,0.5">
+            <Grid Grid.Column="1" Margin="3,0,0,0">
+                <Rectangle Stroke="{StaticResource ControlTextColor}"/>
+                <Rectangle StrokeThickness="0" RenderTransformOrigin="0.5,0.5" Margin="2">
                     <Rectangle.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleY="-1" ScaleX="1"/>
@@ -45,7 +46,7 @@
                     </Rectangle.RenderTransform>
                     <Rectangle.Fill>
                         <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                            <GradientStop Color="LimeGreen" Offset="{Binding CurrentBackupPressurePercentage}"/>
+                            <GradientStop Color="#FFEA6500" Offset="{Binding CurrentBackupPressurePercentage}"/>
                             <GradientStop Color="Transparent" Offset="{Binding CurrentBackupPressurePercentage}"/>
                         </LinearGradientBrush>
                     </Rectangle.Fill>
@@ -53,17 +54,22 @@
             </Grid>
         </Grid>
 
-        <Button Grid.Row="3" Margin="10,5" HorizontalAlignment="Left" Style="{StaticResource GeneralButtonStyle}" Padding="10,3" Content="Backup Library Now" Command="{Binding BackupLibrary}"/>
+        <Button Grid.Row="3" Margin="10,15,0,0" HorizontalAlignment="Left" Style="{StaticResource GeneralButtonStyle}" Padding="10,3" Content="Backup Library Now" Command="{Binding BackupLibrary}"/>
 
-        <Grid Grid.Row="4" Margin="10,5,10,15">
+        <Grid Grid.Row="4" Margin="10,3,10,15">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="{Binding ProgressStatus}"/>
+            <StackPanel Grid.Row="0" Orientation="Vertical">
+                <TextBlock Style="{StaticResource ControlTitleStyle}" Text="When backing up the library, the current library will be closed,"/>
+                <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" the backup completed, and the library will be re-opened."/>
+            </StackPanel>
 
-            <ProgressBar Grid.Row="1" Minimum="0" Maximum="1000" Value="{Binding ProgressAmount}"
+            <TextBlock Grid.Row="1" Margin="0,5,0,0" Text="{Binding ProgressStatus}"/>
+            <ProgressBar Grid.Row="2" Minimum="0" Maximum="1000" Value="{Binding ProgressAmount}"
                          Visibility="{Binding BackupActive, Converter={StaticResource VisibleOnTrue}}"/>
         </Grid>
     </Grid>
