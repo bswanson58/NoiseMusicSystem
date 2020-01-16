@@ -3,6 +3,7 @@ using System.Linq;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
@@ -22,7 +23,8 @@ namespace Noise.UI.ViewModels {
 
 	internal class LibrarySelectorViewModel : AutomaticCommandBase,
 											  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
-											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, IHandle<Events.DatabaseStatisticsUpdated> {
+											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, 
+                                              IHandle<Events.DatabaseStatisticsUpdated>, IHandle<Events.LibraryBackupPressureThreshold> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IUiLog					mLog;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
@@ -38,6 +40,7 @@ namespace Noise.UI.ViewModels {
 
 	    public  string                                      LibraryStatistics => mDatabaseStatistics;
 	    public  BindableCollection<LibraryConfiguration>    LibraryList => mLibraries;
+		public	bool										BackupNeeded { get; private set; }
 
 		public	IInteractionRequest							LibraryBackupRequest => mLibraryBackupRequest;
 	    public  IInteractionRequest                         LibraryConfigurationRequest => mLibraryConfigurationRequest;
@@ -58,6 +61,7 @@ namespace Noise.UI.ViewModels {
 
 			LoadLibraries();
 		    SetLibraryStatistics( mLibraryBuilder.LibraryStatistics );
+            UpdateBackupNeeded();
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -90,6 +94,8 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.LibraryChanged args ) {
 			RaisePropertyChanged( () => CurrentLibrary );
 			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+
+			UpdateBackupNeeded();
 		}
 
 		public void Handle( Events.LibraryListChanged args ) {
@@ -108,6 +114,10 @@ namespace Noise.UI.ViewModels {
             SetLibraryStatistics( message.DatabaseStatistics );
 		}
 
+		public void Handle( Events.LibraryBackupPressureThreshold args ) {
+			UpdateBackupNeeded();
+		}
+
         private void SetLibraryStatistics( IDatabaseStatistics statistics ) {
             mDatabaseStatistics = $"Artists: {statistics.ArtistCount}, Albums: {statistics.AlbumCount}";
 
@@ -121,9 +131,23 @@ namespace Noise.UI.ViewModels {
 					OpenLibrary( value.LibraryId );
 				}
 
-				RaisePropertyChanged( () => CurrentLibrary );
+                RaisePropertyChanged( () => CurrentLibrary );
 			}
 		}
+
+		private void UpdateBackupNeeded() {
+            var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+			if(( preferences != null ) &&
+               ( mLibraryConfiguration.Current != null )) {
+                BackupNeeded = mLibraryConfiguration.Current.BackupPressure >= preferences.MaximumBackupPressure;
+			}
+			else {
+				BackupNeeded = false;
+            }
+
+            RaisePropertyChanged( () => BackupNeeded );
+        }
 
 		public void Execute_UpdateLibrary() {
 			mLibraryBuilder.StartLibraryUpdate();

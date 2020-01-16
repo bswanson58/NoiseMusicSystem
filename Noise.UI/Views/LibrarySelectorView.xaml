@@ -16,6 +16,18 @@
         <Binding Path="LibrarySelectorViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <Style x:Key="BackupNeededStyle" TargetType="Button" BasedOn="{StaticResource PathButtonStyle}">
+            <Setter Property="ToolTip" Value="Backup Library"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BackupNeeded}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource SignatureSolidBrush}"/>
+                    <Setter Property="ToolTip" Value="A Library Backup Is Required!"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <i:Interaction.Behaviors>
         <behaviours:InteractionRequestDialogBehavior DialogClass="LibraryConfiguration"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
@@ -64,7 +76,7 @@
             <StackPanel Grid.Column="2" Tag="dimmed" Margin="5,0,0,0" Orientation="Horizontal">
                 <Button Height="25" Width="25" Margin="2,0" Padding="1" ToolTip="Sync Library" Style="{StaticResource PathButtonStyle}"
                         Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
-                <Button Height="25" Width="25" Margin="2,0" Padding="3" ToolTip="Backup Library" Style="{StaticResource PathButtonStyle}"
+                <Button Height="25" Width="25" Margin="2,0" Padding="3" Style="{StaticResource BackupNeededStyle}"
                         Command="{Binding Path=LibraryBackup}" Content="{StaticResource Path_Backup}"/>
                 <Button Height="25" Width="25" Margin="2,0" ToolTip="Configure Libraries" Style="{StaticResource PathButtonStyle}" Padding="3"
                         Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
