@@ -13,6 +13,8 @@
 
 		public bool BackgroundTasks { get; set; }
 
+		public bool	BackupTasks { get; set; }
+
 		public bool BuildingDiscovery { get; set; }
 		public bool BuildingDiscoverFolders { get; set; }
 		public bool BuildingDiscoverFiles { get; set; }
@@ -51,29 +53,18 @@
 
 		public bool UserInterface { get; set; }
 
-		public bool LogAnyBuildingDiscovery {
-			get { return( BuildingDiscovery || BuildingDiscoverFiles || BuildingDiscoverFolders ); }
-		}
+		public bool LogAnyBuildingDiscovery => BuildingDiscovery || BuildingDiscoverFiles || BuildingDiscoverFolders;
 
-		public bool LogAnyCleaning {
-			get {  return( MetadataCleaning || MetadataCleaningDomainObjects || MetadataCleaningFileObjects ); }
-		}
+        public bool LogAnyCleaning => MetadataCleaning || MetadataCleaningDomainObjects || MetadataCleaningFileObjects;
 
-		public bool LogAnyClassification {
-			get {  return( FileClassification || FileClassificationFiles || FileClassificationSteps || FileClassificationUnknown ||
-						   FileClassificationArtists || FileClassificationAlbums || FileClassificationTracks || FileClassificationArtwork || FileClassificationTextInfo );
-			}
-		}
+        public bool LogAnyClassification => FileClassification || FileClassificationFiles || FileClassificationSteps || FileClassificationUnknown ||
+                                            FileClassificationArtists || FileClassificationAlbums || FileClassificationTracks || FileClassificationArtwork || FileClassificationTextInfo;
 
-		public bool LogAnyBuildingSummary {
-			get {  return( BuildingSummary || BuildingSummaryArtists || BuildingSummaryAlbums ); }
-		}
+        public bool LogAnyBuildingSummary => BuildingSummary || BuildingSummaryArtists || BuildingSummaryAlbums;
 
-		public bool LogAnyBuilding {
-			get {  return( LogAnyBuildingDiscovery || LogAnyCleaning || LogAnyClassification || BuildingSummary ); }
-		}
+        public bool LogAnyBuilding => LogAnyBuildingDiscovery || LogAnyCleaning || LogAnyClassification || BuildingSummary;
 
-		public LoggingPreferences() {
+        public LoggingPreferences() {
 			LogExceptions = true;
 		}
 	}

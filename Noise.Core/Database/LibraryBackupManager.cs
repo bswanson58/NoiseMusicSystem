@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -13,10 +14,10 @@ namespace Noise.Core.Database {
         private readonly ILibraryConfiguration  mLibraryConfiguration;
         private readonly IPreferences           mPreferences;
         private readonly IEventAggregator       mEventAggregator;
-        private readonly INoiseLog              mLog;
+        private readonly ILogBackup             mLog;
 
         public LibraryBackupManager( ILifecycleManager lifecycleManager, ILibrarian librarian, ILibraryConfiguration configuration,
-                                     IPreferences preferences, IEventAggregator eventAggregator, INoiseLog log ) {
+                                     IPreferences preferences, IEventAggregator eventAggregator, ILogBackup log ) {
             mLibrarian = librarian;
             mLibraryConfiguration = configuration;
             mPreferences = preferences;
@@ -47,6 +48,8 @@ namespace Noise.Core.Database {
                 mLibraryConfiguration.UpdateConfiguration( library );
 
                 mLibraryConfiguration.Open( library );
+
+                mLog.LogLibraryBackup( library.LibraryName );
             }
         }
 
@@ -60,10 +63,12 @@ namespace Noise.Core.Database {
 
                 var preferences = mPreferences.Load<NoiseCorePreferences>();
 
+                mLog.LogBackupPressure( args.PressureSource, config.BackupPressure, preferences.MaximumBackupPressure );
+
                 if( config.BackupPressure > preferences.MaximumBackupPressure ) {
                     mEventAggregator.PublishOnUIThread( new Events.LibraryBackupPressureThreshold( Events.LibraryBackupPressureThreshold.ThresholdLevel.Exceeded ));
 
-                    mLog.LogMessage( $"Library ({config.LibraryName}) backup pressure exceeded." );
+                    mLog.LogBackupThresholdExceeded( config.LibraryName, preferences.MaximumBackupPressure );
                 }
             }
         }

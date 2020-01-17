@@ -286,6 +286,7 @@
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
     <Compile Include="Logging\ILogBackgroundTasks.cs" />
+    <Compile Include="Logging\ILogBackup.cs" />
     <Compile Include="Logging\ILogLibraryBuilding.cs" />
     <Compile Include="Logging\ILogLibraryBuildingSidecars.cs" />
     <Compile Include="Logging\ILogLibraryBuildingSummary.cs" />
@@ -298,6 +299,7 @@
     <Compile Include="Logging\ILogPlayStrategy.cs" />
     <Compile Include="Logging\ILogUserStatus.cs" />
     <Compile Include="Logging\LogBackgroundTasks.cs" />
+    <Compile Include="Logging\LogBackup.cs" />
     <Compile Include="Logging\LogLibraryBuilding.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
     <Compile Include="Logging\LogLibraryBuildingSidecars.cs" />
