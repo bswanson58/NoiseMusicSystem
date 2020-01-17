@@ -32,7 +32,13 @@ namespace Noise.Infrastructure.Dto {
         public ePlayAdjacentStrategy    PlayAdjacentStrategy { get; set; }
         public bool                     DoNotStrategyPlay { get; set; }
 
-		public DbTrack() {
+        public TimeSpan					Duration => new TimeSpan( 0, 0, 0, 0, DurationMilliseconds );
+        public bool						IsUserRating => true;
+		public int						RatingSortValue => IsFavorite ? 6 : 0 + Rating;
+
+        public DateTime DateAdded => ( new DateTime( DateAddedTicks ));
+
+        public DbTrack() {
 			Album = Constants.cDatabaseNullOid;
 			DateAddedTicks = DateTime.Now.Ticks;
 			Encoding = eAudioEncoding.Unknown;
@@ -47,16 +53,10 @@ namespace Noise.Infrastructure.Dto {
             PlayAdjacentStrategy = ePlayAdjacentStrategy.None;
 		}
 
-		public TimeSpan Duration => ( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds ));
-
         public long Genre {
 			get => ( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre );
             set => UserGenre = value;
         }
-
-		public bool IsUserRating => ( true );
-
-        public DateTime DateAdded => ( new DateTime( DateAddedTicks ));
 
         public void UpdateLastPlayed() {
 			PlayCount++;

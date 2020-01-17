@@ -74,6 +74,7 @@ namespace Noise.UI.Dto {
 
             Tracks = CollectionViewSource.GetDefaultView( mTracks );
             Tracks.SortDescriptions.Add( new SortDescription( nameof( SortTrackName ), ListSortDirection.Ascending ));
+            Tracks.SortDescriptions.Add( new SortDescription( "Track.RatingSortValue", ListSortDirection.Descending ));
             Tracks.SortDescriptions.Add( new SortDescription( "Artist.Name", ListSortDirection.Ascending ));
             Tracks.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
         }
