@@ -433,5 +433,14 @@ namespace Noise.Infrastructure {
 		}
 
         public class UserTagsChanged { }
+
+		public class LibraryUserState {
+			public	bool						IsRestoring { get; set; }
+			public	Dictionary<string, object>	State { get; }
+
+			public LibraryUserState() {
+				State = new Dictionary<string, object>();
+            }
+        }
 	}
 }

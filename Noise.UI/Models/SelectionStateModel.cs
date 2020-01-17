@@ -9,13 +9,26 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Interfaces;
 
 namespace Noise.UI.Models {
+	internal class SelectionUserState {
+		public	long	ArtistId { get; }
+		public	long	AlbumId { get; }
+		public	long	TagId { get; }
+
+		public SelectionUserState( DbArtist artist, DbAlbum album, DbTag tag ) {
+			ArtistId = artist?.DbId ?? Constants.cDatabaseNullOid;
+			AlbumId = album?.DbId ?? Constants.cDatabaseNullOid;
+			TagId = tag?.DbId ?? Constants.cDatabaseNullOid;
+        }
+    }
+
 	public class SelectionStateModel : ISelectionState,
-									   IHandle<Events.WindowLayoutRequest>, IHandle<Events.DatabaseClosing>,
+									   IHandle<Events.WindowLayoutRequest>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TagFocusRequested>,
                                        IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackStopped> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITagProvider			mTagProvider;
 		private readonly Subject<DbArtist>		mArtistSubject;
 		private readonly Subject<DbAlbum>		mAlbumSubject;
         private readonly Subject<DbTag>         mTagSubject;
@@ -36,10 +49,11 @@ namespace Noise.UI.Models {
         public  IObservable<DbTag>              CurrentTagChanged => mTagSubject.AsObservable();
         public  IObservable<PlayingItem>        PlayingTrackChanged => mPlayingSubject.AsObservable();
 
-        public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
+        public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagProvider tagProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
+			mTagProvider = tagProvider;
 
 			mArtistSubject = new Subject<DbArtist>();
 			mAlbumSubject = new Subject<DbAlbum>();
@@ -74,6 +88,23 @@ namespace Noise.UI.Models {
 
 			CurrentTag = new DbTag( eTagGroup.User, String.Empty );
 			CurrentlyPlayingItem = new PlayingItem();
+        }
+
+		public void Handle( Events.LibraryUserState state ) {
+            if( state.IsRestoring ) {
+    			if( state.State.ContainsKey( nameof( SelectionStateModel ))) {
+	    			var objectState = state.State[nameof( SelectionStateModel )];
+
+		    		if( objectState is SelectionUserState selectionState ) {
+                            ChangeToArtist( selectionState.ArtistId, false );
+							ChangeToAlbum( selectionState.AlbumId );
+							ChangeToTag( selectionState.TagId );
+				    }
+                }
+            }
+            else {
+                state.State.Add( nameof( SelectionStateModel ), new SelectionUserState( CurrentArtist, CurrentAlbum, CurrentTag ));
+            }
         }
 
 		public void Handle( Events.ArtistFocusRequested args ) {
@@ -198,6 +229,10 @@ namespace Noise.UI.Models {
 
             ClearCurrentVolume();
 		}
+
+		private void ChangeToTag( long tagId ) {
+			ChangeToTag( mTagProvider.GetTag( tagId ));
+        }
 
         private void ChangeToTag( DbTag tag ) {
             CurrentTag = tag;

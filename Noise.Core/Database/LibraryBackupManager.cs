@@ -40,6 +40,10 @@ namespace Noise.Core.Database {
             var library = mLibraryConfiguration.Current;
 
             if( library != null ) {
+                var userState = new Events.LibraryUserState() { IsRestoring = false };
+
+                mEventAggregator.PublishOnUIThread( userState );
+
                 mLibraryConfiguration.Close( library );
 
                 await mLibrarian.BackupLibrary( library, progress );
@@ -48,6 +52,9 @@ namespace Noise.Core.Database {
                 mLibraryConfiguration.UpdateConfiguration( library );
 
                 mLibraryConfiguration.Open( library );
+
+                userState.IsRestoring = true;
+                mEventAggregator.PublishOnUIThread( userState );
 
                 mLog.LogLibraryBackup( library.LibraryName );
             }
