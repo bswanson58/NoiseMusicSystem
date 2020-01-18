@@ -9,6 +9,7 @@ using ReusableBits.Ui.Utility;
 namespace ReusableBits.Ui.Behaviours {
     public class WidgetOpacity : Behavior<FrameworkElement> {
         private readonly List<FrameworkElement> mElements;
+        private bool                            mMouseInHouse;
 
         public static readonly DependencyProperty TagNameProperty = DependencyProperty.Register(
             "TagName", typeof( string ), typeof( WidgetOpacity ), new PropertyMetadata( null, OnTagNameChanged ));
@@ -22,6 +23,28 @@ namespace ReusableBits.Ui.Behaviours {
         public string TagName {
             get => GetValue( TagNameProperty ) as string;
             set => SetValue( TagNameProperty, value );
+        }
+
+        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(
+            "IsEnabled", typeof( bool ), typeof( WidgetOpacity ), new PropertyMetadata( true, OnEnabledChanged ));
+
+        public bool IsEnabled {
+            get => (bool)GetValue( IsEnabledProperty );
+            set => SetValue( IsEnabledProperty, value );
+        }
+
+        public static readonly DependencyProperty IsDisabledProperty = DependencyProperty.Register(
+            "IsDisabled", typeof( bool ), typeof( WidgetOpacity ), new PropertyMetadata( false, OnEnabledChanged ));
+
+        public bool IsDisabled {
+            get => (bool)GetValue( IsDisabledProperty );
+            set => SetValue( IsDisabledProperty, value );
+        }
+
+        private static void OnEnabledChanged( DependencyObject sender, DependencyPropertyChangedEventArgs args ) {
+            if( sender is WidgetOpacity widget ) {
+                widget.OnEnableChanged();
+            }
         }
 
         public static readonly DependencyProperty FadeInAnimationProperty = DependencyProperty.Register(
@@ -42,6 +65,7 @@ namespace ReusableBits.Ui.Behaviours {
 
         public WidgetOpacity() {
             mElements = new List<FrameworkElement>();
+            mMouseInHouse = false;
         }
 
         protected override void OnAttached() {
@@ -55,12 +79,27 @@ namespace ReusableBits.Ui.Behaviours {
         private void OnLoaded( object sender, RoutedEventArgs args ) {
             LoadElements();
 
-            FadeOutWidgets();
+            if( Enabled ) {
+                FadeOutWidgets();
+            }
         }
 
         public void OnTagNameChanged() {
             LoadElements();
         }
+
+        public void OnEnableChanged() {
+            if( Enabled ) {
+                if(!mMouseInHouse ) {
+                    FadeOutWidgets();
+                }
+            }
+            else {
+                FadeInWidgets();
+            }
+        }
+
+        private bool Enabled => IsEnabled && !IsDisabled;
 
         private void LoadElements() {
             if( AssociatedObject != null ) {
@@ -71,6 +110,14 @@ namespace ReusableBits.Ui.Behaviours {
         }
 
         private void OnMouseEnter( object sender, MouseEventArgs args ) {
+            mMouseInHouse = true;
+
+            if( Enabled ) {
+                FadeInWidgets();
+            }
+        }
+
+        private void FadeInWidgets() {
             var animation = FadeInAnimation;
 
             if( animation != null ) {
@@ -82,7 +129,11 @@ namespace ReusableBits.Ui.Behaviours {
         }
 
         private void OnMouseLeave( object sender, MouseEventArgs args ) {
-            FadeOutWidgets();
+            mMouseInHouse = false;
+
+            if( Enabled ) {
+                FadeOutWidgets();
+            }
         }
 
         private void FadeOutWidgets() {
