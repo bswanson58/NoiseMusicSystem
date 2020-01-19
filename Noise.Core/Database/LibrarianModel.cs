@@ -27,16 +27,20 @@ namespace Noise.Core.Database {
 			mLog = log;
 		}
 
-		public Task BackupLibrary( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
+		public Task<bool> BackupLibrary( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
 			return Task.Run( () => {
 				if(( library != null ) &&
                    ( progressCallback != null )) {
-                    BackupLibraryTask( library, progressCallback );
+                    return BackupLibraryTask( library, progressCallback );
 				}
+
+				return false;
             });
         }
 
-		private void BackupLibraryTask( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
+		private bool BackupLibraryTask( LibraryConfiguration library, Action<LibrarianProgressReport> progressCallback ) {
+			var retValue = false;
+
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryBackup( library );
 
@@ -91,6 +95,7 @@ namespace Noise.Core.Database {
 
 						mLog.LogMessage( $"Backup of {library} was completed ('{libraryBackup.BackupDate}')" );
                         progressCallback( new LibrarianProgressReport( "Backup Completed - Success", library.LibraryName ));
+						retValue = true;
                     }
 				}
 				catch( Exception ex ) {
@@ -104,18 +109,24 @@ namespace Noise.Core.Database {
 				progressCallback( new LibrarianProgressReport( "Completed Library backup.", "Failed" ));
 				mLog.LogException( $"Could not open library backup. {library}", ex );
 			}
+
+			return retValue;
 		}
 
-		public Task RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+		public Task<bool> RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
 			return Task.Run( () => {
                 if(( library != null ) &&
                    ( progressCallback != null )) {
-                    RestoreLibraryTask( library, libraryBackup, progressCallback );
+                    return RestoreLibraryTask( library, libraryBackup, progressCallback );
                 }
+
+				return false;
             });
 		}
 
-		private void RestoreLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+		private bool RestoreLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+			var retValue = false;
+
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
@@ -174,6 +185,7 @@ namespace Noise.Core.Database {
 
                         progressCallback( new LibrarianProgressReport(  "Restore Completed - Success", library.LibraryName ));
 						mLog.LogMessage( $"Restore of {library} was completed ('{libraryBackup.BackupDate.ToShortDateString()} - {libraryBackup.BackupDate.ToShortTimeString()}')" );
+						retValue = true;
 					}
 				}
 			}
@@ -183,18 +195,24 @@ namespace Noise.Core.Database {
 				progressCallback( new LibrarianProgressReport( "Completed Library restore.", "Failed" ));
 				mLibraryConfiguration.AbortLibraryRestore( library, libraryBackup );
 			}
+
+			return retValue;
 		}
 
-		public Task ExportLibrary( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
+		public Task<bool> ExportLibrary( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
 			return Task.Run( () => {
                 if(( library != null ) &&
                    ( progressCallback != null )) {
-                    ExportLibraryTask( library, exportPath, progressCallback );
+                    return ExportLibraryTask( library, exportPath, progressCallback );
                 }
+
+				return false;
             });
 		}
 
-		private void ExportLibraryTask( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
+		private bool ExportLibraryTask( LibraryConfiguration library, string exportPath, Action<LibrarianProgressReport> progressCallback ) {
+			var retValue = false;
+
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryExport( library, exportPath );
 
@@ -247,6 +265,7 @@ namespace Noise.Core.Database {
 
 						mLog.LogMessage( $"Export of {library} was completed to ('{libraryBackup.BackupPath}')" );
                         progressCallback( new LibrarianProgressReport( "Export Completed - Success", library.LibraryName ));
+						retValue = true;
 					}
 				}
 				catch( Exception ex ) {
@@ -260,18 +279,24 @@ namespace Noise.Core.Database {
 				progressCallback( new LibrarianProgressReport( "Export library failed.", library.LibraryName ));
 				mLog.LogException( $"Export of {library}", ex );
 			}
+
+			return retValue;
 		}
 
-		public Task ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+		public Task<bool> ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
 			return Task.Run( () => {
                 if(( library != null ) &&
                    ( progressCallback != null )) {
-                    ImportLibraryTask( library, libraryBackup, progressCallback );
+                    return ImportLibraryTask( library, libraryBackup, progressCallback );
                 }
+
+				return false;
             });
 		}
 
-		private void ImportLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+		private bool ImportLibraryTask( LibraryConfiguration library, LibraryBackup libraryBackup, Action<LibrarianProgressReport> progressCallback ) {
+			var retValue = false;
+
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var newLibrary = mLibraryConfiguration.OpenLibraryImport( library, libraryBackup );
@@ -322,6 +347,7 @@ namespace Noise.Core.Database {
 
                         progressCallback( new LibrarianProgressReport( "Import Completed - Success", library.LibraryName ));
                         mLog.LogMessage( $"Imported {library}" );
+						retValue = true;
 					}
 				}
 			}
@@ -331,6 +357,8 @@ namespace Noise.Core.Database {
 				progressCallback( new LibrarianProgressReport( "Completed Library import - Failed", library.LibraryName ));
 				mLibraryConfiguration.AbortLibraryImport( library );
 			}
+
+			return retValue;
 		}
 	}
 }

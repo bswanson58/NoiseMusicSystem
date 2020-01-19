@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using System;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
@@ -27,6 +28,10 @@ namespace Noise.Core.Logging {
 
         public void LogLibraryBackup( string libraryName ) {
             LogOnCondition( mPreferences.BackupTasks, () => LogBackupMessage( "Backup completed for library: {0}", libraryName ));
+        }
+
+        public void LogBackupException( Exception ex ) {
+            LogException( cModuleName, cPhaseName, ex, "LogBackup", "Backup failed." );
         }
     }
 }

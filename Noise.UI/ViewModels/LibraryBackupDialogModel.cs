@@ -5,7 +5,6 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Logging;
 using Noise.UI.Support;
-using ReactiveUI;
 
 namespace Noise.UI.ViewModels {
     class LibraryBackupDialogModel : DialogModelBase {
@@ -63,6 +62,11 @@ namespace Noise.UI.ViewModels {
             set => Set( () => BackupActive, value );
         }
 
+        public bool BackupSucceeded {
+            get => Get( () => BackupSucceeded );
+            set => Set( () => BackupSucceeded, value );
+        }
+
         private void OnLibrarySelected() {
             if( CurrentLibrary != null ) {
                 var preferences = mPreferences.Load<NoiseCorePreferences>();
@@ -73,16 +77,16 @@ namespace Noise.UI.ViewModels {
         }
 
         public async void Execute_BackupLibrary() {
-            await mLibraryBackup.BackupLibrary( OnBackupProgress );
+            BackupActive = true;
+            BackupSucceeded = await mLibraryBackup.BackupLibrary( OnBackupProgress );
 
+            BackupActive = false;
             OnLibrarySelected();
         }
 
         private void OnBackupProgress( LibrarianProgressReport progress ) {
             ProgressAmount = progress.Progress;
             ProgressStatus = $"{progress.CurrentItem} - {progress.CurrentPhase}";
-
-            BackupActive = !progress.Completed;
         }
 
         public bool CanExecute_BackupLibrary() {

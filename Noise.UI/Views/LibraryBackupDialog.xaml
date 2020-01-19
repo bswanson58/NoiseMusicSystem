@@ -12,6 +12,29 @@
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="True"/>
+
+        <Style x:Key="BackupProgress" TargetType="TextBlock">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding BackupActive}" Value="False"/>
+                        <Condition Binding="{Binding BackupSucceeded}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Foreground" Value="LimeGreen"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding BackupActive}" Value="False"/>
+                        <Condition Binding="{Binding BackupSucceeded}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Foreground" Value="Red"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <Grid Margin="10">
@@ -68,7 +91,7 @@
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" the backup completed, and the library will be re-opened."/>
             </StackPanel>
 
-            <TextBlock Grid.Row="1" Margin="0,5,0,0" Text="{Binding ProgressStatus}"/>
+            <TextBlock Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource BackupProgress}" Text="{Binding ProgressStatus}"/>
             <ProgressBar Grid.Row="2" Minimum="0" Maximum="1000" Value="{Binding ProgressAmount}"
                          Visibility="{Binding BackupActive, Converter={StaticResource VisibleOnTrue}}"/>
         </Grid>

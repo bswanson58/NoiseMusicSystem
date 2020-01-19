@@ -36,28 +36,36 @@ namespace Noise.Core.Database {
             mEventAggregator.Unsubscribe( this );
         }
 
-        public async Task BackupLibrary( Action<LibrarianProgressReport> progress ) {
+        public async Task<bool> BackupLibrary( Action<LibrarianProgressReport> progress ) {
+            var retValue = false;
             var library = mLibraryConfiguration.Current;
 
             if( library != null ) {
-                var userState = new Events.LibraryUserState() { IsRestoring = false };
+                try {
+                    var userState = new Events.LibraryUserState() { IsRestoring = false };
 
-                mEventAggregator.PublishOnUIThread( userState );
+                    mEventAggregator.PublishOnUIThread( userState );
 
-                mLibraryConfiguration.Close( library );
+                    mLibraryConfiguration.Close( library );
 
-                await mLibrarian.BackupLibrary( library, progress );
+                    retValue = await mLibrarian.BackupLibrary( library, progress );
 
-                library.BackupPressure = 0;
-                mLibraryConfiguration.UpdateConfiguration( library );
+                    library.BackupPressure = 0;
+                    mLibraryConfiguration.UpdateConfiguration( library );
 
-                mLibraryConfiguration.Open( library );
+                    mLibraryConfiguration.Open( library );
 
-                userState.IsRestoring = true;
-                mEventAggregator.PublishOnUIThread( userState );
+                    userState.IsRestoring = true;
+                    mEventAggregator.PublishOnUIThread( userState );
 
-                mLog.LogLibraryBackup( library.LibraryName );
+                    mLog.LogLibraryBackup( library.LibraryName );
+                }
+                catch( Exception ex ) {
+                    mLog.LogBackupException( ex );
+                }
             }
+
+            return retValue;
         }
 
         public void Handle( Events.LibraryBackupPressure args ) {
