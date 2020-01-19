@@ -125,7 +125,7 @@ namespace Noise.Core.PlayQueue {
                             mPlayList.Add( CreateTrack( t.TrackId, t.Strategy, t.HasPlayed ));
                         });
 
-						FirePlayQueueChanged();
+						FirePlayQueueChanged( true );
                     }
                 }
             }
@@ -750,8 +750,8 @@ namespace Noise.Core.PlayQueue {
             mExhaustedStrategyPlay.StrategySpecification = strategy;
         }
 
-        private void FirePlayQueueChanged() {
-			mEventAggregator.PublishOnUIThread( new Events.PlayQueueChanged( this ));
+        private void FirePlayQueueChanged( bool queueRestored = false ) {
+			mEventAggregator.PublishOnUIThread( new Events.PlayQueueChanged( this, queueRestored ));
 		}
 	}
 }

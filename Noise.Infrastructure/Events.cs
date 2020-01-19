@@ -156,9 +156,11 @@ namespace Noise.Infrastructure {
 
 		public class PlayQueueChanged {
 			public IPlayQueue	PlayQueue { get; }
+			public bool			QueueRestored { get; }
 
-			public PlayQueueChanged( IPlayQueue playQueue ) {
+			public PlayQueueChanged( IPlayQueue playQueue, bool queueRestored = false ) {
 				PlayQueue = playQueue;
+				QueueRestored = queueRestored;
 			}
 		}
 

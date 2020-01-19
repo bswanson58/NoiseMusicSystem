@@ -23,6 +23,7 @@ namespace Noise.Core.PlaySupport {
 		QueueTrackAdded,
 		QueueExhausted,
 		QueueCleared,
+		QueueRestored,
 		PlayerStopped,
 		PlayerPaused,
 		PlayerPlaying,
@@ -57,9 +58,9 @@ namespace Noise.Core.PlaySupport {
 		private StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
 		private ePlayState									mCurrentPlayState;
 
-		public IObservable<ePlayState>			PlayStateChange { get { return ( mPlayStateSubject.AsObservable()); } }
+		public IObservable<ePlayState>			PlayStateChange => mPlayStateSubject.AsObservable();
 
-		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IRatings ratings,
+        public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IRatings ratings,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
 							   IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
@@ -99,9 +100,9 @@ namespace Noise.Core.PlaySupport {
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
 				mDisplayTimeElapsed = preferences.DisplayPlayTimeElapsed;
 
-				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
-				if( audioCongfiguration != null ) {
-					mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
+				var audioConfiguration = mPreferences.Load<AudioPreferences>();
+				if( audioConfiguration != null ) {
+					mEnableReplayGain = audioConfiguration.ReplayGainEnabled;
 				}
 
 				mPlayStateController = new StateMachine<ePlayState, eStateTriggers>( () => PlayState, newState => PlayState = newState );
@@ -111,7 +112,8 @@ namespace Noise.Core.PlaySupport {
 
 				mPlayStateController.Configure( ePlayState.StoppedEmptyQueue )
 					.OnEntry( StopPlay )
-					.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying );
+					.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying )
+                    .Permit( eStateTriggers.QueueRestored, ePlayState.Stopped );
 
 				mPlayStateController.Configure( ePlayState.Stopping )
 					.OnEntry( StopPlay )
@@ -193,8 +195,8 @@ namespace Noise.Core.PlaySupport {
 		public void Shutdown() { }
 
 		public ePlayState PlayState {
-			get{ return( mCurrentPlayState ); }
-			set {
+			get => ( mCurrentPlayState );
+            set {
 				mCurrentPlayState = value;
 				mLog.PlayStateSet( mCurrentPlayState );
 
@@ -322,17 +324,17 @@ namespace Noise.Core.PlaySupport {
 			mPlayStatusDispose.Dispose();
 			mStreamInfoDispose.Dispose();
 
-			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
-			if( audioCongfiguration != null ) {
-				audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
+			var audioConfiguration = mPreferences.Load<AudioPreferences>();
+			if( audioConfiguration != null ) {
+				audioConfiguration.ReplayGainEnabled = mEnableReplayGain;
 
-				mPreferences.Save( audioCongfiguration );
+				mPreferences.Save( audioConfiguration );
 			}			
 		}
 
 		public ePlaybackStatus CurrentStatus {
-			get { return( mCurrentStatus ); }
-			set {
+			get => ( mCurrentStatus );
+            set {
 				if( mCurrentStatus != value ) {
 					mCurrentStatus = value;
 
@@ -353,20 +355,27 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public void Handle( Events.PlayQueueChanged eventArgs ) {
-			if( eventArgs.PlayQueue.IsQueueEmpty ) {
-				FireStateChange( eStateTriggers.QueueCleared );
+			if(!eventArgs.QueueRestored ) {
+                if( eventArgs.PlayQueue.IsQueueEmpty ) {
+                    FireStateChange( eStateTriggers.QueueCleared );
 
-				CurrentStatus = ePlaybackStatus.Stopped;
+                    CurrentStatus = ePlaybackStatus.Stopped;
+                }
+                else {
+                    if(( CurrentTrack != null ) &&
+                       (!mPlayQueue.IsTrackQueued( CurrentTrack.Track ))) {
+                        FireStateChange( eStateTriggers.UiStop );
+                    }
+                    else {
+                        FireStateChange( eStateTriggers.QueueTrackAdded );
+                    }
+                }
 			}
 			else {
-				if(( CurrentTrack != null ) &&
-				   (!mPlayQueue.IsTrackQueued( CurrentTrack.Track ))) {
-					FireStateChange( eStateTriggers.UiStop );
-				}
-				else {
-					FireStateChange( eStateTriggers.QueueTrackAdded );
-				}
-			}
+				StopPlay();
+
+				FireStateChange( eStateTriggers.QueueRestored );
+            }
 		}
 
 		private void OnTrackStarted( int channel ) {
@@ -618,19 +627,15 @@ namespace Noise.Core.PlaySupport {
 			FireStateChange( eStateTriggers.UiPlay );
 		}
 
-		public bool CanPlay {
-			get { return( mPlayStateController.CanFire( eStateTriggers.UiPlay )); }
-		}
+		public bool CanPlay => ( mPlayStateController.CanFire( eStateTriggers.UiPlay ));
 
-		public void Pause() {
+        public void Pause() {
 			FireStateChange( eStateTriggers.UiPause );
 		}
 
-		public bool CanPause {
-			get{ return( mPlayStateController.CanFire( eStateTriggers.UiPause )); }
-		}
+		public bool CanPause => ( mPlayStateController.CanFire( eStateTriggers.UiPause ));
 
-		public void Stop() {
+        public void Stop() {
 			FireStateChange( eStateTriggers.UiStop );
 		}
 
@@ -638,50 +643,31 @@ namespace Noise.Core.PlaySupport {
 			mPlayQueue.StopAtEndOfTrack();
 		}
 
-		public bool CanStop {
-			get{ return( mPlayStateController.CanFire( eStateTriggers.UiStop )); }
-		}
+		public bool CanStop => ( mPlayStateController.CanFire( eStateTriggers.UiStop ));
 
-		public bool CanStopAtEndOfTrack {
-			get{ return( mPlayQueue.CanStopAtEndOfTrack() && mPlayStateController.CanFire( eStateTriggers.UiStop )); }
-		}
+        public bool CanStopAtEndOfTrack => ( mPlayQueue.CanStopAtEndOfTrack() && mPlayStateController.CanFire( eStateTriggers.UiStop ));
 
-		public void PlayNextTrack() {
+        public void PlayNextTrack() {
 			FireStateChange( eStateTriggers.UiPlayNext );
 		}
 
-		public bool CanPlayNextTrack {
-			get{ return(( mPlayStateController.CanFire( eStateTriggers.UiPlayNext )) &&
-						( mPlayQueue.CanPlayNextTrack())); }
-		}
- 
-		public void PlayPreviousTrack() {
+		public bool CanPlayNextTrack => mPlayStateController.CanFire( eStateTriggers.UiPlayNext ) && mPlayQueue.CanPlayNextTrack();
+
+        public void PlayPreviousTrack() {
 			FireStateChange( eStateTriggers.UiPlayPrevious );
 		}
 
-		public bool CanPlayPreviousTrack {
-			get {
-				return(( mPlayQueue.CanPlayPreviousTrack()) &&
-					   ( mPlayStateController.CanFire( eStateTriggers.UiPlayPrevious )) ||
-					  (( CurrentTrack != null ) &&
-				       ( CurrentStatus != ePlaybackStatus.Stopped ) &&
-				       ( mCurrentPosition > new TimeSpan( 0,0,5 ))));
-			}
-		}
+		public bool CanPlayPreviousTrack => ( mPlayQueue.CanPlayPreviousTrack()) &&
+                                            ( mPlayStateController.CanFire( eStateTriggers.UiPlayPrevious )) ||
+                                           (( CurrentTrack != null ) &&
+                                            ( CurrentStatus != ePlaybackStatus.Stopped ) &&
+                                            ( mCurrentPosition > new TimeSpan( 0,0,5 )));
 
-		public PlayQueueTrack CurrentTrack {
-			get { return( GetTrack( mCurrentChannel )); }
-		}
+        public PlayQueueTrack CurrentTrack => GetTrack( mCurrentChannel );
+        public PlayQueueTrack NextTrack => mPlayQueue.NextTrack;
+        public PlayQueueTrack PreviousTrack => mPlayQueue.PreviousTrack;
 
-		public PlayQueueTrack NextTrack {
-			get{ return( mPlayQueue.NextTrack ); }
-		}
-
-		public PlayQueueTrack PreviousTrack {
-			get{ return( mPlayQueue.PreviousTrack ); }
-		}
-
-		private void OnAudioLevelsChanged( AudioLevels levels ) {
+        private void OnAudioLevelsChanged( AudioLevels levels ) {
 			mSampleLevels = levels;
 		}
 
@@ -758,20 +744,17 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public long PlayPosition {
-			get { return( mCurrentChannel != 0 ? 
-								( mCurrentPosition.Ticks < mCurrentLength.Ticks ? mCurrentPosition.Ticks : mCurrentLength.Ticks ) : 0L ); }
-			set {
+			get => mCurrentChannel != 0 ? ( mCurrentPosition.Ticks < mCurrentLength.Ticks ? mCurrentPosition.Ticks : mCurrentLength.Ticks ) : 0L;
+            set {
 				if( mCurrentChannel != 0 ) {
 					mAudioPlayer.SetPlayPosition( mCurrentChannel, new TimeSpan( value ));
 				}
 			}
 		}
 
-		public long TrackEndPosition {
-			get { return( mCurrentChannel != 0 ? mCurrentLength.Ticks : 1L ); }
-		}
+		public long TrackEndPosition => mCurrentChannel != 0 ? mCurrentLength.Ticks : 1L;
 
-		private IUserSettings GetChannelSettings( int channel ) {
+        private IUserSettings GetChannelSettings( int channel ) {
 			IUserSettings	retValue = null;
 			var				currentTrack = GetTrack( channel );
 
@@ -840,22 +823,17 @@ namespace Noise.Core.PlaySupport {
 			}
 		}
 
-		public double LeftLevel {
-			get { return( mCurrentChannel != 0 ? mSampleLevels.LeftLevel : 0.0 ); }
-		}
+		public double LeftLevel => mCurrentChannel != 0 ? mSampleLevels.LeftLevel : 0.0;
+        public double RightLevel => mCurrentChannel != 0 ? mSampleLevels.RightLevel : 0.0;
 
-		public double RightLevel {
-			get { return( mCurrentChannel != 0 ? mSampleLevels.RightLevel : 0.0 ); }
-		}
-
-		public BitmapSource GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
+        public BitmapSource GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
 			return ( mAudioPlayer.GetSpectrumImage( mCurrentChannel, height, width, baseColor, peakColor, peakHoldColor ));
 		}
 
 		public bool ReplayGainEnable {
-			get{ return( mEnableReplayGain ); }
-			set { mEnableReplayGain = value; }
-		}
+			get => ( mEnableReplayGain );
+            set => mEnableReplayGain = value;
+        }
 
 		private void FirePlaybackInfoChange() {
 			mEventAggregator.PublishOnUIThread( new Events.PlaybackInfoChanged());
