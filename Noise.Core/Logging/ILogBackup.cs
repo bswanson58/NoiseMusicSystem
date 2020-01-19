@@ -5,6 +5,7 @@ namespace Noise.Core.Logging {
         void    LogBackupPressure( string source, uint currentPressure, int currentThreshold );
         void    LogBackupThresholdExceeded( string libraryName, int currentThreshold );
         void    LogLibraryBackup( string libraryName );
-        void    LogBackupException( Exception ex );
+        void    LogBackupException( Exception ex, string operation );
+        void    LogBackupDeleted( string libraryName, DateTime backupDate );
     }
 }

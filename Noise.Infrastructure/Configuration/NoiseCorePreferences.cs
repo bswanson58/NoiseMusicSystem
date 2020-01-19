@@ -21,6 +21,8 @@ namespace Noise.Infrastructure.Configuration {
 		public	int						        MaximumPlayedTracks { get; set; }
 
 		public	int								MaximumBackupPressure { get; set; }
+		public	bool							EnforceBackupCopyLimit { get; set; }
+		public	int								MaximumBackupCopies { get; set; }
 
 		public NoiseCorePreferences() {
 			PlayStrategy = ePlayStrategy.Next;
@@ -40,6 +42,8 @@ namespace Noise.Infrastructure.Configuration {
 			EnableRemoteAccess = false;
 
 			MaximumBackupPressure = 50;
+			EnforceBackupCopyLimit = true;
+			MaximumBackupCopies = 10;
 		}
 	}
 }

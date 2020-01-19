@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Core.Logging;
@@ -58,14 +61,44 @@ namespace Noise.Core.Database {
                     userState.IsRestoring = true;
                     mEventAggregator.PublishOnUIThread( userState );
 
+                    EnforceBackupCopies( library );
+
                     mLog.LogLibraryBackup( library.LibraryName );
                 }
                 catch( Exception ex ) {
-                    mLog.LogBackupException( ex );
+                    mLog.LogBackupException( ex, "BackupLibrary" );
                 }
             }
 
             return retValue;
+        }
+
+        private void EnforceBackupCopies( LibraryConfiguration library ) {
+            try {
+                var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+                if( preferences.EnforceBackupCopyLimit ) {
+                    var backupCopies = new List<LibraryBackup>( from backup in mLibraryConfiguration.GetLibraryBackups( library ) orderby backup.BackupDate select backup );
+
+                    while(( preferences.MaximumBackupCopies > 0 ) &&
+                          ( backupCopies.Count > preferences.MaximumBackupCopies )) {
+                        var oldestBackup = backupCopies.FirstOrDefault();
+
+                        if( oldestBackup != null ) {
+                            Directory.Delete( oldestBackup.BackupPath, true );
+
+                            mLog.LogBackupDeleted( library.LibraryName, oldestBackup.BackupDate );
+                        }
+
+                        if( backupCopies.Any()) {
+                            backupCopies.RemoveAt( 0 );
+                        }
+                    }
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogBackupException( ex, "EnforceBackupCopies" );
+            }
         }
 
         public void Handle( Events.LibraryBackupPressure args ) {

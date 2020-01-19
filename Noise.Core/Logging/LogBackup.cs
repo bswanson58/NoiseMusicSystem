@@ -30,8 +30,12 @@ namespace Noise.Core.Logging {
             LogOnCondition( mPreferences.BackupTasks, () => LogBackupMessage( "Backup completed for library: {0}", libraryName ));
         }
 
-        public void LogBackupException( Exception ex ) {
-            LogException( cModuleName, cPhaseName, ex, "LogBackup", "Backup failed." );
+        public void LogBackupException( Exception ex, string operation ) {
+            LogException( cModuleName, cPhaseName, ex, operation, "Backup operation failed." );
+        }
+
+        public void LogBackupDeleted( string libraryName, DateTime backupDate ) {
+            LogOnCondition( mPreferences.BackupTasks, () => LogBackupMessage( "Old backup deleted from library '{0}', dated {1}", libraryName, backupDate ));
         }
     }
 }
