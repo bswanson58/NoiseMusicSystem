@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Globalization;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -7,7 +9,7 @@ using Noise.UI.Logging;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-    class LibraryBackupDialogModel : DialogModelBase {
+    class LibraryBackupDialogModel : DialogModelBase, IDataErrorInfo {
         private readonly ILibraryConfiguration  mLibraryConfiguration;
         private readonly ILibraryBackupManager  mLibraryBackup;
         private readonly IPreferences           mPreferences;
@@ -25,6 +27,10 @@ namespace Noise.UI.ViewModels {
             Libraries = new ObservableCollectionEx<LibraryConfiguration>();
             Libraries.AddRange( mLibraryConfiguration.Libraries );
             CurrentLibrary = mLibraryConfiguration.Current;
+
+            var corePreferences = mPreferences.Load<NoiseCorePreferences>();
+            EnforceBackupCopyLimit = corePreferences.EnforceBackupCopyLimit;
+            BackupCopyLimit = corePreferences.MaximumBackupCopies.ToString();
         }
 
         public LibraryConfiguration CurrentLibrary {
@@ -67,6 +73,16 @@ namespace Noise.UI.ViewModels {
             set => Set( () => BackupSucceeded, value );
         }
 
+        public bool EnforceBackupCopyLimit {
+            get => Get( () => EnforceBackupCopyLimit );
+            set => Set( () => EnforceBackupCopyLimit, value );
+        }
+
+        public string BackupCopyLimit {
+            get => Get( () => BackupCopyLimit );
+            set => Set( () => BackupCopyLimit, value );
+        }
+
         private void OnLibrarySelected() {
             if( CurrentLibrary != null ) {
                 var preferences = mPreferences.Load<NoiseCorePreferences>();
@@ -92,5 +108,32 @@ namespace Noise.UI.ViewModels {
         public bool CanExecute_BackupLibrary() {
             return mLibraryConfiguration.Current != null;
         }
+
+        public void SaveOptions() {
+            var corePreferences = mPreferences.Load<NoiseCorePreferences>();
+
+            corePreferences.EnforceBackupCopyLimit = EnforceBackupCopyLimit;
+            if( Int16.TryParse( BackupCopyLimit, NumberStyles.Integer, CultureInfo.CurrentUICulture, out short max )) {
+                corePreferences.MaximumBackupCopies = max;
+            }
+
+            mPreferences.Save( corePreferences );
+        }
+
+        public string this[string columnName] {
+            get {
+                switch( columnName ) {
+                    case nameof( BackupCopyLimit ):
+                        if(!Int16.TryParse( BackupCopyLimit, NumberStyles.Integer, CultureInfo.CurrentUICulture, out _ )) {
+                            return "Input must be an integer value.";
+                        }
+                        break;
+                }
+
+                return String.Empty;
+            }
+        }
+
+        public string Error => String.Empty;
     }
 }

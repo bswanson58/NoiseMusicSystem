@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LibraryBackupDialogModel, IsDesignTimeCreatable=False}"
              Tag="Library Backup"
-             Height="185" Width="450">
+             Height="285" Width="450">
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="True"/>
@@ -39,6 +39,7 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -77,9 +78,24 @@
             </Grid>
         </Grid>
 
-        <Button Grid.Row="3" Margin="10,15,0,0" HorizontalAlignment="Left" Style="{StaticResource GeneralButtonStyle}" Padding="10,3" Content="Backup Library Now" Command="{Binding BackupLibrary}"/>
+        <Grid Grid.Row="2" Margin="10,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="4" Margin="10,3,10,15">
+            <TextBlock Grid.Row="0" Margin="0,0,0,5" Style="{StaticResource ControlTitleStyle}" Text="Backup Options:"/>
+            <CheckBox Grid.Row="1" Margin="45,0,0,5" Content="Manage Backup Copies" IsChecked="{Binding EnforceBackupCopyLimit}"/>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <TextBlock Margin="45,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Maximum Backup Copies:"/>
+                <TextBox Width="50" IsEnabled="{Binding EnforceBackupCopyLimit, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Text="{Binding BackupCopyLimit}"/>
+            </StackPanel>
+        </Grid>
+
+        <Button Grid.Row="4" Margin="10,15,0,0" HorizontalAlignment="Left" Style="{StaticResource GeneralButtonStyle}" Padding="10,3" Content="Backup Library Now" Command="{Binding BackupLibrary}"/>
+
+        <Grid Grid.Row="5" Margin="10,3,10,15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

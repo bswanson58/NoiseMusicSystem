@@ -162,10 +162,16 @@ namespace Noise.UI.ViewModels {
 			try {
                 var  dialogModel = new LibraryBackupDialogModel( mLibraryBackup, mLibraryConfiguration, mPreferences, mLog );
 
-				mLibraryBackupRequest.Raise( new LibraryBackupInfo( dialogModel ));
+				mLibraryBackupRequest.Raise( new LibraryBackupInfo( dialogModel ), OnLibraryBackupCompleted );
             }
 			catch( Exception ex ) {
                 mLog.LogException( "Executing Library Backup", ex );
+            }
+        }
+
+		private void OnLibraryBackupCompleted( LibraryBackupInfo info ) {
+			if( info.Confirmed ) {
+				info.ViewModel.SaveOptions();
             }
         }
 
