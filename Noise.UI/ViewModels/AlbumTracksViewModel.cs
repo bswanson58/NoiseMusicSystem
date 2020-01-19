@@ -47,6 +47,7 @@ namespace Noise.UI.ViewModels {
         public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
         public InteractionRequest<PlayStrategyInfo>     StrategyEditRequest {  get; }
         public DelegateCommand                          ClearTrackRatings { get; }
+		public UiTrack									PlayingTrack { get; private set; }
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
 									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
@@ -75,8 +76,18 @@ namespace Noise.UI.ViewModels {
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mSelectionState.CurrentAlbumVolumeChanged.Subscribe( OnVolumeChanged );
 
-            mPlayingItemHandler.StartHandler( mTracks );
+            mPlayingItemHandler.StartHandler( mTracks, OnPlayingItemChanged );
 		}
+
+		private void OnPlayingItemChanged( IPlayingItem item ) {
+			if( item is UiTrack track ) {
+				if( track.IsPlaying ) {
+					PlayingTrack = track;
+
+					RaisePropertyChanged( () => PlayingTrack );
+                }
+            }
+        }
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearTrackList();

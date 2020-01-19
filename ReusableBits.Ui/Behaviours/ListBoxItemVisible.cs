@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
@@ -26,21 +25,21 @@ namespace ReusableBits.Ui.Behaviours {
 			new PropertyMetadata( false, OnItemChanged ));
 
 		public object Item {
-			get { return GetValue( ItemProperty ); }
-			set { SetValue( ItemProperty, value ); }
-		}
+			get => GetValue( ItemProperty );
+            set => SetValue( ItemProperty, value );
+        }
 
 		private static void OnItemChanged( DependencyObject sender, DependencyPropertyChangedEventArgs e ) {
 			if(( e.NewValue != null ) &&
-			   ( sender is ListBoxItemVisible )) {
-				var listBox = ( sender as ListBoxItemVisible ).mItemsControl;
+			   ( sender is ListBoxItemVisible behavior )) {
+                var listBox = behavior.mItemsControl;
 
-				listBox.Dispatcher.BeginInvoke( (Action)( () => {
-					listBox.UpdateLayout();
+                listBox.Dispatcher?.BeginInvoke((Action)( () => {
+                        listBox.UpdateLayout();
 
-					listBox.ScrollIntoView( e.NewValue );
-				} ));
-			}
+                        listBox.ScrollIntoView( e.NewValue );
+                    }));
+            }
 		}
 	}
 }

@@ -232,6 +232,7 @@
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
     <Compile Include="Behaviours\BindablePasswordBox.cs" />
     <Compile Include="Behaviours\CommandReference.cs" />
+    <Compile Include="Behaviours\DataGridItemVisible.cs" />
     <Compile Include="Behaviours\DialogResult.cs" />
     <Compile Include="Behaviours\DragAdorner.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandParameter.cs" />

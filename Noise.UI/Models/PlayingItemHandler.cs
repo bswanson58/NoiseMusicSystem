@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Interfaces;
@@ -10,6 +10,7 @@ namespace Noise.UI.Models {
         private readonly ISelectionState    mSelectionState;
         private IEnumerable<IPlayingItem>   mList;
         private Func<IPlayingItem>          mItemFunc;
+        private Action<IPlayingItem>        mOnPlayAction;
         private PlayingItem                 mPlayingItem;
         private IDisposable                 mPlayingTrackSubscription;
 
@@ -21,6 +22,12 @@ namespace Noise.UI.Models {
 
         public void StartHandler() {
             mPlayingTrackSubscription = mSelectionState.PlayingTrackChanged.Subscribe( OnPlayingChanged );
+        }
+
+        public void StartHandler( IEnumerable<IPlayingItem> list, Action<IPlayingItem> onPlayAction ) {
+            StartHandler( list );
+
+            mOnPlayAction = onPlayAction;
         }
 
         public void StartHandler( IEnumerable<IPlayingItem> list ) {
@@ -71,7 +78,17 @@ namespace Noise.UI.Models {
         }
 
         public void UpdateList( IEnumerable<IPlayingItem> list ) {
-            list.ForEach( i => i.SetPlayingStatus( mPlayingItem ));
+            var playList = list.ToList();
+
+            playList.ForEach( i => i.SetPlayingStatus( mPlayingItem ));
+
+            if( mOnPlayAction != null ) {
+                var item = playList.FirstOrDefault( i => i.IsPlaying );
+
+                if( item != null ) {
+                    mOnPlayAction.Invoke( item );
+                }
+            }
         }
     }
 }

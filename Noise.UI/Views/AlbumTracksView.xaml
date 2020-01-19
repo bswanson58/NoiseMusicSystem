@@ -1,25 +1,24 @@
 ﻿<UserControl x:Class="Noise.UI.Views.AlbumTracksView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:Controls="clr-namespace:Noise.UI.Controls"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:controls="clr-namespace:Noise.UI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-             xmlns:Views="clr-namespace:Noise.UI.Views"
-             xmlns:Dto="clr-namespace:Noise.UI.Dto"
-             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:views="clr-namespace:Noise.UI.Views"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
+             xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              d:DesignHeight="100"
              d:DesignWidth="530"
+             d:DataContext="{d:DesignInstance viewModels:AlbumTracksViewModel, IsDesignTimeCreatable=False}"
+             DataContext="{Binding AlbumTracksViewModel, Source={StaticResource ViewModelLocator}}"
              mc:Ignorable="d">
 
-    <UserControl.DataContext>
-        <Binding Path="AlbumTracksViewModel" Source="{StaticResource ViewModelLocator}" />
-    </UserControl.DataContext>
-    
     <UserControl.Resources>
-        <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+        <reusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
 
         <DataTemplate x:Key="PlayAdjacentPreviousTemplate">
             <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_PlayAdjacentPrevious}"/>
@@ -37,7 +36,7 @@
             <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_NoPlay}"/>
         </DataTemplate>
 
-        <Views:AdjacentPlaySelector x:Key="AdjacentPlaySelector"
+        <views:AdjacentPlaySelector x:Key="AdjacentPlaySelector"
                                     BothTemplate="{StaticResource PlayAdjacentBothTemplate}"
                                     NextTemplate="{StaticResource PlayAdjacentNextTemplate}"
                                     PreviousTemplate="{StaticResource PlayAdjacentPreviousTemplate}"
@@ -68,7 +67,7 @@
         </Style>
 
         <!-- Play -->
-        <DataTemplate x:Key="PlayTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="PlayTemplate" DataType="dto:UiTrack">
             <Button Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" />
         </DataTemplate>
 
@@ -76,12 +75,12 @@
         <DataTemplate x:Key="TrackNumberColumnHeader">
             <TextBlock Text="#" HorizontalAlignment="Right"/>
         </DataTemplate>
-        <DataTemplate x:Key="TrackNumberTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="TrackNumberTemplate" DataType="dto:UiTrack">
             <TextBlock Text="{Binding TrackNumber}" Style="{StaticResource ListViewTextStyle}" TextAlignment="Right" Margin="5,0"/>
         </DataTemplate>
         
         <!-- Track Name -->
-        <DataTemplate x:Key="TrackNameTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="TrackNameTemplate" DataType="dto:UiTrack">
             <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=Name}" />
 
             <DataTemplate.Triggers>
@@ -95,7 +94,7 @@
         </DataTemplate>
         
         <!-- Duration -->
-        <DataTemplate x:Key="DurationTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="DurationTemplate" DataType="dto:UiTrack">
             <TextBlock x:Name="Duration" Style="{StaticResource ListViewTextStyle}" Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="5,0"/>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="True">
@@ -105,7 +104,7 @@
         </DataTemplate>
         
         <!-- Favorite -->
-        <DataTemplate x:Key="FavoriteTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="FavoriteTemplate" DataType="dto:UiTrack">
             <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
                       Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
                       IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -132,8 +131,8 @@
                         Command="{Binding Path=DataContext.ClearTrackRatings, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="RatingTemplate" DataType="Dto:UiTrack">
-            <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
+        <DataTemplate x:Key="RatingTemplate" DataType="dto:UiTrack">
+            <controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
                                     Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
                                     Rating="{Binding Path=UiRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Style="{StaticResource NoiseRatingStyle}" />
@@ -145,7 +144,7 @@
         </DataTemplate>
 
         <!-- Tags Template -->
-        <DataTemplate x:Key="TagsTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="TagsTemplate" DataType="dto:UiTrack">
             <ContentControl x:Name="TagContainer" Opacity="0.3">
                 <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
                         Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
@@ -162,7 +161,7 @@
         </DataTemplate>
         
         <!-- Adjacent Play -->
-        <DataTemplate x:Key="AdjacentPlayTemplate" DataType="Dto:UiTrack">
+        <DataTemplate x:Key="AdjacentPlayTemplate" DataType="dto:UiTrack">
             <ContentControl x:Name="StrategyContainer" Opacity="0.3">
                 <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
                         Command="{Binding Path=StrategyOptions}" Content="{Binding CombinedPlayStrategy}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
@@ -181,10 +180,10 @@
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="TagAssociationDialog"
+        <behaviours:InteractionRequestDialogBehavior DialogClass="TagAssociationDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=TagEditRequest}" />
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackStrategyOptionsDialog"
+        <behaviours:InteractionRequestDialogBehavior DialogClass="TrackStrategyOptionsDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=StrategyEditRequest}" />
     </i:Interaction.Behaviors>
@@ -219,7 +218,8 @@
                                         HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource AdjacentPlayTemplate}"/>
             </DataGrid.Columns>
             <i:Interaction.Behaviors>
-                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <behaviours:DataGridItemVisible Item="{Binding PlayingTrack}" />
             </i:Interaction.Behaviors>
         </DataGrid>
     </GroupBox>

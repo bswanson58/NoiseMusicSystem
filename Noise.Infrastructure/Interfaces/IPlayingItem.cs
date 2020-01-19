@@ -11,6 +11,7 @@ namespace Noise.Infrastructure.Interfaces {
     public interface IPlayingItemHandler {
         void    StartHandler();
         void    StartHandler( IEnumerable<IPlayingItem> list );
+        void    StartHandler( IEnumerable<IPlayingItem> list, Action<IPlayingItem> onItemPlaying );
         void    StartHandler( Func<IPlayingItem> forItem );
 
         void    StopHandler();
