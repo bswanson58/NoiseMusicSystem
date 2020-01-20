@@ -38,18 +38,20 @@ namespace Noise.UI.ViewModels {
 		private ImageSource					mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
 		private readonly PlaybackContextDialogManager		mPlaybackContextDialogManager;
+		private readonly TrackFadePointsDialogModel			mTrackFadePointsDialogModel;
 
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
 		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController,
-								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager ) {
+								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager, TrackFadePointsDialogModel fadePointsDialogModel ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 			mAudioController = audioController;
 			mDialogService = dialogService;
 			mPlaybackContextDialogManager = playbackContextDialogManager;
+			mTrackFadePointsDialogModel = fadePointsDialogModel;
 
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
@@ -672,5 +674,20 @@ namespace Noise.UI.ViewModels {
 				   ( mPlayController.CurrentTrack != null ));
 		}
 
+		public void Execute_DefineFadePoints() {
+			if(( mDialogService != null ) &&
+			   ( mPlayController.CurrentTrack != null ) &&
+			   ( mTrackFadePointsDialogModel != null )) {
+				mTrackFadePointsDialogModel.SetTrack( mPlayController.CurrentTrack.Track, mPlayController.PlayPosition, mPlayController.TrackEndPosition );
+
+				if( mDialogService.ShowDialog( DialogNames.TrackFadePointsDialog, mTrackFadePointsDialogModel ) == true ) {
+					mTrackFadePointsDialogModel.SaveFadePoints();
+                }
+            }
+        }
+
+		public bool CanExecute_DefineFadePoints() {
+			return mPlayController.CurrentTrack != null;
+        }
 	}
 }

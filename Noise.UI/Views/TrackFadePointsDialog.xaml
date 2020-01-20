@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Noise.UI.Views.TrackFadePointsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:TrackFadePointsDialogModel, IsDesignTimeCreatable=False}"
+             Tag="Track Fade Points"
+             Height="250" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="The fade times can be used to set the starting and ending"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="3,0" Text="positions for the playback of a track."></TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" HorizontalAlignment="Right" Text="Fade In Time:"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Text="{Binding FadeInTime}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" HorizontalAlignment="Right" Text="Fade Out Time:"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Text="{Binding FadeOutTime}"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Current Time:"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Text="{Binding CurrentTime}"/>
+
+            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+                <Button Style="{StaticResource GeneralButtonStyle}" Content="Set As Fade In" Command="{Binding SetFadeInTime}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Set As Fade Out" Command="{Binding SetFadeOutTime}"/>
+            </StackPanel>
+
+        </Grid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+        </StackPanel>
+    </Grid>
+</UserControl>
