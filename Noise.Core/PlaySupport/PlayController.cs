@@ -37,6 +37,7 @@ namespace Noise.Core.PlaySupport {
 		private readonly ILogPlayState				mLog;
 		private readonly IAudioPlayer				mAudioPlayer;
 		private readonly IPlaybackContextManager	mPlaybackContext;
+		private readonly IPlaybackContextWriter		mContextWriter;
 		private readonly IPlayQueue					mPlayQueue;
 		private readonly IPlayHistory				mPlayHistory;
 		private readonly IRatings					mRatings;
@@ -62,12 +63,13 @@ namespace Noise.Core.PlaySupport {
 
         public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IRatings ratings,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
-							   IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
+							   IPlaybackContextWriter contextWriter, IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
 			mPlaybackContext = playbackContext;
+			mContextWriter = contextWriter;
 			mScrobbler = scrobbler;
 			mRatings = ratings;
 			mAudioPlayer = audioPlayer;
@@ -499,8 +501,15 @@ namespace Noise.Core.PlaySupport {
 			var retValue = 0;
 
 			if( track != null ) {
-				retValue = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : 
-											mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ));
+				if( track.IsStream ) {
+                    retValue = mAudioPlayer.OpenStream( track.Stream );
+                }
+				else {
+                    var fadePoints = DetermineFadePoints( track );
+
+                    retValue = fadePoints != null ? mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ), fadePoints.FadeInPoint, fadePoints.FadeOutPoint ) :
+                                                    mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ));
+                }
 
 				if( retValue != 0 ) {
 					mOpenTracks.Add( retValue, track );
@@ -545,6 +554,16 @@ namespace Noise.Core.PlaySupport {
 
 			return ( retValue );
 		}
+
+		private ScTrackFadePoints DetermineFadePoints( PlayQueueTrack track ) {
+			var retValue = default( ScTrackFadePoints );
+
+			if( track?.Track != null ) {
+				retValue = mContextWriter.GetTrackFadePoints( track.Track );
+            }
+
+			return retValue;
+        }
 
 		private PlayQueueTrack FindPreviousTrack( PlayQueueTrack track ) {
 			var retValue = default( PlayQueueTrack );

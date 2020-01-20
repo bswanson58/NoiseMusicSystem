@@ -19,6 +19,8 @@ using Un4seen.Bass.Misc;
 
 namespace Noise.AudioSupport.Player {
 	public class AudioPlayer : IAudioPlayer {
+		private const double							ComparisonEpsilon = 0.1;
+
 		private readonly ILogAudioPlay					mLog;
 		private int										mMixerChannel;
 		private	float									mMixerSampleRate;
@@ -261,7 +263,11 @@ namespace Noise.AudioSupport.Player {
 			return( OpenFile( filePath, 0.0f ));
 		}
 
-		public int OpenFile( string  filePath, float gainAdjustment ) {
+        public int OpenFile( string  filePath, float gainAdjustment ) {
+			return OpenFile( filePath, gainAdjustment, 0.0, 0.0  );
+        }
+
+		public int OpenFile( string  filePath, float gainAdjustment, double fadeInPoint, double fadeOutPoint ) {
 			var retValue = 0;
 
 			if( File.Exists( filePath )) {
@@ -304,7 +310,8 @@ namespace Noise.AudioSupport.Player {
 
 						if( TrackOverlapEnable ) {
 							var trackLength = Bass.BASS_ChannelGetLength( stream.Channel );
-							var position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, 3 );
+							var fadeOutPosition = Math.Abs( fadeOutPoint ) > ComparisonEpsilon ? fadeOutPoint : 3.0;
+							var position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, fadeOutPosition );
 
 							if( position > 0 ) {
 								stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
@@ -321,6 +328,12 @@ namespace Noise.AudioSupport.Player {
 								}
 							}
 						}
+
+						if( Math.Abs( fadeInPoint ) > ComparisonEpsilon ) {
+							if(!Bass.BASS_ChannelSetPosition( stream.Channel, fadeInPoint )) {
+								mLog.LogErrorCode( "Could not set the channel position to the fade in point.", (int)Bass.BASS_ErrorGetCode());
+                            }
+                        }
 
 						retValue = channel;
 						mLog.LogChannelOpen( channel, filePath );
