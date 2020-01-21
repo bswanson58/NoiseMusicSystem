@@ -264,10 +264,10 @@ namespace Noise.AudioSupport.Player {
 		}
 
         public int OpenFile( string  filePath, float gainAdjustment ) {
-			return OpenFile( filePath, gainAdjustment, 0.0, 0.0  );
+			return OpenFile( filePath, gainAdjustment, 0, 0  );
         }
 
-		public int OpenFile( string  filePath, float gainAdjustment, double fadeInPoint, double fadeOutPoint ) {
+		public int OpenFile( string  filePath, float gainAdjustment, long playStart, long playEnd ) {
 			var retValue = 0;
 
 			if( File.Exists( filePath )) {
@@ -298,39 +298,51 @@ namespace Noise.AudioSupport.Player {
 							}
 						}
 
-						stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_END, 0L, mPlayEndSyncProc, IntPtr.Zero );
-						if( stream.SyncEnd == 0 ) {
-							mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
-						}
-
-						stream.SyncStalled = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_STALL, 0L, mPlayStalledSyncProc, IntPtr.Zero );
-						if( stream.SyncStalled == 0 ) {
-							mLog.LogErrorCode( "Could not set stall sync", (int)Bass.BASS_ErrorGetCode());
-						}
-
-						if( TrackOverlapEnable ) {
+						if(( TrackOverlapEnable ) ||
+						   ( playEnd > 0 )) {
 							var trackLength = Bass.BASS_ChannelGetLength( stream.Channel );
-							var fadeOutPosition = Math.Abs( fadeOutPoint ) > ComparisonEpsilon ? fadeOutPoint : 3.0;
-							var position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, fadeOutPosition );
+							var trackPlayLength = trackLength;
 
-							if( position > 0 ) {
-								stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
-																					 position, mPlayRequestSyncProc, IntPtr.Zero );
-								if( stream.SyncNext == 0 ) {
-									mLog.LogErrorCode( "Could not set request sync", (int)Bass.BASS_ErrorGetCode());
-								}
+							if( playEnd > 0 ) {
+								trackPlayLength = Math.Min( Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd ), trackLength );
+                            }
 
-								position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
-								stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
-																					   position, mQueuedTrackPlaySync, IntPtr.Zero );
-								if( stream.SyncQueued == 0 ) {
-									mLog.LogErrorCode( "Could not set queued track sync", (int)Bass.BASS_ErrorGetCode());
-								}
+                            stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS, trackPlayLength, mPlayEndSyncProc, IntPtr.Zero );
+                            if( stream.SyncEnd == 0 ) {
+                                mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
+                            }
+
+                            var position = Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd - 3 );
+							stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
+																				 position, mPlayRequestSyncProc, IntPtr.Zero );
+							if( stream.SyncNext == 0 ) {
+								mLog.LogErrorCode( "Could not set request sync", (int)Bass.BASS_ErrorGetCode());
 							}
-						}
 
-						if( Math.Abs( fadeInPoint ) > ComparisonEpsilon ) {
-							if(!Bass.BASS_ChannelSetPosition( stream.Channel, fadeInPoint )) {
+							if( TrackOverlapEnable ) {
+                                position = trackPlayLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
+                                stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
+                                    position, mQueuedTrackPlaySync, IntPtr.Zero );
+                                if( stream.SyncQueued == 0 ) {
+                                    mLog.LogErrorCode( "Could not set queued track sync", (int)Bass.BASS_ErrorGetCode());
+                                }
+                            }
+						}
+						else {
+                            stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_END, 0L, mPlayEndSyncProc, IntPtr.Zero );
+                            if( stream.SyncEnd == 0 ) {
+                                mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
+                            }
+                        }
+
+                        stream.SyncStalled = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_STALL, 0L, mPlayStalledSyncProc, IntPtr.Zero );
+                        if( stream.SyncStalled == 0 ) {
+                            mLog.LogErrorCode( "Could not set stall sync", (int)Bass.BASS_ErrorGetCode());
+                        }
+
+                        if( playStart > 0 ) {
+							var position = Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playStart );
+							if(!Bass.BASS_ChannelSetPosition( stream.Channel, position )) {
 								mLog.LogErrorCode( "Could not set the channel position to the fade in point.", (int)Bass.BASS_ErrorGetCode());
                             }
                         }

@@ -33,29 +33,112 @@ namespace Noise.UI.ViewModels {
                 FadeInTime = TimeSpan.FromSeconds( mFadePoints.FadeInPoint ).ToString();
                 FadeOutTime = TimeSpan.FromSeconds( mFadePoints.FadeOutPoint ).ToString();
             }
+
+            UpdateControls();
         }
 
         public void Execute_SetFadeInTime() {
             FadeInTime = CurrentTime;
 
-            RaisePropertyChanged( () => FadeInTime );
+            UpdateControls();
+        }
+
+        public bool CanExecute_SetFadeInTime() {
+            var retValue = false;
+            
+            if( TimeSpan.TryParse( FadeOutTime, CultureInfo.CurrentUICulture, out TimeSpan timeOut )) {
+                if(((int)timeOut.TotalSeconds == 0 ) ||
+                   ( mCurrentPosition < timeOut )) {
+                    retValue = true;
+                }
+            }
+
+            return retValue;
+        }
+
+        public void Execute_ClearFadeInTime() {
+            FadeInTime = TimeSpan.FromSeconds( 0 ).ToString();
+
+            UpdateControls();
+        }
+
+        public bool CanExecute_ClearFadeInTime() {
+            var retValue = false;
+            
+            if( TimeSpan.TryParse( FadeInTime, CultureInfo.CurrentUICulture, out TimeSpan timeIn )) {
+                retValue = (int)timeIn.TotalSeconds != 0;
+            }
+
+            return retValue;
         }
 
         public void Execute_SetFadeOutTime() {
             FadeOutTime = CurrentTime;
 
-            RaisePropertyChanged( () => FadeOutTime );
+            UpdateControls();
+        }
+
+        public bool CanExecute_SetFadeOutTime() {
+            var retValue = false;
+            
+            if( TimeSpan.TryParse( FadeInTime, CultureInfo.CurrentUICulture, out TimeSpan timeIn )) {
+                if(((int)timeIn.TotalSeconds == 0 ) ||
+                   ( mCurrentPosition > timeIn )) {
+                    retValue = true;
+                }
+            }
+
+            return retValue;
+        }
+
+        public void Execute_ClearFadeOutTime() {
+            FadeOutTime = TimeSpan.FromSeconds( 0 ).ToString();
+
+            UpdateControls();
+        }
+
+        public bool CanExecute_ClearFadeOutTime() {
+            var retValue = false;
+            
+            if( TimeSpan.TryParse( FadeOutTime, CultureInfo.CurrentUICulture, out TimeSpan timeOut )) {
+                retValue = (int)timeOut.TotalSeconds != 0;
+            }
+
+            return retValue;
         }
 
         public void SaveFadePoints() {
             if( TimeSpan.TryParse( FadeInTime, CultureInfo.CurrentUICulture, out TimeSpan timeIn )) {
-                mFadePoints.FadeInPoint = timeIn.Seconds;
+                if( timeIn < mTrackLength ) {
+                    mFadePoints.FadeInPoint = (long)timeIn.TotalSeconds;
+                }
+                else {
+                    mFadePoints.FadeInPoint = 0;
+                }
             }
             if( TimeSpan.TryParse( FadeOutTime, CultureInfo.CurrentUICulture, out TimeSpan timeOut )) {
-                mFadePoints.FadeOutPoint = timeOut.Seconds;
+                if( timeOut < mTrackLength ) {
+                    mFadePoints.FadeOutPoint = (long)timeOut.TotalSeconds;
+                }
+                else {
+                    mFadePoints.FadeOutPoint = 0;
+                }
+            }
+            if( mFadePoints.FadeInPoint >= Math.Min( mFadePoints.FadeOutPoint, mTrackLength.TotalSeconds )) {
+                mFadePoints.FadeInPoint = 0;
             }
 
             mContextWriter.SaveTrackFadePoints( mTrack, mFadePoints );
+        }
+
+        private void UpdateControls() {
+            RaisePropertyChanged( () => FadeInTime );
+            RaisePropertyChanged( () => FadeOutTime );
+            RaisePropertyChanged( () => CurrentTime );
+            RaiseCanExecuteChangedEvent( "CanExecute_SetFadeInTime" );
+            RaiseCanExecuteChangedEvent( "CanExecute_SetFadeOutTime" );
+            RaiseCanExecuteChangedEvent( "CanExecute_ClearFadeInTime" );
+            RaiseCanExecuteChangedEvent( "CanExecute_ClearFadeOutTime" );
         }
     }
 }

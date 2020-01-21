@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:TrackFadePointsDialogModel, IsDesignTimeCreatable=False}"
              Tag="Track Fade Points"
-             Height="250" Width="400">
+             Height="200" Width="400">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,6 +25,7 @@
         <Grid Grid.Row="1" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="5"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="15"/>
                 <RowDefinition Height="Auto"/>
@@ -33,21 +34,24 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" HorizontalAlignment="Right" Text="Fade In Time:"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Text="{Binding FadeInTime}" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Fade In Time:"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding FadeInTime}" />
+            <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="0,0,80,0" Content="Clear" Command="{Binding ClearFadeInTime}"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" HorizontalAlignment="Right" Text="Fade Out Time:"/>
-            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Text="{Binding FadeOutTime}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Fade Out Time:"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding FadeOutTime}"/>
+            <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="0,0,80,0" Content="Clear" Command="{Binding ClearFadeOutTime}"/>
 
-            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Current Time:"/>
-            <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Text="{Binding CurrentTime}"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Current Time:"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" Margin="5,0,0,0" Text="{Binding CurrentTime}"/>
 
-            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
-                <Button Style="{StaticResource GeneralButtonStyle}" Content="Set As Fade In" Command="{Binding SetFadeInTime}"/>
-                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Set As Fade Out" Command="{Binding SetFadeOutTime}"/>
+            <StackPanel Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Set As Fade In" Command="{Binding SetFadeInTime}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="15,0,0,0" Content="Set As Fade Out" Command="{Binding SetFadeOutTime}"/>
             </StackPanel>
 
         </Grid>
