@@ -78,7 +78,7 @@ namespace Noise.UI.ViewModels {
         event                       EventHandler FilterCleared;
     }
 
-    abstract class ArtistFilterBase : IArtistFilter {
+    abstract class ArtistFilterBase : ReactiveObject, IArtistFilter {
         private readonly ICollectionView    mCollectionView;
         private readonly List<String>       mFilterList;
         private string                      mFilterText;
@@ -125,6 +125,7 @@ namespace Noise.UI.ViewModels {
             mFilterText = text;
 
             mCollectionView.Refresh();
+            this.RaisePropertyChanged( nameof( FilterText ));
         }
     }
 
