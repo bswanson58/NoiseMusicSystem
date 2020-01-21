@@ -307,11 +307,13 @@ namespace Noise.AudioSupport.Player {
 								trackPlayLength = Math.Min( Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd ), trackLength );
                             }
 
+							// set a marker where play should stop
                             stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS, trackPlayLength, mPlayEndSyncProc, IntPtr.Zero );
                             if( stream.SyncEnd == 0 ) {
                                 mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
                             }
 
+							// set a marker where the next track should be requested
                             var position = Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd - 3 );
 							stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
 																				 position, mPlayRequestSyncProc, IntPtr.Zero );
@@ -320,9 +322,10 @@ namespace Noise.AudioSupport.Player {
 							}
 
 							if( TrackOverlapEnable ) {
+								// set a marker where the next track should start if it's overlapped
                                 position = trackPlayLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
                                 stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
-                                    position, mQueuedTrackPlaySync, IntPtr.Zero );
+                                                                                       position, mQueuedTrackPlaySync, IntPtr.Zero );
                                 if( stream.SyncQueued == 0 ) {
                                     mLog.LogErrorCode( "Could not set queued track sync", (int)Bass.BASS_ErrorGetCode());
                                 }
@@ -342,6 +345,8 @@ namespace Noise.AudioSupport.Player {
 
                         if( playStart > 0 ) {
 							var position = Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playStart );
+
+							// move up in the stream to the desired start position
 							if(!Bass.BASS_ChannelSetPosition( stream.Channel, position )) {
 								mLog.LogErrorCode( "Could not set the channel position to the fade in point.", (int)Bass.BASS_ErrorGetCode());
                             }
