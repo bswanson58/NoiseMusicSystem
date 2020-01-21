@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
              DataContext="{Binding TagAssociationViewModel, Source={StaticResource ViewModelLocator}}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -17,7 +17,7 @@
             </Grid>
         </ControlTemplate>
 
-        <DataTemplate x:Key="AssociationTemplate" DataType="Dto:UiTagAssociation">
+        <DataTemplate x:Key="AssociationTemplate" DataType="dto:UiTagAssociation">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -26,7 +26,7 @@
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
                 <TextBlock x:Name="TrackName" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding DisplayName}"
-                           Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 
                 <Button x:Name="AssociationDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
                         BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
@@ -47,12 +47,12 @@
         <ListBox Margin="0,3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ItemsSource="{Binding Associations}" SelectedItem="{Binding SelectedAssociation}" ItemTemplate="{StaticResource AssociationTemplate}">
             <i:Interaction.Behaviors>
-                <Behaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                <behaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
             </i:Interaction.Behaviors>
         </ListBox>
 
         <i:Interaction.Behaviors>
-            <Behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
         </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

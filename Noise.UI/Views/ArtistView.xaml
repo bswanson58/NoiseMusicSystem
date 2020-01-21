@@ -170,7 +170,7 @@
                         </Grid>
                     </Grid>
                     <i:Interaction.Behaviors>
-                        <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                        <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
                     </i:Interaction.Behaviors>
                 </Border>
             </Grid>

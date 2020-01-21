@@ -83,9 +83,9 @@
             </StackPanel>
         </Grid>
         <i:Interaction.Behaviors>
-            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimWhenEnabled" IsDisabled="{Binding BackupNeeded}"
-                                              FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                                              FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
         </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

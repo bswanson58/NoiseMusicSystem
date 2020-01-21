@@ -182,7 +182,7 @@
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  SelectedItem="{Binding Path=SelectedItem}">
             <i:Interaction.Behaviors>
-                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
 				<reusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
 			</i:Interaction.Behaviors>
 			<eventCommandTriggers:CommandSource.Trigger>

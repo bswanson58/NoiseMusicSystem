@@ -218,7 +218,7 @@
                                         HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource AdjacentPlayTemplate}"/>
             </DataGrid.Columns>
             <i:Interaction.Behaviors>
-                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
                 <behaviours:DataGridItemVisible Item="{Binding PlayingTrack}" />
             </i:Interaction.Behaviors>
         </DataGrid>

@@ -3,21 +3,21 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:compMod="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 DataContext="{Binding LibraryAdditionsViewModel, Source={StaticResource ViewModelLocator}}"
 			 Tag="What's New"
 			 AllowDrop="{Binding DisplayMarker}"
-			 ReusableBehaviours:ViewDisplayedNotifier.NotifyCommand="{Binding ViewDisplayed}"
+			 reusableBehaviours:ViewDisplayedNotifier.NotifyCommand="{Binding ViewDisplayed}"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 			<!-- The AllowDrop property is used to hold the boolean flag for displaying the marker on the TabItem header -->
 	
 	<UserControl.Resources>
-		<ValueConverters:NumericRangeValueConverter x:Key="NumericRangeValueConverter" MinimumOutput="0.2" MaximumOutput="1.0"/>
+		<valueConverters:NumericRangeValueConverter x:Key="NumericRangeValueConverter" MinimumOutput="0.2" MaximumOutput="1.0"/>
 		
 		<CollectionViewSource Source="{Binding NodeList}" x:Key="SortedNodes" >
 			<CollectionViewSource.SortDescriptions>
@@ -41,11 +41,11 @@
         </Style>
 
         <!-- Play -->
-        <DataTemplate x:Key="PlayTemplate" DataType="Adapters:LibraryAdditionNode">
+        <DataTemplate x:Key="PlayTemplate" DataType="adapters:LibraryAdditionNode">
             <Button Margin="5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="NameTemplate" DataType="Adapters:LibraryAdditionNode">
+        <DataTemplate x:Key="NameTemplate" DataType="adapters:LibraryAdditionNode">
             <StackPanel x:Name="ItemPanel" Orientation="Horizontal"
                         Opacity="{Binding Path=RelativeAge, Converter={StaticResource NumericRangeValueConverter}}">
                 <TextBlock x:Name="ArtistName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Artist.Name}"/>
@@ -78,7 +78,7 @@
 		        </DataGrid.Columns>
 		    </DataGrid>
             <i:Interaction.Behaviors>
-                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             </i:Interaction.Behaviors>
 		</GroupBox>
 	</Grid>

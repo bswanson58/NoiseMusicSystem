@@ -3,10 +3,10 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300"
 			 Tag="Search"
@@ -29,7 +29,7 @@
         </Style>
 
         <!-- Play -->
-        <DataTemplate x:Key="PlayTemplate" DataType="Adapters:SearchViewNode">
+        <DataTemplate x:Key="PlayTemplate" DataType="adapters:SearchViewNode">
             <Button Margin="5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" 
                     Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
         </DataTemplate>
@@ -61,7 +61,7 @@
 						  ItemsSource="{Binding Path=SearchTypes}" SelectedItem="{Binding Path=CurrentSearchType}" DisplayMemberPath="DisplayName" Margin="0,3"/>
 				<TextBlock Grid.Column="2" Margin="3" Text="for:" VerticalAlignment="Center"/>
 				<TextBox Grid.Column="3" Margin="3" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource WaterMarkTextBox}"
-						 Behaviours:TextBoxHelper.Watermark="enter phrase to search for..." Behaviours:TextBoxHelper.ClearTextButton="True"/>
+						 behaviours:TextBoxHelper.Watermark="enter phrase to search for..." behaviours:TextBoxHelper.ClearTextButton="True"/>
             </Grid>
 
 			<Grid Grid.Row="1">
@@ -93,8 +93,8 @@
 			</Grid>
 
             <i:Interaction.Behaviors>
-                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
-                <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+                <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
             </i:Interaction.Behaviors>
 		</Grid>
 	</GroupBox>

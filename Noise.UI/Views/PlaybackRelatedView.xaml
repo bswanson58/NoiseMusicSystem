@@ -133,7 +133,7 @@
         </Grid>
 
         <i:Interaction.Behaviors>
-            <behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource MouseEnterAnimation}" FadeOutAnimation="{StaticResource MouseLeaveAnimation}"/>
+            <behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
         </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>
