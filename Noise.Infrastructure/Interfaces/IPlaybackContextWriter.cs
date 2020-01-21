@@ -8,7 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			SaveAlbumContext( DbTrack forTrack, ScPlayContext albumContext );
 		void			SaveTrackContext( DbTrack forTrack, ScPlayContext trackContext );
 
-		ScTrackFadePoints	GetTrackFadePoints( DbTrack forTrack );
-		void				SaveTrackFadePoints( DbTrack forTrack, ScTrackFadePoints fadePoints );
+		ScTrackPlayPoints	GetTrackPlayPoints( DbTrack forTrack );
+		void				SaveTrackPlayPoints( DbTrack forTrack, ScTrackPlayPoints fadePoints );
 	}
 }

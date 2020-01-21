@@ -6,9 +6,9 @@ namespace Noise.UI.Views {
     /// <summary>
     /// Interaction logic for TrackFadePointsDialog.xaml
     /// </summary>
-    [Export( DialogNames.TrackFadePointsDialog, typeof( FrameworkElement ))]
-    public partial class TrackFadePointsDialog {
-        public TrackFadePointsDialog() {
+    [Export( DialogNames.TrackPlayPointsDialog, typeof( FrameworkElement ))]
+    public partial class TrackPlayPointsDialog {
+        public TrackPlayPointsDialog() {
             InitializeComponent();
         }
     }

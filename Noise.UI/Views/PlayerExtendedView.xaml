@@ -266,7 +266,8 @@
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
-						<Button Margin="15,3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_FadePoints}" Command="{Binding DefineFadePoints}" Padding="1"/>
+						<Button Margin="15,3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_FadePoints}" Command="{Binding DefinePlayPoints}" Padding="1"
+                                ToolTip="Set Track Start/End Playing Times"/>
 					</StackPanel>
 					
 					<Slider Grid.Row="1" Margin="10,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"

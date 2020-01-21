@@ -26,6 +26,6 @@
         public const string     TagEditDialog               = "TagEditDialog";
         public const string     TagAssociationDialog        = "TagAssociationDialog";
         public const string     TrackStrategyOptionsDialog  = "TrackStrategyOptionsDialog";
-		public const string		TrackFadePointsDialog		= "TrackFadePointsDialog";
+		public const string		TrackPlayPointsDialog		= "TrackPlayPointsDialog";
 	}
 }

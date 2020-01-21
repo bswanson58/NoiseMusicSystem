@@ -402,7 +402,7 @@
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
-    <Compile Include="ViewModels\TrackFadePointsDialogModel.cs" />
+    <Compile Include="ViewModels\TrackPlayPointsDialogModel.cs" />
     <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
     <Compile Include="ViewModels\TransportViewModel.cs" />
     <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
@@ -531,8 +531,8 @@
     <Compile Include="Views\TagsView.xaml.cs">
       <DependentUpon>TagsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TrackFadePointsDialog.xaml.cs">
-      <DependentUpon>TrackFadePointsDialog.xaml</DependentUpon>
+    <Compile Include="Views\TrackPlayPointsDialog.xaml.cs">
+      <DependentUpon>TrackPlayPointsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TrackStrategyOptionsDialog.xaml.cs">
       <DependentUpon>TrackStrategyOptionsDialog.xaml</DependentUpon>
@@ -884,7 +884,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TrackFadePointsDialog.xaml">
+    <Page Include="Views\TrackPlayPointsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

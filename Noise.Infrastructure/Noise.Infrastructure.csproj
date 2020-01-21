@@ -235,7 +235,7 @@
     <Compile Include="Dto\ScArtist.cs" />
     <Compile Include="Dto\ScPlayContext.cs" />
     <Compile Include="Dto\ScTrack.cs" />
-    <Compile Include="Dto\ScTrackFadePoints.cs" />
+    <Compile Include="Dto\ScTrackPlayPoints.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
     <Compile Include="Dto\SetFavoriteCommandArgs.cs" />

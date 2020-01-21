@@ -38,20 +38,20 @@ namespace Noise.UI.ViewModels {
 		private ImageSource					mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
 		private readonly PlaybackContextDialogManager		mPlaybackContextDialogManager;
-		private readonly TrackFadePointsDialogModel			mTrackFadePointsDialogModel;
+		private readonly TrackPlayPointsDialogModel			mTrackPlayPointsDialogModel;
 
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
 		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController,
-								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager, TrackFadePointsDialogModel fadePointsDialogModel ) {
+								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager, TrackPlayPointsDialogModel playPointsDialogModel ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 			mAudioController = audioController;
 			mDialogService = dialogService;
 			mPlaybackContextDialogManager = playbackContextDialogManager;
-			mTrackFadePointsDialogModel = fadePointsDialogModel;
+			mTrackPlayPointsDialogModel = playPointsDialogModel;
 
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
@@ -650,20 +650,20 @@ namespace Noise.UI.ViewModels {
 				   ( mPlayController.CurrentTrack != null ));
 		}
 
-		public void Execute_DefineFadePoints() {
+		public void Execute_DefinePlayPoints() {
 			if(( mDialogService != null ) &&
 			   ( mPlayController.CurrentTrack != null ) &&
-			   ( mTrackFadePointsDialogModel != null )) {
-				mTrackFadePointsDialogModel.SetTrack( mPlayController.CurrentTrack.Track, mPlayController.PlayPosition, mPlayController.TrackEndPosition );
+			   ( mTrackPlayPointsDialogModel != null )) {
+				mTrackPlayPointsDialogModel.SetTrack( mPlayController.CurrentTrack.Track, mPlayController.PlayPosition, mPlayController.TrackEndPosition );
 
-				if( mDialogService.ShowDialog( DialogNames.TrackFadePointsDialog, mTrackFadePointsDialogModel ) == true ) {
-					mTrackFadePointsDialogModel.SaveFadePoints();
+				if( mDialogService.ShowDialog( DialogNames.TrackPlayPointsDialog, mTrackPlayPointsDialogModel ) == true ) {
+					mTrackPlayPointsDialogModel.SavePlayPoints();
                 }
             }
         }
         [DependsUpon( "CurrentStatus" )]
         [DependsUpon("StartTrackFlag")]
-		public bool CanExecute_DefineFadePoints() {
+		public bool CanExecute_DefinePlayPoints() {
 			return mPlayController.CurrentTrack != null;
         }
 	}

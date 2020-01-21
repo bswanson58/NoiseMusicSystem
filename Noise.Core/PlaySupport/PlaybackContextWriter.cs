@@ -57,22 +57,22 @@ namespace Noise.Core.PlaySupport {
 			}
 		}
 
-        public ScTrackFadePoints GetTrackFadePoints( DbTrack forTrack ) {
-            var retValue = new ScTrackFadePoints();
+        public ScTrackPlayPoints GetTrackPlayPoints( DbTrack forTrack ) {
+            var retValue = new ScTrackPlayPoints();
             var scTrack = mSidecarWriter.ReadSidecar( forTrack );
 
-            if(scTrack?.FadePoints != null) {
-                retValue = scTrack.FadePoints;
+            if(scTrack?.PlayPoints != null) {
+                retValue = scTrack.PlayPoints;
             }
 
             return( retValue );
         }
 
-        public void SaveTrackFadePoints( DbTrack forTrack, ScTrackFadePoints fadePoints ) {
+        public void SaveTrackPlayPoints( DbTrack forTrack, ScTrackPlayPoints playPoints ) {
             var scTrack = mSidecarWriter.ReadSidecar( forTrack );
 
             if( scTrack != null ) {
-                scTrack.FadePoints = fadePoints;
+                scTrack.PlayPoints = playPoints;
                 mSidecarWriter.WriteSidecar( forTrack, scTrack );
             }
         }

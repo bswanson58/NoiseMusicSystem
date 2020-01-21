@@ -18,7 +18,7 @@ namespace Noise.Infrastructure.Dto {
 		public ScPlayContext	        PlaybackContext {  get; set; }
         public ePlayAdjacentStrategy    PlayAdjacentStrategy { get; set; }
         public bool                     DoNotStrategyPlay { get; set; }
-		public ScTrackFadePoints		FadePoints {  get; set; }
+		public ScTrackPlayPoints		PlayPoints {  get; set; }
 
 		public ScTrack() {
 			TrackName = string.Empty;

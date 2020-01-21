@@ -505,9 +505,9 @@ namespace Noise.Core.PlaySupport {
                     retValue = mAudioPlayer.OpenStream( track.Stream );
                 }
 				else {
-                    var fadePoints = DetermineFadePoints( track );
+                    var playPoints = DeterminePlayPoints( track );
 
-                    retValue = fadePoints != null ? mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ), fadePoints.FadeInPoint, fadePoints.FadeOutPoint ) :
+                    retValue = playPoints != null ? mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ), playPoints.StartPlaySeconds, playPoints.StopPlaySeconds ) :
                                                     mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ));
                 }
 
@@ -555,11 +555,11 @@ namespace Noise.Core.PlaySupport {
 			return ( retValue );
 		}
 
-		private ScTrackFadePoints DetermineFadePoints( PlayQueueTrack track ) {
-			var retValue = default( ScTrackFadePoints );
+		private ScTrackPlayPoints DeterminePlayPoints( PlayQueueTrack track ) {
+			var retValue = default( ScTrackPlayPoints );
 
 			if( track?.Track != null ) {
-				retValue = mContextWriter.GetTrackFadePoints( track.Track );
+				retValue = mContextWriter.GetTrackPlayPoints( track.Track );
             }
 
 			return retValue;
