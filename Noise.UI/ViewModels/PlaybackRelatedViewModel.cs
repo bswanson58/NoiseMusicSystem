@@ -126,21 +126,25 @@ namespace Noise.UI.ViewModels {
         }
 
         private void AddSearchItem( SearchResultItem item ) {
-            var key = item.Track.Name.RemoveSpecialCharacters().ToLower();
-            var parent = mTracks.FirstOrDefault( i => i.Key.Equals( key ));
+            if(( item?.Track != null ) &&
+               ( item.Album != null ) &&
+               ( item.Artist != null )) {
+                var key = item.Track.Name.RemoveSpecialCharacters().ToLower();
+                var parent = mTracks.FirstOrDefault( i => i.Key.Equals( key ));
 
-            if( parent != null ) {
-                parent.AddAlbum( item.Artist, item.Album, item.Track );
+                if( parent != null ) {
+                    parent.AddAlbum( item.Artist, item.Album, item.Track );
 
-                mPlayingItemHandler.UpdateList( parent.TrackList );
-            }
-            else {
-                var expanded = !mTracks.Any();
+                    mPlayingItemHandler.UpdateList( parent.TrackList );
+                }
+                else {
+                    var expanded = !mTracks.Any();
                 
-                parent = new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded );
-                mPlayingItemHandler.UpdateItem( parent );
+                    parent = new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded );
+                    mPlayingItemHandler.UpdateItem( parent );
 
-                mTracks.Add( parent );
+                    mTracks.Add( parent );
+                }
             }
         }
 
