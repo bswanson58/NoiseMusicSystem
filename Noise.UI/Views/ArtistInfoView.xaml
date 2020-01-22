@@ -29,7 +29,7 @@
 			</Grid.RowDefinitions>
 			<GroupBox Margin="3,0" Header=" Biography ">
 				<ScrollViewer behaviours:ScrollViewerPosition.ChangeTrigger="{Binding ArtistValid, Mode=OneWay}">
-					<FlowDocumentScrollViewer VerticalScrollBarVisibility="Hidden">
+					<FlowDocumentScrollViewer VerticalScrollBarVisibility="Hidden" IsHitTestVisible="False">
 						<FlowDocument ColumnWidth="100" IsHyphenationEnabled="True" IsOptimalParagraphEnabled="True">
 							<Paragraph>
 								<adapters:BindableRun BoundText="{Binding ArtistBiography, Converter={StaticResource htmlConverter}}" />
