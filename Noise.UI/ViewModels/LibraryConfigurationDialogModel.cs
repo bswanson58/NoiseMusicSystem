@@ -29,11 +29,14 @@ namespace Noise.UI.ViewModels {
 			mLibraryBuilder = libraryBuilder;
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 
-			LoadLibraries();
-			SelectedLibrary = mLibraryConfiguration.Current ?? mLibraryConfiguration.Libraries.FirstOrDefault();
-
 			mEventAggregator.Subscribe( this );
 		}
+
+		public void Initialize() {
+            LoadLibraries();
+
+            SelectedLibrary = mLibraryConfiguration.Current ?? mLibraryConfiguration.Libraries.FirstOrDefault();
+        }
 
 		public void Handle( Events.LibraryListChanged args ) {
 			LoadLibraries();

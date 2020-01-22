@@ -5,7 +5,6 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Noise.UI.Logging;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -13,24 +12,31 @@ namespace Noise.UI.ViewModels {
         private readonly ILibraryConfiguration  mLibraryConfiguration;
         private readonly ILibraryBackupManager  mLibraryBackup;
         private readonly IPreferences           mPreferences;
-        private readonly IUiLog                 mLog;
         private LibraryConfiguration            mCurrentLibrary;
 
         public  ObservableCollectionEx<LibraryConfiguration>   Libraries { get; }
 
-        public LibraryBackupDialogModel( ILibraryBackupManager libraryBackup, ILibraryConfiguration configuration, IPreferences preferences, IUiLog log ) {
+        public LibraryBackupDialogModel( ILibraryBackupManager libraryBackup, ILibraryConfiguration configuration, IPreferences preferences ) {
             mLibraryBackup = libraryBackup;
             mLibraryConfiguration = configuration;
             mPreferences = preferences;
-            mLog = log;
 
             Libraries = new ObservableCollectionEx<LibraryConfiguration>();
+        }
+
+        public void Initialize() {
             Libraries.AddRange( mLibraryConfiguration.Libraries );
             CurrentLibrary = mLibraryConfiguration.Current;
 
             var corePreferences = mPreferences.Load<NoiseCorePreferences>();
+
             EnforceBackupCopyLimit = corePreferences.EnforceBackupCopyLimit;
             BackupCopyLimit = corePreferences.MaximumBackupCopies.ToString();
+
+            ProgressAmount = 0;
+            ProgressStatus = String.Empty;
+            BackupActive = false;
+            BackupSucceeded = false;
         }
 
         public LibraryConfiguration CurrentLibrary {
