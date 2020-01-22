@@ -67,7 +67,7 @@
                             </i:Interaction.Triggers>
                         </Image>
 
-                        <ContentPresenter Grid.Column="0" Margin="7" Opacity="0.5" Content="{StaticResource Path_UnknownArtist}"
+                        <ContentPresenter Grid.Column="0" Margin="7,9,10,12" Opacity="0.5" Content="{StaticResource Path_UnknownArtist}"
                                           Visibility="{Binding ArtworkValid, Converter={StaticResource DisplayIfFalse}}"/>
 
                         <Grid Grid.Column="3" Margin="3,7,5,3">

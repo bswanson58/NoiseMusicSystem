@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
@@ -47,8 +46,6 @@ namespace Noise.UI.ViewModels {
 		private readonly IRatings					mRatings;
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private UiAlbum								mCurrentAlbum;
-		private readonly BitmapImage				mUnknownImage;
-		private readonly BitmapImage				mSelectImage;
 		private ImageScrubberItem					mCurrentAlbumCover;
 		private string								mCategoryDisplay;
 		private readonly Observal.Observer			mChangeObserver;
@@ -62,6 +59,7 @@ namespace Noise.UI.ViewModels {
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
 
         public	UiAlbum							Album => mCurrentAlbum;
+        public	bool							ArtworkValid { get; private set; }
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState, IRatings ratings,
@@ -94,9 +92,6 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-			mUnknownImage = mResourceProvider.RetrieveImage( "Unknown Album Image.png" );
-			mSelectImage = mResourceProvider.RetrieveImage( "Select Album Image.png" );
-
 			mAlbumEditRequest = new InteractionRequest<AlbumEditRequest>();
 			mAlbumArtworkDisplayRequest = new InteractionRequest<AlbumArtworkDisplayInfo>();
 
@@ -112,7 +107,7 @@ namespace Noise.UI.ViewModels {
 			SupportInfo = null;
 			mVolumeNames.Clear();
 			mCurrentVolumeName = string.Empty;
-			mCurrentAlbumCover = new ImageScrubberItem( 0, mUnknownImage, 0 );
+			mCurrentAlbumCover = null;
 
 			RaisePropertyChanged( () => Album );
 			RaisePropertyChanged( () => SupportInfo );
@@ -185,13 +180,16 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private ImageScrubberItem SelectAlbumCover( DbAlbum forAlbum ) {
-			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
+			var	retValue = default( ImageScrubberItem );
 			var cover = mAlbumArtworkProvider.GetAlbumCover( forAlbum );
 
 			if(( cover?.Image != null ) &&
 			   ( cover.Image.Length > 0 )) {
 				retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
 			}
+
+			ArtworkValid = retValue != null;
+			RaisePropertyChanged( () => ArtworkValid );
 
 			return( retValue );
 		}
@@ -344,7 +342,7 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "SupportInfo" )]
 		public ImageScrubberItem AlbumCover {
-			get => ( mCurrentAlbumCover );
+			get => mCurrentAlbumCover;
             set {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
