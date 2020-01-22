@@ -91,13 +91,18 @@
                     </controls:LinkLabel>
 				</Grid>
 				<GroupBox Grid.Row="1" Margin="0" BorderThickness="1" Header=" Discography ">
-                    <DataGrid ItemsSource="{Binding Discography}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" RowHeight="15">
+                    <DataGrid ItemsSource="{Binding Discography}" AutoGenerateColumns="False" CanUserReorderColumns="False" IsReadOnly="True" RowHeight="15" Focusable="False">
 						<DataGrid.Columns>
                             <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
-                            <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="210"/>
-                            <DataGridTextColumn Header="Format" Binding="{Binding Format}" Width="190"/>
-                            <DataGridTextColumn Header="Released" Binding="{Binding Year, Converter={StaticResource PublishedYearConverter}}" Width="75"/>
+                            <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="180"/>
+                            <DataGridTextColumn Header="Format" Binding="{Binding Format}" Width="180"/>
+                            <DataGridTextColumn Header="Released" Binding="{Binding Year, Converter={StaticResource PublishedYearConverter}}" Width="90"/>
                         </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                            </Style>
+                        </DataGrid.RowStyle>
                     </DataGrid>
                 </GroupBox>
 			</Grid>
