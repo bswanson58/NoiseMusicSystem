@@ -44,6 +44,7 @@ namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue, IRequireInitialization,
 								  IHandle<Events.TrackUserUpdate>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState> {
 		private readonly IEventAggregator			    mEventAggregator;
+		private readonly ILibraryConfiguration			mLibraryConfiguration;
 		private readonly ILogPlayQueue				    mLog;
 		private readonly IArtistProvider			    mArtistProvider;
 		private readonly IAlbumProvider				    mAlbumProvider;
@@ -72,7 +73,7 @@ namespace Noise.Core.PlayQueue {
         public  int                                     PlayedTrackCount => GetPlayedTrackList().Count();
         public  bool                                    StrategyRequestsQueued => ( from PlayQueueTrack track in PlayList where track.IsStrategyQueued select track ).Any();
 
-		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, ILibraryConfiguration libraryConfiguration,
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							 IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory,
@@ -80,6 +81,7 @@ namespace Noise.Core.PlayQueue {
 							 IEnumerable<IPlayQueueSupport> playQueueSupporters, IPreferences preferences, ILogPlayQueue log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
+			mLibraryConfiguration = libraryConfiguration;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -138,8 +140,10 @@ namespace Noise.Core.PlayQueue {
 			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
 			try {
-                SetExhaustedStrategy( preferences.ExhaustedStrategySpecification );
-				SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
+				if( mLibraryConfiguration.Current != null ) {
+                    SetExhaustedStrategy( mLibraryConfiguration.Current.ExhaustedStrategySpecification );
+                    SetPlayStrategy( mLibraryConfiguration.Current.PlayStrategy, PlayStrategyParametersFactory.FromString( mLibraryConfiguration.Current.PlayStrategyParameters ));
+                }
 
 				mDeleteUnplayedTracks = preferences.DeletePlayedTracks;
 				mMaximumPlayedTracks = preferences.MaximumPlayedTracks;
@@ -721,12 +725,14 @@ namespace Noise.Core.PlayQueue {
 
             mPlayStrategy?.Initialize( this, parameters );
 
-            var preferences = mPreferences.Load<NoiseCorePreferences>();
+			if( mLibraryConfiguration.Current != null ) {
+                mLibraryConfiguration.Current.PlayStrategy = strategyId;
+                mLibraryConfiguration.Current.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
 
-			preferences.PlayStrategy = strategyId;
-			preferences.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
-			mPreferences.Save( preferences );
+				mLibraryConfiguration.UpdateConfiguration( mLibraryConfiguration.Current );
+            }
 
+            mEventAggregator.PublishOnUIThread( new Events.PlayStrategyChanged());
 			mLog.StrategySet( strategyId, parameters );
 
 			Condition.Requires( mPlayStrategy ).IsNotNull();
@@ -739,10 +745,13 @@ namespace Noise.Core.PlayQueue {
             set {
                 SetExhaustedStrategy( value );
 
-                var preferences = mPreferences.Load<NoiseCorePreferences>();
+				if( mLibraryConfiguration.Current != null ) {
+                    mLibraryConfiguration.Current.ExhaustedStrategySpecification = mExhaustedStrategyPlay.StrategySpecification;
 
-                preferences.ExhaustedStrategySpecification = mExhaustedStrategyPlay.StrategySpecification;
-                mPreferences.Save( preferences );
+					mLibraryConfiguration.UpdateConfiguration( mLibraryConfiguration.Current );
+                }
+
+				mEventAggregator.PublishOnUIThread( new Events.PlayStrategyChanged());
             }
         }
 

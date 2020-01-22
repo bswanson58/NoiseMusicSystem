@@ -196,6 +196,8 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class PlayStrategyChanged { }
+
 		public class AlbumQueued {
 			public DbAlbum		QueuedAlbum { get; }
 

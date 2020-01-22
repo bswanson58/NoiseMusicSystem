@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
@@ -40,6 +41,10 @@ namespace Noise.Infrastructure.Dto {
 		public	uint				BackupPressure { get; set; }
 		public	List<MediaLocation>	MediaLocations { get; set; }
 
+        public	ePlayStrategy			        PlayStrategy { get; set; }
+        public	string					        PlayStrategyParameters { get; set; }
+        public  ExhaustedStrategySpecification  ExhaustedStrategySpecification { get; set; }
+
         public  string              BlobDatabasePath => !String.IsNullOrWhiteSpace( BlobDatabaseLocation ) ? BlobDatabaseLocation : 
                                                                                                             Path.Combine( mConfigurationPath, Constants.BlobDatabaseDirectory );
         public  string              LibraryDatabasePath => Path.Combine( mConfigurationPath, Constants.LibraryDatabaseDirectory );
@@ -58,6 +63,9 @@ namespace Noise.Infrastructure.Dto {
             BlobDatabaseLocation = string.Empty;
             IsMetadataInPlace = true;
 			BackupPressure = 0;
+            PlayStrategy = ePlayStrategy.Next;
+            PlayStrategyParameters = string.Empty;
+            ExhaustedStrategySpecification = new ExhaustedStrategySpecification();
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {

@@ -6,7 +6,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueStrategyViewModel : AutomaticCommandBase,
-											  IHandle<Events.PlayQueueChanged> {
+											  IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayStrategyChanged> {
 		private readonly IEventAggregator                           mEventAggregator;
 		private readonly IPlayQueue                                 mPlayQueue;
 		private readonly IDialogService                             mDialogService;
@@ -18,8 +18,7 @@ namespace Noise.UI.ViewModels {
 			mDialogService = dialogService;
 			mConfigurationDialog = configurationDialog;
 
-			PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.Description;
+			SetStrategyDescriptions();
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -27,6 +26,16 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.PlayQueueChanged eventArgs ) {
 			RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 		}
+
+		public void Handle( Events.PlayStrategyChanged args ) {
+			SetStrategyDescriptions();
+        }
+
+		private void SetStrategyDescriptions() {
+            PlayStrategyDescription = mPlayQueue.PlayStrategy?.ConfiguredDescription;
+            PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy?.Description;
+        }
+
 		public void Execute_StartStrategy() {
 			mPlayQueue.StartPlayStrategy();
 		}
@@ -56,9 +65,6 @@ namespace Noise.UI.ViewModels {
 					mPlayQueue.ExhaustedPlayStrategy = mConfigurationDialog.ExhaustedStrategySpecification;
 					mPlayQueue.DeletedPlayedTracks = mConfigurationDialog.DeletePlayedTracks;
                     mPlayQueue.SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
-		
-                    PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-                    PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.Description;
 
 					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 				}

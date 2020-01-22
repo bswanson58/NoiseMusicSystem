@@ -13,10 +13,6 @@ namespace Noise.Infrastructure.Configuration {
 		public	bool					        MaintainArtistSidecars { get; set; }
 		public	bool					        MaintainAlbumSidecars { get; set; }
 
-		public	ePlayStrategy			        PlayStrategy { get; set; }
-		public	string					        PlayStrategyParameters { get; set; }
-        public  ExhaustedStrategySpecification  ExhaustedStrategySpecification { get; set; }
-
 		public	bool					        DeletePlayedTracks { get; set;}
 		public	int						        MaximumPlayedTracks { get; set; }
 
@@ -25,10 +21,6 @@ namespace Noise.Infrastructure.Configuration {
 		public	int								MaximumBackupCopies { get; set; }
 
 		public NoiseCorePreferences() {
-			PlayStrategy = ePlayStrategy.Next;
-			PlayStrategyParameters = string.Empty;
-            ExhaustedStrategySpecification = new ExhaustedStrategySpecification();
-
 			HasNetworkAccess = true;
 			LoadLastLibraryOnStartup = true;
 
