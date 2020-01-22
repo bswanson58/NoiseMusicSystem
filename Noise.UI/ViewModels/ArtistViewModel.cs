@@ -14,6 +14,7 @@ using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 using System;
+
 namespace Noise.UI.ViewModels {
 	public class ArtistEditRequest : InteractionRequestData<UiArtist> {
 		public ArtistEditRequest(UiArtist artist ) : base( artist ) { } 
@@ -48,6 +49,7 @@ namespace Noise.UI.ViewModels {
 
         [DependsUpon( "Artist" )]
         public  bool                            ArtistValid => Artist != null;
+		public	bool							ArtworkValid { get; private set; }
         public  UiArtist                        Artist => mCurrentArtist;
         public  LinkNode                        ArtistWebsite => mArtistWebsite;
 		public	event EventHandler				IsActiveChanged  = delegate { };
@@ -228,7 +230,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveArtist( long artistId ) {
 			ArtistTaskHandler.StartTask( () => mArtistProvider.GetArtist( artistId ), 
 										SetCurrentArtist,
-										exception => mLog.LogException( string.Format( "GetArtist:{0}", artistId ), exception ));
+										exception => mLog.LogException( $"GetArtist:{artistId}", exception ));
 		}
 
 		internal TaskHandler<Artwork> ArtworkTaskHandler {
@@ -251,6 +253,9 @@ namespace Noise.UI.ViewModels {
                                               SetArtwork,
                                               exception => mLog.LogException( $"GetArtistArtwork for '{artistName}'", exception ));
             }
+			else {
+				SetArtwork( null );
+            }
 		}
 
 		internal TaskHandler TopTracksTaskHandler {
@@ -267,7 +272,10 @@ namespace Noise.UI.ViewModels {
 		private void SetArtwork( Artwork artwork ) {
 			mArtistImage = artwork;
 
+			ArtworkValid = artwork != null && artwork.HaveValidImage;
+
 			RaisePropertyChanged( () => ArtistImage );
+			RaisePropertyChanged( () => ArtworkValid );
 		}
  
 		private void OnArtistChanged( PropertyChangeNotification changeNotification ) {
