@@ -47,11 +47,17 @@ namespace Noise.UI.ViewModels {
 		}
 
         private void OnRatingChanged( PropertyValue<UiPlayQueueTrack, Int16> value ) {
-            mRatings.SetRating( value.Sender.QueuedTrack.Track, value.Sender.UiRating );
+			if(( value?.Sender?.QueuedTrack?.Track != null ) &&
+               ( value.Sender.QueuedTrack.Track.Rating != value.Value )) {
+                mRatings.SetRating( value.Sender.QueuedTrack.Track, value.Sender.UiRating );
+            }
         }
 
 		private void OnFavoriteChanged( PropertyValue<UiPlayQueueTrack, bool> value ) {
-			mRatings.SetFavorite( value.Sender.QueuedTrack.Track, value.Sender.UiIsFavorite );
+            if(( value?.Sender?.QueuedTrack?.Track != null ) &&
+               ( value.Sender.QueuedTrack.Track.IsFavorite != value.Value )) {
+                mRatings.SetFavorite( value.Sender.QueuedTrack.Track, value.Sender.UiIsFavorite );
+            }
         }
 
 		public bool QueueEmpty {
