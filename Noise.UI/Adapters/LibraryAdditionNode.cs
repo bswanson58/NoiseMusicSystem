@@ -27,7 +27,10 @@ namespace Noise.UI.Adapters {
         }
 
         public void Execute_Play( object sender ) {
-			mAlbumPlayAction( this );
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
+            mAlbumPlayAction( this );
 		}
 	}
 }

@@ -22,6 +22,9 @@ namespace Noise.UI.Adapters {
 		}
 
 	    public void Execute_Play() {
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
 	        mOnPlay?.Invoke( this );
 	    }
 	}

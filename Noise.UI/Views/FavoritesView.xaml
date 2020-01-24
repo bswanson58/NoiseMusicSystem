@@ -7,6 +7,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 mc:Ignorable="d"
 			 Tag="Favorites"
 			 DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
@@ -41,7 +42,11 @@
 
 	    <DataTemplate x:Key="NameTemplate" DataType="Adapters:FavoriteViewNode">
             <TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=DisplayName}"
-	                   ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+	                   ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                <i:Interaction.Behaviors>
+                    <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
+                </i:Interaction.Behaviors>
+            </TextBlock>
 	        <DataTemplate.Triggers>
 	            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
 	                <Setter TargetName="Title" Property="Foreground" Value="{StaticResource PlayingBrush}"/>

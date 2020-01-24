@@ -6,6 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
+             xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              DataContext="{Binding TagAssociationViewModel, Source={StaticResource ViewModelLocator}}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -26,7 +27,11 @@
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
                 <TextBlock x:Name="TrackName" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding DisplayName}"
-                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                    <i:Interaction.Behaviors>
+                        <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
+                    </i:Interaction.Behaviors>
+                </TextBlock>
 
                 <Button x:Name="AssociationDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
                         BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"

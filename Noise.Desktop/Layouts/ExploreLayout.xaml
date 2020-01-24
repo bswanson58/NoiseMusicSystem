@@ -53,7 +53,7 @@
         </Storyboard>
 
         <DataTemplate x:Key="MoveControlTemplate" DataType="behaviors:MoveControlProperties">
-            <TextBlock Text="{Binding MoveText}"/>
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding MoveText}"/>
         </DataTemplate>
 	</UserControl.Resources>
 	

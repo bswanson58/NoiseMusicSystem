@@ -9,6 +9,7 @@
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
 			 xmlns:controls="clr-namespace:Noise.UI.Controls"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
@@ -35,10 +36,14 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}" Content="4" />
+						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}"/>
 
 						<Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-                            <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                            <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}">
+                                <i:Interaction.Behaviors>
+                                    <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
+                                </i:Interaction.Behaviors>
+                            </TextBlock>
 						</Viewbox>
 					</Grid>
 

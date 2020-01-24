@@ -8,6 +8,7 @@
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:vm="clr-namespace:Noise.UI.ViewModels;assembly=Noise.UI"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              mc:Ignorable="d" 
              Tag="Wander"
              DataContext="{Binding PlaybackRelatedViewModel, Source={StaticResource ViewModelLocator}}"
@@ -37,7 +38,11 @@
                 <Button Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
 
                 <TextBlock x:Name="TrackName" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource ListViewTextStyle}" Text="{Binding Track.Name}"
-                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                    <i:Interaction.Behaviors>
+                        <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Track.Name}" />
+                    </i:Interaction.Behaviors>
+                </TextBlock>
 
                 <TextBlock x:Name="AlbumName" Grid.Row="1" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>

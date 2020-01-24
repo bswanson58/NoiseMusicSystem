@@ -42,6 +42,9 @@ namespace Noise.UI.Dto {
         }
 
         public void Execute_Play() {
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
             OnPlay?.Invoke( this );
         }
 
