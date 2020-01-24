@@ -6,6 +6,8 @@
 			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:Behaviours1="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
@@ -54,7 +56,11 @@
 
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
                     <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
-                               Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                               Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                        <i:Interaction.Behaviors>
+                            <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding TrackName}" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
                 </Grid>
 
 				<Grid Grid.Row="1" Margin="60,0,0,3">
