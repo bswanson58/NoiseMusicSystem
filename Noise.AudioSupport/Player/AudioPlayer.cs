@@ -267,7 +267,7 @@ namespace Noise.AudioSupport.Player {
 			return OpenFile( filePath, gainAdjustment, 0, 0  );
         }
 
-		public int OpenFile( string  filePath, float gainAdjustment, long playStart, long playEnd ) {
+        public int OpenFile( string  filePath, float gainAdjustment, long playStart, long playEnd ) {
 			var retValue = 0;
 
 			if( File.Exists( filePath )) {
@@ -307,14 +307,14 @@ namespace Noise.AudioSupport.Player {
 								trackPlayLength = Math.Min( Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd ), trackLength );
                             }
 
-							// set a marker where play should stop
+                            // set a marker where play should stop
                             stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS, trackPlayLength, mPlayEndSyncProc, IntPtr.Zero );
                             if( stream.SyncEnd == 0 ) {
                                 mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
                             }
 
 							// set a marker where the next track should be requested
-                            var position = Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd - 3 );
+                            var position = trackPlayLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, 3 );
 							stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
 																				 position, mPlayRequestSyncProc, IntPtr.Zero );
 							if( stream.SyncNext == 0 ) {
