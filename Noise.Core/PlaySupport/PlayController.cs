@@ -374,9 +374,9 @@ namespace Noise.Core.PlaySupport {
                 }
 			}
 			else {
-				StopPlay();
+                StopPlay();
 
-				FireStateChange( eStateTriggers.QueueRestored );
+                FireStateChange( mPlayQueue.IsQueueEmpty ? eStateTriggers.QueueCleared : eStateTriggers.QueueRestored );
             }
 		}
 
