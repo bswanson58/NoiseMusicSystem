@@ -11,6 +11,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="600"
 			 DataContext="{Binding PlayQueueListViewModel, Source={StaticResource ViewModelLocator}}">
@@ -166,7 +167,7 @@
 	</Control.InputBindings>
 
 	<Grid>
-        <ListBox x:Name="_playQueueListBox"
+        <ListBox x:Name="_playQueueListBox" Tag="TrackQueueTarget"
                  BorderThickness="0"
                  dragDrop:DragDrop.DropHandler="{Binding}"
                  dragDrop:DragDrop.IsDragSource="true"
@@ -182,9 +183,11 @@
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  SelectedItem="{Binding Path=SelectedItem}">
             <i:Interaction.Behaviors>
+                <elementMover:ElementMoverListTarget/>
                 <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
 				<reusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
 			</i:Interaction.Behaviors>
+
 			<eventCommandTriggers:CommandSource.Trigger>
 				<eventCommandTriggers:CommandTriggerGroup>
 					<eventCommandTriggers:EventCommandTrigger Command="{Binding Path=PlayRequested}"

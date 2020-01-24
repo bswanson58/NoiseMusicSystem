@@ -235,6 +235,9 @@
     <Compile Include="Behaviours\DataGridItemVisible.cs" />
     <Compile Include="Behaviours\DialogResult.cs" />
     <Compile Include="Behaviours\DragAdorner.cs" />
+    <Compile Include="Behaviours\ElementMover\ElementMoverBehavior.cs" />
+    <Compile Include="Behaviours\ElementMover\ElementMoverSource.cs" />
+    <Compile Include="Behaviours\ElementMover\ElementMoverTarget.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandParameter.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandSource.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandTrigger.cs" />
@@ -1008,6 +1011,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

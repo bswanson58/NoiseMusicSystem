@@ -11,6 +11,7 @@
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              d:DesignHeight="100"
              d:DesignWidth="530"
              d:DataContext="{d:DesignInstance viewModels:AlbumTracksViewModel, IsDesignTimeCreatable=False}"
@@ -81,7 +82,11 @@
         
         <!-- Track Name -->
         <DataTemplate x:Key="TrackNameTemplate" DataType="dto:UiTrack">
-            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=Name}" />
+            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Name}">
+                <i:Interaction.Behaviors>
+                    <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Name}" />
+                </i:Interaction.Behaviors>
+            </TextBlock>
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
