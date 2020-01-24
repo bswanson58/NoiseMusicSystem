@@ -21,10 +21,10 @@
 	<UserControl.Resources>
 		<valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
 		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
-		<valueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
 		<valueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
         <valueConverters:BooleanVisibilityConverter x:Key="DisplayIfFalse" TriggerValue="True" IsHidden="True"/>
-        <valueConverters:BooleanVisibilityConverter x:Key="DisplayIfTrue" TriggerValue="False" IsHidden="True"/>
 		<valueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
 
         <Style x:Key="PlayingItemBorder" TargetType="GroupBox" BasedOn="{StaticResource SectionBorderStyle}">
@@ -51,7 +51,7 @@
             <Grid Background="{StaticResource NoiseBrush}" 
 				  behaviours:GridUtils.ColumnDefinitions="Auto,*">
 				<!--  Album cover image  -->
-				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform" Visibility="{Binding ArtworkValid, Converter={StaticResource DisplayIfTrue}}">
+				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform" Visibility="{Binding ArtworkValid, Converter={StaticResource CollapseIfFalse}}">
                     <Image RenderTransformOrigin="0.5,0.5" Cursor="SizeWE">
 						<Image.RenderTransform>
 							<TransformGroup>
@@ -67,7 +67,7 @@
 					</Image>
 				</Viewbox>
 
-                <ContentPresenter Grid.Column="0" Margin="5,7,0,5" Opacity="0.5" Content="{StaticResource Path_UnknownAlbum}"
+                <ContentPresenter Grid.Column="0" Margin="5,7,0,5" Opacity="0.5" HorizontalAlignment="Left" Content="{StaticResource Path_UnknownAlbum}"
                                   Visibility="{Binding ArtworkValid, Converter={StaticResource DisplayIfFalse}}"/>
 
                 <Grid x:Name="GridParent" Grid.Column="1" Margin="3,7,5,3">
