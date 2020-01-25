@@ -124,7 +124,7 @@ namespace Noise.UI.ViewModels {
                     mPlayPoints.StopPlaySeconds = 0;
                 }
             }
-            if( mPlayPoints.StartPlaySeconds >= Math.Min( mPlayPoints.StopPlaySeconds, mTrackLength.TotalSeconds )) {
+            if( mPlayPoints.StartPlaySeconds >= ( mPlayPoints.StopPlaySeconds > 0 ? mPlayPoints.StopPlaySeconds : mTrackLength.TotalSeconds )) {
                 mPlayPoints.StartPlaySeconds = 0;
             }
 
