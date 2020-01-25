@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using DynamicData;
@@ -43,6 +44,8 @@ namespace Noise.Core.PlayQueue {
 
 	internal class PlayQueueMgr : IPlayQueue, IRequireInitialization,
 								  IHandle<Events.TrackUserUpdate>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState> {
+        private const int								cStrategyAddTrackCount = 3;
+
 		private readonly IEventAggregator			    mEventAggregator;
 		private readonly ILibraryConfiguration			mLibraryConfiguration;
 		private readonly ILogPlayQueue				    mLog;
@@ -170,6 +173,10 @@ namespace Noise.Core.PlayQueue {
 
 			FirePlayQueueChanged();
 		}
+
+		private void StrategyAdd( IEnumerable<DbTrack> trackList ) {
+			trackList.ForEach( StrategyAdd);
+        }
 
 		public void StrategyAdd( DbTrack track ) {
 			AddTrack( track, eStrategySource.ExhaustedStrategy );
@@ -600,20 +607,23 @@ namespace Noise.Core.PlayQueue {
 		}
 
         private bool SelectExhaustedTracks() {
-            const int suggestionCount = 3;
-            var retValue = false;
+			var retValue = false;
+			var task = Task.Run( () => mExhaustedStrategyPlay.SelectTracks( this, cStrategyAddTrackCount - UnplayedTrackCount ).ToList());
 
-            if( UnplayedTrackCount < suggestionCount ) {
-                var tracks = mExhaustedStrategyPlay.SelectTracks( this, suggestionCount - UnplayedTrackCount );
+            try {
+                var trackList = task.Result;
 
-                foreach( var track in tracks ) {
-                    StrategyAdd( track );
+                if( trackList.Any()) {
+                    StrategyAdd( trackList );
 
                     retValue = true;
                 }
             }
+            catch( Exception ex ) {
+                mLog.LogQueueException( "Selecting exhausted strategy tracks", ex );
+            }
 
-            return retValue;
+			return retValue;
         }
 
 		public bool CanPlayNextTrack() {
