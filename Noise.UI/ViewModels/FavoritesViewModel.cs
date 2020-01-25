@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using Caliburn.Micro;
-using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -17,10 +16,10 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class FavoriteFilter {
-		public string	FilterName { get; private set; }
-		public bool		FilterArtists { get; private set; }
-		public bool		FilterAlbums { get; private set; }
-		public bool		FilterTracks { get; private set; }
+		public string	FilterName { get; }
+		public bool		FilterArtists { get; }
+		public bool		FilterAlbums { get; }
+		public bool		FilterTracks { get; }
 
 		public FavoriteFilter( string name, bool filterArtists, bool filterAlbums, bool filterTracks ) {
 			FilterName = name;
@@ -51,6 +50,10 @@ namespace Noise.UI.ViewModels {
 		private readonly List<FavoriteFilter>	mFilterList; 
 		private TaskHandler<IEnumerable<FavoriteViewNode>>		mTaskHandler; 
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
+
+        public	IEventAggregator								EventAggregator => mEventAggregator;
+        public	IList<FavoriteFilter>							FilterList => mFilterList;
+        public	SortableCollection<FavoriteViewNode>			FavoritesCollection => mFavoritesList;
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState, IPrefixedNameHandler nameHandler,
@@ -88,10 +91,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IEventAggregator EventAggregator => ( mEventAggregator );
-
-	    public IList<FavoriteFilter> FilterList => ( mFilterList);
-
 	    public FavoriteFilter CurrentFilter {
 			get { return( Get( () => CurrentFilter )); }
 			set {
@@ -100,8 +99,6 @@ namespace Noise.UI.ViewModels {
 				FavoritesList.Refresh();
 			}
 		}
-
-		public SortableCollection<FavoriteViewNode> FavoritesCollection => ( mFavoritesList );
 
 	    public ICollectionView FavoritesList {
 			get{ 
@@ -118,10 +115,8 @@ namespace Noise.UI.ViewModels {
 		private bool OnFavoriteFilter( object node ) {
 			var retValue = true;
 
-			if( node is FavoriteViewNode ) {
-				var favoriteNode = node as FavoriteViewNode;
-
-				if( favoriteNode.Track != null ) {
+			if( node is FavoriteViewNode favoriteNode ) {
+                if( favoriteNode.Track != null ) {
 					retValue = CurrentFilter.FilterTracks;
 				}
 				else if( favoriteNode.Album != null ) {
@@ -154,8 +149,8 @@ namespace Noise.UI.ViewModels {
 	    }
 		
         public FavoriteViewNode SelectedNode {
-			get {  return( mSelectedNode ); }
-			set {
+			get => ( mSelectedNode );
+            set {
 				mSelectedNode = value;
 
 				if( mSelectedNode != null ) {
@@ -194,10 +189,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistChanged( DbArtist newArtist ) {
-			if(( newArtist != null ) &&
-			   ( mSelectedNode != null ) &&
-			   ( mSelectedNode.Artist != null ) &&
-			   ( mSelectedNode.Artist.DbId != newArtist.DbId )) {
+			if(( newArtist != null ) && 
+               ( mSelectedNode?.Artist != null ) &&
+               ( mSelectedNode.Artist.DbId != newArtist.DbId )) {
 				mSelectedNode = null;
 
 				RaisePropertyChanged( () => SelectedNode );
@@ -206,8 +200,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnAlbumChanged( DbAlbum newAlbum ) {
 			if(( newAlbum != null ) &&
-			   ( mSelectedNode != null ) &&
-			   ( mSelectedNode.Album != null ) &&
+			   ( mSelectedNode?.Album != null ) &&
 			   ( mSelectedNode.Album.DbId != newAlbum.DbId )) {
 				mSelectedNode = null;
 				
@@ -308,9 +301,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ExportFavorites() {
-			string fileName;
-
-			if( mDialogService.SaveFileDialog( "Export Favorites", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
+            if( mDialogService.SaveFileDialog( "Export Favorites", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out var fileName ) == true ) {
 				mDataExchangeMgr.ExportFavorites( fileName );
 			}
 		}
