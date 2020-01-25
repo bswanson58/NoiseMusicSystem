@@ -24,6 +24,7 @@ namespace Noise.UI.Models {
 	public class SelectionStateModel : ISelectionState,
 									   IHandle<Events.WindowLayoutRequest>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TagFocusRequested>,
+									   IHandle<Events.TrackQueued>, IHandle<Events.AlbumQueued>,
                                        IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackStopped> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
@@ -107,7 +108,15 @@ namespace Noise.UI.Models {
             }
         }
 
-		public void Handle( Events.ArtistFocusRequested args ) {
+		public void Handle( Events.AlbumQueued _ ) {
+			mLastFocusRequest = DateTime.Now;
+        }
+
+        public void Handle( Events.TrackQueued _ ) {
+            mLastFocusRequest = DateTime.Now;
+        }
+
+        public void Handle( Events.ArtistFocusRequested args ) {
 			ChangeToArtist( args.ArtistId, true );
 
 			mLastFocusRequest = DateTime.Now;
