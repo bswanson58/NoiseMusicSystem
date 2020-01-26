@@ -58,7 +58,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+                        <Image Grid.Column="0" MinWidth="50" MaxWidth="300" MinHeight="50" MaxHeight="180" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
 	    				   Source="{Binding ArtistImage, Converter={StaticResource ImageConverter}}" Cursor="Hand">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonDown" >

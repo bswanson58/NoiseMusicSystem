@@ -51,7 +51,7 @@
             <Grid Background="{StaticResource NoiseBrush}" 
 				  behaviours:GridUtils.ColumnDefinitions="Auto,*">
 				<!--  Album cover image  -->
-				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="200" Stretch="Uniform" Visibility="{Binding ArtworkValid, Converter={StaticResource CollapseIfFalse}}">
+				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="180" Stretch="Uniform" Visibility="{Binding ArtworkValid, Converter={StaticResource CollapseIfFalse}}">
                     <Image RenderTransformOrigin="0.5,0.5" Cursor="SizeWE">
 						<Image.RenderTransform>
 							<TransformGroup>
