@@ -37,7 +37,7 @@
 
                 <TextBlock x:Name="TooltipText" Grid.Row="0" Text="Backup Library"/>
 
-                <Grid Grid.Row="1" Height="9" Margin="0,4,0,0" Visibility="{Binding BackupNeeded, Converter={StaticResource CollapseIfTrue}}">
+                <Grid Grid.Row="1" Height="8" Margin="0,4,0,0" Visibility="{Binding BackupNeeded, Converter={StaticResource CollapseIfTrue}}">
                     <Rectangle Stroke="{StaticResource ControlTextColor}"/>
                     <Rectangle StrokeThickness="0" RenderTransformOrigin="0.5,0.5" Margin="2">
                         <Rectangle.RenderTransform>
