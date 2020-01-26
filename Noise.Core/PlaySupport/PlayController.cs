@@ -43,9 +43,9 @@ namespace Noise.Core.PlaySupport {
 		private readonly IRatings					mRatings;
 		private readonly IScrobbler					mScrobbler;
 		private readonly IPreferences				mPreferences;
+		private readonly PlayTimeDisplay			mPlayTimeDisplay;
 		private TimeSpan							mCurrentPosition;
 		private TimeSpan							mCurrentLength;
-		private bool								mDisplayTimeElapsed;
 		private AudioLevels							mSampleLevels;
 		private readonly Timer						mInfoUpdateTimer;
 		private int									mCurrentChannel;
@@ -59,7 +59,10 @@ namespace Noise.Core.PlaySupport {
 		private StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
 		private ePlayState									mCurrentPlayState;
 
-		public IObservable<ePlayState>			PlayStateChange => mPlayStateSubject.AsObservable();
+		public	IObservable<ePlayState>				PlayStateChange => mPlayStateSubject.AsObservable();
+
+        public	bool								IsLeftTrackTimeActive => mPlayTimeDisplay.IsLeftDisplayed;
+        public	bool								IsRightTrackTimeActive => mPlayTimeDisplay.IsRightDisplayed;
 
         public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IRatings ratings,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
@@ -74,6 +77,7 @@ namespace Noise.Core.PlaySupport {
 			mRatings = ratings;
 			mAudioPlayer = audioPlayer;
 			mPreferences = preferences;
+			mPlayTimeDisplay = new PlayTimeDisplay();
 
 			lifecycleManager.RegisterForInitialize( this );
 
@@ -100,7 +104,7 @@ namespace Noise.Core.PlaySupport {
 
 
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
-				mDisplayTimeElapsed = preferences.DisplayPlayTimeElapsed;
+				mPlayTimeDisplay.SetMode( preferences.DisplayPlayTimeMode );
 
 				var audioConfiguration = mPreferences.Load<AudioPreferences>();
 				if( audioConfiguration != null ) {
@@ -716,22 +720,22 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public void ToggleTimeDisplay() {
-			mDisplayTimeElapsed = !mDisplayTimeElapsed;
+			mPlayTimeDisplay.SetNextMode();
 
 			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-			preferences.DisplayPlayTimeElapsed = mDisplayTimeElapsed;
+			preferences.DisplayPlayTimeMode = mPlayTimeDisplay.CurrentMode;
 			mPreferences.Save( preferences );
 
 			FirePlaybackInfoChange();
 		}
 
-		public TimeSpan TrackTime {
+		public TimeSpan LeftTrackTime {
 			get {
 				var retValue = new TimeSpan();
 
 				if( mCurrentChannel != 0 ) {
-					if( mDisplayTimeElapsed ) {
+					if( mPlayTimeDisplay.IsLeftIncrementing ) {
 						retValue = mCurrentPosition;
 					}
 					else {
@@ -747,7 +751,28 @@ namespace Noise.Core.PlaySupport {
 			}
 		}
 
-		public double PlayPositionPercentage {
+        public TimeSpan RightTrackTime {
+            get {
+                var retValue = new TimeSpan();
+
+                if( mCurrentChannel != 0 ) {
+                    if( mPlayTimeDisplay.IsRightIncrementing ) {
+                        retValue = mCurrentPosition;
+                    }
+                    else {
+                        retValue = mCurrentPosition - mCurrentLength;
+                    }
+                }
+
+                if( mCurrentLength < mCurrentPosition ) {
+                    mCurrentLength = mCurrentPosition;
+                }
+
+                return( retValue );
+            }
+        }
+
+        public double PlayPositionPercentage {
 			get {
 				var retValue = 0.0D;
 

@@ -224,7 +224,16 @@ namespace Noise.UI.ViewModels {
 		public PlayQueueTrack PeekPreviousTrack => mPlayController.PreviousTrack;
 
         [DependsUpon( "InfoUpdateFlag" )]
-		public TimeSpan TrackTime => mPlayController.TrackTime;
+		public TimeSpan LeftTrackTime => mPlayController.LeftTrackTime;
+
+        [DependsUpon( "InfoUpdateFlag" )]
+        public bool IsLeftTrackTimeActive => mPlayController.IsLeftTrackTimeActive;
+
+        [DependsUpon( "InfoUpdateFlag" )]
+        public TimeSpan RightTrackTime => mPlayController.RightTrackTime;
+
+        [DependsUpon( "InfoUpdateFlag" )]
+        public bool IsRightTrackTimeActive => mPlayController.IsRightTrackTimeActive;
 
         [DependsUpon( "InfoUpdateFlag" )]
 		public double PlayPositionPercentage => mPlayController.PlayPositionPercentage;

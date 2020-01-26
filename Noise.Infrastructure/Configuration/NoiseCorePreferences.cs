@@ -1,9 +1,6 @@
-﻿using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
-
-namespace Noise.Infrastructure.Configuration {
+﻿namespace Noise.Infrastructure.Configuration {
 	public class NoiseCorePreferences {
-		public	bool					        DisplayPlayTimeElapsed { get; set; }
+		public	int								DisplayPlayTimeMode { get; set; }
 		public	bool					        EnableRemoteAccess { get; set; }
 		public	bool					        EnablePlaybackScrobbling { get; set; }
 		public	bool					        HasNetworkAccess { get; set; }

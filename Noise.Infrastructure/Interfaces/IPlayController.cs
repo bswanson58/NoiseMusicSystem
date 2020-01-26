@@ -46,8 +46,13 @@ namespace Noise.Infrastructure.Interfaces {
 		PlayQueueTrack	CurrentTrack { get; }
 		PlayQueueTrack	NextTrack { get; }
 		PlayQueueTrack	PreviousTrack { get; }
-		TimeSpan		TrackTime { get; }
+
+        TimeSpan		LeftTrackTime { get; }
+		bool			IsLeftTrackTimeActive { get; }
+        TimeSpan		RightTrackTime { get; }
+		bool			IsRightTrackTimeActive { get; }
 		void			ToggleTimeDisplay();
+
 		long			PlayPosition { get; set; }
 		double			PlayPositionPercentage { get; }
 		long			TrackEndPosition { get; }

@@ -353,6 +353,7 @@
     <Compile Include="PlayStrategies\PlayStrategyRandom.cs" />
     <Compile Include="PlayStrategies\PlayStrategySingle.cs" />
     <Compile Include="PlayStrategies\PlayStrategyTwoFers.cs" />
+    <Compile Include="PlaySupport\PlayTimeDisplay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sidecars\AlbumSidecarSync.cs" />
     <Compile Include="Sidecars\ArtistSidecarSync.cs" />

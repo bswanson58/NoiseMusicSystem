@@ -20,6 +20,7 @@
 		<reusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
 	    <reusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
         <reusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfEmptyString" HideOnEmpty="False" IsHidden="True"/>
+        <reusableConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
 
         <!-- MahApps Slider thumb dimensions -->
         <system:Double x:Key="HorizontalThumbHeight">13</system:Double>
@@ -189,16 +190,18 @@
 					<!--  Playing Position  -->
                     <Grid Grid.Column="1" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<!-- Textual Play Position -->
-                        <StackPanel Grid.Column="0" Margin="10,0,0,0" Orientation="Horizontal">
+						<!-- Left Textual Play Position -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding IsLeftTrackTimeActive, Converter={StaticResource CollapseIfFalse}}">
                             <TextBlock Margin="0,0,3,0" Style="{StaticResource SmallTitleStyle}" Foreground="{StaticResource BorderTextColor}" VerticalAlignment="Center" Text="Position:" />
 							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource SmallTitleStyle}" FontWeight="Bold" Cursor="Hand"
-                                       Foreground="{DynamicResource SignatureBrush}" ToolTip="Click to change the display format of the position time"
-									   Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
+                                       Foreground="{DynamicResource SignatureBrush}" ToolTip="Click to change the display format of the playback time"
+									   Text="{Binding Path=LeftTrackTime, Converter={StaticResource TimeSpanConverter}}">
 								<eventCommandTriggers:CommandSource.Trigger>
 									<eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
 								</eventCommandTriggers:CommandSource.Trigger>
@@ -206,9 +209,19 @@
 						</StackPanel>
 
 						<!-- Play Position indicator -->
-						<Slider Grid.Column="1" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+						<Slider Grid.Column="2" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
 						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
 						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
+
+                        <!-- Right Textual Play Position -->
+                        <TextBlock Grid.Column="3" Margin="5,0,10,0" VerticalAlignment="Center" Style="{StaticResource SmallTitleStyle}" FontWeight="Bold" Cursor="Hand"
+                                   Foreground="{DynamicResource SignatureBrush}" ToolTip="Click to change the display format of the playback time"
+                                   Text="{Binding Path=RightTrackTime, Converter={StaticResource TimeSpanConverter}}"
+                                   Visibility="{Binding IsRightTrackTimeActive, Converter={StaticResource CollapseIfFalse}}">
+                            <eventCommandTriggers:CommandSource.Trigger>
+                                <eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+                            </eventCommandTriggers:CommandSource.Trigger>
+                        </TextBlock>
 					</Grid>
 				</Grid>
 
