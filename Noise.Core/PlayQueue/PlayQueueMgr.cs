@@ -174,8 +174,10 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
-		private void StrategyAdd( IEnumerable<DbTrack> trackList ) {
-			trackList.ForEach( StrategyAdd);
+		private void StrategyAdd( IEnumerable<PlayQueueTrack> trackList ) {
+			trackList.ForEach( AddTrack );
+
+            FirePlayQueueChanged();
         }
 
 		public void StrategyAdd( DbTrack track ) {
@@ -185,34 +187,46 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private string ResolvePath( StorageFile file ) {
-			return ( mStorageFolderSupport.GetPath( file ));
+			return( mStorageFolderSupport.GetPath( file ));
 		}
 
 		private StorageFile ResolveStorageFile( DbTrack track ) {
 			return( mStorageFileProvider.GetPhysicalFile( track ));
 		}
 
-		private void AddTrack( DbTrack track, eStrategySource strategySource ) {
-			var newTrack = CreateTrack( track, strategySource );
+        private void AddTrack( DbTrack track, eStrategySource strategySource ) {
+            AddTrack( CreateTrack( track, strategySource ));
+        }
 
-			// Place any user selected tracks before any unplayed strategy queued tracks.
-			if( strategySource == eStrategySource.User ) {
-				var	firstStrategyTrack = PlayList.FirstOrDefault( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
-				if( firstStrategyTrack != null ) {
-					mPlayList.Insert( PlayList.IndexOf( firstStrategyTrack ), newTrack );
-				}
-				else {
-					mPlayList.Add( newTrack );
-				}
-			}
-			else {
-				mPlayList.Add( newTrack );
-			}
+		private void AddTrack( PlayQueueTrack track ) {
+            // Place any user selected tracks before any unplayed strategy queued tracks.
+            if( track.StrategySource == eStrategySource.User ) {
+                var	firstStrategyTrack = PlayList.FirstOrDefault( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
 
-			mLog.AddedTrack( newTrack );
-		}
+                if( firstStrategyTrack != null ) {
+                    mPlayList.Insert( PlayList.IndexOf( firstStrategyTrack ), track );
+                }
+                else {
+                    mPlayList.Add( track );
+                }
+            }
+            else {
+                mPlayList.Add( track );
+            }
 
-		private PlayQueueTrack CreateTrack( long trackId, eStrategySource strategy, bool hasPlayed = false ) {
+            mLog.AddedTrack( track );
+        }
+
+		private IEnumerable<PlayQueueTrack> CreateTrackList( IEnumerable<DbTrack> trackList, eStrategySource strategy ) {
+			var retValue = new List<PlayQueueTrack>();
+
+			foreach( var track in trackList ) {
+				retValue.Add( CreateTrack( track, strategy ));
+            }
+			return retValue;
+        }
+
+        private PlayQueueTrack CreateTrack( long trackId, eStrategySource strategy, bool hasPlayed = false ) {
             return CreateTrack( mTrackProvider.GetTrack( trackId ), strategy, hasPlayed );
         }
 
@@ -235,21 +249,13 @@ namespace Noise.Core.PlayQueue {
 		public void StrategyAdd( DbTrack track, PlayQueueTrack afterTrack ) {
 			if(( track != null ) &&
 			   ( afterTrack != null )) { 
-				var album = mAlbumProvider.GetAlbumForTrack( track );
+				var newTrack = CreateTrack( track, eStrategySource.PlayStrategy );
+				var trackIndex = PlayList.IndexOf( afterTrack );
 
-				if( album != null ) {
-					var artist = mArtistProvider.GetArtistForAlbum( album );
+				mPlayList.Insert( trackIndex + 1, newTrack );
 
-					if( artist != null ) {
-						var newTrack = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, eStrategySource.PlayStrategy );
-						var trackIndex = PlayList.IndexOf( afterTrack );
-
-						mPlayList.Insert( trackIndex + 1, newTrack );
-
-						FirePlayQueueChanged();
-						mLog.AddedTrack( newTrack );
-					}
-				}
+				FirePlayQueueChanged();
+				mLog.AddedTrack( newTrack );
 			}
 		}
 
@@ -260,48 +266,71 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddAlbum( DbAlbum album ) {
-			using( var tracks = mTrackProvider.GetTrackList( album )) {
-				var firstTrack = true;
-				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List orderby track.VolumeName, track.TrackNumber select track ).ToList();
-
-				mAddingMoreTracks = sortedList.Count > 2;
-
-				foreach( var track in sortedList ) {
-					AddTrack( track, eStrategySource.User );
-
-					if( firstTrack ) {
-						FirePlayQueueChanged();
-
-						firstTrack = false;
-					}
+			var task = Task.Run( () => {
+                using( var tracks = mTrackProvider.GetTrackList( album )) {
+                    var sortedList = new List<DbTrack>( from DbTrack track in tracks.List orderby track.VolumeName, track.TrackNumber select track ).ToList();
+                    
+					return CreateTrackList( sortedList, eStrategySource.User );
 				}
+            });
 
-				mAddingMoreTracks = false;
-			}
+			try {
+				var	trackList = task.Result.ToList();
+                var firstTrack = true;
+
+                mAddingMoreTracks = trackList.Count > 2;
+
+                foreach( var track in trackList ) {
+                    AddTrack( track );
+
+                    if( firstTrack ) {
+                        FirePlayQueueChanged();
+
+                        firstTrack = false;
+                    }
+                }
+
+                mAddingMoreTracks = false;
+                FirePlayQueueChanged();
+            }
+			catch( Exception ex ) {
+				mLog.LogQueueException( "Adding Album", ex );
+            }
 		}
 
 		public void Add( DbAlbum album, string volumeName ) {
-			using( var tracks = mTrackProvider.GetTrackList( album )) {
-				var firstTrack = true;
-				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
-													where string.Equals( track.VolumeName, volumeName )
-													orderby track.VolumeName, track.TrackNumber select track ).ToList();
+            var task = Task.Run( () => {
+                using( var tracks = mTrackProvider.GetTrackList( album )) {
+                    var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
+                                                        where string.Equals( track.VolumeName, volumeName )
+                                                        orderby track.VolumeName, track.TrackNumber select track ).ToList();
+                    
+                    return CreateTrackList( sortedList, eStrategySource.User );
+                }
+            });
 
-				mAddingMoreTracks = sortedList.Count > 2;
+            try {
+                var	trackList = task.Result.ToList();
+                var firstTrack = true;
 
-				foreach( var track in sortedList ) {
-					AddTrack( track, eStrategySource.User );
+                mAddingMoreTracks = trackList.Count > 2;
 
-					if( firstTrack ) {
-						FirePlayQueueChanged();
+                foreach( var track in trackList ) {
+                    AddTrack( track );
 
-						firstTrack = false;
-					}
-				}
+                    if( firstTrack ) {
+                        FirePlayQueueChanged();
 
-				mAddingMoreTracks = false;
-				FirePlayQueueChanged();
-			}
+                        firstTrack = false;
+                    }
+                }
+
+                mAddingMoreTracks = false;
+                FirePlayQueueChanged();
+            }
+            catch( Exception ex ) {
+                mLog.LogQueueException( "Adding Volume of Album", ex );
+            }
 		}
 
 		public void Add( DbArtist artist ) {
@@ -610,10 +639,11 @@ namespace Noise.Core.PlayQueue {
 			var retValue = false;
 
 			if( UnplayedTrackCount < cStrategyAddTrackCount ) {
-                var task = Task.Run( () => mExhaustedStrategyPlay.SelectTracks( this, cStrategyAddTrackCount - UnplayedTrackCount ).ToList());
+                var task = Task.Run( 
+                    () => CreateTrackList( mExhaustedStrategyPlay.SelectTracks( this, cStrategyAddTrackCount - UnplayedTrackCount ), eStrategySource.ExhaustedStrategy ));
 
                 try {
-                    var trackList = task.Result;
+                    var trackList = task.Result.ToList();
 
                     if( trackList.Any()) {
                         StrategyAdd( trackList );
