@@ -78,7 +78,11 @@
 
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
                     <TextBlock x:Name="ParentName" Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding ParentName}"
-                               behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                               behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                        <i:Interaction.Behaviors>
+                            <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding ParentName}" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
                 </Grid>
 
                 <Grid Grid.Row="1" Margin="60,0,0,3">
