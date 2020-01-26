@@ -13,7 +13,7 @@
 			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
 			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance viewModels:PlaybackRelatedViewModel, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance viewModels:ArtistListViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300">
 	
 	<UserControl.DataContext>
@@ -185,12 +185,13 @@
 						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Artist Sort Order" />
 
-				<ContentControl Grid.Column="1" Tag="dimmed" ContentTemplateSelector="{StaticResource ArtistFilterTemplateSelector}" Content="{Binding ArtistFilter}"/>
+				<ContentControl Grid.Column="1" Tag="dimOnClear" ContentTemplateSelector="{StaticResource ArtistFilterTemplateSelector}" Content="{Binding ArtistFilter}"/>
 			</Grid>
 		</Grid>
         <i:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
         </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

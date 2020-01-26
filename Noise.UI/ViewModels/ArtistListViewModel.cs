@@ -42,6 +42,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
         public	ICollectionView							ArtistList => mArtistView;
+		public	bool									IsListFiltered => ArtistFilter.IsFilterSet;
         public	IEnumerable<ViewSortStrategy>			SortDescriptions => mArtistSorts;
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings, IPrefixedNameHandler nameHandler,
@@ -147,12 +148,14 @@ namespace Noise.UI.ViewModels {
 			SetArtistFilter( ArtistFilterType.FilterArtistList );
 
 			ArtistFilter.SetFilterList( request.ArtistList );
+            RaisePropertyChanged( () => IsListFiltered );
 		}
 
 		public void Handle( Events.GenreFocusRequested args ) {
 			SetArtistFilter( ArtistFilterType.FilterGenre );
 
             ArtistFilter.FilterText = args.Genre;
+            RaisePropertyChanged( () => IsListFiltered );
         }
 
 		private void OnArtistChanged( DbArtist artist ) {
@@ -217,12 +220,14 @@ namespace Noise.UI.ViewModels {
 			set {
 				if( ArtistFilter != null ) {
                     ArtistFilter.FilterCleared -= OnFilterCleared;
+					ArtistFilter.FilterUpdated -= OnFilterUpdated;
                 }
 
 			    Set(() => ArtistFilter, value );
 
 				if( ArtistFilter != null ) {
 					ArtistFilter.FilterCleared += OnFilterCleared;
+					ArtistFilter.FilterUpdated += OnFilterUpdated;
                 }
 			}
 		}
@@ -233,7 +238,13 @@ namespace Noise.UI.ViewModels {
 				   ( ArtistFilter.FilterType == ArtistFilterType.FilterArtistList )) {
 					SetArtistFilter( ArtistFilterType.FilterText );
                 }
+
+                RaisePropertyChanged( () => IsListFiltered );
 			}
+        }
+
+		private void OnFilterUpdated( object sender, EventArgs args ) {
+			RaisePropertyChanged( () => IsListFiltered );
         }
 
 		private void SetArtistFilter( ArtistFilterType ofType ) {

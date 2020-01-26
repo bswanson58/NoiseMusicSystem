@@ -75,7 +75,10 @@ namespace Noise.UI.ViewModels {
         ReactiveCommand<Unit, Unit> Clear { get; }
         void                        ClearFilter();
 
+        bool                        IsFilterSet { get; }
+
         event                       EventHandler FilterCleared;
+        event                       EventHandler FilterUpdated;
     }
 
     abstract class ArtistFilterBase : ReactiveObject, IArtistFilter {
@@ -85,7 +88,9 @@ namespace Noise.UI.ViewModels {
 
         public  ArtistFilterType            FilterType { get; set; }
         public  ReactiveCommand<Unit, Unit> Clear { get; }
+        public  bool                        IsFilterSet => !String.IsNullOrWhiteSpace( FilterText ) || mFilterList.Any();
         public  event EventHandler          FilterCleared = delegate { };
+        public  event EventHandler          FilterUpdated = delegate { };
 
         protected ArtistFilterBase( ICollectionView view ) {
             mCollectionView = view;
@@ -126,6 +131,8 @@ namespace Noise.UI.ViewModels {
 
             mCollectionView.Refresh();
             this.RaisePropertyChanged( nameof( FilterText ));
+
+            FilterUpdated( this, EventArgs.Empty );
         }
     }
 
