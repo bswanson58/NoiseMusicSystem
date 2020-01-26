@@ -10,8 +10,10 @@
 			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
 			 xmlns:controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:AlbumListViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300">
 
 	<UserControl.DataContext>
@@ -164,7 +166,7 @@
 						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Album Sort Order" />
 
-				<TextBox Grid.Column="1" Tag="dimmed" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+				<TextBox Grid.Column="1" Tag="dimOnClear" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
 						 behaviours:TextBoxHelper.Watermark="enter album filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
 						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
@@ -172,6 +174,7 @@
         <i:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
         </i:Interaction.Behaviors>
 </GroupBox>
 </UserControl>

@@ -46,6 +46,7 @@ namespace Noise.UI.ViewModels {
 		private bool									mRetrievingAlbums;
 		private long									mAlbumToSelect;
  
+		public	bool									IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
 		public	event	EventHandler					IsActiveChanged = delegate { };
 	    public  IEnumerable<ViewSortStrategy>           SortDescriptions => mAlbumSorts;
 
@@ -254,6 +255,7 @@ namespace Noise.UI.ViewModels {
 				    mAlbumView?.Refresh();
 
 				    RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => IsListFiltered );
 					RaisePropertyChanged( () => AlbumCount );
 				} );
 			}

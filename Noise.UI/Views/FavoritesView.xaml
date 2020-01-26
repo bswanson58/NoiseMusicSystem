@@ -3,10 +3,10 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 mc:Ignorable="d"
 			 Tag="Favorites"
@@ -36,13 +36,13 @@
 	    </Style>
 
 	    <!-- Play -->
-	    <DataTemplate x:Key="PlayTemplate" DataType="Adapters:FavoriteViewNode">
+	    <DataTemplate x:Key="PlayTemplate" DataType="adapters:FavoriteViewNode">
 	        <Button Margin="5,0" Command="{Binding Path=PlayFavorite}" Style="{StaticResource PlayButtonStyle}" />
 	    </DataTemplate>
 
-	    <DataTemplate x:Key="NameTemplate" DataType="Adapters:FavoriteViewNode">
+	    <DataTemplate x:Key="NameTemplate" DataType="adapters:FavoriteViewNode">
             <TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=DisplayName}"
-	                   ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+	                   reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
                 <i:Interaction.Behaviors>
                     <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
                 </i:Interaction.Behaviors>
@@ -75,13 +75,13 @@
 				</DataGrid.Columns>
 
 				<i:Interaction.Behaviors>
-					<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+					<reusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
 				</i:Interaction.Behaviors>
 			</DataGrid>
 
 			<Rectangle Grid.Row="1" Margin="3,7,3,3" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
-			<Grid Grid.Row="2" Tag="dimmed" Margin="3,7,3,3">
+			<Grid Grid.Row="2" Margin="3,7,3,3">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
@@ -90,20 +90,21 @@
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
-				<TextBlock Grid.Column="0" Margin="3,0" VerticalAlignment="Center" Text="Display:"/>
-				<ComboBox Grid.Column="1" ItemsSource="{Binding FilterList}" DisplayMemberPath="FilterName" SelectedItem="{Binding CurrentFilter}"/>
+                <TextBlock Grid.Column="0" Tag="dimmed" Margin="3,0" VerticalAlignment="Center" Text="Display:"/>
+                <ComboBox Grid.Column="1" Tag="dimmed" ItemsSource="{Binding FilterList}" DisplayMemberPath="FilterName" SelectedItem="{Binding CurrentFilter}"/>
 
-                <TextBox Grid.Column="2" Margin="7,0" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
-                         Behaviours:TextBoxHelper.Watermark="enter filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                <TextBox Grid.Column="2" Tag="dimOnClear" Margin="7,0" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         behaviours:TextBoxHelper.Watermark="enter filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Button Grid.Column="3" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
-				<Button Grid.Column="4" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
-				<Button Grid.Column="5" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+                <Button Grid.Column="3" Tag="dimmed" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
+                <Button Grid.Column="4" Tag="dimmed" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+                <Button Grid.Column="5" Tag="dimmed" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
 			</Grid>
             <i:Interaction.Behaviors>
-                <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
-                <ReusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+                <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+                <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+                <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
             </i:Interaction.Behaviors>
 		</Grid>
 	</GroupBox>

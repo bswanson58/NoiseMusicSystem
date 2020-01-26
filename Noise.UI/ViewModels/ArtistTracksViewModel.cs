@@ -33,6 +33,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 		private CancellationTokenSource						mCancellationTokenSource;
 
+		public	bool									IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
 		public	event EventHandler						IsActiveChanged = delegate { };
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
@@ -163,6 +164,7 @@ namespace Noise.UI.ViewModels {
                 Set(() => FilterText, value );
 
                 mTrackView?.Refresh();
+                RaisePropertyChanged( () => IsListFiltered );
             }
         }
 

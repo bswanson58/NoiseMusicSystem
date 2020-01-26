@@ -1,13 +1,15 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ArtistTracksView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:Behaviours1="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+			 d:DataContext="{d:DesignInstance viewModels:ArtistTracksViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
@@ -22,7 +24,7 @@
             <Setter Property="Focusable" Value="False"/>
         </Style>
 		
-        <DataTemplate x:Key="AlbumTrackTemplate" DataType="Dto:UiAlbumTrack">
+        <DataTemplate x:Key="AlbumTrackTemplate" DataType="dto:UiAlbumTrack">
 			<Grid Margin="15,0,0,0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="33"/>
@@ -33,14 +35,14 @@
 
                 <Button Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
                 <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Album.Name}"
-                           Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                           reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 <ContentPresenter x:Name="Rating" Grid.Column="2" Content="{Binding Track}" Opacity="0.7" ContentTemplate="{StaticResource ReadOnlyRating}"/>
                 <TextBlock Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
                            TextAlignment="Right" Margin="3,0,8,0"/>
             </Grid>
         </DataTemplate>
 
-        <HierarchicalDataTemplate x:Key="ArtistTrackTemplate" DataType="Dto:UiArtistTrackNode" 
+        <HierarchicalDataTemplate x:Key="ArtistTrackTemplate" DataType="dto:UiArtistTrackNode" 
                                   ItemsSource="{Binding Children}" ItemTemplate="{StaticResource AlbumTrackTemplate}">
 			<Grid>
 				<Grid.RowDefinitions>
@@ -56,7 +58,7 @@
 
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
                     <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
-                               Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                               reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
                         <i:Interaction.Behaviors>
                             <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding TrackName}" />
                         </i:Interaction.Behaviors>
@@ -71,7 +73,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
-                               Behaviours1:FadeTrimming.IsEnabled="True" Behaviours1:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                               reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                     <ContentPresenter x:Name="FirstRating" Grid.Column="1" Opacity="0.7" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
                     <TextBlock x:Name="FirstDuration" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
@@ -119,10 +121,14 @@
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" albums." />
                 </StackPanel>
 
-                <TextBox Grid.Column="2" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
-                         Behaviours:TextBoxHelper.Watermark="enter track filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                <TextBox Grid.Column="2" Tag="dimOnClear" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         behaviours:TextBoxHelper.Watermark="enter track filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 		</Grid>
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

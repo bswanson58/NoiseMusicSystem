@@ -53,6 +53,7 @@ namespace Noise.UI.ViewModels {
 
         public	IEventAggregator								EventAggregator => mEventAggregator;
         public	IList<FavoriteFilter>							FilterList => mFilterList;
+		public	bool											IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
         public	SortableCollection<FavoriteViewNode>			FavoritesCollection => mFavoritesList;
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
@@ -144,6 +145,7 @@ namespace Noise.UI.ViewModels {
 	                mFavoritesView?.Refresh();
 
 	                RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => IsListFiltered );
 	            } );
 	        }
 	    }
