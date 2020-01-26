@@ -22,8 +22,8 @@ namespace Noise.UI.ViewModels {
 
 	internal class LibrarySelectorViewModel : AutomaticCommandBase,
 											  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
-											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, 
-                                              IHandle<Events.DatabaseStatisticsUpdated>, IHandle<Events.LibraryBackupPressureThreshold> {
+											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, IHandle<Events.DatabaseStatisticsUpdated>, 
+                                              IHandle<Events.LibraryBackupPressure>, IHandle<Events.LibraryBackupPressureThreshold> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IUiLog					mLog;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
@@ -40,6 +40,7 @@ namespace Noise.UI.ViewModels {
 	    public  string                                      LibraryStatistics => mDatabaseStatistics;
 	    public  BindableCollection<LibraryConfiguration>    LibraryList => mLibraries;
 		public	bool										BackupNeeded { get; private set; }
+		public	double										BackupPressurePercentage { get; private set; }
 
 		public	IInteractionRequest							LibraryBackupRequest => mLibraryBackupRequest;
 	    public  IInteractionRequest                         LibraryConfigurationRequest => mLibraryConfigurationRequest;
@@ -62,6 +63,7 @@ namespace Noise.UI.ViewModels {
 			LoadLibraries();
 		    SetLibraryStatistics( mLibraryBuilder.LibraryStatistics );
             UpdateBackupNeeded();
+			UpdateBackupPressure();
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -96,6 +98,7 @@ namespace Noise.UI.ViewModels {
 			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
 
 			UpdateBackupNeeded();
+			UpdateBackupPressure();
 		}
 
 		public void Handle( Events.LibraryListChanged args ) {
@@ -113,6 +116,10 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.DatabaseStatisticsUpdated message ) {
             SetLibraryStatistics( message.DatabaseStatistics );
 		}
+
+		public void Handle( Events.LibraryBackupPressure args ) {
+			UpdateBackupPressure();
+        }
 
 		public void Handle( Events.LibraryBackupPressureThreshold args ) {
 			UpdateBackupNeeded();
@@ -134,6 +141,16 @@ namespace Noise.UI.ViewModels {
                 RaisePropertyChanged( () => CurrentLibrary );
 			}
 		}
+
+        private void UpdateBackupPressure() {
+            if( CurrentLibrary != null ) {
+                var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+                BackupPressurePercentage = Math.Min( 1.0, (double)CurrentLibrary.BackupPressure / preferences.MaximumBackupPressure );
+
+                RaisePropertyChanged( () => BackupPressurePercentage );
+            }
+        }
 
 		private void UpdateBackupNeeded() {
             var preferences = mPreferences.Load<NoiseCorePreferences>();

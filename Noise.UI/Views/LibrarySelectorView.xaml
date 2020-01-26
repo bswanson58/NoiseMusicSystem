@@ -7,8 +7,9 @@
              xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance viewModels:PlaybackRelatedViewModel, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance viewModels:LibrarySelectorViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="75" d:DesignWidth="400"
              Height="55">
 
@@ -17,15 +18,49 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
+
         <Style x:Key="BackupNeededStyle" TargetType="Button" BasedOn="{StaticResource PathButtonStyle}">
-            <Setter Property="ToolTip" Value="Backup Library"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding BackupNeeded}" Value="True">
                     <Setter Property="Foreground" Value="{DynamicResource SignatureSolidBrush}"/>
-                    <Setter Property="ToolTip" Value="A Library Backup Is Required!"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <DataTemplate x:Key="BackupTooltip" DataType="viewModels:LibrarySelectorViewModel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock x:Name="TooltipText" Grid.Row="0" Text="Backup Library"/>
+
+                <Grid Grid.Row="1" Height="9" Margin="0,4,0,0" Visibility="{Binding BackupNeeded, Converter={StaticResource CollapseIfTrue}}">
+                    <Rectangle Stroke="{StaticResource ControlTextColor}"/>
+                    <Rectangle StrokeThickness="0" RenderTransformOrigin="0.5,0.5" Margin="2">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                                <GradientStop Color="#FFEA6500" Offset="{Binding BackupPressurePercentage}"/>
+                                <GradientStop Color="Transparent" Offset="{Binding BackupPressurePercentage}"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding BackupNeeded}" Value="True">
+                    <Setter TargetName="TooltipText" Property="Foreground" Value="{DynamicResource SignatureSolidBrush}"/>
+                    <Setter TargetName="TooltipText" Property="Text" Value="A Library Backup Is Required!"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
@@ -77,7 +112,11 @@
                 <Button Tag="dimmed" Height="25" Width="25" Margin="2,0" Padding="1" ToolTip="Sync Library" Focusable="False" Style="{StaticResource PathButtonStyle}"
                         Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
                 <Button Tag="dimWhenEnabled" Height="25" Width="25" Margin="2,0" Padding="3" Focusable="False" Style="{StaticResource BackupNeededStyle}"
-                        Command="{Binding Path=LibraryBackup}" Content="{StaticResource Path_Backup}"/>
+                        Command="{Binding Path=LibraryBackup}" Content="{StaticResource Path_Backup}">
+                    <Button.ToolTip>
+                        <ToolTip Content="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ContentTemplate="{StaticResource BackupTooltip}"/>
+                    </Button.ToolTip>
+                </Button>
                 <Button Tag="dimmed" Height="25" Width="25" Margin="2,0" ToolTip="Configure Libraries" Focusable="False" Style="{StaticResource PathButtonStyle}" Padding="3"
                         Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
             </StackPanel>
