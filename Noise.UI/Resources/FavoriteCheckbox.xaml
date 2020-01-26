@@ -3,7 +3,7 @@
 
     <!-- Favorite column header style -->
     <DataTemplate x:Key="FavoriteColumnHeaderTemplate">
-        <TextBlock FontFamily="WebDings" Text="Y"/>
+        <TextBlock FontFamily="WebDings" Text="Y" FontSize="16"/>
     </DataTemplate>
 
     <!-- Favorite Checkbox Style-->
