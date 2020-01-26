@@ -608,19 +608,22 @@ namespace Noise.Core.PlayQueue {
 
         private bool SelectExhaustedTracks() {
 			var retValue = false;
-			var task = Task.Run( () => mExhaustedStrategyPlay.SelectTracks( this, cStrategyAddTrackCount - UnplayedTrackCount ).ToList());
 
-            try {
-                var trackList = task.Result;
+			if( UnplayedTrackCount < cStrategyAddTrackCount ) {
+                var task = Task.Run( () => mExhaustedStrategyPlay.SelectTracks( this, cStrategyAddTrackCount - UnplayedTrackCount ).ToList());
 
-                if( trackList.Any()) {
-                    StrategyAdd( trackList );
+                try {
+                    var trackList = task.Result;
 
-                    retValue = true;
+                    if( trackList.Any()) {
+                        StrategyAdd( trackList );
+
+                        retValue = true;
+                    }
                 }
-            }
-            catch( Exception ex ) {
-                mLog.LogQueueException( "Selecting exhausted strategy tracks", ex );
+                catch( Exception ex ) {
+                    mLog.LogQueueException( "Selecting exhausted strategy tracks", ex );
+                }
             }
 
 			return retValue;
