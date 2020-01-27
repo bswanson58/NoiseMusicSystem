@@ -311,6 +311,7 @@
     <Compile Include="Dto\UiTagAssociation.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
     <Compile Include="Dto\UiTrack.cs" />
+    <Compile Include="Dto\UiTrackAlbum.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
     <Compile Include="Interfaces\IPrefixedNameHandler.cs" />
     <Compile Include="Interfaces\ISelectionState.cs" />
