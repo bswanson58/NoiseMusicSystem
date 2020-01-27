@@ -40,6 +40,7 @@ namespace Noise.Infrastructure.Interfaces {
 		int				UnplayedTrackCount { get; }
 		int				PlayedTrackCount { get; }
 		bool			StrategyRequestsQueued { get; }
+		int				IndexOfNextInsert { get; }
 
 		void			ReorderQueueItem( int fromIndex, int toIndex );
 

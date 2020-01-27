@@ -160,6 +160,20 @@ namespace Noise.Core.PlayQueue {
 			mEventAggregator.Unsubscribe( this );
 		}
 
+        public int IndexOfNextInsert {
+            get {
+                var retValue = 0;
+
+                if( PlayList.Any()) {
+                    var	firstStrategyTrack = PlayList.FirstOrDefault( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
+
+                    retValue = firstStrategyTrack != null ? PlayList.IndexOf( firstStrategyTrack ) : PlayList.Count();
+                }
+
+                return retValue;
+            }
+        }
+
 		public void Add( DbTrack track ) {
 			AddTrack( track, eStrategySource.User );
 

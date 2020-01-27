@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -24,6 +25,7 @@ namespace Noise.UI.ViewModels {
 
         public	ObservableCollectionExtended<UiPlayQueueTrack>	QueueList { get; }
 	    public  UiPlayQueueTrack								PlayingItem {  get; private set; }
+		public	int												NextInsertIndex { get; private set; }
 
         public PlayQueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IRatings ratings ) {
 			EventAggregator = eventAggregator;
@@ -31,6 +33,7 @@ namespace Noise.UI.ViewModels {
 			mRatings = ratings;
 
 			QueueList = new ObservableCollectionExtended<UiPlayQueueTrack>();
+			QueueList.CollectionChanged += OnQueueChanged;
 			QueueEmpty = true;
 
 			var uiList = mPlayQueue.PlayQueue.Transform( CreateUiTrack ).AsObservableList();
@@ -58,6 +61,12 @@ namespace Noise.UI.ViewModels {
                ( value.Sender.QueuedTrack.Track.IsFavorite != value.Value )) {
                 mRatings.SetFavorite( value.Sender.QueuedTrack.Track, value.Sender.UiIsFavorite );
             }
+        }
+
+		private void OnQueueChanged( object sender, NotifyCollectionChangedEventArgs args ) {
+			NextInsertIndex = mPlayQueue.IndexOfNextInsert;
+
+			RaisePropertyChanged( () => NextInsertIndex );
         }
 
 		public bool QueueEmpty {

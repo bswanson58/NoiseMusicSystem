@@ -12,8 +12,10 @@
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance viewModels:PlayQueueListViewModel, IsDesignTimeCreatable=False}"
 			 DataContext="{Binding PlayQueueListViewModel, Source={StaticResource ViewModelLocator}}">
 	
 	<Control.Resources>
@@ -183,7 +185,7 @@
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  SelectedItem="{Binding Path=SelectedItem}">
             <i:Interaction.Behaviors>
-                <elementMover:ElementMoverListTarget/>
+                <elementMover:ElementMoverListTarget NextInsertIndex="{Binding NextInsertIndex}"/>
                 <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
 				<reusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
 			</i:Interaction.Behaviors>

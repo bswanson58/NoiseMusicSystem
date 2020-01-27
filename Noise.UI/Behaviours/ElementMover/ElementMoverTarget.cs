@@ -38,6 +38,14 @@ namespace Noise.UI.Behaviours.ElementMover {
     }
 
     public class ElementMoverListTarget : ElementMoverTarget {
+        public static readonly DependencyProperty NextInsertIndexProperty = DependencyProperty.Register(
+            "NextInsertIndex", typeof( int ), typeof( ElementMoverListTarget ), new PropertyMetadata( -1 ));
+
+        public int NextInsertIndex {
+            get => (int)GetValue( NextInsertIndexProperty );
+            set => SetValue( NextInsertIndexProperty, value );
+        }
+
         protected override void OnAttached() {
             base.OnAttached();
 
@@ -67,7 +75,9 @@ namespace Noise.UI.Behaviours.ElementMover {
 
             if( AssociatedObject is ListBox listBox ) {
                 if( listBox.Items.Count > 0 ) {
-                    var listBoxItem = GetListBoxItem( listBox, listBox.Items.Count - 1 );
+                    // account for the track we're queueing has already been added to the collection.
+                    var insertIndex = Math.Min( NextInsertIndex > 0 ? NextInsertIndex - 1 : listBox.Items.Count - 1, listBox.Items.Count - 1 );
+                    var listBoxItem = GetListBoxItem( listBox, insertIndex );
 
                     if( listBoxItem != null ) {
                         var relativePoint = listBoxItem.TransformToAncestor( AssociatedObject ).Transform( new Point( 0, 0 ));
@@ -75,6 +85,9 @@ namespace Noise.UI.Behaviours.ElementMover {
 
                         retValue = new Point( relativePoint.X + 10, verticalPlacement );
                     }
+                }
+                else {
+                    retValue = new Point( 10, 10 );
                 }
             }
 
