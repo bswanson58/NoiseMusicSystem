@@ -13,6 +13,7 @@ namespace Noise.Infrastructure.Interfaces {
 		IDataProviderList<DbTrack>	GetTrackListForGenre( long genreId );
 		IDataProviderList<DbTrack>	GetFavoriteTracks();
         IDataProviderList<DbTrack>  GetRatedTracks( int ratedAtLeast );
+		IDataProviderList<DbTrack>	GetRatedTracks( DbArtist forArtist );
 		IDataProviderList<DbTrack>	GetNewlyAddedTracks();
 		IEnumerable<DbTrack>		GetTrackListForPlayList( DbPlayList playList );
 
