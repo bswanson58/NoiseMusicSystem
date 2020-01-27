@@ -98,6 +98,7 @@ namespace Noise.Desktop {
 					case ViewNames.AlbumInfoView:
 					case ViewNames.ArtistInfoView:
 					case ViewNames.ArtistTracksView:
+                    case ViewNames.RatedTracksView:
 						Execute.OnUIThread( () => region.RequestNavigate( eventArgs.ViewName ));
 						break;
 				}

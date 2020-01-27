@@ -391,6 +391,7 @@
     <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueStrategyViewModel.cs" />
     <Compile Include="ViewModels\PlayStrategyDialogModel.cs" />
+    <Compile Include="ViewModels\RatedTracksViewModel.cs" />
     <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
@@ -515,6 +516,9 @@
     </Compile>
     <Compile Include="Views\PlayingTrackView.xaml.cs">
       <DependentUpon>PlayingTrackView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RatedTracksView.xaml.cs">
+      <DependentUpon>RatedTracksView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TagAddDialog.xaml.cs">
       <DependentUpon>TagAddDialog.xaml</DependentUpon>
@@ -860,6 +864,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayingTrackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RatedTracksView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

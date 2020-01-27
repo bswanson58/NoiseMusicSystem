@@ -161,7 +161,9 @@
                                 <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayAlbumInfoPanel}" Content="{StaticResource Path_Album}" ToolTip="Display Album Information" />
                                 <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
-									Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
+                                        Command="{Binding DisplayRatedTracksPanel}" Content="{StaticResource Path_Rating}" ToolTip="Display All Rated Tracks" />
+                                <Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
+                                        Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
                                 <Button Style="{StaticResource PathButtonStyle}"
 									Command="{Binding EditArtist}" Content="{StaticResource Path_Edit}" ToolTip="Edit Artist Properties" />
                             </StackPanel>

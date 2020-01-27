@@ -48,7 +48,8 @@
 				<Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
 				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistInfoView}" />
 				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
-				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:RatedTracksView}" />
 				<Layout:View RegionName="RightPanel" Type="{x:Type Views:PlayQueueView}" />
 				<Layout:View RegionName="RightPanel" Type="{x:Type Views:PlayHistoryView}" />
 				<Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />

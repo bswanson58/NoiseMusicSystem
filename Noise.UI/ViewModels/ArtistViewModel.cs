@@ -411,6 +411,19 @@ namespace Noise.UI.ViewModels {
 			ArtistTracksViewOpen = request.ViewWasOpened;
 		}
 
+        public bool RatedTracksViewOpen {
+            get{ return( Get( () => RatedTracksViewOpen )); }
+            set{ Set( () => RatedTracksViewOpen, value ); }
+        }
+
+        public void Execute_DisplayRatedTracksPanel() {
+            var request = new Events.ViewDisplayRequest( ViewNames.RatedTracksView );
+
+            mEventAggregator.PublishOnUIThread( request );
+
+            RatedTracksViewOpen = request.ViewWasOpened;
+        }
+
         public IInteractionRequest ArtistArtworkDisplayRequest => ( mArtistArtworkDisplayRequest );
 
         [DependsUpon( "ArtistPortfolioAvailable" )]
