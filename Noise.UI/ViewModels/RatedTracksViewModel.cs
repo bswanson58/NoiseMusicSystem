@@ -30,8 +30,8 @@ namespace Noise.UI.ViewModels {
         private TaskHandler<IEnumerable<UiTrackAlbum>>      mUpdateTask;
         private CancellationTokenSource					    mCancellationTokenSource;
 
-        public	bool									IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
-        public	event EventHandler						IsActiveChanged = delegate { };
+        public	bool									    IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
+        public	event EventHandler						    IsActiveChanged = delegate { };
 
         public RatedTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
                                       IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
@@ -45,9 +45,8 @@ namespace Noise.UI.ViewModels {
             mEventAggregator.Subscribe( this );
 
             mTrackList = new BindableCollection<UiTrackAlbum>();
-            TracksValid = false;
 
-//            mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+            mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
         }
 
         public bool IsActive {
@@ -69,14 +68,29 @@ namespace Noise.UI.ViewModels {
             }
         }
 
-        public bool TracksValid {
-            get{ return( Get( () => TracksValid )); }
-            set{ Set( () => TracksValid, value ); }
+        private void OnArtistChanged( DbArtist artist ) {
+            if( IsActive ) {
+                if( artist != null ) {
+                    UpdateTrackList( artist );
+                }
+                else {
+                    ClearTrackList();
+                }
+            }
+            else {
+                ClearTrackList();
+            }
+        }
+
+        private void ClearTrackList() {
+            CancelRetrievalTask();
+            mTrackList.Clear();
+
+            FilterText = String.Empty;
         }
 
         public void Handle( Events.DatabaseClosing args ) {
             mTrackList.Clear();
-            TracksValid = false;
         }
 
         public ICollectionView TrackList {
@@ -105,7 +119,7 @@ namespace Noise.UI.ViewModels {
             var retValue = true;
 
             if((!string.IsNullOrWhiteSpace( FilterText )) &&
-               ( node is UiArtistTrackNode trackNode )) {
+               ( node is UiTrackAlbum trackNode )) {
                 if( trackNode.TrackName.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
                     retValue = false;
                 }
@@ -140,7 +154,6 @@ namespace Noise.UI.ViewModels {
 
 		private void UpdateTrackList( DbArtist artist ) {
 			CancelRetrievalTask();
-			TracksValid = false;
 			FilterText = String.Empty;
 
 			var cancellationToken = GenerateCanellationToken();
@@ -163,7 +176,7 @@ namespace Noise.UI.ViewModels {
                         var album = mAlbumProvider.GetAlbum( track.Album );
 
                         if( album != null ) {
-                            retValue.Add( new UiTrackAlbum( album, track ));
+                            retValue.Add( new UiTrackAlbum( album, track, OnTrackPlay ));
                         }
                     }
                     else {
@@ -178,8 +191,6 @@ namespace Noise.UI.ViewModels {
         private void SetTrackList( IEnumerable<UiTrackAlbum> list ) {
             mTrackList.Clear();
             mTrackList.AddRange( from node in list orderby node.SortRating descending, node.TrackName select node );
-
-            TracksValid = true;
         }
 
         private void OnTrackPlay( long trackId ) {

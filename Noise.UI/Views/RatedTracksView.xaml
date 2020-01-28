@@ -4,16 +4,90 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
+             xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              mc:Ignorable="d" 
              DataContext="{Binding RatedTracksViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:RatedTracksViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
+        <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MetroListBoxItem}">
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
 
+        <DataTemplate x:Key="TrackAlbumTemplate" DataType="dto:UiTrackAlbum">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="23"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
+
+                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
+                               reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                        <i:Interaction.Behaviors>
+                            <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding TrackName}" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
+
+                    <ContentPresenter Grid.Column="2" VerticalAlignment="Bottom" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
+
+                    <TextBlock Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Margin="5,0,8,0" VerticalAlignment="Bottom"
+                               Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right"/>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,0,0,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                               reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Rated Tracks of Artist">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
+            <ListBox Grid.Row="0" ItemsSource="{Binding TrackList}" ItemTemplate="{StaticResource TrackAlbumTemplate}" ItemContainerStyle="{StaticResource ListBoxItemStyle}"/>
+
+            <Rectangle Grid.Row="1" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*" MinWidth="150"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="1" Tag="dimOnClear" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         behaviours:TextBoxHelper.Watermark="enter track filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </Grid>
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>
