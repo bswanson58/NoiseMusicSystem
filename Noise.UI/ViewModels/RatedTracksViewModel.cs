@@ -28,10 +28,13 @@ namespace Noise.UI.ViewModels {
         private readonly BindableCollection<UiTrackAlbum>	mTrackList;
         private ICollectionView				    mTrackView;
         private	bool						    mIsActive;
+        private DbArtist                        mCurrentArtist;
         private TaskHandler<IEnumerable<UiTrackAlbum>>      mUpdateTask;
         private CancellationTokenSource					    mCancellationTokenSource;
 
         public	bool									    IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
+        public  string                                      ListCount => mTrackList.Any() ? $"{mTrackList.Count}" : "No";
+        public  string                                      ArtistName => mCurrentArtist != null ? mCurrentArtist.Name : String.Empty;
         public	event EventHandler						    IsActiveChanged = delegate { };
 
         public RatedTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand, IPlayingItemHandler playingItemHandler,
@@ -72,8 +75,10 @@ namespace Noise.UI.ViewModels {
         }
 
         private void OnArtistChanged( DbArtist artist ) {
+            mCurrentArtist = artist;
+
             if( IsActive ) {
-                if( artist != null ) {
+                if( mCurrentArtist != null ) {
                     UpdateTrackList( artist );
                 }
                 else {
@@ -83,6 +88,8 @@ namespace Noise.UI.ViewModels {
             else {
                 ClearTrackList();
             }
+
+            RaisePropertyChanged( () => ArtistName );
         }
 
         private void ClearTrackList() {
@@ -90,6 +97,7 @@ namespace Noise.UI.ViewModels {
             mTrackList.Clear();
 
             FilterText = String.Empty;
+            RaisePropertyChanged( () => ListCount );
         }
 
         public void Handle( Events.DatabaseClosing args ) {
@@ -196,6 +204,7 @@ namespace Noise.UI.ViewModels {
             mTrackList.AddRange( from node in list orderby node.SortRating descending, node.TrackName select node );
 
             mPlayingItemHandler.UpdateList();
+            RaisePropertyChanged( () => ListCount );
         }
 
         private void OnTrackPlay( long trackId ) {

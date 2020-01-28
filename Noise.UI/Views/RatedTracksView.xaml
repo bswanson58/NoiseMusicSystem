@@ -9,12 +9,15 @@
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              DataContext="{Binding RatedTracksViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:RatedTracksViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
+        <valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
+
         <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MetroListBoxItem}">
             <Setter Property="Focusable" Value="False"/>
         </Style>
@@ -68,7 +71,16 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Rated Tracks of Artist">
+    <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}">
+        <GroupBox.Header>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text=" " />
+                <TextBlock Text="{Binding ListCount}" />
+                <TextBlock Text=" Rated Tracks for " Visibility="{Binding ArtistName, Converter={StaticResource CollapseIfStringEmpty}}"/>
+                <TextBlock Text="{Binding ArtistName}"/>
+            </StackPanel>
+        </GroupBox.Header>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
