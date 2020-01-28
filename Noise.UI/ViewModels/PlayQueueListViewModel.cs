@@ -164,7 +164,7 @@ namespace Noise.UI.ViewModels {
 		private void DisplayQueueItemInfo( UiPlayQueueTrack track ) {
 			if( track.QueuedTrack.Artist != null ) {
 				if( track.QueuedTrack.Album != null ) {
-					EventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( track.QueuedTrack.Artist.DbId, track.QueuedTrack.Album.DbId ));
+					EventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( track.QueuedTrack.Artist.DbId, track.QueuedTrack.Album.DbId, track.QueuedTrack.IsPlaying ));
 				}
 				else {
 					EventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( track.QueuedTrack.Artist.DbId ));

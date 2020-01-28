@@ -32,12 +32,15 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
 			<Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding StartStrategy}"
 					Content="Start" ToolTip="Start Play Using The Current Strategy"/>
-			<Button Grid.Column="2" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding ConfigureStrategy}" 
-					Content="{StaticResource Path_Configure}" ToolTip="Configure Play Strategies"/>
+            <Button Grid.Column="2" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding PlayingFocus}" 
+                    Content="{StaticResource Path_Information}" ToolTip="Focus On Playing Track"/>
+			<Button Grid.Column="3" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding ConfigureStrategy}" 
+                    Content="{StaticResource Path_Configure}" ToolTip="Configure Play Strategies"/>
         </Grid>
         <i:Interaction.Behaviors>
             <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>

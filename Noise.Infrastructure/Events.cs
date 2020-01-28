@@ -22,12 +22,14 @@ namespace Noise.Infrastructure {
 		}
 
 		public class AlbumFocusRequested {
-			public long	ArtistId { get; }
-			public long	AlbumId { get; }
+			public long		ArtistId { get; }
+			public long		AlbumId { get; }
+			public bool		CancelFocusDelay { get; }
 
-			public AlbumFocusRequested( long artistId, long albumId ) {
+			public AlbumFocusRequested( long artistId, long albumId, bool cancelFocusDelay = false ) {
 				ArtistId = artistId;
 				AlbumId = albumId;
+				CancelFocusDelay = cancelFocusDelay;
 			}
 
 			public AlbumFocusRequested( DbAlbum album ) :

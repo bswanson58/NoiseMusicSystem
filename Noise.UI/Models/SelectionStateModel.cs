@@ -126,7 +126,12 @@ namespace Noise.UI.Models {
 			ChangeToArtist( args.ArtistId, true );
 			ChangeToAlbum( args.AlbumId );
 
-			mLastFocusRequest = DateTime.Now;
+			if( args.CancelFocusDelay ) {
+				mLastFocusRequest = DateTime.Now - mPlayTrackDelay;
+            }
+			else {
+                mLastFocusRequest = DateTime.Now;
+            }
 		}
 
         public void Handle( Events.TagFocusRequested args ) {
