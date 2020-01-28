@@ -18,22 +18,23 @@ using ReusableBits;
 namespace Noise.UI.ViewModels {
     class RatedTracksViewModel : ViewModelBase, IActiveAware, IDisposable,
                                                 IHandle<Events.DatabaseClosing> {
-        private readonly IEventAggregator	mEventAggregator;
-        private readonly IUiLog				mLog;
-        private readonly ISelectionState	mSelectionState;
-        private readonly IAlbumProvider		mAlbumProvider;
-        private readonly ITrackProvider		mTrackProvider;
-        private readonly IPlayCommand		mPlayCommand;
+        private readonly IEventAggregator	    mEventAggregator;
+        private readonly IUiLog				    mLog;
+        private readonly ISelectionState	    mSelectionState;
+        private readonly IAlbumProvider		    mAlbumProvider;
+        private readonly ITrackProvider		    mTrackProvider;
+        private readonly IPlayingItemHandler    mPlayingItemHandler;
+        private readonly IPlayCommand		    mPlayCommand;
         private readonly BindableCollection<UiTrackAlbum>	mTrackList;
-        private ICollectionView				mTrackView;
-        private	bool						mIsActive;
+        private ICollectionView				    mTrackView;
+        private	bool						    mIsActive;
         private TaskHandler<IEnumerable<UiTrackAlbum>>      mUpdateTask;
         private CancellationTokenSource					    mCancellationTokenSource;
 
         public	bool									    IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
         public	event EventHandler						    IsActiveChanged = delegate { };
 
-        public RatedTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
+        public RatedTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand, IPlayingItemHandler playingItemHandler,
                                       IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
             mEventAggregator = eventAggregator;
             mLog = log;
@@ -41,12 +42,14 @@ namespace Noise.UI.ViewModels {
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mPlayCommand = playCommand;
+            mPlayingItemHandler = playingItemHandler;
 
             mEventAggregator.Subscribe( this );
 
             mTrackList = new BindableCollection<UiTrackAlbum>();
 
             mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+            mPlayingItemHandler.StartHandler( mTrackList );
         }
 
         public bool IsActive {
@@ -191,6 +194,8 @@ namespace Noise.UI.ViewModels {
         private void SetTrackList( IEnumerable<UiTrackAlbum> list ) {
             mTrackList.Clear();
             mTrackList.AddRange( from node in list orderby node.SortRating descending, node.TrackName select node );
+
+            mPlayingItemHandler.UpdateList();
         }
 
         private void OnTrackPlay( long trackId ) {
@@ -200,6 +205,7 @@ namespace Noise.UI.ViewModels {
         public void Dispose() {
             mCancellationTokenSource?.Dispose();
             mEventAggregator?.Unsubscribe( this );
+            mPlayingItemHandler.StopHandler();
         }
     }
 }

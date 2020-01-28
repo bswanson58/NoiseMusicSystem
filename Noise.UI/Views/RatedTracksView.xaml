@@ -31,12 +31,12 @@
                         <ColumnDefinition Width="23"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" MinWidth="45"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
+                    <Button Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
 
-                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
+                    <TextBlock x:Name="TrackName" Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
                                reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
                         <i:Interaction.Behaviors>
                             <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding TrackName}" />
@@ -45,7 +45,7 @@
 
                     <ContentPresenter Grid.Column="2" VerticalAlignment="Bottom" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
 
-                    <TextBlock Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Margin="5,0,8,0" VerticalAlignment="Bottom"
+                    <TextBlock x:Name="Duration" Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Margin="5,0,8,0" VerticalAlignment="Bottom"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right"/>
                 </Grid>
 
@@ -59,6 +59,12 @@
                                reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                 </Grid>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    <Setter TargetName="Duration" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
