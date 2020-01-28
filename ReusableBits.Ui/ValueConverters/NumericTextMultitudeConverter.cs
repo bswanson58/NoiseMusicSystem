@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
@@ -9,6 +7,7 @@ using System.Windows.Data;
 
 namespace ReusableBits.Ui.ValueConverters {
 	public class NumericTextMultitudeConverter : IValueConverter {
+/*
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
         private static extern long StrFormatByteSizeW(long qdw, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszBuf, int cchBuf);
 
@@ -20,11 +19,7 @@ namespace ReusableBits.Ui.ValueConverters {
 
             return sb.ToString();
         }
-
-        public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture ) {
-            return DependencyProperty.UnsetValue;
-        }
-        /*
+*/
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
 			var lValue = System.Convert.ToInt64( value );
 			var formatValue = lValue;
@@ -48,6 +43,9 @@ namespace ReusableBits.Ui.ValueConverters {
 
 			return( $"{formatValue}{suffix}" );
 		}
-        */
+
+        public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture ) {
+            return DependencyProperty.UnsetValue;
+        }
 	}
 }
