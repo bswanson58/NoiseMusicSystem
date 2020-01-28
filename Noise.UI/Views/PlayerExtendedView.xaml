@@ -215,9 +215,9 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Grid.Column="0" FontSize="16" FontWeight="Bold" Style="{StaticResource SmallTitleStyle}" Text="Now Playing: "
+						<TextBlock Grid.Column="0" FontWeight="Bold" Style="{StaticResource SmallTitleStyle}" Text="Now Playing: "
 								   Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
-                        <TextBlock Grid.Column="1" FontSize="16" FontWeight="Bold" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}" 
+                        <TextBlock Grid.Column="1" FontWeight="Bold" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}" 
                                    Text="{Binding TrackName}" />
 					    <TextBlock Grid.Column="2" FontSize="14" Margin="3,0" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
 					               reusableBehaviours:FadeTrimming.IsEnabled="True"
@@ -241,9 +241,9 @@
 
 						<!--  Playing position  -->
 						<TextBlock Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,5,0" Text="Position:" />
-                        <TextBlock Grid.Column="5" Margin="0,0,7,0" VerticalAlignment="Bottom" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
+                        <TextBlock Grid.Column="5" Margin="0,0,3,0" VerticalAlignment="Bottom" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
 								   ToolTip="Click to change the display format of the position time" Cursor="Hand"
-								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
+								   Text="{Binding LeftTrackTime, Converter={StaticResource TimeSpanConverter}}">
 							<eventCommandTriggers:CommandSource.Trigger>
 								<eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
 							</eventCommandTriggers:CommandSource.Trigger>
