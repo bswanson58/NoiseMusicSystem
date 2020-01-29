@@ -13,6 +13,7 @@
 	<SolidColorBrush x:Key="BorderColor" Color="{StaticResource BorderLineColor}" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
     <SolidColorBrush x:Key="PopupBackground" Color="#FFB0B0B0"/>
+    <SolidColorBrush x:Key="DefaultForegroundBrush" Color="{DynamicResource IdealForegroundColor}"/>
 
     <!-- Blue palette
     <Color x:Key="PlayButtonNormalFill">#FFA7C6FF</Color>
@@ -200,14 +201,14 @@
     <!-- Read Only Rating Control-->
     <!-- Usage: <ContentPresenter Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/> -->
     <DataTemplate x:Key="ReadOnlyRating">
-        <Grid>
+        <Grid Opacity="0.7">
             <ContentControl x:Name="_5Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_5Star}" Visibility="Collapsed"/>
             <ContentControl x:Name="_4Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_4Star}" Visibility="Collapsed"/>
             <ContentControl x:Name="_3Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_3Star}" Visibility="Collapsed"/>
             <ContentControl x:Name="_2Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_2Star}" Visibility="Collapsed"/>
             <ContentControl x:Name="_1Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_1Star}" Visibility="Collapsed"/>
             <TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" VerticalAlignment="Center" 
-                       Foreground="{StaticResource ControlTextColor}" FontSize="16" Visibility="Collapsed"/>
+                       Foreground="{StaticResource DefaultForegroundBrush}" FontSize="16" Visibility="Collapsed"/>
         </Grid>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding IsFavorite}" Value="True">
