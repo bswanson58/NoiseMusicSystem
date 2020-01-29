@@ -24,7 +24,7 @@ namespace Noise.UI.Models {
 	public class SelectionStateModel : ISelectionState,
 									   IHandle<Events.WindowLayoutRequest>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TagFocusRequested>,
-									   IHandle<Events.TrackQueued>, IHandle<Events.AlbumQueued>,
+									   IHandle<Events.ViewDisplayRequest>, IHandle<Events.TrackQueued>, IHandle<Events.AlbumQueued>,
                                        IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackStopped> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
@@ -105,6 +105,13 @@ namespace Noise.UI.Models {
             }
             else {
                 state.State.Add( nameof( SelectionStateModel ), new SelectionUserState( CurrentArtist, CurrentAlbum, CurrentTag ));
+            }
+        }
+
+		public void Handle( Events.ViewDisplayRequest args ) {
+			if(( args.ViewName.Equals( ViewNames.ArtistTracksView )) ||
+			   ( args.ViewName.Equals( ViewNames.RatedTracksView ))) {
+				mLastFocusRequest = DateTime.Now;
             }
         }
 
