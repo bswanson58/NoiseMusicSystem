@@ -32,7 +32,7 @@
                     <ColumnDefinition Width="33"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" MinWidth="45"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}"/>
@@ -48,7 +48,7 @@
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                 <ContentPresenter x:Name="Rating" Grid.Row="1" Grid.Column="2" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
                 <TextBlock x:Name="Duration" Grid.Row="1" Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
-                           TextAlignment="Right" Margin="3,0,8,0"/>
+                           TextAlignment="Right" Margin="3,0,5,0"/>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding DisplayTrackName}" Value="True">
@@ -89,14 +89,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" MinWidth="45"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock x:Name="AlbumName" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding FirstAlbumName}"
                                behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                     <ContentPresenter x:Name="FirstRating" Grid.Column="1" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}" Visibility="Hidden"/>
                     <TextBlock x:Name="FirstPlayDuration" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Visibility="Hidden"
-                               Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
+                               Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,5,0"/>
                 </Grid>
             </Grid>
 

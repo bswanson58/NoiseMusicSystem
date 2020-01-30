@@ -48,7 +48,7 @@
 
                     <ContentPresenter Grid.Column="2" VerticalAlignment="Bottom" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
 
-                    <TextBlock x:Name="Duration" Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Margin="5,0,8,0" VerticalAlignment="Bottom"
+                    <TextBlock x:Name="Duration" Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Margin="3,0,5,0" VerticalAlignment="Bottom"
                                Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right"/>
                 </Grid>
 
