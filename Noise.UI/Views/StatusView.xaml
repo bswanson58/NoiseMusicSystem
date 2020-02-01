@@ -3,24 +3,27 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
-			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
+			 xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 mc:Ignorable="d" 
-			 d:DesignWidth="700"
+			 d:DesignWidth="500"
+             d:DataContext="{d:DesignInstance viewModels:StatusViewModel, IsDesignTimeCreatable=False}"
+             DataContext="{Binding StatusViewModel, Source={StaticResource ViewModelLocator}}"
 			 Height="25">
 	
 	<UserControl.Resources>
-		<!-- since we are using a Seperator, but not as an immediate child of the StatusBar, we will make use of that style manually -->
+		<!-- since we are using a Separator, but not as an immediate child of the StatusBar, we will make use of that style manually -->
 		<!-- thanks to WineNCheese for this one - http://tinyurl.com/byh9ac -->
 		<Style TargetType="Separator" BasedOn="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}">
 			<Setter Property="Margin" Value="0" />
 		</Style>
 
-		<DataTemplate x:Key="GeneralStatusTemplate" DataType="Controls:StatusMessage">
+		<DataTemplate x:Key="GeneralStatusTemplate" DataType="controls:StatusMessage">
 			<TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
 		</DataTemplate>
 
-		<DataTemplate x:Key="SpeechStatusTemplate" DataType="Controls:StatusMessage">
+		<DataTemplate x:Key="SpeechStatusTemplate" DataType="controls:StatusMessage">
 			<StackPanel Orientation="Horizontal">
 				<ContentPresenter Margin="0,1" Content="{StaticResource Path_Microphone}"/>
 				<TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
@@ -28,22 +31,28 @@
 		</DataTemplate>
 	
 	</UserControl.Resources>
-	
-	<UserControl.DataContext>
-		<Binding Path="StatusViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
 
-	<StatusBar VerticalAlignment="Bottom" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
+    <Grid>
+	    <StatusBar behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
+		    <StatusBarItem HorizontalContentAlignment="Left">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding VersionString}"/>
-			<Separator Grid.Column="1" Margin ="3,0"/>
-			<Controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
-		</Grid>
-	</StatusBar>
+                    <TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding VersionString}"/>
+                    <Separator Grid.Column="1" Margin ="3,0"/>
+                    <controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
+                </Grid>
+            </StatusBarItem>
+
+		    <StatusBarItem HorizontalContentAlignment="Right">
+                <Button Margin="0,0,16,0" BorderThickness="0" VerticalAlignment="Center" Background="Transparent" Foreground="LightGray" 
+                        Focusable="False" Padding="3,1" Width="24" 
+                        Content="{StaticResource Path_Folder}" Command="{Binding OpenDataFolder}" ToolTip="Open Configuration Folder"/>
+            </StatusBarItem>
+	    </StatusBar>
+    </Grid>
 </UserControl>

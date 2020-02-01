@@ -16,15 +16,17 @@ namespace Noise.UI.ViewModels {
 		private const string	cGeneralStatusTemplate = "GeneralStatusTemplate";
 		private const string	cSpeechStatusTemplate  = "SpeechStatusTemplate";
 
-		private IEventAggregator		        mEventAggregator;
+		private readonly INoiseEnvironment		mNoiseEnvironment;
+        private IEventAggregator		        mEventAggregator;
         private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
         private readonly string					mCompileDate;
 		private bool							mViewAttached;
 		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}{mCompileDate}";
 
-		public StatusViewModel( IEventAggregator eventAggregator, IVersionFormatter versionFormatter, IPreferences preferences ) {
+		public StatusViewModel( IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment, IVersionFormatter versionFormatter, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
+			mNoiseEnvironment = noiseEnvironment;
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
@@ -93,6 +95,10 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
+
+		public void Execute_OpenDataFolder() {
+            mEventAggregator.PublishOnUIThread( new Events.LaunchRequest( mNoiseEnvironment.ApplicationDirectory()));
+        }
 
         public void Dispose() {
             mEventAggregator?.Unsubscribe( this );
