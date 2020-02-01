@@ -32,9 +32,13 @@
     <Color x:Key="PlayButtonMouseOverStroke">#FF00F000</Color>
 
     <Color x:Key="PlayButtonPressedFill">#FF008600</Color>
-    <SolidColorBrush x:Key="PlayingBrush" Color="{StaticResource PlayButtonMouseOverFill}"/>
-    
-    <Style x:Key="StartupFontStyle" TargetType="Control">
+
+    <LinearGradientBrush x:Key="PlayingBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="{StaticResource PlayButtonNormalFill}" Offset="0.4" />
+        <GradientStop Color="{StaticResource PlayButtonMouseOverStroke}" Offset="1" />
+    </LinearGradientBrush>
+
+<Style x:Key="StartupFontStyle" TargetType="Control">
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
