@@ -145,7 +145,7 @@ namespace Noise.Core.PlayQueue {
 			try {
 				if( mLibraryConfiguration.Current != null ) {
                     SetExhaustedStrategy( mLibraryConfiguration.Current.ExhaustedStrategySpecification );
-                    SetPlayStrategy( mLibraryConfiguration.Current.PlayStrategy, PlayStrategyParametersFactory.FromString( mLibraryConfiguration.Current.PlayStrategyParameters ));
+                    SetPlayStrategy( mLibraryConfiguration.Current.PlayStrategy, PlayStrategyParametersFactory.FromString( mLibraryConfiguration.Current.PlayStrategyParameters ), false );
                 }
 
 				mDeleteUnplayedTracks = preferences.DeletePlayedTracks;
@@ -778,11 +778,16 @@ namespace Noise.Core.PlayQueue {
 		public IPlayStrategy PlayStrategy => ( mPlayStrategy );
 
         public void SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters ) {
+			SetPlayStrategy( strategyId, parameters, true );
+        }
+
+        private void SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters, bool updateConfiguration ) {
 			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( strategyId );
 
             mPlayStrategy?.Initialize( this, parameters );
 
-			if( mLibraryConfiguration.Current != null ) {
+			if(( updateConfiguration ) &&
+               ( mLibraryConfiguration.Current != null )) {
                 mLibraryConfiguration.Current.PlayStrategy = strategyId;
                 mLibraryConfiguration.Current.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
 
