@@ -70,7 +70,7 @@
         </Style>
 
 		<DataTemplate x:Key="QueueListItem" DataType="dto:UiPlayQueueTrack">
-            <Grid Margin="0,1,4,0" Background="Transparent">
+            <Grid Margin="0,1,4,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -103,12 +103,11 @@
                 </Grid>
 
                 <TextBlock x:Name="AlbumName" Grid.Row="1" Grid.Column="1" Margin="5,1,0,0" FontSize="11" Opacity="0.6"
-                           reusableBehaviours:FadeTrimming.IsEnabled="True"
-                           reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                           reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                            Text="{Binding Path=QueuedTrack.AlbumName}" />
 
                 <!-- Overlay -->
-                <Grid x:Name="Overlay" Grid.Column="1" Grid.Row="1" Opacity="0">
+                <Grid x:Name="Overlay" Grid.Column="1" Grid.Row="1" Opacity="0" Background="Transparent">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
