@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
+using System.Text;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
@@ -69,10 +70,15 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {
-			var stream = new FileStream( fromPath, FileMode.Open, FileAccess.Read );
-			var serializer = new DataContractJsonSerializer( typeof( LibraryConfiguration ));
-			var retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
-			stream.Close();
+			LibraryConfiguration	retValue;
+
+			using( var stream = new FileStream( fromPath, FileMode.Open, FileAccess.Read )) {
+                var serializer = new DataContractJsonSerializer( typeof( LibraryConfiguration ));
+                
+                retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
+
+                stream.Close();
+            }
 
             retValue?.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
 
@@ -84,11 +90,15 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public void Persist( string toPath ) {
-			var stream = new FileStream( toPath, FileMode.Create, FileAccess.Write );
-			var serializer = new DataContractJsonSerializer( GetType());
+			using( var stream = new FileStream( toPath, FileMode.Create, FileAccess.Write )) {
+                using( var writer = JsonReaderWriterFactory.CreateJsonWriter( stream, Encoding.UTF8, true, true )) {
+                    var serializer = new DataContractJsonSerializer( GetType());
 
-			serializer.WriteObject( stream, this );
-			stream.Close();
+                    serializer.WriteObject( writer, this );
+
+					writer.Flush();
+                }
+            }
 
 			// this would change the configuration path to a backup location during a database backup...
 //			SetConfigurationPath( Path.GetDirectoryName( toPath ));
