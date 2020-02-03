@@ -182,6 +182,10 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+
+        <Style x:Key="DataGridUnselectableRowStyle" TargetType="{x:Type DataGridRow}">
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
@@ -195,7 +199,8 @@
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
 
-        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" RowHeight="15">
+        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" RowHeight="15"
+                  RowStyle="{StaticResource DataGridUnselectableRowStyle}">
             <DataGrid.Columns>
                 <!-- Play -->
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" 
