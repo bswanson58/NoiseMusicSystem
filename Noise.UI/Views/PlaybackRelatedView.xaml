@@ -124,7 +124,7 @@
         </HierarchicalDataTemplate>
     </UserControl.Resources>
 
-    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Related Tracks ">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header="{Binding Title}">
         <Grid>
             <TreeView x:Name="TreeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">

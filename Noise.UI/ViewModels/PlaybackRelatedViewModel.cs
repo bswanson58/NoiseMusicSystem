@@ -33,11 +33,13 @@ namespace Noise.UI.ViewModels {
         private readonly IDisposable                        mSubscriptions;
         private readonly ReactiveCommand<DbTrack, Unit>     mStartSearch;
         private readonly ObservableCollectionEx<RelatedTrackParent> mTracks;
+        private DbTrack                                     mCurrentTrack;
         private IDisposable                                 mSelectionStateSubscription;
         private bool                                        mIsActive;
         private bool                                        mRelatedTracksAvailable;
 
         public  ICollectionView                             Tracks { get; }
+        public  string                                      Title => mCurrentTrack != null ? $"Tracks Related to '{mCurrentTrack.Name}'" : " Playback Related Tracks ";
         public  ReactiveCommand<RelatedTrackNode, Unit>     TreeViewSelected { get; }
         public	event EventHandler				            IsActiveChanged  = delegate { };
 
@@ -149,7 +151,11 @@ namespace Noise.UI.ViewModels {
         }
 
         private void OnTrackStarted( DbTrack track ) {
+            mCurrentTrack = track;
+
             mStartSearch.Execute( track );
+
+            this.RaisePropertyChanged( nameof( Title ));
         }
 
         private IObservable<Unit> OnStartSearch( DbTrack track ) {
