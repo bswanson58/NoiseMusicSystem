@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Artist = {Name}")]
-	public class UiArtist : UiBase {
+	public class UiArtist : UiBase, IPlayingItem {
 		public string			SortName { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
@@ -87,7 +88,12 @@ namespace Noise.UI.Dto {
 
 	    // used to sort albums by rating in the album list.
 	    public int SortRating => IsFavorite ? 10 : Rating;
-		
+
+        public bool IsPlaying {
+            get { return( Get( () => IsPlaying )); }
+            set {  Set( () => IsPlaying, value ); }
+        }
+
         public string Name {
 			get{ return( Get( () => Name )); }
 			set{ Set( () => Name, value ); }
@@ -106,5 +112,9 @@ namespace Noise.UI.Dto {
 		public override string ToString() {
 			return( Name );
 		}
-	}
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            IsPlaying = DbId.Equals( item.Artist );
+        }
+    }
 }

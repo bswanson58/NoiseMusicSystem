@@ -14,7 +14,7 @@
 	<UserControl.Resources>
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,35,5,0">
-				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="what!? you have no favorites???" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="what!? you have no favorites???" />
 			</Grid>
 		</ControlTemplate>
 	</UserControl.Resources>
@@ -29,8 +29,7 @@
 			
 			<ListView Grid.Row="0" BorderThickness="0" ItemContainerStyle="{StaticResource ListViewItemStretch}"
 					  ItemsSource="{Binding Path=FavoritesList}" SelectedItem="{Binding SelectedNode}"
-					  Behaviours:ListViewColumns.Stretch="true"
-					  Behaviours:GridViewSort.AutoSort="True">
+					  Behaviours:ListViewColumns.Stretch="true" Behaviours:GridViewSort.AutoSort="True">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
@@ -43,7 +42,13 @@
 						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
+									<TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=DisplayName}"
+									           ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter TargetName="Title" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
@@ -55,7 +60,7 @@
 				</i:Interaction.Behaviors>
 			</ListView>
 
-			<Rectangle Grid.Row="1" Margin="3,7,3,0" Height="1" StrokeThickness="0" Fill="LightGray" Opacity="0.5" />
+			<Rectangle Grid.Row="1" Margin="3,7,3,3" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
 			<Grid Grid.Row="2" Margin="3,7,3,3">
 				<Grid.ColumnDefinitions>

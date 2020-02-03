@@ -17,6 +17,8 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		private readonly IContextProvider				mContextProvider;
 		private readonly ILibraryConfiguration			mLibraryConfiguration;
 
+        public bool                                     IsOpen => mLibraryConfiguration.Current != null;
+
 		public EntityFrameworkDatabaseManager( IEventAggregator eventAggregator, ILogDatabase log, ILibraryConfiguration libraryConfiguration,
 											   IDatabaseInitializeStrategy initializeStrategy, IDatabaseInfo databaseInfo, IContextProvider contextProvider ) {
 			mEventAggregator = eventAggregator;
@@ -29,11 +31,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			mEventAggregator.Subscribe( this );
 		}
 
-		public bool IsOpen {
-			get{ return( mLibraryConfiguration.Current != null ); }
-		}
-
-		public void Handle( Events.LibraryChanged args ) {
+        public void Handle( Events.LibraryChanged args ) {
 			CloseDatabase();
 
 			if( mLibraryConfiguration.Current != null ) {
@@ -64,33 +62,15 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 					}
 				}
 
-				mContextProvider.BlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
-				if(!mContextProvider.BlobStorageManager.IsOpen ) {
-					if(!mContextProvider.BlobStorageManager.OpenStorage()) {
-						mContextProvider.BlobStorageManager.CreateStorage();
-
-						if(!mContextProvider.BlobStorageManager.OpenStorage()) {
-							var ex = new ApplicationException( "EntityFrameworkDatabaseManager:Blob storage could not be created." );
-
-							mLog.LogException( "Blob storage cound not be created", ex );
-							throw( ex );
-						}
-					}
-				}
-
 				mEventAggregator.PublishOnUIThread( new Events.DatabaseOpened());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Database could not be opened {0}", mLibraryConfiguration.Current ), ex );
+				mLog.LogException( $"Database could not be opened { mLibraryConfiguration.Current }", ex );
 			}
 		}
 
 		private void CloseDatabase() {
 			mEventAggregator.PublishOnUIThread( new Events.DatabaseClosing());
-
-			if( mContextProvider.BlobStorageManager.IsOpen ) {
-				mContextProvider.BlobStorageManager.CloseStorage();
-			}
 
 			mLog.ClosedDatabase();
 		}

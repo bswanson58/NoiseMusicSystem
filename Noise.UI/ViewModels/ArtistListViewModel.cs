@@ -31,47 +31,43 @@ namespace Noise.UI.ViewModels {
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
+        private readonly IPlayingItemHandler            mPlayingItemHandler;
 		private readonly IRatings						mRatings;
+        private readonly IPrefixedNameHandler           mPrefixedNameHandler;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiArtist>	mArtistList;
 		private ICollectionView							mArtistView;
-		private readonly bool							mEnableSortPrefixes;
-		private readonly List<string>					mSortPrefixes;
 		private readonly List<ViewSortStrategy>			mArtistSorts;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
-		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings,
-									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IUiLog log ) {
+		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings, IPrefixedNameHandler nameHandler,
+									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
+            mPlayingItemHandler = playingItemHandler;
 			mRatings = ratings;
+            mPrefixedNameHandler = nameHandler;
 
 			mArtistList = new BindableCollection<UiArtist>();
-			mSortPrefixes = new List<string>();
 			VisualStateName = cHideSortDescriptions;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
-			var configuration = mPreferences.Load<UserInterfacePreferences>();
-			if( configuration != null ) {
-				mEnableSortPrefixes = configuration.EnableSortPrefixes;
-
-				if( mEnableSortPrefixes ) {
-					mSortPrefixes.AddRange( configuration.SortPrefixes.Split( '|' ));
-				}
-			}
-
 			mArtistSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
 														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
+                                                        new ViewSortStrategy( "Album Count", new List<SortDescription>{ new SortDescription( "AlbumCount", ListSortDirection.Descending ),
+                                                        			                                                    new SortDescription( "SortName", ListSortDirection.Ascending ) }),
 														new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Genre", ListSortDirection.Ascending ),
 																												   new SortDescription( "SortName", ListSortDirection.Ascending )}),
 		                                                new ViewSortStrategy( "Rating", new List<SortDescription> { new SortDescription("SortRating", ListSortDirection.Descending ),
 		                                                                                                            new SortDescription( "SortName", ListSortDirection.Ascending ) }) };
+            var configuration = mPreferences.Load<UserInterfacePreferences>();
+
 			if( configuration != null ) {
 				var sortConfiguration = ( from config in mArtistSorts where config.DisplayName == configuration.ArtistListSortOrder select config ).FirstOrDefault();
 
@@ -79,14 +75,15 @@ namespace Noise.UI.ViewModels {
 					SelectedSortDescription = sortConfiguration;
 				}
 				else {
-					SelectedSortDescription = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
+					SelectedSortDescription = mPrefixedNameHandler.ArePrefixesEnabled ? mArtistSorts[1] : mArtistSorts[0];
 				}
 			}
 			else {
-				SelectedSortDescription = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
+				SelectedSortDescription = mPrefixedNameHandler.ArePrefixesEnabled ? mArtistSorts[1] : mArtistSorts[0];
 			}
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+            mPlayingItemHandler.StartHandler( mArtistList );
 			mEventAggregator.Subscribe( this );
 
 			if( databaseInfo.IsOpen ) {
@@ -304,25 +301,15 @@ namespace Noise.UI.ViewModels {
 				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
-				if( mEnableSortPrefixes ) {
-					FormatSortPrefix( retValue );
-				}
+                FormatSortPrefix( retValue );
 			}
 
 			return ( retValue );
 		}
 
 		private void FormatSortPrefix( UiArtist artist ) {
-			if( mSortPrefixes != null ) {
-				foreach( string prefix in mSortPrefixes ) {
-					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
-						artist.SortName = artist.Name.Remove( 0, prefix.Length ).Trim();
-						artist.DisplayName = "(" + artist.Name.Insert( prefix.Length, ")" );
-
-						break;
-					}
-				}
-			}
+            artist.DisplayName = mPrefixedNameHandler.FormatPrefixedName( artist.Name );
+            artist.SortName = mPrefixedNameHandler.FormatSortingName( artist.Name );
 		}
 
 		private void SetArtistList( IEnumerable<DbArtist> artistList ) {
@@ -336,6 +323,8 @@ namespace Noise.UI.ViewModels {
 			mArtistList.IsNotifying = true;
 			mArtistList.Refresh();
 			RaisePropertyChanged( () => ArtistCount );
+
+            mPlayingItemHandler.UpdateList();
 		}
 
 		private void AddArtist( DbArtist artist ) {
@@ -357,9 +346,7 @@ namespace Noise.UI.ViewModels {
 					uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
 					mChangeObserver.Add( uiArtist );
 
-					if( mEnableSortPrefixes ) {
-						FormatSortPrefix( uiArtist );
-					}
+                    FormatSortPrefix( uiArtist );
 				}
 			}
 		}

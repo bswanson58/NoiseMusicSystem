@@ -238,7 +238,7 @@ namespace Noise.UI.ViewModels {
 					var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
 
 					if( trackList.Any()) {
-						var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+						var selectedTrack = trackList.Skip( NextRandom( trackList.Count )).Take( 1 ).FirstOrDefault();
 
 						if( selectedTrack != null ) {
 							retValue.Add( new LinkNode( trackName, selectedTrack.Album, OnTopTrackClicked ));

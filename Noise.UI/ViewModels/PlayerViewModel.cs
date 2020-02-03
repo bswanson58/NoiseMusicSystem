@@ -526,7 +526,13 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "CurrentEq" )]
 		public bool IsEqEditable {
-			get{ return(!CurrentEq.IsPreset ); }
+			get {
+                if( CurrentEq != null ) {
+                    return !CurrentEq.IsPreset;
+                }
+
+                return false;
+            }
 		}
 
 		[DependsUpon( "CurrentEq" )]

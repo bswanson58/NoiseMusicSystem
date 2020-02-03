@@ -23,13 +23,13 @@
 
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,15,5,0">
-				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Select an artist!" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Select an artist!" />
 			</Grid>
 		</ControlTemplate>
 
 		<DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
-			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3">
-				<Grid Margin="0,0,3,0">
+			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3" Margin="3">
+				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
@@ -44,11 +44,11 @@
 						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}" Content="4" />
 
 						<Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-							<TextBlock Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                            <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
 						</Viewbox>
 					</Grid>
 
-					<Grid Grid.Row="1" Margin="7,0,0,0">
+					<Grid Grid.Row="1" Margin="7,-3,0,0" Opacity="0.75">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="23" />
 							<ColumnDefinition Width="Auto" />
@@ -77,7 +77,7 @@
 										Opacity="{Binding Path=FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
 										IsChecked="{Binding FavoriteValue, Mode=TwoWay}"
 										Style="{DynamicResource FavoriteCheckBoxStyle}" />
-							<Controls:RatingControl x:Name="AlbumRating" Margin="0,0,3,0"
+							<Controls:RatingControl x:Name="AlbumRating"
 													Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
 													Rating="{Binding Path=UiRating, Mode=TwoWay}"
 													UseAlternate="{Binding UseAlternateRating}"
@@ -93,6 +93,9 @@
 					<Setter TargetName="AlbumIsFavorite" Property="Opacity" Value="1.0"/>
 					<Setter TargetName="AlbumRating" Property="Opacity" Value="1.0"/>
 				</Trigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
 			</DataTemplate.Triggers>
 
 		</DataTemplate>
@@ -120,7 +123,7 @@
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
-							<EasingDoubleKeyFrame KeyTime="0" Value="115" />
+							<EasingDoubleKeyFrame KeyTime="0" Value="140" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>

@@ -28,7 +28,7 @@ namespace Noise.Core.DataProviders {
 			var otherImages = ArtistImageList( forArtist );
 
 			if( otherImages.Any()) {
-				var imageIndex = mRandom.Next( 0, otherImages.Count());
+				var imageIndex = mRandom.Next( 0, otherImages.Count );
 
 				if( imageIndex > 0 ) {
 					var imageName = otherImages.Skip( imageIndex - 1 ).Take( 1 ).FirstOrDefault();

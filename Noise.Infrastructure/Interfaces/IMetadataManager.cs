@@ -23,16 +23,19 @@ namespace Noise.Infrastructure.Interfaces {
 	}
 
 	public interface IArtistDiscography {
-		string					ArtistName { get; }
+		string					    ArtistName { get; }
 		List<DbDiscographyRelease>	Discography { get; } 
 	}
 
 	public interface IMetadataManager {
-		IArtistMetadata		GetArtistMetadata( string forArtist );
-		IArtistDiscography	GetArtistDiscography( string forArtist );
-		Artwork				GetArtistArtwork( string forArtist );
+        IArtistMetadata		    GetArtistMetadata( string forArtist );
+		IArtistDiscography	    GetArtistDiscography( string forArtist );
 
-		void				ExportMetadata( string exportPath );
-		void				ImportMetadata( string importPath );
+        bool                    ArtistPortfolioAvailable( string forArtist );
+        IEnumerable<Artwork>    GetArtistPortfolio( string forArtist );
+        Artwork				    GetArtistArtwork( string forArtist );
+
+		void				    ExportMetadata( string exportPath );
+		void				    ImportMetadata( string importPath );
 	}
 }

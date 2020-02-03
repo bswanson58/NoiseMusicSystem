@@ -270,7 +270,7 @@
       <DependentUpon>VuMeter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\VuMeterBar.cs" />
-    <Compile Include="Dto\ExhaustedStrategyItem.cs" />
+    <Compile Include="Dto\CombinedPlayStrategy.cs" />
     <Compile Include="Dto\NameIdPair.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
@@ -282,13 +282,18 @@
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
+    <Compile Include="Dto\UiStrategyDescription.cs" />
+    <Compile Include="Dto\UiTag.cs" />
+    <Compile Include="Dto\UiTagAssociation.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
+    <Compile Include="Interfaces\IPrefixedNameHandler.cs" />
     <Compile Include="Interfaces\ISelectionState.cs" />
     <Compile Include="Logging\IUiLog.cs" />
     <Compile Include="Logging\UiLogger.cs" />
     <Compile Include="MappingConfiguration.cs" />
+    <Compile Include="Models\PlayingItemHandler.cs" />
     <Compile Include="Models\SelectionStateModel.cs" />
     <Compile Include="Models\ThemeCatalog.cs" />
     <Compile Include="Models\ThemeManager.cs" />
@@ -315,6 +320,7 @@
     </Compile>
     <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
+    <Compile Include="Support\PrefixedNameHandler.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\DateOnlyConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
@@ -334,11 +340,11 @@
     <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
+    <Compile Include="ViewModels\ArtistArtworkViewModel.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModel.cs" />
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
-    <Compile Include="ViewModels\CategorySelectionDialogModel.cs" />
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
@@ -352,7 +358,6 @@
     <Compile Include="ViewModels\PlayingAlbumViewModel.cs" />
     <Compile Include="ViewModels\PlayingArtistViewModel.cs" />
     <Compile Include="ViewModels\PlayingTrackViewModel.cs" />
-    <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueControlViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueStrategyViewModel.cs" />
@@ -364,13 +369,18 @@
     <Compile Include="ViewModels\StartupLibraryCreationViewModel.cs" />
     <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
-    <Compile Include="ViewModels\StreamViewModel.cs" />
+    <Compile Include="ViewModels\TagAssociationDialogModel.cs" />
+    <Compile Include="ViewModels\TagAssociationViewModel.cs" />
+    <Compile Include="ViewModels\TagEditDialogModel.cs" />
+    <Compile Include="ViewModels\TagListViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
+    <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
     <Compile Include="ViewModels\TransportViewModel.cs" />
     <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
+    <Compile Include="Views\AdjacentPlaySelector.cs" />
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
     </Compile>
@@ -392,6 +402,9 @@
     <Compile Include="Views\ArtistAlbumConfigurationDialog.xaml.cs">
       <DependentUpon>ArtistAlbumConfigurationDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ArtistArtworkView.xaml.cs">
+      <DependentUpon>ArtistArtworkView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ArtistEditDialog.xaml.cs">
       <DependentUpon>ArtistEditDialog.xaml</DependentUpon>
     </Compile>
@@ -406,12 +419,6 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CategoryEditDialog.xaml.cs">
-      <DependentUpon>CategoryEditDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CategorySelectionDialog.xaml.cs">
-      <DependentUpon>CategorySelectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CloudConfigurationDialog.xaml.cs">
       <DependentUpon>CloudConfigurationDialog.xaml</DependentUpon>
@@ -473,14 +480,32 @@
     <Compile Include="Views\PlayingTrackView.xaml.cs">
       <DependentUpon>PlayingTrackView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TagAddDialog.xaml.cs">
+      <DependentUpon>TagAddDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagAssociationDialog.xaml.cs">
+      <DependentUpon>TagAssociationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagAssociationView.xaml.cs">
+      <DependentUpon>TagAssociationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagEditDialog.xaml.cs">
+      <DependentUpon>TagEditDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagListView.xaml.cs">
+      <DependentUpon>TagListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagsView.xaml.cs">
+      <DependentUpon>TagsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TrackStrategyOptionsDialog.xaml.cs">
+      <DependentUpon>TrackStrategyOptionsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TransportView.xaml.cs">
       <DependentUpon>TransportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayListDialog.xaml.cs">
       <DependentUpon>PlayListDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PlayListView.xaml.cs">
-      <DependentUpon>PlayListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayQueueControlView.xaml.cs">
       <DependentUpon>PlayQueueControlView.xaml</DependentUpon>
@@ -526,9 +551,6 @@
     </Compile>
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\StreamView.xaml.cs">
-      <DependentUpon>StreamView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TimeExplorerAlbumsView.xaml.cs">
       <DependentUpon>TimeExplorerAlbumsView.xaml</DependentUpon>
@@ -677,6 +699,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ArtistArtworkView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ArtistEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -694,14 +720,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\CategoryEditDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\CategorySelectionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -785,15 +803,39 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\TagAddDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagAssociationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagAssociationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TrackStrategyOptionsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TransportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayListDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlayListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -854,10 +896,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StatusView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\StreamView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

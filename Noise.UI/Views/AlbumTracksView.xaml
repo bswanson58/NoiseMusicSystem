@@ -7,8 +7,9 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
+             xmlns:Views="clr-namespace:Noise.UI.Views"
+             d:DesignHeight="100"
+             d:DesignWidth="530"
              mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -17,12 +18,42 @@
     
     <UserControl.Resources>
         <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+
+        <DataTemplate x:Key="PlayAdjacentPreviousTemplate">
+            <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_PlayAdjacentPrevious}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="PlayAdjacentNextTemplate">
+            <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_PlayAdjacentNext}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="PlayAdjacentBothTemplate">
+            <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_PlayAdjacentBoth}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="PlayAdjacentNeitherTemplate">
+            <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_PlayAdjacentNeither}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="DoNotPlayTemplate">
+            <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_NoPlay}"/>
+        </DataTemplate>
+
+        <Views:AdjacentPlaySelector x:Key="AdjacentPlaySelector"
+                                    BothTemplate="{StaticResource PlayAdjacentBothTemplate}"
+                                    NextTemplate="{StaticResource PlayAdjacentNextTemplate}"
+                                    PreviousTemplate="{StaticResource PlayAdjacentPreviousTemplate}"
+                                    NeitherTemplate="{StaticResource PlayAdjacentNeitherTemplate}"
+                                    DoNotPlayTemplate="{StaticResource DoNotPlayTemplate}"/>
+
+        <Style x:Key="RightAlignedHeader" TargetType="GridViewColumnHeader" BasedOn="{StaticResource MetroGridViewColumnHeader}">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackEdit"
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="TagAssociationDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=TrackEditRequest}" />
+                                                     InteractionRequest="{Binding Path=TagEditRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackStrategyOptionsDialog"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=StrategyEditRequest}" />
     </i:Interaction.Behaviors>
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
@@ -47,30 +78,40 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="33"
-                                    Behaviours:GridViewSort.PropertyName="TrackNumber"
-                                    Header="#">
+                    <GridViewColumn Width="33" Header="# " HeaderContainerStyle="{StaticResource RightAlignedHeader}"
+                                    Behaviours:GridViewSort.PropertyName="TrackNumber">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=TrackNumber}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Behaviours:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}"
-                                    Header="Track Name" />
-                    <GridViewColumn Width="75"
-                                    Behaviours:GridViewSort.PropertyName="Duration"
-                                    Header="Duration">
+                    <GridViewColumn Header=" Track Name" Behaviours:GridViewSort.PropertyName="Name">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock x:Name="TrackName" Text="{Binding Path=Name}" />
+
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                        <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                        <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="75" Header="Duration " HeaderContainerStyle="{StaticResource RightAlignedHeader}"
+                                    Behaviours:GridViewSort.PropertyName="Duration">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="27"
-                                    Behaviours:GridViewSort.PropertyName="UiIsFavorite"
-                                    HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}">
+                    <GridViewColumn Width="27" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}"
+                                    Behaviours:GridViewSort.PropertyName="UiIsFavorite">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
@@ -85,9 +126,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="115"
-                                    Behaviours:GridViewSort.PropertyName="UiRating"
-                                    Header="Rating">
+                    <GridViewColumn Width="115"  Header=" Rating" Behaviours:GridViewSort.PropertyName="UiRating">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
@@ -102,22 +141,46 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource EditColumnHeaderTemplate}">
+                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button x:Name="TrackEdit" Width="17" Height="17" Opacity="0.1"
-                                        Command="{Binding Path=Edit}"
-                                        Content="{StaticResource Path_Edit}"
-                                        Padding="1"
-                                        ToolTip="Edit Track Properties" />
+                                <ContentControl x:Name="TagContainer" Opacity="0.3">
+                                    <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                                            Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+                                </ContentControl>
                                 <DataTemplate.Triggers>
                                     <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                                        <Setter TargetName="TagContainer" Property="Opacity" Value="1.0"/>
                                     </Trigger>
+                                    <DataTrigger Binding="{Binding HasTags}" Value="True">
+                                        <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                                        <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                                    </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource AdjacentPlayHeaderTemplate}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentControl x:Name="StrategyContainer" Opacity="0.3">
+                                    <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                                            Command="{Binding Path=StrategyOptions}" Content="{Binding CombinedPlayStrategy}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
+                                            ToolTip="Play Adjacent Tracks" Focusable="False"/>
+                                </ContentControl>
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="StrategyOptions" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="StrategyContainer" Property="Opacity" Value="1.0"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding HasStrategyOptions}" Value="True">
+                                        <Setter TargetName="StrategyOptions" Property="Opacity" Value="1.0"/>
+                                        <Setter TargetName="StrategyOptions" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                 </GridView>
             </ListView.View>
         </ListView>

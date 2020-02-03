@@ -13,10 +13,22 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			AddItem( tag );
 		}
 
-		public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
+	    public void DeleteTag( DbTag tag ) {
+	        RemoveItem( tag );
+	    }
+
+	    public DbTag GetTag( long dbid ) {
+            return GetItemByKey( dbid );
+        }
+
+        public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
 			var context = CreateContext();
 
 			return( new EfProviderList<DbTag>( context, Set( context ).Where( entry => entry.TagGroup == forGroup )));
 		}
+
+        public IDataUpdateShell<DbTag> GetTagForUpdate( long dbid ) {
+            return( GetUpdateShell( dbid ));
+        }
 	}
 }

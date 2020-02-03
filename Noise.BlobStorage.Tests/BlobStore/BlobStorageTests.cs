@@ -17,9 +17,13 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 
 		private Mock<IBlobStorageResolver>	mStorageResolver;
 		private IBlobStorageManager			mStorageManager;
+        private Mock<ILibraryConfiguration> mLibraryConfiguration;
 
 		[SetUp]
 		public void Setup() {
+            mLibraryConfiguration = new Mock<ILibraryConfiguration>();
+            mLibraryConfiguration.Setup( m => m.Current.BlobDatabasePath ).Returns( Path.Combine( cBlobStorage, "Test Blob Storage" ));
+
 			mStorageResolver = new Mock<IBlobStorageResolver>();
 			mStorageResolver.Setup( m => m.StorageLevels ).Returns( 1 );
 			mStorageResolver.Setup( m => m.KeyForStorageLevel( It.IsAny<long>(), It.Is<uint>( p => p == 0  ))).Returns( "first storage level" );
@@ -27,7 +31,7 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 
 			var storageManager = new BlobStorageManager( new Mock<INoiseLog>().Object );
 			storageManager.SetResolver( mStorageResolver.Object );
-			storageManager.Initialize( Path.Combine( cBlobStorage, "Test Blob Storage" ));
+			storageManager.Initialize( mLibraryConfiguration.Object );
 
 			storageManager.DeleteStorage();
 			if( storageManager.CreateStorage()) {

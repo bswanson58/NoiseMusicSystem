@@ -44,6 +44,8 @@ namespace Noise.UI.ViewModels {
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
 		private readonly ISelectionState		mSelectionState;
+        private readonly IPlayingItemHandler    mPlayingItemHandler;
+        private readonly IPrefixedNameHandler   mPrefixedNameHandler;
 		private FavoriteViewNode				mSelectedNode;
 		private ICollectionView					mFavoritesView;
 		private readonly List<FavoriteFilter>	mFilterList; 
@@ -51,8 +53,8 @@ namespace Noise.UI.ViewModels {
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
-								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
-								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) {
+								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState, IPrefixedNameHandler nameHandler,
+								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
@@ -64,6 +66,8 @@ namespace Noise.UI.ViewModels {
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 			mSelectionState = selectionState;
+            mPlayingItemHandler = playingItemHandler;
+            mPrefixedNameHandler = nameHandler;
 
 			mFavoritesList = new SortableCollection<FavoriteViewNode>();
 
@@ -77,6 +81,7 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+            mPlayingItemHandler.StartHandler( mFavoritesList );
 
 			if( databaseInfo.IsOpen ) {
 				LoadFavorites();
@@ -219,8 +224,8 @@ namespace Noise.UI.ViewModels {
 				return( mTaskHandler );
 			}
 
-			set { mTaskHandler = value; }
-		} 
+			set => mTaskHandler = value;
+        } 
 
 		private void LoadFavorites() {
 			TaskHandler.StartTask( RetrieveFavorites, SetFavorites, exception => mLog.LogException( "Loading Favorites", exception ));
@@ -247,6 +252,11 @@ namespace Noise.UI.ViewModels {
 											let artist = mArtistProvider.GetArtistForAlbum( album )
 										select new FavoriteViewNode( artist, album, track, PlayTrack ));
 				}
+
+                retValue.ForEach( f => {
+                        f.DisplayName = mPrefixedNameHandler.FormatPrefixedName( f.Title );
+                        f.SortingName = mPrefixedNameHandler.FormatSortingName( f.Title );
+                    });
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Loading Favorites", ex );
@@ -260,9 +270,11 @@ namespace Noise.UI.ViewModels {
 			ClearFavorites();
 
 			mFavoritesList.AddRange( favorites );
-			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
+			mFavoritesList.Sort( n => n.SortingName, ListSortDirection.Ascending );
 			mFavoritesList.IsNotifying = true;
 			mFavoritesList.Refresh();
+
+            mPlayingItemHandler.UpdateList();
 
 			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
 			RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
@@ -273,12 +285,6 @@ namespace Noise.UI.ViewModels {
 			mSelectedNode = null;
 
 			RaisePropertyChanged( () => SelectedNode );
-		}
-
-		private static string SelectSortProperty( FavoriteViewNode node ) {
-			Condition.Requires( node ).IsNotNull();
-
-			return( node.Track != null ? node.Track.Name : node.Album != null ? node.Album.Name : node.Artist != null ? node.Artist.Name : string.Empty );
 		}
 
 		private void PlayArtist( FavoriteViewNode node ) {

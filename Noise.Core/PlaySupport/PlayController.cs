@@ -413,6 +413,7 @@ namespace Noise.Core.PlaySupport {
 				StopInfoUpdate();
 
 				FireStateChange( eStateTriggers.PlayerStopped );
+                mEventAggregator.PublishOnUIThread( new Events.PlaybackStopped());
 			}
 		}
 

@@ -75,7 +75,7 @@ namespace Noise.Core.DataProviders {
 
 			if(( albumInfo.Artwork != null ) &&
 			   ( albumInfo.Artwork.GetLength( 0 ) > 1 )) {
-				retValue = mArtworkProvider.GetArtwork( albumInfo.Artwork[mRandom.Next(albumInfo.Artwork.GetLength( 0 ) - 1 )].DbId );
+				retValue = mArtworkProvider.GetArtwork( albumInfo.Artwork[mRandom.Next(albumInfo.Artwork.GetLength( 0 ))].DbId );
 			}
 
 			return( retValue );

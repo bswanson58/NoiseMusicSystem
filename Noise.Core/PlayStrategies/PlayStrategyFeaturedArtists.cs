@@ -51,7 +51,7 @@ namespace Noise.Core.PlayStrategies {
 				var tracks = TracksForArtist( nextArtist );
 
 				if( tracks.Any()) {
-					var trackIndex = mRandom.Next( tracks.Count - 1 );
+					var trackIndex = mRandom.Next( tracks.Count );
 					var track = mTrackProvider.GetTrack( tracks[trackIndex] );
 
 					if( track != null ) {

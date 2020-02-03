@@ -8,8 +8,8 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	[TestFixture]
 	public class ArtworkProviderTests : BaseArtworkProviderTests {
-		private readonly ProviderTestSetup	mTestSetup;
-		private readonly Mock<ILogDatabase>	mLog;
+		private readonly ProviderTestSetup	        mTestSetup;
+		private readonly Mock<ILogDatabase>	        mLog;
 
 		public ArtworkProviderTests() {
 			mTestSetup = new ProviderTestSetup();
@@ -22,7 +22,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		}
 
 		protected override IArtworkProvider CreateSut() {
-			return( new ArtworkProvider( mTestSetup.ContextProvider, mLog.Object ));
+			return( new ArtworkProvider( mTestSetup.ContextProvider, mLog.Object, null ));
 		}
 	}
 }

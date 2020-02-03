@@ -42,7 +42,14 @@ namespace Noise.Core.Sidecars {
 			mEventAggregator.Subscribe( this );
 		}
 
-		public void ExecuteTask() {
+        public void ExecuteTask() {
+            // process a block of sidecars in each time slot.
+            for( var task = 0; task < 10; task++ ) {
+                CheckNextAlbum();
+            }
+        }
+
+		private void CheckNextAlbum() {
 			var album = NextAlbum();
 
 			if( album != null ) {
@@ -51,8 +58,9 @@ namespace Noise.Core.Sidecars {
 						var dbSideCar = mSidecarProvider.GetSidecarForAlbum( album );
 						var albumSidecar = mSidecarCreator.CreateFrom( album );
 
-						if(( dbSideCar != null ) &&
-						   ( albumSidecar != null )) {
+						 if(( dbSideCar != null ) &&
+						   ( albumSidecar != null ) &&
+                           ( albumSidecar.Version != dbSideCar.Version )) {
 							if( albumSidecar.Version > dbSideCar.Version ) {
 								mSidecarWriter.WriteSidecar( album, albumSidecar );
 								mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );

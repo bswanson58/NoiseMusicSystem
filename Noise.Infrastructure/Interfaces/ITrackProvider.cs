@@ -15,7 +15,7 @@ namespace Noise.Infrastructure.Interfaces {
 		IDataProviderList<DbTrack>	GetNewlyAddedTracks();
 		IEnumerable<DbTrack>		GetTrackListForPlayList( DbPlayList playList );
 
-		IDataUpdateShell<DbTrack>	GetTrackForUpdate( long trackId );
+		ITrackUpdateShell       	GetTrackForUpdate( long trackId );
 
 		long						GetItemCount();
 	}

@@ -4,14 +4,18 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Adapters.DynamicProxies;
 
 namespace Noise.UI.Support {
-	internal class DialogWindowModel : ViewModelBase {
+    public interface IDialogWindow {
+        void    Close( bool isConfirmed );
+    }
+
+	internal class DialogWindowModel : ViewModelBase, IDialogWindow {
 		public FrameworkElement			DialogContent { get; set; }
 		private bool?					mDialogResult;
 		private INotifyPropertyChanged	mEditObjectChanged;
 
 		public bool? DialogResult {
-			get{ return( mDialogResult ); }
-			set{ 
+			get => ( mDialogResult );
+		    set{ 
 				mDialogResult = value; 
 
 				RaisePropertyChanged( () => DialogResult );
@@ -83,5 +87,9 @@ namespace Noise.UI.Support {
 		public void Execute_Cancel( object sender ) {
 			DialogResult = false;
 		}
+
+	    public void Close( bool isConfirmed ) {
+            DialogResult = isConfirmed;
+	    }
 	}
 }

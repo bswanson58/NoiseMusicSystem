@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Noise.UI.Views.TagAddDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             Tag="New Tag"
+             FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
+             Height="50" Width="300">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock x:Name="FirstFocus" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Text="Tag Name:"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Margin="5,0"  Text="{Binding Tag.Tag.Name}"
+                 Style="{StaticResource WaterMarkTextBox}" Behaviours:TextBoxHelper.Watermark="enter tag name..." />
+    </Grid>
+</UserControl>

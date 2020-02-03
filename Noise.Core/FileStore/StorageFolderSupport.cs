@@ -164,7 +164,7 @@ namespace Noise.Core.FileStore {
 		private StorageFolder FindCommonAncestor( IList<StorageFolder> folderList ) {
 			var retValue = default( StorageFolder );
 
-			if( folderList.Count() > 1 ) {
+			if( folderList.Count > 1 ) {
 				var parentLists = new List<List<long>>();
 
 				foreach( var folder in folderList ) {
@@ -184,7 +184,7 @@ namespace Noise.Core.FileStore {
 				while( level > -1 ) {
 					var distinct = parentLists.Select( list => list.Count > level ? list[level] : Constants.cDatabaseNullOid ).Distinct().ToArray();
 
-					if( distinct.Count() == 1 ) {
+					if( distinct.Length == 1 ) {
 						var folderId = distinct.First();
 
 						if( folderId != Constants.cDatabaseNullOid ) {
@@ -213,7 +213,7 @@ namespace Noise.Core.FileStore {
 			var pathList = paths.Where( path => !string.IsNullOrWhiteSpace( path )).ToList();
 
 			if( pathList.Any()) {
-				if( pathList.Count() == 1 ) {
+				if( pathList.Count == 1 ) {
 					retValue = pathList.First();
 				}
 				else {
@@ -319,8 +319,10 @@ namespace Noise.Core.FileStore {
 
 			if(!string.IsNullOrEmpty( ext )) {
 				switch( ext.ToLower()) {
+                    case ".aac":
 					case ".flac":
 					case ".mp3":
+                    case ".m4a":
 					case ".ogg":
 					case ".wma":
 						retValue = eFileType.Music;
@@ -362,6 +364,11 @@ namespace Noise.Core.FileStore {
 					case ".mp3":
 						retValue = eAudioEncoding.MP3;
 						break;
+
+                    case ".m4a":
+                    case ".aac":
+                        retValue = eAudioEncoding.AAC;
+                        break;
 
 					case ".ogg":
 						retValue = eAudioEncoding.OGG;

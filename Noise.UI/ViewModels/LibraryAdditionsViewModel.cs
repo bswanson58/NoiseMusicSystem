@@ -23,6 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IPlayCommand			mPlayCommand;
 		private readonly ISelectionState		mSelectionState;
+        private readonly IPlayingItemHandler    mPlayingItemHandler;
 		private readonly DateTime				mHorizonTime;
 		private readonly UInt32					mHorizonCount;
 		private readonly BindableCollection<LibraryAdditionNode>	mNodeList;
@@ -30,13 +31,15 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
 		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, UserInterfacePreferences preferences, IDatabaseInfo databaseInfo, ISelectionState selectionState,
-										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayCommand playCommand, IUiLog log ) {
+										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, 
+                                          IPlayCommand playCommand, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mSelectionState = selectionState;
+            mPlayingItemHandler = playingItemHandler;
 			mPlayCommand = playCommand;
 
 			mNodeList = new BindableCollection<LibraryAdditionNode>();
@@ -50,6 +53,7 @@ namespace Noise.UI.ViewModels {
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+            mPlayingItemHandler.StartHandler( mNodeList );
 			mEventAggregator.Subscribe( this );
 		}
 
@@ -115,6 +119,8 @@ namespace Noise.UI.ViewModels {
 		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
 			ClearList();
 			mNodeList.AddRange( list );
+
+            mPlayingItemHandler.UpdateList();
 		}
 
 		private IEnumerable<LibraryAdditionNode> RetrieveAdditions() {

@@ -9,10 +9,12 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
 		private readonly IRootFolderProvider	mRootFolderProvider;
+        private readonly IAlbumProvider         mAlbumProvider;
 
-		public TrackProvider( IContextProvider contextProvider, IRootFolderProvider rootFolderProvider, ILogDatabase log ) :
+		public TrackProvider( IAlbumProvider albumProvider, IContextProvider contextProvider, IRootFolderProvider rootFolderProvider, ILogDatabase log ) :
 			base( contextProvider, log ) {
 			mRootFolderProvider = rootFolderProvider;
+            mAlbumProvider = albumProvider;
 		}
 
 		public void AddTrack( DbTrack track ) {
@@ -73,10 +75,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			return( playList.TrackIds.Select( GetTrack ).ToList());
 		}
 
-		public IDataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {
+		public ITrackUpdateShell GetTrackForUpdate( long trackId ) {
 			var context = CreateContext();
 
-			return( new EfUpdateShell<DbTrack>( context, GetItemByKey( context, trackId )));
+			return( new TrackUpdateShell( mAlbumProvider, context, GetItemByKey( context, trackId )));
 		}
 
 		public long GetItemCount() {

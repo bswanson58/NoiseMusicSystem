@@ -12,13 +12,11 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public virtual void Update() {
-			var versionable = Item as IVersionable;
+            if( Item is IVersionable versionable ) {
+                versionable.UpdateVersion();
+            }
 
-			if( versionable != null ) {
-				versionable.UpdateVersion();
-			}
-
-			mContext.SaveChanges();
+            mContext.SaveChanges();
 		}
 	}
 }

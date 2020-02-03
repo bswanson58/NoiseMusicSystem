@@ -26,6 +26,14 @@ namespace Noise.Infrastructure {
 				this( album.Artist, album.DbId ) { }
 		}
 
+        public class TagFocusRequested {
+            public DbTag    Tag {  get; private set; }
+
+            public TagFocusRequested( DbTag tag) {
+                Tag = tag;
+            }
+        }
+
 		public class ArtistContentRequest {
 			public long	ArtistId { get; private set; }
 
@@ -130,16 +138,6 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class PlayExhaustedStrategyChanged {
-			public ePlayExhaustedStrategy	ExhaustedStrategy { get; private set; }
-			public IPlayStrategyParameters	StrategyParameters { get; private set; }
-
-			public PlayExhaustedStrategyChanged( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
-				ExhaustedStrategy = strategy;
-				StrategyParameters = parameters;
-			}
-		}
-
 		public class PlayHistoryChanged {
 			public IPlayHistory	PlayHistory { get; private set; }
 
@@ -219,6 +217,7 @@ namespace Noise.Infrastructure {
 				Track = track;
 			}
 		}
+        public class PlaybackStopped { }
 
 		public class PlaybackTrackUpdated {
 			public PlayQueueTrack	Track { get; private set; }
@@ -396,5 +395,7 @@ namespace Noise.Infrastructure {
 				TransportState = transportState;
 			}
 		}
+
+        public class UserTagsChanged { }
 	}
 }

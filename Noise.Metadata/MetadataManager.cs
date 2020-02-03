@@ -94,7 +94,11 @@ namespace Noise.Metadata {
 			}
 		}
 
-		public IArtistMetadata GetArtistMetadata( string forArtist ) {
+        public bool ArtistPortfolioAvailable( string forArtist ) {
+            return mArtistMetadataManager.ArtistPortfolioAvailable( forArtist );
+        }
+
+        public IArtistMetadata GetArtistMetadata( string forArtist ) {
 			mArtistMetadataManager.ArtistMentioned( forArtist );
 			mUpdaters.Apply( updater => updater.QueueArtistUpdate( forArtist ));
 
@@ -115,7 +119,11 @@ namespace Noise.Metadata {
 			return( mArtistMetadataManager.GetArtistArtwork( forArtist ));
 		}
 
-		public async void ExportMetadata( string exportPath ) {
+        public IEnumerable<Artwork> GetArtistPortfolio( string forArtist ) {
+            return mArtistMetadataManager.GetArtistPortfolio( forArtist );
+        }
+
+        public async void ExportMetadata( string exportPath ) {
 			try {
 				if( mDocumentStore is EmbeddableDocumentStore ) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;

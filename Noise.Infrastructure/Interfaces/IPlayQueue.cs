@@ -27,6 +27,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ContinuePlayFromTrack( PlayQueueTrack track );
 		bool			ContinuePlayFromTrack( long trackId );
 		bool			ReplayTrack( long trackId );
+        void            PromoteTrackFromStrategy( PlayQueueTrack track );
 
 		PlayQueueTrack	NextTrack { get; }
 		PlayQueueTrack	PreviousTrack { get; }
@@ -40,10 +41,11 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void			ReorderQueueItem( int fromIndex, int toIndex );
 
-		IPlayStrategy			PlayStrategy { get; }
-		IPlayExhaustedStrategy	PlayExhaustedStrategy { get; }
-		void					SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters );
-		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters );
+		IPlayStrategy			        PlayStrategy { get; }
+		void					        SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters );
+
+        IStrategyDescription   	        PlayExhaustedStrategy { get; }
+        ExhaustedStrategySpecification  ExhaustedPlayStrategy { get; set; }
 
 		void			StartPlayStrategy();
 		bool			CanStartPlayStrategy { get; }

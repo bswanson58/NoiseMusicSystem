@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Noise.UI.Views.TrackStrategyOptionsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Width="350"
+             Height="120"
+             Tag="Strategy Play Options"
+             >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="1" Text="Play adjacent tracks:"/>
+        <CheckBox Grid.Row="2" Margin="8,3" IsChecked="{Binding PlayPrevious}" IsEnabled="{Binding CanPlayAdjacent}" Content="Play the previous track first"/>
+        <CheckBox Grid.Row="3" Margin="8,3" IsChecked="{Binding PlayNext}" IsEnabled="{Binding CanPlayAdjacent}" Content="Continue with the next track"/>
+
+        <CheckBox Grid.Row="5" Margin="8,3" IsChecked="{Binding DoNotPlay}" Content="Don't strategy play"/>
+    </Grid>
+</UserControl>

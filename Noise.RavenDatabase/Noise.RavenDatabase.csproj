@@ -230,6 +230,7 @@
     <Compile Include="Support\RavenDataUpdateShell.cs" />
     <Compile Include="Support\RavenRepository.cs" />
     <Compile Include="Support\RavenSimpleDataProviderList.cs" />
+    <Compile Include="Support\RavenTrackUpdateShell.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

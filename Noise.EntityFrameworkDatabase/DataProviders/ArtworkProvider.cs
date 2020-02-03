@@ -6,14 +6,29 @@ using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
-		public ArtworkProvider( IContextProvider contextProvider, ILogDatabase log ) :
-			base( contextProvider, log ) { }
+        private readonly Lazy<ITagArtworkProvider>  mArtworkProvider;
+
+		public ArtworkProvider( IContextProvider contextProvider, ILogDatabase log, Lazy<ITagArtworkProvider> artworkProvider ) :
+			base( contextProvider, log ) {
+            mArtworkProvider = artworkProvider;
+        }
 
 		private Artwork TransformArtwork( DbArtwork artwork ) {
-			return( new Artwork( artwork ) { Image = BlobStorage.RetrieveBytes( artwork.DbId ) });
+            var retValue = new Artwork( artwork );
+
+            if(( retValue.Source == InfoSource.Tag ) &&
+               ( BlobStorage.IsInPlace )) {
+                retValue.Image = mArtworkProvider.Value.GetArtwork( artwork.AssociatedItem, artwork.Name );
+            }
+            else {
+                retValue.Image = BlobStorage.RetrieveBytes( artwork.DbId );
+            }
+
+            return retValue;
 		}
 
 		public void AddArtwork( DbArtwork artwork ) {
@@ -98,7 +113,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 	                artworkList = Set( context ).Where( entity => ((entity.Album == albumId) && (entity.DbContentType == (int)ofType)) );
 	            }
 
-	            retValue = artworkList.ToArray();
+	            retValue = artworkList.AsEnumerable().DistinctBy( a => a.Name ).ToArray();
 	        }
 
 	        return retValue;

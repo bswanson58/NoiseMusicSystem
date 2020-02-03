@@ -46,14 +46,19 @@
 								<DataTemplate>
 									<StackPanel x:Name="ItemPanel" Orientation="Horizontal"
 												Opacity="{Binding Path=RelativeAge, Converter={StaticResource NumericRangeValueConverter}}">
-										<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Artist.Name}"/>
-										<TextBlock Style="{StaticResource ListViewTextStyle}" Text="/"/>
-										<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Album.Name}"/>
+										<TextBlock x:Name="ArtistName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Artist.Name}"/>
+										<TextBlock x:Name="NameSeparator" Style="{StaticResource ListViewTextStyle}" Text="/"/>
+										<TextBlock x:Name="AlbumName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Album.Name}"/>
 									</StackPanel>
 									<DataTemplate.Triggers>
 										<Trigger SourceName="ItemPanel" Property="IsMouseOver" Value="True">
 											<Setter TargetName="ItemPanel" Property="Opacity" Value="1.0"/>
 										</Trigger>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter TargetName="ArtistName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                                            <Setter TargetName="NameSeparator" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                                            <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                                        </DataTrigger>
 									</DataTemplate.Triggers>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>

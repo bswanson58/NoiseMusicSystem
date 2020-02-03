@@ -14,11 +14,16 @@
 		public const string		AlbumEdit					= "AlbumEdit";
 		public const string		TrackEdit					= "TrackEdit";
 		public const string		AlbumArtworkDisplay			= "AlbumArtworkDisplay";
+        public const string     ArtistArtworkDisplay        = "ArtistArtworkDisplay";
 		public const string		ArtistAlbumConfiguration	= "ArtistAlbumConfiguration";
 		public const string		CategorySelection			= "CategorySelection";
 		public const string		CategoryEdit				= "CategoryEdit";
 		public const string		FeaturedArtistsSelect		= "FeaturedArtistsSelect";
 		public const string		PlayStrategyConfiguration	= "PlayStrategyConfiguration";
 		public const string		ManagePlaybackContext		= "ManagePlaybackContext";
+        public const string     TagAddDialog                = "TagAddDialog";
+        public const string     TagEditDialog               = "TagEditDialog";
+        public const string     TagAssociationDialog        = "TagAssociationDialog";
+        public const string     TrackStrategyOptionsDialog  = "TrackStrategyOptionsDialog";
 	}
 }

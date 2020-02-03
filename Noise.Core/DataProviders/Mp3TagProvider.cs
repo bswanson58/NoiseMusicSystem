@@ -202,9 +202,7 @@ namespace Noise.Core.DataProviders {
 
 						var favoritesFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrameDescription, false );
 						if( favoritesFrame != null ) {
-							bool isFavorite;
-
-							if( Boolean.TryParse( favoritesFrame.Text[0], out isFavorite )) {
+                            if( Boolean.TryParse( favoritesFrame.Text[0], out var isFavorite )) {
 								track.IsFavorite = isFavorite;
 							}
 						}
@@ -213,24 +211,18 @@ namespace Noise.Core.DataProviders {
 					var pictures = Tags.Tag.Pictures;
 					if(( pictures != null ) &&
 					   ( pictures.GetLength( 0 ) > 0 )) {
-						int picsInFolder;
+                        var index = 0;
 
-						// Only pull the pictures from the first file in the folder.
-						using( var artworkList = mArtworkProvider.GetArtworkForFolder( mFile.ParentFolder )) {
-							picsInFolder = artworkList.List.Count();
-						}
+						foreach( var picture in pictures ) {
+							var dbPicture = new DbArtwork( mFile.DbId, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
+									{ Source = InfoSource.Tag,
+									  Name = $"Embedded Tag ({index})",
+									  Artist = artist.DbId,
+									  Album = album.DbId,
+									  FolderLocation = mFile.ParentFolder };
 
-						if( picsInFolder == 0 ) {
-							foreach( var picture in pictures ) {
-								var dbPicture = new DbArtwork( album.DbId, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
-										{ Source = InfoSource.Tag,
-										  Name = "Embedded Tag",
-										  Artist = artist.DbId,
-										  Album = album.DbId,
-										  FolderLocation = mFile.ParentFolder };
-
-								mArtworkProvider.AddArtwork( dbPicture, picture.Data.ToArray());
-							}
+							mArtworkProvider.AddArtwork( dbPicture, picture.Data.ToArray());
+                            index++;
 						}
 					}
 
@@ -241,7 +233,7 @@ namespace Noise.Core.DataProviders {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( string.Format( "Building tags for {0}/{1}/{2}", artist, album, track ), ex );
+					mLog.LogException( $"Building tags for {artist}/{album}/{track}", ex );
 				}
 			}
 		}

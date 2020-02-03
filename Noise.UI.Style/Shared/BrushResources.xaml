@@ -7,6 +7,18 @@
         <GradientStop Offset="1" Color="White" />
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="RightFadedBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0.9" Color="{DynamicResource BorderLineColor}" />
+        <GradientStop Offset="1" Color="Transparent" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="DoubleFadedBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="Transparent" />
+        <GradientStop Offset="0.1" Color="{DynamicResource BorderLineColor}" />
+        <GradientStop Offset="0.9" Color="{DynamicResource BorderLineColor}" />
+        <GradientStop Offset="1" Color="Transparent" />
+    </LinearGradientBrush>
+
     <Behaviours:NoiseGenerator x:Key="BackgroundNoise" Size="128">
         <Behaviours:NoiseGenerator.Colors>
             <Behaviours:ColorFrequency Frequency="90" Color="#197A9CE6" />

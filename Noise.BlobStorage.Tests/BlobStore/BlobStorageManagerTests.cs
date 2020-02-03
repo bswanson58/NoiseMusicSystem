@@ -11,17 +11,21 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 	public class BlobStorageManagerTests {
 		private	Mock<IBlobStorageResolver>	mBlobResolver;
 		private IBlobStorageManager			mStorageManager;
+        private Mock<ILibraryConfiguration> mLibraryConfiguration;
 
 		private IBlobStorageManager CreateSut() {
+            mLibraryConfiguration = new Mock<ILibraryConfiguration>();
+
 			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
 			blobStoragePath = Path.Combine( blobStoragePath, "Test Blob Storage" );
+            mLibraryConfiguration.Setup( m => m.Current.BlobDatabasePath ).Returns( blobStoragePath );
 
 			mBlobResolver = new Mock<IBlobStorageResolver>();
 
 			var storageManager = new BlobStorageManager( new Mock<INoiseLog>().Object );
 			storageManager.SetResolver( mBlobResolver.Object );
 
-			storageManager.Initialize( blobStoragePath );
+			storageManager.Initialize( mLibraryConfiguration.Object );
 			if( storageManager.CreateStorage()) {
 				mStorageManager = storageManager;
 			}

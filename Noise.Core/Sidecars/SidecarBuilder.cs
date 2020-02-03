@@ -51,17 +51,27 @@ namespace Noise.Core.Sidecars {
 
 				using( var albumList = mAlbumProvider.GetAllAlbums()) {
 					foreach( var album in albumList.List ) {
-						if( mSidecarProvider.GetSidecarForAlbum( album ) == null ) {
-							mSidecarProvider.Add( new StorageSidecar( Constants.AlbumSidecarName, album ) { Status = SidecarStatus.Read });
-						}
+                        try {
+                            if( mSidecarProvider.GetSidecarForAlbum( album ) == null ) {
+                                mSidecarProvider.Add( new StorageSidecar( Constants.AlbumSidecarName, album ) { Status = SidecarStatus.Read });
+                            }
+                        }
+                        catch( Exception ex ) {
+                            mLog.LogException( $"Adding sidecar to album: {album.Name}, artist: {album.Artist}", ex );
+                        }
 					}
 				}
 
 				using( var artistList = mArtistProvider.GetArtistList()) {
 					foreach( var artist in artistList.List ) {
-						if( mSidecarProvider.GetSidecarForArtist( artist ) == null ) {
-							mSidecarProvider.Add( new StorageSidecar( Constants.ArtistSidecarName, artist ) { Status = SidecarStatus.Read });
-						}
+                        try {
+                            if( mSidecarProvider.GetSidecarForArtist( artist ) == null ) {
+                                mSidecarProvider.Add( new StorageSidecar( Constants.ArtistSidecarName, artist ) { Status = SidecarStatus.Read });
+                            }
+                        }
+                        catch( Exception ex ) {
+                            mLog.LogException( $"Adding sidecar for artist: {artist.Name}", ex );
+                        }
 					}
 				}
 			}
@@ -73,27 +83,37 @@ namespace Noise.Core.Sidecars {
 		}
 
 		private void ProcessAlbumSidecar( StorageSidecar sidecar ) {
-			var album = mAlbumProvider.GetAlbum( sidecar.AlbumId );
+            try {
+                var album = mAlbumProvider.GetAlbum( sidecar.AlbumId );
 
-			if( album != null ) {
-				mSidecarCreator.Update( album, mSidecarWriter.ReadSidecar( album ));
-				UpdateSidecarVersion( sidecar, album.Version );
-			}
-			else {
-				mLog.LogUnknownAlbumSidecar( sidecar );
-			}
+                if( album != null ) {
+                    mSidecarCreator.Update( album, mSidecarWriter.ReadSidecar( album ));
+                    UpdateSidecarVersion( sidecar, album.Version );
+                }
+                else {
+                    mLog.LogUnknownAlbumSidecar( sidecar );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"ProcessAlbumSidecar for: {sidecar.AlbumId}", ex );
+            }
 		}
 
 		private void ProcessArtistSidecar( StorageSidecar sidecar ) {
-			var artist = mArtistProvider.GetArtist( sidecar.ArtistId );
+            try {
+                var artist = mArtistProvider.GetArtist( sidecar.ArtistId );
 
-			if( artist != null ) {
-				mSidecarCreator.Update( artist, mSidecarWriter.ReadSidecar( artist ));
-				UpdateSidecarVersion( sidecar, artist.Version );
-			}
-			else {
-				mLog.LogUnknownArtistSidecar( sidecar );
-			}
+                if( artist != null ) {
+                    mSidecarCreator.Update( artist, mSidecarWriter.ReadSidecar( artist ));
+                    UpdateSidecarVersion( sidecar, artist.Version );
+                }
+                else {
+                    mLog.LogUnknownArtistSidecar( sidecar );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"ProcessArtistSidecar for: {sidecar.ArtistId}", ex );
+            }
 		}
 
 		private void UpdateSidecarVersion( StorageSidecar sidecar, long version ) {

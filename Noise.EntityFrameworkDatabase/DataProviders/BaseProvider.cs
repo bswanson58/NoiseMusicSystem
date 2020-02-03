@@ -10,26 +10,21 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal abstract class BaseProvider<TEntity> where TEntity : DbBase {
 		private	readonly IContextProvider	mContextProvider;
-		private readonly ILogDatabase		mLog;
 
-		protected BaseProvider( IContextProvider contextProvider, ILogDatabase log ) {
+        protected   IBlobStorage            BlobStorage => mContextProvider.BlobStorage;
+        protected   ILogDatabase            Log { get; }
+
+        protected BaseProvider( IContextProvider contextProvider, ILogDatabase log ) {
 			mContextProvider = contextProvider;
-			mLog = log;
+			Log = log;
 		}
 
-		protected ILogDatabase Log {
-			get {  return( mLog ); }
-		}
 
-		protected IDbContext CreateContext() {
+        protected IDbContext CreateContext() {
 			return( mContextProvider.CreateContext());
 		}
 
-		protected IBlobStorage BlobStorage {
-			get{ return( mContextProvider.BlobStorageManager.GetStorage()); }
-		}
-
-		protected IDbSet<TEntity> Set( IDbContext fromContext ) {
+        protected IDbSet<TEntity> Set( IDbContext fromContext ) {
 			Condition.Requires( fromContext ).IsNotNull();
 
 			return( fromContext.Set<TEntity>());

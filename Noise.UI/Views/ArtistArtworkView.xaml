@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="Noise.UI.Views.ArtistArtworkView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
+             Height="750" Width="950"
+             Tag="Artist Portfolio">
+    <UserControl.Resources>
+        <ValueConverters:ByteImageConverter x:Key="ImageConverter" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="7"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Grid.Row="1" Grid.Column="1">
+                <ScrollViewer.Style>
+                    <Style TargetType="{x:Type ScrollViewer}">
+                        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+                        <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=chkActualSize}" Value="True">
+                                <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+                                <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ScrollViewer.Style>
+
+                <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding CurrentArtwork.Image, Converter={StaticResource ImageConverter}}"/>
+            </ScrollViewer>
+
+            <ListBox x:Name="FirstFocus" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Portfolio}" SelectedItem="{Binding CurrentArtwork}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Viewbox>
+                            <Border BorderThickness="4" BorderBrush="White" Margin="5">
+                                <StackPanel Orientation="Vertical">
+                                    <Image Width="120" Height="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                           Source="{Binding Path=Image, Converter={StaticResource ImageConverter}}"/>
+                                    <TextBlock HorizontalAlignment="Center" Margin="3,0,3,3" Text="{Binding Path=Name}"/>
+                                </StackPanel>
+                            </Border>
+                        </Viewbox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <CheckBox x:Name="chkActualSize" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Content="Display Actual Size"/>
+        </Grid>
+    </Grid>
+</UserControl>

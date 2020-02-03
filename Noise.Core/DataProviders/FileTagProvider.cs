@@ -19,6 +19,7 @@ namespace Noise.Core.DataProviders {
 			IMetaDataProvider	retValue = null;
 
 			switch( encoding ) {
+                case eAudioEncoding.AAC:
 				case eAudioEncoding.FLAC:
 				case eAudioEncoding.MP3:
 				case eAudioEncoding.OGG:

@@ -42,6 +42,10 @@ namespace Noise.Core.FileProcessor {
 				context.MetaDataProviders.Add( mFileNameProvider.GetProvider( context.StorageFile ));
 				context.MetaDataProviders.Add( mDefaultProvider.GetProvider( context.StorageFile ));
 			}
+
+            foreach( var provider in context.MetaDataProviders ) {
+                Condition.Ensures( provider, "MetaDataProvider" ).IsNotNull();
+            }
 		}
 	}
 }

@@ -12,15 +12,18 @@ namespace Noise.Core.PlaySupport {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IMetadataManager	mMetadataManager;
 		private readonly ITrackProvider		mTrackProvider;
+        private readonly IUserTagManager    mTagManager;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly INoiseLog			mLog;
 		private readonly Random				mRandom;
 
-		public PlayCommand( IEventAggregator eventAggregator, IPlayQueue playQueue, ITrackProvider trackProvider, IMetadataManager metadataManager, INoiseLog log ) {
+		public PlayCommand( IEventAggregator eventAggregator, IPlayQueue playQueue, ITrackProvider trackProvider,
+                            IMetadataManager metadataManager, IUserTagManager tagManager, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mTrackProvider = trackProvider;
 			mMetadataManager = metadataManager;
+            mTagManager = tagManager;
 			mLog = log;
 
 			mRandom = new Random( DateTime.Now.Millisecond );
@@ -32,7 +35,7 @@ namespace Noise.Core.PlaySupport {
 						mPlayQueue.Add( artist );
 					}
 					catch( Exception exception ) {
-						mLog.LogException( string.Format( "Adding artist '{0}' to playback queue", artist.Name ), exception );
+						mLog.LogException( $"Adding artist '{artist.Name}' to playback queue", exception );
 					}
 				}));
 		}
@@ -51,12 +54,40 @@ namespace Noise.Core.PlaySupport {
 					}
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Adding top tracks for artist '{0}' to playback queue", artist.Name ), exception );
+					mLog.LogException( $"Adding top tracks for artist '{artist.Name}' to playback queue", exception );
 				}
 			}));
 		}
 
-		private List<DbTrack> RetrieveTopTracks( DbArtist artist ) {
+        public Task PlayRandomTaggedTracks( DbTag tag ) {
+            return Task.Run( () => {
+                try {
+                    var associations = mTagManager.GetAssociations( tag.DbId ).ToList();
+                    var tracksToQueue = Math.Min( associations.Count, 10 );
+
+                    while( associations.Any() && tracksToQueue > 0 ) {
+                        var association = associations.Skip( NextRandom( associations.Count )).Take( 1 ).FirstOrDefault();
+
+                        if( association != null ) {
+                            var track = mTrackProvider.GetTrack( association.ArtistId );
+
+                            if(!mPlayQueue.IsTrackQueued( track )) {
+                                mPlayQueue.Add( track );
+
+                                tracksToQueue--;
+                            }
+
+                            associations.Remove( association );
+                        }
+                    }
+                }
+                catch( Exception exception ) {
+                    mLog.LogException( $"Adding tagged tracks for tag '{tag.Name}' to playback queue", exception );
+                }
+            });
+        }
+
+        private List<DbTrack> RetrieveTopTracks( DbArtist artist ) {
 			var retValue = new List<DbTrack>();
 			var info = mMetadataManager.GetArtistMetadata( artist.Name );
 			var topTracks = info.GetMetadataArray( eMetadataType.TopTracks ).ToArray();
@@ -69,7 +100,7 @@ namespace Noise.Core.PlaySupport {
 					var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
 
 					if( trackList.Any()) {
-						var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+						var selectedTrack = trackList.Skip( NextRandom( trackList.Count )).Take( 1 ).FirstOrDefault();
 
 						if( selectedTrack != null ) {
 							retValue.Add( selectedTrack );
@@ -93,7 +124,7 @@ namespace Noise.Core.PlaySupport {
 					mEventAggregator.PublishOnUIThread( new Events.AlbumQueued( album ));
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Adding album '{0}' to playback queue", album.Name ), exception );
+					mLog.LogException( $"Adding album '{album.Name}' to playback queue", exception );
 				}
 			}));
 		}
@@ -106,7 +137,7 @@ namespace Noise.Core.PlaySupport {
 					mEventAggregator.PublishOnUIThread( new Events.AlbumQueued( album ));
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Adding volume '{0}' of album '{1}' to playback queue", volumeName, album.Name ), exception );
+					mLog.LogException( $"Adding volume '{volumeName}' of album '{album.Name}' to playback queue", exception );
 				}
 			}));
 		}
@@ -119,7 +150,7 @@ namespace Noise.Core.PlaySupport {
 					mEventAggregator.PublishOnUIThread( new Events.TrackQueued( track ));
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Adding track '{0}' to playback queue", track.Name ), exception );
+					mLog.LogException( $"Adding track '{track.Name}' to playback queue", exception );
 				}
 			}));
 		}
@@ -141,7 +172,7 @@ namespace Noise.Core.PlaySupport {
 					mPlayQueue.Add( stream );
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Adding stream '{0}' to playback queue", stream.Name ), exception );
+					mLog.LogException( $"Adding stream '{stream.Name}' to playback queue", exception );
 				}
 			}));
 		}

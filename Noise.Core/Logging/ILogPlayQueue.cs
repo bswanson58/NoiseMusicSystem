@@ -11,7 +11,6 @@ namespace Noise.Core.Logging {
 		void	StatusChanged( PlayQueueTrack track );
 
 		void	StrategySet( ePlayStrategy strategy, IPlayStrategyParameters parameters );
-		void	StrategySet( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters );
 
 		void	LogQueueException( string message, Exception exception, [CallerMemberName] string callerName = "" );
 	}

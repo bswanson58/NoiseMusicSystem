@@ -1,32 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
 using ReusableBits.Ui.Controls;
 
 namespace Noise.UI.ViewModels {
-	public class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent> {
+	public class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent>, IDisposable {
 		private const string	cGeneralStatusTemplate = "GeneralStatusTemplate";
 		private const string	cSpeechStatusTemplate  = "SpeechStatusTemplate";
 
-		private readonly IEventAggregator		mEventAggregator;
+		private IEventAggregator		        mEventAggregator;
+        private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
 		private bool							mViewAttached;
 
-		public	string							Version { get; private set; }
+		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}";
 
-		public StatusViewModel( IEventAggregator eventAggregator ) {
+		public StatusViewModel( IEventAggregator eventAggregator, IVersionFormatter versionFormatter ) {
 			mEventAggregator = eventAggregator;
+            mVersionFormatter = versionFormatter;
+
 			mHoldingQueue = new Queue<StatusMessage>();
 
-			Version = string.Format( "{0} v{1}", VersionInformation.ProductName, VersionInformation.Version );
+            mVersionFormatter.SetVersion( VersionInformation.Version );
+            mVersionFormatter.DisplayLevel = VersionLevel.Build;
+            mVersionFormatter.PropertyChanged += VersionFormatterOnPropertyChanged;
 
 			mEventAggregator.Subscribe( this );
 		}
 
-		public StatusMessage StatusMessage {
+        private void VersionFormatterOnPropertyChanged( object sender, PropertyChangedEventArgs e ) {
+            RaisePropertyChanged( e.PropertyName );
+        }
+
+        public StatusMessage StatusMessage {
 			get{ return( Get( () => StatusMessage )); }
 			set{ Set( () => StatusMessage, value ); }
 		}
@@ -43,6 +55,7 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
+            mVersionFormatter.StartFormatting();
 			mViewAttached = true;
 		}
 
@@ -68,5 +81,13 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
-	}
+
+        public void Dispose() {
+            mEventAggregator?.Unsubscribe( this );
+            mEventAggregator = null;
+
+            mVersionFormatter?.Dispose();
+            mVersionFormatter = null;
+        }
+    }
 }

@@ -17,14 +17,18 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class PlayQueueListViewModel : AutomaticCommandBase, IDropTarget,
 										  IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackStatusChanged>, IHandle<Events.TrackUserUpdate> {
-		private readonly IEventAggregator			mEventAggregator;
-		private readonly IPlayQueue					mPlayQueue;
-		private readonly IRatings					mRatings;
-		private readonly Observal.Observer			mChangeObserver;
-		private UiPlayQueueTrack					mPlayingItem;
+		private readonly IEventAggregator			    mEventAggregator;
+		private readonly IPlayQueue					    mPlayQueue;
+		private readonly IRatings					    mRatings;
+		private readonly Observal.Observer			    mChangeObserver;
+		private UiPlayQueueTrack					    mPlayingItem;
 		private readonly BindableCollection<UiPlayQueueTrack>		mQueue;
 
-		public PlayQueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IRatings ratings ) {
+	    protected IEventAggregator                      EventAggregator => mEventAggregator;
+	    public  BindableCollection<UiPlayQueueTrack>    QueueList => mQueue;
+	    public  UiPlayQueueTrack                        PlayingItem => mPlayingItem;
+
+        public PlayQueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IRatings ratings ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mRatings = ratings;
@@ -37,24 +41,12 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 		}
 
-		protected IEventAggregator EventAggregator {
-			get{ return( mEventAggregator ); }
-		}
-
-		public BindableCollection<UiPlayQueueTrack> QueueList {
-			get{ return( mQueue ); }
-		}
-
-		public UiPlayQueueTrack SelectedItem {
+	    public UiPlayQueueTrack SelectedItem {
 			get{ return( Get( () => SelectedItem )); }
 			set{ Set( () => SelectedItem, value ); }
 		}
 
-		public UiPlayQueueTrack PlayingItem {
-			get{ return( mPlayingItem ); }
-		}
-
-		public void DragOver( DropInfo dropInfo ) {
+	    public void DragOver( DropInfo dropInfo ) {
 			if(( dropInfo.Data is UiPlayQueueTrack ) &&
 			   ( dropInfo.TargetItem is UiPlayQueueTrack )) {
 				dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
@@ -144,7 +136,7 @@ namespace Noise.UI.ViewModels {
 
 		private UiPlayQueueTrack CreateUiTrack( PlayQueueTrack track ) {
 			return( new UiPlayQueueTrack( track, MoveQueueItemUp, MoveQueueItemDown, DisplayQueueItemInfo, DequeueTrack,
-												 PlayQueueTrack, PlayFromQueueTrack ));
+												 PlayQueueTrack, PlayFromQueueTrack, PromoteSuggestion ));
 		}
 
 		private void MoveQueueItemUp( UiPlayQueueTrack track ) {
@@ -185,6 +177,12 @@ namespace Noise.UI.ViewModels {
 		private void PlayFromQueueTrack( UiPlayQueueTrack track ) {
 			mPlayQueue.ContinuePlayFromTrack( track.QueuedTrack );
 		}
+
+        private void PromoteSuggestion( UiPlayQueueTrack track ) {
+            mPlayQueue.PromoteTrackFromStrategy( track.QueuedTrack );
+
+            track.NotifyPlayStrategyChanged();
+        }
 
 		private void LoadPlayQueue() {
 			UpdateQueueList( mPlayQueue.PlayList );

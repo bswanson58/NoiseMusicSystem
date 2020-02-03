@@ -19,7 +19,7 @@ namespace Noise.UI.ViewModels {
 			mConfigurationDialog = configurationDialog;
 
 			PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.ConfiguredDescription;
+			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.Description;
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -40,18 +40,6 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => PlayExhaustedDescription, value ); }
 		}
 
-		private void SetPlayStrategy( ePlayStrategy strategy, IPlayStrategyParameters parameters ) {
-			mPlayQueue.SetPlayStrategy( strategy, parameters );
-		
-			PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-		}
-
-		private void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
-			mPlayQueue.SetPlayExhaustedStrategy( strategy, parameters );
-		
-			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.ConfiguredDescription;
-		}
-
 		public string PlayStrategyDescription {
 			get {  return( Get( () => PlayStrategyDescription )); }
 			set {  Set( () => PlayStrategyDescription, value ); }
@@ -60,16 +48,17 @@ namespace Noise.UI.ViewModels {
 		public void Execute_ConfigureStrategy() {
 			mConfigurationDialog.PlayStrategy = mPlayQueue.PlayStrategy.StrategyId;
 			mConfigurationDialog.PlayStrategyParameter = mPlayQueue.PlayStrategy.Parameters;
-			mConfigurationDialog.ExhaustedStrategy = mPlayQueue.PlayExhaustedStrategy.StrategyId;
-			mConfigurationDialog.ExhaustedStrategyParameter = mPlayQueue.PlayExhaustedStrategy.Parameters;
+            mConfigurationDialog.ExhaustedStrategySpecification = mPlayQueue.ExhaustedPlayStrategy;
 			mConfigurationDialog.DeletePlayedTracks = mPlayQueue.DeletedPlayedTracks;
 
 			if( mDialogService.ShowDialog( DialogNames.PlayStrategyConfiguration, mConfigurationDialog ) == true ) {
 				if( mConfigurationDialog.IsConfigurationValid ) {
-					SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
-					SetPlayExhaustedStrategy( mConfigurationDialog.ExhaustedStrategy, mConfigurationDialog.ExhaustedStrategyParameter );
-
+					mPlayQueue.ExhaustedPlayStrategy = mConfigurationDialog.ExhaustedStrategySpecification;
 					mPlayQueue.DeletedPlayedTracks = mConfigurationDialog.DeletePlayedTracks;
+                    mPlayQueue.SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
+		
+                    PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
+                    PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.Description;
 
 					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 				}

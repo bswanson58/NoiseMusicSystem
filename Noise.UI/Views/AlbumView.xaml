@@ -30,9 +30,6 @@
 		<Behaviours:InteractionRequestDialogBehavior DialogClass="AlbumArtworkDisplay"
 													 DialogService="{Binding Source={StaticResource DialogService}}"
 													 InteractionRequest="{Binding Path=AlbumArtworkDisplayRequest}" />
-		<Behaviours:InteractionRequestDialogBehavior DialogClass="CategorySelection"
-													 DialogService="{Binding Source={StaticResource DialogService}}"
-													 InteractionRequest="{Binding Path=AlbumCategoryEditRequest}" />
 	</i:Interaction.Behaviors>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
@@ -58,12 +55,11 @@
 				</Viewbox>
 				
 				<Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,11,5"
-					  Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
+					  Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
 
 					<!--  Album name -->
 					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
-						<TextBlock Grid.Column="1" Style="{StaticResource LargeTitleStyle}" 
-									   HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
+						<TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->
@@ -113,10 +109,8 @@
 						</StackPanel.Triggers>
 					</StackPanel>
 
-					<TextBlock Grid.Row="2" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Path=Album.Genre}" />
-					
 					<!-- Published Year -->
-					<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right"
+					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0"
 								Visibility="{Binding Album.PublishedYear, Converter={StaticResource HideIfZero}}">
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Published: "/>
 						<TextBlock Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right"
@@ -124,20 +118,13 @@
 					</StackPanel>
 
 					<!--  Playing time  -->
-					<StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal">
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Playing time: " />
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
 					</StackPanel>
 
-					<!--  Categories  -->
-					<StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal"
-								Visibility="{Binding Path=HaveAlbumCategories, Converter={StaticResource BooleanVisibilityConverter}}">
-						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Categories: " />
-						<TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding Path=AlbumCategories}" />
-					</StackPanel>
-
 					<!--  Album commands  -->
-					<StackPanel Grid.Row="7" Height="28" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="5" Height="28" HorizontalAlignment="Right" Orientation="Horizontal">
 
 						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
@@ -151,13 +138,11 @@
 							<ComboBox MinWidth="97" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
 						</StackPanel>
 						
-						<Button Margin="0,0,5,0" Padding="3,5" Style="{StaticResource PathButtonStyle}"
+						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
-						<Button Margin="0,0,5,0" Padding="3,5" Style="{StaticResource PathButtonStyle}"
+						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
-						<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
-								Command="{Binding EditCategories}" Content="{StaticResource Path_Categories}" ToolTip="Edit Album Categories" />
-						<Button Margin="0,0,0,0" Style="{StaticResource PathButtonStyle}"
+						<Button Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Properties" />
 					</StackPanel>
 				</Grid>
