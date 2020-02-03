@@ -35,6 +35,7 @@ namespace Noise.UI.Models {
         private readonly Subject<DbTag>         mTagSubject;
         private readonly Subject<string>        mVolumeSubject;
         private readonly Subject<PlayingItem>   mPlayingSubject;
+		private readonly Subject<DbTrack>		mFocusSubject;
 		private TimeSpan						mPlayTrackDelay;
 		private bool							mPlaybackTrackFocusEnabled;
 		private DateTime						mLastFocusRequest;
@@ -43,12 +44,14 @@ namespace Noise.UI.Models {
 		public	DbAlbum							CurrentAlbum { get; private set; }
         public  DbTag                           CurrentTag { get; private set; }
 		public	PlayingItem						CurrentlyPlayingItem { get; private set; }
+		public	DbTrack							CurrentFocus { get; private set; }
 
         public	IObservable<DbArtist>			CurrentArtistChanged => ( mArtistSubject.AsObservable());
         public	IObservable<DbAlbum>			CurrentAlbumChanged => ( mAlbumSubject.AsObservable());
         public  IObservable<string>             CurrentAlbumVolumeChanged => mVolumeSubject.AsObservable();
         public  IObservable<DbTag>              CurrentTagChanged => mTagSubject.AsObservable();
         public  IObservable<PlayingItem>        PlayingTrackChanged => mPlayingSubject.AsObservable();
+		public	IObservable<DbTrack>			FocusChanged => mFocusSubject.AsObservable();
 
         public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagProvider tagProvider ) {
 			mEventAggregator = eventAggregator;
@@ -61,6 +64,7 @@ namespace Noise.UI.Models {
             mTagSubject = new Subject<DbTag>();
             mVolumeSubject = new Subject<string>();
             mPlayingSubject = new Subject<PlayingItem>();
+			mFocusSubject = new Subject<DbTrack>();
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastFocusRequest = DateTime.Now - mPlayTrackDelay;
@@ -77,6 +81,14 @@ namespace Noise.UI.Models {
 			mPlaybackTrackFocusEnabled = enabled;
 			mPlayTrackDelay = delay;
 		}
+
+		public void RequestFocus( DbTrack track ) {
+			CurrentFocus = track;
+
+			mFocusSubject.OnNext( CurrentFocus );
+
+            mEventAggregator.PublishOnUIThread( new Events.ViewDisplayRequest( ViewNames.RelatedTracksView ));
+        }
 
 		public void Handle( Events.WindowLayoutRequest args ) {
 			ClearArtist();
@@ -159,6 +171,12 @@ namespace Noise.UI.Models {
 
 			CurrentlyPlayingItem = new PlayingItem( args.Track.Artist, args.Track.Album, args.Track.Track );
             mPlayingSubject.OnNext( CurrentlyPlayingItem );
+
+			if( args.Track.IsTrack ) {
+				CurrentFocus = args.Track.Track;
+
+                mFocusSubject.OnNext( CurrentFocus );
+            }
 		}
 
         public void Handle( Events.PlaybackStopped args ) {

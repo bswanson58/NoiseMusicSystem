@@ -82,19 +82,27 @@
         
         <!-- Track Name -->
         <DataTemplate x:Key="TrackNameTemplate" DataType="dto:UiTrack">
-            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Name}">
+            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Cursor="Hand" Text="{Binding Name}">
                 <i:Interaction.Behaviors>
                     <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Name}" />
                 </i:Interaction.Behaviors>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                        <i:InvokeCommandAction Command="{Binding FocusRequest}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </TextBlock>
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
-                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureHoverBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                     <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
                 </DataTrigger>
+                <Trigger SourceName="TrackName" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </Trigger>
             </DataTemplate.Triggers>
         </DataTemplate>
         

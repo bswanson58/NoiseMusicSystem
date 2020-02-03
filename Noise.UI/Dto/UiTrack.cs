@@ -39,13 +39,15 @@ namespace Noise.UI.Dto {
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mEditAction;
         private readonly Action<long>   mStrategyAction;
+        private readonly Action<long>   mFocusRequest;
 
         protected UiTrack() { }
 
-		public UiTrack( Action<long> playAction, Action<long> editAction, Action<long> strategyEdit ) {
+		public UiTrack( Action<long> playAction, Action<long> editAction, Action<long> strategyEdit, Action<long> focusRequest = null ) {
 			mPlayAction = playAction;
 			mEditAction = editAction;
             mStrategyAction = strategyEdit;
+            mFocusRequest = focusRequest;
 
             mTags = new List<string>();
 		}
@@ -90,6 +92,14 @@ namespace Noise.UI.Dto {
 
         public bool CanExecute_StrategyOptions() {
             return mStrategyAction != null;
+        }
+
+        public void Execute_FocusRequest() {
+            mFocusRequest?.Invoke( DbId );
+        }
+
+        public bool CanExecute_FocusRequest() {
+            return mFocusRequest != null;
         }
 
         public void SetTags( IEnumerable<string> tags ) {

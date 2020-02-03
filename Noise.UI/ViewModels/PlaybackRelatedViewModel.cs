@@ -31,7 +31,7 @@ namespace Noise.UI.ViewModels {
         private readonly IPlayingItemHandler                mPlayingItemHandler;
         private readonly IEventAggregator					mEventAggregator;
         private readonly IDisposable                        mSubscriptions;
-        private readonly ReactiveCommand<PlayingItem, Unit> mStartSearch;
+        private readonly ReactiveCommand<DbTrack, Unit>     mStartSearch;
         private readonly ObservableCollectionEx<RelatedTrackParent> mTracks;
         private IDisposable                                 mSelectionStateSubscription;
         private bool                                        mIsActive;
@@ -66,7 +66,7 @@ namespace Noise.UI.ViewModels {
                     .Do( AddSearchItem )
                     .Subscribe();
 
-            mStartSearch = ReactiveCommand.CreateFromObservable<PlayingItem, Unit>( item => OnStartSearch( item ).SubscribeOn( RxApp.TaskpoolScheduler ));
+            mStartSearch = ReactiveCommand.CreateFromObservable<DbTrack, Unit>( item => OnStartSearch( item ).SubscribeOn( RxApp.TaskpoolScheduler ));
             mPlayingItemHandler.StartHandler();
 
             mEventAggregator.Subscribe( this );
@@ -90,9 +90,9 @@ namespace Noise.UI.ViewModels {
 
                 if( mIsActive ) {
                     if( mSelectionStateSubscription == null ) {
-                        mSelectionStateSubscription = mSelectionState.PlayingTrackChanged.Subscribe( OnTrackStarted );
+                        mSelectionStateSubscription = mSelectionState.FocusChanged.Subscribe( OnTrackStarted );
 
-                        OnTrackStarted( mSelectionState.CurrentlyPlayingItem );
+                        OnTrackStarted( mSelectionState.CurrentFocus );
                     }
                 }
                 else {
@@ -148,21 +148,16 @@ namespace Noise.UI.ViewModels {
             }
         }
 
-        private void OnTrackStarted( PlayingItem playingItem ) {
-            mStartSearch.Execute( playingItem );
+        private void OnTrackStarted( DbTrack track ) {
+            mStartSearch.Execute( track );
         }
 
-        private IObservable<Unit> OnStartSearch( PlayingItem item ) {
+        private IObservable<Unit> OnStartSearch( DbTrack track ) {
             return Observable.Start( () => {
-                if(( item != null ) &&
-                   ( item.Track != Constants.cDatabaseNullOid )) {
-                    var track = mTrackProvider.GetTrack( item.Track );
+                if( track != null ) {
+                    mSearchClient.StartSearch( eSearchItemType.Track , CreateSearchTerm( track.Name ));
 
-                    if( track != null ) {
-                        mSearchClient.StartSearch( eSearchItemType.Track , CreateSearchTerm( track.Name ));
-
-                        AddArtistFavoriteTracks( track.Artist );
-                    }
+                    AddArtistFavoriteTracks( track.Artist );
                 }
 
                 return Unit.Default;

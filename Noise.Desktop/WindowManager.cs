@@ -91,17 +91,27 @@ namespace Noise.Desktop {
 		}
 
 		public void Handle( Events.ViewDisplayRequest eventArgs ) {
-			var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "AlbumInfo" );
+			IRegion region;
 
-			if( region != null ) {
-				switch( eventArgs.ViewName ) {
-					case ViewNames.AlbumInfoView:
-					case ViewNames.ArtistInfoView:
-					case ViewNames.ArtistTracksView:
-                    case ViewNames.RatedTracksView:
-						Execute.OnUIThread( () => region.RequestNavigate( eventArgs.ViewName ));
-						break;
-				}
+			switch( eventArgs.ViewName ) {
+				case ViewNames.AlbumInfoView:
+				case ViewNames.ArtistInfoView:
+				case ViewNames.ArtistTracksView:
+                case ViewNames.RatedTracksView:
+                    region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "AlbumInfo" );
+
+					if( region != null ) {
+                        Execute.OnUIThread( () => region.RequestNavigate( eventArgs.ViewName ));
+                    }
+					break;
+
+				case ViewNames.RelatedTracksView:
+                    region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "LeftPanel" );
+
+                    if( region != null ) {
+                        Execute.OnUIThread( () => region.RequestNavigate( eventArgs.ViewName ));
+                    }
+					break;
 			}
 		}
 

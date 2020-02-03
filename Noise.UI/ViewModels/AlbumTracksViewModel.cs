@@ -211,7 +211,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions );
+			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions, OnFocusRequest );
 
 			if( dbTrack != null ) {
 				Mapper.Map( dbTrack, retValue );
@@ -332,6 +332,14 @@ namespace Noise.UI.ViewModels {
                         mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "TrackStrategyPlayEdited" ));
                     }
                 }
+            }
+        }
+
+		private void OnFocusRequest( long trackId ) {
+			var track = mTrackProvider.GetTrack( trackId );
+
+			if( track != null ) {
+				mSelectionState.RequestFocus( track );
             }
         }
 	}
