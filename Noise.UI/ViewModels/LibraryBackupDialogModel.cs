@@ -11,14 +11,16 @@ namespace Noise.UI.ViewModels {
     class LibraryBackupDialogModel : DialogModelBase, IDataErrorInfo {
         private readonly ILibraryConfiguration  mLibraryConfiguration;
         private readonly ILibraryBackupManager  mLibraryBackup;
+        private readonly ILibraryBuilder        mLibraryBuilder;
         private readonly IPreferences           mPreferences;
         private LibraryConfiguration            mCurrentLibrary;
 
         public  ObservableCollectionEx<LibraryConfiguration>   Libraries { get; }
 
-        public LibraryBackupDialogModel( ILibraryBackupManager libraryBackup, ILibraryConfiguration configuration, IPreferences preferences ) {
+        public LibraryBackupDialogModel( ILibraryBackupManager libraryBackup, ILibraryConfiguration configuration, ILibraryBuilder libraryBuilder, IPreferences preferences ) {
             mLibraryBackup = libraryBackup;
             mLibraryConfiguration = configuration;
+            mLibraryBuilder = libraryBuilder;
             mPreferences = preferences;
 
             Libraries = new ObservableCollectionEx<LibraryConfiguration>();
@@ -112,7 +114,8 @@ namespace Noise.UI.ViewModels {
         }
 
         public bool CanExecute_BackupLibrary() {
-            return mLibraryConfiguration.Current != null;
+            return mLibraryConfiguration.Current != null && 
+                  !mLibraryBuilder.LibraryUpdateInProgress;
         }
 
         public void SaveOptions() {

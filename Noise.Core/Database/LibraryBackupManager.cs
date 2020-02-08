@@ -15,14 +15,16 @@ namespace Noise.Core.Database {
                                  IHandle<Events.LibraryBackupPressure> {
         private readonly ILibrarian             mLibrarian;
         private readonly ILibraryConfiguration  mLibraryConfiguration;
+        private readonly ILibraryBuilder        mLibraryBuilder;
         private readonly IPreferences           mPreferences;
         private readonly IEventAggregator       mEventAggregator;
         private readonly ILogBackup             mLog;
 
-        public LibraryBackupManager( ILifecycleManager lifecycleManager, ILibrarian librarian, ILibraryConfiguration configuration,
+        public LibraryBackupManager( ILifecycleManager lifecycleManager, ILibrarian librarian, ILibraryConfiguration configuration, ILibraryBuilder libraryBuilder,
                                      IPreferences preferences, IEventAggregator eventAggregator, ILogBackup log ) {
             mLibrarian = librarian;
             mLibraryConfiguration = configuration;
+            mLibraryBuilder = libraryBuilder;
             mPreferences = preferences;
             mEventAggregator = eventAggregator;
             mLog = log;
@@ -43,7 +45,8 @@ namespace Noise.Core.Database {
             var retValue = false;
             var library = mLibraryConfiguration.Current;
 
-            if( library != null ) {
+            if(( library != null ) &&
+               (!mLibraryBuilder.LibraryUpdateInProgress )) {
                 try {
                     var userState = new Events.LibraryUserState() { IsRestoring = false };
 
