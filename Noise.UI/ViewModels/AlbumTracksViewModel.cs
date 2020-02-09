@@ -236,7 +236,35 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			mPlayCommand.Play( mTrackProvider.GetTrack( trackId ));
+			var targetTrack = mTracks.FirstOrDefault( t => t.DbId.Equals( trackId ));
+			var previousTrack = targetTrack;
+            var previousTracks = new List<UiTrack>();
+			var playList = new List<DbTrack>();
+
+            while(( previousTrack != null ) && 
+                 (( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
+				  ( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ))) {
+				previousTrack = mTracks.TakeWhile( t => !t.DbId.Equals( previousTrack.DbId )).LastOrDefault();
+
+				if( previousTrack != null ) {
+					previousTracks.Insert( 0, previousTrack );
+                }
+            }
+			previousTracks.ForEach( t => playList.Add( mTrackProvider.GetTrack( t.DbId )));
+            
+            playList.Add( mTrackProvider.GetTrack( trackId ));
+
+			while(( targetTrack != null ) &&
+                 (( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ) ||
+				  ( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ))) {
+				targetTrack = mTracks.SkipWhile( t => !t.DbId.Equals( targetTrack.DbId )).Skip( 1 ).FirstOrDefault();
+
+				if( targetTrack != null ) {
+					playList.Add( mTrackProvider.GetTrack( targetTrack.DbId ));
+                }
+            }
+
+			mPlayCommand.Play( playList );
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
