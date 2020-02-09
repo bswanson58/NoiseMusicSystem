@@ -82,7 +82,8 @@
         
         <!-- Track Name -->
         <DataTemplate x:Key="TrackNameTemplate" DataType="dto:UiTrack">
-            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Cursor="Hand" Text="{Binding Name}">
+            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Cursor="Hand" Text="{Binding Name}"
+                       reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
                 <i:Interaction.Behaviors>
                     <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Name}" />
                 </i:Interaction.Behaviors>
@@ -95,14 +96,11 @@
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
-                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureHoverBrush}"/>
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                     <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
                 </DataTrigger>
-                <Trigger SourceName="TrackName" Property="IsMouseOver" Value="True">
-                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
-                </Trigger>
             </DataTemplate.Triggers>
         </DataTemplate>
         
@@ -190,10 +188,6 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
-
-        <Style x:Key="DataGridUnselectableRowStyle" TargetType="{x:Type DataGridRow}">
-            <Setter Property="Focusable" Value="False"/>
-        </Style>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
@@ -207,8 +201,7 @@
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
 
-        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" RowHeight="15"
-                  RowStyle="{StaticResource DataGridUnselectableRowStyle}">
+        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" RowHeight="15">
             <DataGrid.Columns>
                 <!-- Play -->
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" 
