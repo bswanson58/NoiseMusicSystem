@@ -70,7 +70,7 @@
         </Style>
 
 		<DataTemplate x:Key="QueueListItem" DataType="dto:UiPlayQueueTrack">
-            <Grid Margin="0,1,4,0">
+            <Grid Margin="0,1,4,0" Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -107,7 +107,7 @@
                            Text="{Binding Path=QueuedTrack.AlbumName}" />
 
                 <!-- Overlay -->
-                <Grid x:Name="Overlay" Grid.Column="1" Grid.Row="1" Opacity="0" Background="Transparent">
+                <Grid x:Name="Overlay" Grid.Column="1" Grid.Row="1" Opacity="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
