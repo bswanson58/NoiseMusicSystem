@@ -22,7 +22,7 @@ namespace MilkBottle.Models {
             mEnvironment = environment;
             mProjectM = projectM;
 
-            mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 20 ) };
+            mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 34 ) };
             mRenderTimer.Tick += OnTimer;
 
             mEventAggregator.Subscribe( this );
