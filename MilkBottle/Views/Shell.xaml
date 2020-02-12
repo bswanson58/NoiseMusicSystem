@@ -1,0 +1,21 @@
+﻿<mah:MetroWindow x:Class="MilkBottle.Views.Shell"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:mvvm="http://prismlibrary.com/"
+                 xmlns:views="clr-namespace:MilkBottle.Views"
+                 mvvm:ViewModelLocator.AutoWireViewModel="True"
+                 ResizeMode="CanResizeWithGrip"
+                 Title="Shell" >
+
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button Content="for sale" />
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+
+    <Grid Background="Bisque">
+        <views:GlSurface Margin="20" />
+    </Grid>
+</mah:MetroWindow>
+
