@@ -1,5 +1,4 @@
 ﻿using System;
-using MilkBottle.Dto;
 using OpenTK;
 
 namespace MilkBottle.Interfaces {
@@ -9,7 +8,5 @@ namespace MilkBottle.Interfaces {
 
         void    StartVisualization();
         void    StopVisualization();
-
-        IObservable<MilkDropPreset>     CurrentPreset { get; }
     }
 }

@@ -9,4 +9,6 @@
             Message = message;
         }
     }
+
+    public class MilkInitialized { }
 }

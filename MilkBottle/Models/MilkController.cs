@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Windows.Threading;
 using Caliburn.Micro;
-using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;
@@ -14,26 +11,17 @@ namespace MilkBottle.Models {
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
-        private readonly Subject<MilkDropPreset>    mCurrentPreset;
         private GLControl                           mGlControl;
-
-        public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
         public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
             mProjectM = projectM;
 
-            mCurrentPreset = new Subject<MilkDropPreset>();
-
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 20 ) };
             mRenderTimer.Tick += OnTimer;
 
             mEventAggregator.Subscribe( this );
-        }
-
-        private void OnPresetSwitched(bool isHardCut, ulong presetIndex ) {
-            mCurrentPreset.OnNext( new MilkDropPreset( mProjectM.getPresetName( presetIndex ), mProjectM.getPresetURL( presetIndex )));
         }
 
         public void Initialize( GLControl glControl ) {
@@ -43,7 +31,8 @@ namespace MilkBottle.Models {
             mGlControl.MakeCurrent();
 
             mProjectM.initialize(  @"D:\projectM\config.inp" );
-            mProjectM.setPresetCallback( OnPresetSwitched );
+
+            mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
         }
 
         public void Handle( Events.ApplicationClosing args ) {

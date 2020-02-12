@@ -204,9 +204,11 @@
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IMilkController.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Interfaces\IPresetController.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
     <Compile Include="Models\AudioManager.cs" />
     <Compile Include="Models\MilkController.cs" />
+    <Compile Include="Models\PresetController.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
