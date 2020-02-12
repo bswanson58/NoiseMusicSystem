@@ -19,12 +19,11 @@ namespace MilkBottle.Models {
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
-        public MilkController( IAudioManager audioManager, IEventAggregator eventAggregator ) {
+        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
+            mProjectM = projectM;
 
-            mProjectM = new ProjectMWrapper();
-            mAudio = new AudioManager();
             mCurrentPreset = new Subject<MilkDropPreset>();
 
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 20 ) };
