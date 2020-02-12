@@ -10,7 +10,8 @@ namespace MilkBottle.Models {
         private readonly IEventAggregator           mEventAggregator;
         private readonly ProjectMWrapper            mProjectM;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
-        private bool                                mUseHardCuts;
+
+        public  bool                                PresetOverlap { get; set; }
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
@@ -37,24 +38,21 @@ namespace MilkBottle.Models {
 //            LoadInitialPresets();
         }
 
-        public void selectNextPreset() {
-            mProjectM.selectNext( mUseHardCuts );
+        public void SelectNextPreset() {
+            mProjectM.selectNext( PresetOverlap );
         }
 
-        public void selectPreviousPreset() {
-            mProjectM.selectPrevious( mUseHardCuts );
+        public void SelectPreviousPreset() {
+            mProjectM.selectPrevious( PresetOverlap );
         }
 
-        public void selectRandomPreset() {
-            mProjectM.selectRandom( mUseHardCuts );
+        public void SelectRandomPreset() {
+            mProjectM.selectRandom( PresetOverlap );
         }
 
-        public void setPresetOverlap( bool state ) {
-            mUseHardCuts = !state;
-        }
-
-        public void setPresetCycling( bool state ) {
-            mProjectM.setPresetLock( !state );
+        public bool PresetCycling {
+            get => mProjectM.isPresetLocked();
+            set => mProjectM.setPresetLock( value );
         }
 
         private void LoadInitialPresets() {

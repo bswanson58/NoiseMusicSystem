@@ -5,11 +5,11 @@ namespace MilkBottle.Interfaces {
     interface IPresetController : IDisposable {
         IObservable<MilkDropPreset>     CurrentPreset { get; }
 
-        void    selectNextPreset();
-        void    selectPreviousPreset();
-        void    selectRandomPreset();
+        void    SelectNextPreset();
+        void    SelectPreviousPreset();
+        void    SelectRandomPreset();
 
-        void    setPresetOverlap( bool state );
-        void    setPresetCycling( bool state );
+        bool    PresetOverlap {  get; set; }
+        bool    PresetCycling { get; set; }
     }
 }

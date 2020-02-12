@@ -222,10 +222,14 @@
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
+    <Compile Include="ViewModels\PresetControlViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="Views\MilkView.xaml.cs">
       <DependentUpon>MilkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PresetControlView.xaml.cs">
+      <DependentUpon>PresetControlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -238,6 +242,10 @@
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\MilkView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PresetControlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

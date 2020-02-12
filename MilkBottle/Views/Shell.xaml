@@ -20,10 +20,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <views:MilkView Grid.Row="0"/>
-        <views:StatusView Grid.Row="1"/>
+        <views:PresetControlView Grid.Row="1"/>
+        <views:StatusView Grid.Row="2"/>
     </Grid>
 </mah:MetroWindow>
 
