@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows;
 using MilkBottle.Properties;
 using MilkBottle.Support;
 
@@ -12,6 +13,11 @@ namespace MilkBottle.Views {
             InitializeComponent();
 
             Closing += OnWindowClosing;
+//            StateChanged += OnStateChanged;
+        }
+
+        private void OnStateChanged( object sender, EventArgs args ) {
+            UseNoneWindowStyle = WindowState == WindowState.Maximized;
         }
 
         private void OnWindowClosing( object sender, CancelEventArgs e ) {

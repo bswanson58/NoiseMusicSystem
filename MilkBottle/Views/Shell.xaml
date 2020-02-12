@@ -6,6 +6,7 @@
                  xmlns:views="clr-namespace:MilkBottle.Views"
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
+                 IgnoreTaskbarOnMaximize="True"
                  Title="Milk Bottle" >
 
     <mah:MetroWindow.RightWindowCommands>
