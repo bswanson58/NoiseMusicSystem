@@ -50,5 +50,15 @@ namespace MilkBottle.Platform {
         public string MilkConfigurationFile() {
             return Path.Combine( PreferencesDirectory(), ApplicationConstants.MilkConfigurationFile );
         }
+
+        public string MilkLibraryFolder() {
+            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.MilkLibraryFolder );
+
+            if(!Directory.Exists( retValue )) {
+                Directory.CreateDirectory( retValue );
+            }
+
+            return( retValue );
+        }
     }
 }

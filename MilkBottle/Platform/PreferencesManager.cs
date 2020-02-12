@@ -19,10 +19,14 @@ namespace MilkBottle.Platform {
         }
 
         public T Load<T>() where T : new() {
+            return Load<T>( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ));
+        }
+
+        public T Load<T>( string path ) where T : new() {
             var retValue = default( T );
 
             try {
-                retValue = mWriter.Read<T>( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ));
+                retValue = mWriter.Read<T>( path );
             }
             catch( Exception ex ) {
                 mLog.Value.LogException( $"Loading Preferences failed for '{typeof( T ).Name}'", ex );
@@ -36,9 +40,13 @@ namespace MilkBottle.Platform {
         }
 
         public void Save<T>( T preferences ) {
+            Save( preferences, Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ));
+        }
+
+        public void Save<T>( T preferences, string path ) {
             if(!Equals( preferences, null )) {
                 try {
-                    mWriter.Write( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ), preferences );
+                    mWriter.Write( path, preferences );
                 }
                 catch( Exception ex ) {
                     mLog.Value.LogException( $"Saving Preferences failed for '{typeof( T ).Name}'", ex );

@@ -15,6 +15,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IMilkController, MilkController>();
             containerRegistry.RegisterSingleton<ProjectMWrapper, ProjectMWrapper>();
             containerRegistry.RegisterSingleton<IPresetController, PresetController>();
+            containerRegistry.RegisterSingleton<IPresetLibrarian, PresetLibrarian>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();

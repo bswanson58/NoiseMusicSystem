@@ -6,5 +6,7 @@
         public const string				CompanyName = "Secret Squirrel Software";
         public const string				ConfigurationDirectory = "Configuration";
         public const string             MilkConfigurationFile = "Milk.config";
+        public const string             MilkLibraryFolder = "Milk Preset Library";
+        public const string             MilkLibraryExtension = ".library";
     }
 }

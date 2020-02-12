@@ -8,6 +8,7 @@ using MilkBottle.Interfaces;
 namespace MilkBottle.Models {
     class PresetController : IPresetController, IHandle<Events.MilkInitialized> {
         private readonly IEventAggregator           mEventAggregator;
+        private readonly IPresetLibrarian           mLibrarian;
         private readonly ProjectMWrapper            mProjectM;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
 
@@ -15,8 +16,9 @@ namespace MilkBottle.Models {
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
-        public PresetController( ProjectMWrapper projectM, IEventAggregator eventAggregator ) {
+        public PresetController( ProjectMWrapper projectM, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
             mProjectM = projectM;
+            mLibrarian = librarian;
             mEventAggregator = eventAggregator;
 
             mCurrentPreset = new Subject<MilkDropPreset>();
