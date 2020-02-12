@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
+using MilkBottle.Models;
 using MilkBottle.Platform;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -9,6 +10,8 @@ namespace MilkBottle {
     class ApplicationModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
             containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
+            containerRegistry.RegisterSingleton<IAudioManager, AudioManager>();
+            containerRegistry.RegisterSingleton<IMilkController, MilkController>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();

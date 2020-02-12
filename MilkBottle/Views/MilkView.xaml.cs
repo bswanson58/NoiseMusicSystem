@@ -8,15 +8,15 @@ using OpenTK.Graphics;
 
 namespace MilkBottle.Views {
     /// <summary>
-    /// Interaction logic for GlSurface.xaml
+    /// Interaction logic for MilkView.xaml
     /// </summary>
-    public partial class GlSurface {
-        GLControl mGlControl;
-        
-        public GlSurface() {
-            InitializeComponent();
+    public partial class MilkView {
+        private GLControl   mGlControl;
 
-            if(( DataContext is GlSurfaceViewModel vm ) &&
+        public MilkView() {
+            InitializeComponent();
+        
+            if(( DataContext is MilkViewModel vm ) &&
                ( mGlControl != null )) {
                 vm.Initialize( mGlControl );
                 vm.StartVisualization();
@@ -32,7 +32,7 @@ namespace MilkBottle.Views {
         }
 
         private void OnSizeChanged( object sender, SizeChangedEventArgs e ) {
-            if( DataContext is GlSurfaceViewModel vm ) {
+            if( DataContext is MilkViewModel vm ) {
                 vm.OnSizeChanged( (int)e.NewSize.Width, (int)e.NewSize.Height );
             }
         }

@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Windows.Threading;
 using Caliburn.Micro;
-using MilkBottle.Models;
+using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;
 
-namespace MilkBottle.ViewModels {
-    public class GlSurfaceViewModel : IDisposable, IHandle<Events.ApplicationClosing> {
+namespace MilkBottle.Models {
+    class MilkController : IMilkController, IHandle<Events.ApplicationClosing> {
         private readonly IEventAggregator   mEventAggregator;
         private readonly DispatcherTimer    mRenderTimer;
         private readonly ProjectMWrapper    mProjectM;
-        private readonly AudioManager       mAudio;
+        private readonly IAudioManager      mAudio;
         private GLControl                   mGlControl;
 
-        public GlSurfaceViewModel( IEventAggregator eventAggregator ) {
+        public MilkController( IAudioManager audioManager, IEventAggregator eventAggregator ) {
+            mAudio = audioManager;
             mEventAggregator = eventAggregator;
 
             mProjectM = new ProjectMWrapper();

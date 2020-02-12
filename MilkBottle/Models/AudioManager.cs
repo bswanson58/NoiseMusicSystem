@@ -1,9 +1,10 @@
 ﻿using System;
+using MilkBottle.Interfaces;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
 namespace MilkBottle.Models {
-    public class AudioManager : IDisposable {
+    public class AudioManager : IAudioManager {
         private WaveFormat                  mAudioFormat;
         private WasapiLoopbackCapture       mCapture;
         private Action<byte[], int, int>    mOnAudioData;

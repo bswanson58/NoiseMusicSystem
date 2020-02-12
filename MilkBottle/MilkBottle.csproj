@@ -183,10 +183,13 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Events\Events.cs" />
+    <Compile Include="Interfaces\IAudioManager.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
+    <Compile Include="Interfaces\IMilkController.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
     <Compile Include="Models\AudioManager.cs" />
+    <Compile Include="Models\MilkController.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
@@ -198,10 +201,10 @@
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
-    <Compile Include="ViewModels\GlSurfaceViewModel.cs" />
+    <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="Views\GlSurface.xaml.cs">
-      <DependentUpon>GlSurface.xaml</DependentUpon>
+    <Compile Include="Views\MilkView.xaml.cs">
+      <DependentUpon>MilkView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -210,7 +213,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\GlSurface.xaml">
+    <Page Include="Views\MilkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
