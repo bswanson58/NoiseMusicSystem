@@ -26,13 +26,13 @@ namespace MilkBottle.Models {
 
         public void Initialize( GLControl glControl ) {
             mGlControl = glControl;
-
-            mAudio.InitializeAudioCapture();
             mGlControl.MakeCurrent();
 
             mProjectM.initialize(  @"D:\projectM\config.inp" );
 
             mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
+
+            mAudio.InitializeAudioCapture();
         }
 
         public void Handle( Events.ApplicationClosing args ) {

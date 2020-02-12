@@ -10,6 +10,7 @@ namespace MilkBottle.Models {
         private readonly IEventAggregator           mEventAggregator;
         private readonly ProjectMWrapper            mProjectM;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
+        private bool                                mUseHardCuts;
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
@@ -22,16 +23,46 @@ namespace MilkBottle.Models {
             mEventAggregator.Subscribe( this );
 
             if( mProjectM.isInitialized()) {
-                SubscribeCallbacks();
+                Initialize();
             }
         }
 
         public void Handle( Events.MilkInitialized args ) {
-            SubscribeCallbacks();
+            Initialize();
         }
 
-        private void SubscribeCallbacks() {
+        private void Initialize() {
             mProjectM.setPresetCallback( OnPresetSwitched );
+
+            LoadInitialPresets();
+        }
+
+        public void selectNextPreset() {
+            mProjectM.selectNext( mUseHardCuts );
+        }
+
+        public void selectPreviousPreset() {
+            mProjectM.selectPrevious( mUseHardCuts );
+        }
+
+        public void selectRandomPreset() {
+            mProjectM.selectRandom( mUseHardCuts );
+        }
+
+        public void setPresetOverlap( bool state ) {
+            mUseHardCuts = !state;
+        }
+
+        public void setPresetCycling( bool state ) {
+            mProjectM.setPresetLock( !state );
+        }
+
+        private void LoadInitialPresets() {
+            mProjectM.clearPresetlist();
+            mProjectM.setShuffleEnabled( false );
+            mProjectM.setPresetLock( true );
+            mProjectM.addPresetURL( @"D:\projectM\presets\presets_stock\Fvese - Lifesavor Anyone.milk", "Fvese - Lifesavor Anyone" );
+            mProjectM.selectNext( true );
         }
 
         private void OnPresetSwitched(bool isHardCut, ulong presetIndex ) {
