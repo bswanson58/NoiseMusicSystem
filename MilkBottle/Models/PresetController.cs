@@ -34,7 +34,7 @@ namespace MilkBottle.Models {
         private void Initialize() {
             mProjectM.setPresetCallback( OnPresetSwitched );
 
-            LoadInitialPresets();
+//            LoadInitialPresets();
         }
 
         public void selectNextPreset() {

@@ -8,14 +8,18 @@ using OpenTK;
 namespace MilkBottle.Models {
     class MilkController : IMilkController, IHandle<Events.ApplicationClosing> {
         private readonly IEventAggregator           mEventAggregator;
+        private readonly IEnvironment               mEnvironment;
+        private readonly IPreferences               mPreferences;
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
         private GLControl                           mGlControl;
 
-        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IEventAggregator eventAggregator ) {
+        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEnvironment environment, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
+            mPreferences = preferences;
+            mEnvironment = environment;
             mProjectM = projectM;
 
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 20 ) };
@@ -28,7 +32,7 @@ namespace MilkBottle.Models {
             mGlControl = glControl;
             mGlControl.MakeCurrent();
 
-            mProjectM.initialize(  @"D:\projectM\config.inp" );
+            mProjectM.initialize( mEnvironment.MilkConfigurationFile());
 
             mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
 

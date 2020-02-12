@@ -5,5 +5,6 @@
         string		ApplicationDirectory();
         string		LogFileDirectory();
         string		PreferencesDirectory();
+        string      MilkConfigurationFile();
     }
 }

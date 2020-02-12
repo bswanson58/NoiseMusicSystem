@@ -199,6 +199,7 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Dto\MilkDropPreset.cs" />
+    <Compile Include="Dto\MilkPreferences.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IAudioManager.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />

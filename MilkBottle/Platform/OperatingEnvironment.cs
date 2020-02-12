@@ -38,13 +38,17 @@ namespace MilkBottle.Platform {
         }
 
         public string PreferencesDirectory() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory, mApplicationName );
+            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
             }
 
             return( retValue );
+        }
+
+        public string MilkConfigurationFile() {
+            return Path.Combine( PreferencesDirectory(), ApplicationConstants.MilkConfigurationFile );
         }
     }
 }
