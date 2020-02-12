@@ -9,12 +9,13 @@
                  IgnoreTaskbarOnMaximize="True"
                  Title="Milk Bottle" >
 
+<!--
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button Content="for sale" />
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
-
+-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
