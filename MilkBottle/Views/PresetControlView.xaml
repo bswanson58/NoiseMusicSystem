@@ -5,24 +5,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:PresetControlViewModel, IsDesignTimeCreatable=False}"
-             Height="35" d:DesignWidth="800">
-    <Grid>
+             Height="30" d:DesignWidth="800">
+
+    <Grid Tag="dimmed" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="15,0" Text="{Binding PresetName}"/>
+        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="12,0" Text="{Binding PresetName}"/>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Margin="5,0" Content="Next" Command="{Binding NextPreset}"/>
-            <Button Margin="5,0" Content="Previous" Command="{Binding PreviousPreset}"/>
+            <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Next" Command="{Binding NextPreset}"/>
+            <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Previous" Command="{Binding PreviousPreset}"/>
             <CheckBox Margin="5,0" VerticalAlignment="Center" Content="Lock" IsChecked="{Binding IsLocked}"/>
             <CheckBox Margin="5,0" VerticalAlignment="Center" Content="Blend" IsChecked="{Binding IsBlended}"/>
         </StackPanel>
     </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+    </i:Interaction.Behaviors>
 </UserControl>
