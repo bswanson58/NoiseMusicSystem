@@ -5,6 +5,7 @@ using MilkBottle.Models;
 using MilkBottle.Platform;
 using Prism.Ioc;
 using Prism.Modularity;
+using ReusableBits.Mvvm.VersionSpinner;
 
 namespace MilkBottle {
     class ApplicationModule : IModule {
@@ -17,6 +18,8 @@ namespace MilkBottle {
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
             containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
             containerRegistry.Register<IPreferences, PreferencesManager>();
+
+            containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

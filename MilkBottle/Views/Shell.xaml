@@ -15,7 +15,13 @@
     </mah:MetroWindow.RightWindowCommands>
 
     <Grid>
-        <views:MilkView/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <views:MilkView Grid.Row="0"/>
+        <views:StatusView Grid.Row="1"/>
     </Grid>
 </mah:MetroWindow>
 

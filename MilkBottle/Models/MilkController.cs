@@ -1,17 +1,23 @@
 ﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows.Threading;
 using Caliburn.Micro;
+using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;
 
 namespace MilkBottle.Models {
     class MilkController : IMilkController, IHandle<Events.ApplicationClosing> {
-        private readonly IEventAggregator   mEventAggregator;
-        private readonly DispatcherTimer    mRenderTimer;
-        private readonly ProjectMWrapper    mProjectM;
-        private readonly IAudioManager      mAudio;
-        private GLControl                   mGlControl;
+        private readonly IEventAggregator           mEventAggregator;
+        private readonly DispatcherTimer            mRenderTimer;
+        private readonly ProjectMWrapper            mProjectM;
+        private readonly IAudioManager              mAudio;
+        private readonly Subject<MilkDropPreset>    mCurrentPreset;
+        private GLControl                           mGlControl;
+
+        public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
         public MilkController( IAudioManager audioManager, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
@@ -19,6 +25,7 @@ namespace MilkBottle.Models {
 
             mProjectM = new ProjectMWrapper();
             mAudio = new AudioManager();
+            mCurrentPreset = new Subject<MilkDropPreset>();
 
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 20 ) };
             mRenderTimer.Tick += OnTimer;
@@ -27,8 +34,7 @@ namespace MilkBottle.Models {
         }
 
         private void OnPresetSwitched(bool isHardCut, ulong presetIndex ) {
-            var presetName = mProjectM.getPresetName( presetIndex );
-            var presetLocation = mProjectM.getPresetURL( presetIndex );
+            mCurrentPreset.OnNext( new MilkDropPreset( mProjectM.getPresetName( presetIndex ), mProjectM.getPresetURL( presetIndex )));
         }
 
         public void Initialize( GLControl glControl ) {
