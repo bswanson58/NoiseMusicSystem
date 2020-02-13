@@ -9,16 +9,14 @@ namespace MilkBottle.Models {
     class MilkController : IMilkController, IHandle<Events.ApplicationClosing> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IEnvironment               mEnvironment;
-        private readonly IPreferences               mPreferences;
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
         private GLControl                           mGlControl;
 
-        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEnvironment environment, IEventAggregator eventAggregator ) {
+        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IEnvironment environment, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
-            mPreferences = preferences;
             mEnvironment = environment;
             mProjectM = projectM;
 
