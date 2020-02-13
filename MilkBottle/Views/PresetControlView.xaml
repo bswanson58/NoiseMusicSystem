@@ -32,6 +32,6 @@
     </Grid>
 
     <i:Interaction.Behaviors>
-        <behaviours:WidgetOpacity TagName="_dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
     </i:Interaction.Behaviors>
 </UserControl>
