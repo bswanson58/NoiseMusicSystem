@@ -49,17 +49,32 @@ namespace MilkBottle.Models {
         }
 
         public void LoadLibrary( string libraryName ) {
+            if( SwitchLibrary( libraryName )) {
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.CurrentPresetLibrary = libraryName;
+                mPreferences.Save( preferences );
+            }
+        }
+
+        private bool SwitchLibrary( string libraryName ) {
+            var retValue = false;
             var library = mLibrarian.GetLibrary( libraryName );
 
             if(( library != null ) &&
                ( library.Presets.Any())) {
                 LoadPresets( library.Presets );
+
+                retValue = true;
             }
+
+            return retValue;
         }
 
         private void Initialize() {
             mProjectM.setPresetCallback( OnPresetSwitched );
             mProjectM.setShuffleEnabled( false );
+            mProjectM.setPresetLock( true );
 
             var preferences = mPreferences.Load<MilkPreferences>();
 
@@ -67,9 +82,18 @@ namespace MilkBottle.Models {
             mPlayRandom = preferences.PlayPresetsRandomly;
             BlendPresetTransition = preferences.BlendPresetTransition;
             
+            if(!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) {
+                SwitchLibrary( preferences.CurrentPresetLibrary );
+            }
+            else {
+                SwitchLibrary( mLibrarian.AvailableLibraries.FirstOrDefault());
+            }
 
             mPresetTimer.Interval = TimeSpan.FromSeconds( mPresetDuration );
-            mPresetTimer.Start();
+
+            if( mPlayRandom ) {
+                mPresetTimer.Start();
+            }
         }
 
         public void SelectNextPreset() {
@@ -100,8 +124,22 @@ namespace MilkBottle.Models {
         }
 
         public bool PresetCycling {
-            get => mProjectM.isPresetLocked();
-            set => mProjectM.setPresetLock( value );
+            get => mPlayRandom;
+            set {
+                mPlayRandom = value;
+
+                if( mPlayRandom ) {
+                    mPresetTimer.Start();
+                }
+                else {
+                    mPresetTimer.Stop();
+                }
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.PlayPresetsRandomly = mPlayRandom;
+                mPreferences.Save( preferences );
+            }
         }
 
         private void OnPresetTimer( object sender, EventArgs args ) {

@@ -6,9 +6,11 @@ namespace MilkBottle.Dto {
         public  int     PresetPlayDurationInSeconds {  get; set; }
         public  bool    PlayPresetsRandomly { get; set; }
         public  bool    BlendPresetTransition { get; set; }
+        public  string  CurrentPresetLibrary { get; set; }
 
         public MilkPreferences() {
             InitialPresetFolder = String.Empty;
+            CurrentPresetLibrary = String.Empty;
 
             PresetPlayDurationInSeconds = 7;
             PlayPresetsRandomly = true;

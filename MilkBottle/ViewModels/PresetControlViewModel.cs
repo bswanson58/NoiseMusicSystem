@@ -71,8 +71,8 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool IsLocked {
-            get => mController.PresetCycling;
-            set => mController.PresetCycling = value;
+            get => !mController.PresetCycling;
+            set => mController.PresetCycling = !value;
         }
 
         public bool IsBlended {
