@@ -11,7 +11,7 @@ namespace MilkBottle.Interfaces {
         void    SelectPreviousPreset();
         void    SelectRandomPreset();
 
-        bool    PresetOverlap {  get; set; }
+        bool    BlendPresetTransition {  get; set; }
         bool    PresetCycling { get; set; }
     }
 }

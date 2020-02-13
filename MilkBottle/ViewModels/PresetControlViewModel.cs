@@ -76,8 +76,8 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool IsBlended {
-            get => mController.PresetOverlap;
-            set => mController.PresetOverlap = value;
+            get => mController.BlendPresetTransition;
+            set => mController.BlendPresetTransition = value;
         }
 
         private void OnNextPreset() {
