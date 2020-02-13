@@ -101,7 +101,7 @@ namespace MilkBottle.Models {
         }
 
         public void SelectNextPreset() {
-            var presetCount = mProjectM.getPlaylistSize();
+            var presetCount = mProjectM.getPresetListSize();
 
             if( mPlayRandom ) {
                 var index = mRandom.Next( 0, (int)presetCount );
@@ -151,7 +151,7 @@ namespace MilkBottle.Models {
         }
 
         private void PlayPreset( int index ) {
-            if( index < mProjectM.getPlaylistSize()) {
+            if( index < mProjectM.getPresetListSize()) {
                 mProjectM.selectPreset((uint)index, !BlendPresetTransition );
             }
         }
