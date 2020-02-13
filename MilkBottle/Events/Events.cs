@@ -20,4 +20,12 @@
             LibraryName = toLibrary;
         }
     }
+
+    public class LaunchRequest {
+        public string	Target { get; }
+
+        public LaunchRequest( string target ) {
+            Target = target;
+        }
+    }
 }

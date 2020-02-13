@@ -28,12 +28,17 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding VersionString}"/>
-            <Separator Grid.Column="1" Margin ="3,0"/>
-            <Controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
+            <Button Grid.Column="0" Margin="3,0" BorderThickness="0" VerticalAlignment="Center" Background="Transparent" Foreground="LightGray" 
+                    Focusable="False" Padding="3,1" Width="24" 
+                    Content="{StaticResource Path_Folder}" Command="{Binding OpenDataFolder}" ToolTip="Open Configuration Folder"/>
+
+            <TextBlock Grid.Column="1" Margin="5,0" FontSize="12" Foreground="LightGray" VerticalAlignment="Center" Text="{Binding VersionString}"/>
+            <Separator Grid.Column="2" Margin ="3,0"/>
+            <Controls:StatusPresenter Grid.Column="3" Margin="5,0" VerticalAlignment="Center" StatusMessage="{Binding StatusMessage}"/>
         </Grid>
     </StatusBar>
 </UserControl>

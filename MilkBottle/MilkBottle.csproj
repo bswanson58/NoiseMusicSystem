@@ -244,6 +244,10 @@
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\Images.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\StoryBoards.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

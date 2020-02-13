@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
+using MilkBottle.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
@@ -11,14 +12,16 @@ using ReusableBits.Ui.Controls;
 namespace MilkBottle.ViewModels {
     class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent>, IDisposable {
 		private IEventAggregator		        mEventAggregator;
+		private readonly IEnvironment			mEnvironment;
         private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
 		private bool							mViewAttached;
 
 		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}";
 
-		public StatusViewModel( IEventAggregator eventAggregator, IVersionFormatter versionFormatter ) {
+		public StatusViewModel( IEventAggregator eventAggregator, IEnvironment environment, IVersionFormatter versionFormatter ) {
 			mEventAggregator = eventAggregator;
+			mEnvironment = environment;
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
@@ -67,6 +70,10 @@ namespace MilkBottle.ViewModels {
 				}
 			}
 		}
+
+        public void Execute_OpenDataFolder() {
+            mEventAggregator.PublishOnUIThread( new Events.LaunchRequest( mEnvironment.ApplicationDirectory()));
+        }
 
         public void Dispose() {
             mEventAggregator?.Unsubscribe( this );

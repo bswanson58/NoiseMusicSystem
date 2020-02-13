@@ -11,7 +11,7 @@ using MilkBottle.Views;
 using Serilog.Events;
 
 namespace MilkBottle {
-   public partial class App {
+   public partial class App : IHandle<Events.LaunchRequest> {
         private IPlatformLog        mLog;
         private IEventAggregator    mEventAggregator;
 
@@ -41,6 +41,7 @@ namespace MilkBottle {
             mLog.LogMessage( "+++ Application Started +++" );
 
             mEventAggregator = Container.Resolve<IEventAggregator>();
+            mEventAggregator.Subscribe( this );
         }
 
         protected override Window CreateShell() {
@@ -53,6 +54,7 @@ namespace MilkBottle {
 
         private void OnShellClose( object sender, CancelEventArgs args ) {
             mEventAggregator.PublishOnUIThread( new Events.ApplicationClosing());
+            mEventAggregator.Unsubscribe( this );
 
             mLog.LogMessage( "+++ Application Closing +++" );
         }
@@ -78,6 +80,15 @@ namespace MilkBottle {
             mLog.LogException( "Task Scheduler unobserved exception", e.Exception );
 
             e.SetObserved(); 
-        } 
+        }
+        
+        public void Handle( Events.LaunchRequest eventArgs ) {
+            try {
+                Process.Start( eventArgs.Target );
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "OnLaunchRequest:", ex );
+            }
+        }
     }
 }
