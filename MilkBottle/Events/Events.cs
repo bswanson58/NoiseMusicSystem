@@ -11,4 +11,5 @@
     }
 
     public class MilkInitialized { }
+    public class PresetLibraryUpdated { }
 }

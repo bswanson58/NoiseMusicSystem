@@ -22,6 +22,8 @@
         <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Margin="12,0" Text="{Binding PresetName}"/>
 
         <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Available Libraries:"/>
+            <ComboBox Margin="0,0,10,0" Width="250" VerticalAlignment="Center" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}"/>
             <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Next" Command="{Binding NextPreset}"/>
             <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Previous" Command="{Binding PreviousPreset}"/>
             <CheckBox Margin="5,0" VerticalAlignment="Center" Content="Lock" IsChecked="{Binding IsLocked}"/>
@@ -30,6 +32,6 @@
     </Grid>
 
     <i:Interaction.Behaviors>
-        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        <behaviours:WidgetOpacity TagName="_dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
     </i:Interaction.Behaviors>
 </UserControl>

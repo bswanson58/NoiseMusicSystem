@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MilkBottle.Properties;
@@ -10,29 +11,54 @@ namespace MilkBottle.Models {
     class PresetLibrarian : IPresetLibrarian {
         private readonly string[]       mSupportPresetExtensions = { "milk" };
 
-        private readonly IEnvironment   mEnvironment;
-        private readonly IPreferences   mPreferences;
+        private readonly IEventAggregator   mEventAggregator;
+        private readonly IEnvironment       mEnvironment;
+        private readonly IPreferences       mPreferences;
+        private readonly IPlatformLog       mLog;
 
         private readonly Dictionary<string, LibrarySet> mLibraries;
 
-        public PresetLibrarian( IEnvironment environment, IPreferences preferences ) {
+        public  IEnumerable<string>         AvailableLibraries => mLibraries.Keys;
+
+        public PresetLibrarian( IEventAggregator eventAggregator, IEnvironment environment, IPreferences preferences, IPlatformLog log ) {
+            mEventAggregator = eventAggregator;
             mEnvironment = environment;
             mPreferences = preferences;
+            mLog = log;
 
             mLibraries = new Dictionary<string, LibrarySet>();
 
             LoadLibrary();
         }
 
+        public LibrarySet GetLibrary( string libraryName ) {
+            var retValue = default( LibrarySet );
+
+            if( mLibraries.ContainsKey( libraryName )) {
+                retValue = mLibraries[libraryName];
+            }
+
+            return retValue;
+        }
+
         private void LoadLibrary() {
             var libraryPath = mEnvironment.MilkLibraryFolder();
 
-            if( Directory.Exists( libraryPath )) {
-                foreach( var directory in Directory.GetDirectories( libraryPath )) {
-                    var libraryName = Path.GetFileName( directory );
+            try {
+                if( Directory.Exists( libraryPath )) {
+                    foreach( var directory in Directory.GetDirectories( libraryPath )) {
+                        var libraryName = Path.GetFileName( directory );
 
-                    LoadLibrarySet( libraryName, directory );
+                        LoadLibrarySet( libraryName, directory );
+                    }
                 }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "PresetLibrarian:LoadLibrary", ex );
+            }
+
+            if( mLibraries.Any()) {
+                mEventAggregator.PublishOnUIThread( new Events.PresetLibraryUpdated());
             }
         }
 
