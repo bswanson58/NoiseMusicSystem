@@ -22,6 +22,7 @@ namespace MilkBottle.Models {
         private bool                                mPlayRandom;
 
         public  bool                                BlendPresetTransition { get; set; }
+        public  string                              CurrentPresetLibrary { get; private set; }
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
@@ -64,6 +65,9 @@ namespace MilkBottle.Models {
             if(( library != null ) &&
                ( library.Presets.Any())) {
                 LoadPresets( library.Presets );
+
+                CurrentPresetLibrary = libraryName;
+                mEventAggregator.PublishOnUIThread( new Events.PresetLibrarySwitched( CurrentPresetLibrary ));
 
                 retValue = true;
             }

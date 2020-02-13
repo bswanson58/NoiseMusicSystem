@@ -12,4 +12,12 @@
 
     public class MilkInitialized { }
     public class PresetLibraryUpdated { }
+
+    public class PresetLibrarySwitched {
+        public  string  LibraryName { get; }
+
+        public PresetLibrarySwitched( string toLibrary ) {
+            LibraryName = toLibrary;
+        }
+    }
 }

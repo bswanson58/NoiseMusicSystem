@@ -8,7 +8,9 @@ using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class PresetControlViewModel : PropertyChangeBase, IDisposable, IHandle<Events.PresetLibraryUpdated> {
+    class PresetControlViewModel : PropertyChangeBase, IDisposable, 
+                                   IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
+        private readonly IEventAggregator       mEventAggregator;
         private readonly IPresetController      mController;
         private readonly IPresetLibrarian       mLibrarian;
         private IDisposable                     mPresetSubscription;
@@ -20,9 +22,10 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetName { get; set; }
         public  ObservableCollection<string>    Libraries { get; }
 
-        public PresetControlViewModel( IPresetController presetController, IPresetLibrarian librarian ) {
+        public PresetControlViewModel( IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
             mController = presetController;
             mLibrarian = librarian;
+            mEventAggregator = eventAggregator;
 
             Libraries = new ObservableCollection<string>();
             mCurrentLibrary = String.Empty;
@@ -32,11 +35,22 @@ namespace MilkBottle.ViewModels {
 
             mPresetSubscription = mController.CurrentPreset.Subscribe( OnPresetChanged );
 
+            mCurrentLibrary = mController.CurrentPresetLibrary;
             UpdateLibraries();
+
+            mEventAggregator.Subscribe( this );
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {
             UpdateLibraries();
+        }
+
+        public void Handle( Events.PresetLibrarySwitched  args ) {
+            if( Libraries.Contains( args.LibraryName )) {
+                mCurrentLibrary = args.LibraryName;
+
+                RaisePropertyChanged( () => CurrentLibrary );
+            }
         }
 
         public string CurrentLibrary {
@@ -89,6 +103,8 @@ namespace MilkBottle.ViewModels {
         }
 
         public void Dispose() {
+            mEventAggregator.Unsubscribe( this );
+
             mPresetSubscription?.Dispose();
             mPresetSubscription = null;
         }
