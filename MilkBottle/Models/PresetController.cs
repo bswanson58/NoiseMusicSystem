@@ -120,11 +120,11 @@ namespace MilkBottle.Models {
         }
 
         public void SelectPreviousPreset() {
-            mProjectM.selectPrevious( !BlendPresetTransition );
+            mProjectM.selectPrevious( BlendPresetTransition );
         }
 
         public void SelectRandomPreset() {
-            mProjectM.selectRandom( !BlendPresetTransition );
+            mProjectM.selectRandom( BlendPresetTransition );
         }
 
         public bool PresetCycling {
@@ -152,7 +152,7 @@ namespace MilkBottle.Models {
 
         private void PlayPreset( int index ) {
             if( index < mProjectM.getPresetListSize()) {
-                mProjectM.selectPreset((uint)index, !BlendPresetTransition );
+                mProjectM.selectPreset((uint)index, BlendPresetTransition );
             }
         }
 
@@ -164,7 +164,7 @@ namespace MilkBottle.Models {
                     mProjectM.addPresetURL( preset.PresetLocation, preset.PresetName );
                 }
 
-                mProjectM.selectNext( !BlendPresetTransition );
+                mProjectM.selectNext( BlendPresetTransition );
             }
             catch( Exception ex ) {
                 mLog.LogException( "PresetController:LoadPresets", ex );
