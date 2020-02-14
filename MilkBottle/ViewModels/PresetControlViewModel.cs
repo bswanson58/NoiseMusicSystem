@@ -24,6 +24,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 PreviousPreset { get; }
 
         public  string                          PresetName { get; set; }
+        public  string                          PresetDurationToolTip { get; private set; }
         public  ObservableCollection<string>    Libraries { get; }
 
         public PresetControlViewModel( IMilkController milkController, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
@@ -39,6 +40,8 @@ namespace MilkBottle.ViewModels {
             Stop = new DelegateCommand( OnStop );
             NextPreset = new DelegateCommand( OnNextPreset );
             PreviousPreset = new DelegateCommand( OnPreviousPreset );
+
+            SetDurationTooltip();
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
 
@@ -103,7 +106,16 @@ namespace MilkBottle.ViewModels {
 
         public int PresetDuration {
             get => mPresetController.PresetDuration;
-            set => mPresetController.PresetDuration = value;
+            set {
+                mPresetController.PresetDuration = value;
+
+                SetDurationTooltip();
+            }
+        }
+
+        private void SetDurationTooltip() {
+            PresetDurationToolTip = $"Duration is {mPresetController.PresetDuration} seconds";
+            RaisePropertyChanged( () => PresetDurationToolTip );
         }
 
         private void OnStart() {
