@@ -12,6 +12,22 @@
              d:DataContext="{d:DesignInstance viewModels:PresetControlViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="1000">
 
+    <UserControl.Resources>
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <DataTemplate x:Key="HorizontalSeparator">
+            <Grid Margin="5,2">
+                <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid Background="Transparent" Margin="12,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -23,13 +39,19 @@
 
         <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
             <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Current Library:"/>
-            <ComboBox Margin="0,0,10,0" Width="250" VerticalAlignment="Center" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}"/>
-            <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Duration:"/>
+            <ComboBox Margin="0,0,5,0" Width="250" VerticalAlignment="Center" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
+            <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Duration:"/>
             <Slider Width="100" Margin="0,0,5,0" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" />
-            <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Next" Command="{Binding NextPreset}"/>
-            <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Previous" Command="{Binding PreviousPreset}"/>
-            <CheckBox Margin="5,0" VerticalAlignment="Center" Content="Lock" IsChecked="{Binding IsLocked}"/>
-            <CheckBox Margin="5,0" VerticalAlignment="Center" Content="Blend" IsChecked="{Binding IsBlended}"/>
+            <CheckBox Margin="5,0" VerticalAlignment="Center" Content="Lock" IsChecked="{Binding IsLocked}" ToolTip="Keep This Preset"/>
+            <CheckBox Margin="5,0,3,0" VerticalAlignment="Center" Content="Blend" IsChecked="{Binding IsBlended}" ToolTip="Overlap Preset Transition"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="4" Command="{Binding Start}" ToolTip="Start"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="&lt;" Command="{Binding Stop}" ToolTip="Stop"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content=":" Command="{Binding NextPreset}" ToolTip="Next Preset"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="9" Command="{Binding PreviousPreset}" ToolTip="Previous Preset"/>
         </StackPanel>
     </Grid>
 
