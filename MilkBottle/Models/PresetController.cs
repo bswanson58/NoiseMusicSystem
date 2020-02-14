@@ -26,6 +26,7 @@ namespace MilkBottle.Models {
 
         public  bool                                BlendPresetTransition { get; set; }
         public  string                              CurrentPresetLibrary { get; private set; }
+        public  bool                                IsRunning { get; private set; }
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
@@ -42,6 +43,7 @@ namespace MilkBottle.Models {
             mPresetTimer = new DispatcherTimer();
             mPresetTimer.Tick += OnPresetTimer;
             mCurrentPresetIndex = -1;
+            IsRunning = false;
 
             mEventAggregator.Subscribe( this );
 
@@ -74,10 +76,14 @@ namespace MilkBottle.Models {
 
         public void StopPresetCycling() {
             mPresetTimer.Stop();
+
+            IsRunning = false;
         }
 
         public void StartPresetCycling() {
             mPresetTimer.Start();
+
+            IsRunning = true;
         }
 
         private bool SwitchLibrary( string libraryName ) {
@@ -117,9 +123,7 @@ namespace MilkBottle.Models {
 
             mPresetTimer.Interval = TimeSpan.FromSeconds( mPresetDuration );
 
-            if( mPlayRandom ) {
-                mPresetTimer.Start();
-            }
+            StartPresetCycling();
         }
 
         public void SelectNextPreset() {

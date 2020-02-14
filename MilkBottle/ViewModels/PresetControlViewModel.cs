@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -10,13 +11,14 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class PresetControlViewModel : PropertyChangeBase, IDisposable, 
-                                   IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
+                                   IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, IHandle<Events.WindowStateChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IMilkController        mMilkController;
         private readonly IPresetController      mPresetController;
         private readonly IPresetLibrarian       mLibrarian;
         private IDisposable                     mPresetSubscription;
         private string                          mCurrentLibrary;
+        private bool                            mWasRunning;
 
         public  DelegateCommand                 Start { get; }
         public  DelegateCommand                 Stop { get; }
@@ -35,6 +37,7 @@ namespace MilkBottle.ViewModels {
 
             Libraries = new ObservableCollection<string>();
             mCurrentLibrary = String.Empty;
+            mWasRunning = false;
 
             Start = new DelegateCommand( OnStart );
             Stop = new DelegateCommand( OnStop );
@@ -60,6 +63,19 @@ namespace MilkBottle.ViewModels {
                 mCurrentLibrary = args.LibraryName;
 
                 RaisePropertyChanged( () => CurrentLibrary );
+            }
+        }
+
+        public void Handle( Events.WindowStateChanged args ) {
+            if( args.CurrentState == WindowState.Minimized ) {
+                mWasRunning = mPresetController.IsRunning;
+
+                OnStop();
+            }
+            else {
+                if( mWasRunning ) {
+                    OnStart();
+                }
             }
         }
 

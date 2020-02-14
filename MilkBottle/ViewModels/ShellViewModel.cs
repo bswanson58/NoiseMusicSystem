@@ -1,13 +1,17 @@
 ﻿using System.Windows;
+using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     public class ShellViewModel : PropertyChangeBase {
-        private WindowState mCurrentWindowState;
+        private readonly IEventAggregator   mEventAggregator;
+        private WindowState                 mCurrentWindowState;
 
         public  bool        DisplayStatus { get; private set; }
 
-        public ShellViewModel() {
+        public ShellViewModel( IEventAggregator eventAggregator ) {
+            mEventAggregator = eventAggregator;
+
             DisplayStatus = true;
         }
 
@@ -18,6 +22,8 @@ namespace MilkBottle.ViewModels {
 
                 DisplayStatus = mCurrentWindowState != WindowState.Maximized;
                 RaisePropertyChanged( () => DisplayStatus );
+
+                mEventAggregator.PublishOnUIThread( new Events.WindowStateChanged( mCurrentWindowState ));
             }
         }   
     } 

@@ -21,7 +21,7 @@
 
     <Window.Resources>
         <reusableConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
-        <reusableConverters:DefaultValueOpacityConverter x:Key="OpacityConverter" DefaultOpacity="0.5" StandardOpacity="1.0"/>
+        <reusableConverters:DefaultValueOpacityConverter x:Key="OpacityConverter" DefaultOpacity="0.3" StandardOpacity="1.0"/>
     </Window.Resources>
 
     <mah:MetroWindow.TitleTemplate>

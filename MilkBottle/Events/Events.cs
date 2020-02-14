@@ -1,4 +1,6 @@
-﻿namespace MilkBottle.Events {
+﻿using System.Windows;
+
+namespace MilkBottle.Events {
     public class ApplicationClosing { }
 
     public class StatusEvent {
@@ -26,6 +28,14 @@
 
         public LaunchRequest( string target ) {
             Target = target;
+        }
+    }
+
+    public class WindowStateChanged {
+        public  WindowState     CurrentState { get; }
+
+        public WindowStateChanged( WindowState toState ) {
+            CurrentState = toState;
         }
     }
 }
