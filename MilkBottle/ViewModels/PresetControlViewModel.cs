@@ -11,31 +11,37 @@ namespace MilkBottle.ViewModels {
     class PresetControlViewModel : PropertyChangeBase, IDisposable, 
                                    IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
         private readonly IEventAggregator       mEventAggregator;
-        private readonly IPresetController      mController;
+        private readonly IMilkController        mMilkController;
+        private readonly IPresetController      mPresetController;
         private readonly IPresetLibrarian       mLibrarian;
         private IDisposable                     mPresetSubscription;
         private string                          mCurrentLibrary;
 
+        public  DelegateCommand                 Start { get; }
+        public  DelegateCommand                 Stop { get; }
         public  DelegateCommand                 NextPreset { get; }
         public  DelegateCommand                 PreviousPreset { get; }
 
         public  string                          PresetName { get; set; }
         public  ObservableCollection<string>    Libraries { get; }
 
-        public PresetControlViewModel( IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
-            mController = presetController;
+        public PresetControlViewModel( IMilkController milkController, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
+            mMilkController = milkController;
+            mPresetController = presetController;
             mLibrarian = librarian;
             mEventAggregator = eventAggregator;
 
             Libraries = new ObservableCollection<string>();
             mCurrentLibrary = String.Empty;
 
+            Start = new DelegateCommand( OnStart );
+            Stop = new DelegateCommand( OnStop );
             NextPreset = new DelegateCommand( OnNextPreset );
             PreviousPreset = new DelegateCommand( OnPreviousPreset );
 
-            mPresetSubscription = mController.CurrentPreset.Subscribe( OnPresetChanged );
+            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
 
-            mCurrentLibrary = mController.CurrentPresetLibrary;
+            mCurrentLibrary = mPresetController.CurrentPresetLibrary;
             UpdateLibraries();
 
             mEventAggregator.Subscribe( this );
@@ -59,7 +65,7 @@ namespace MilkBottle.ViewModels {
                 mCurrentLibrary = value;
 
                 if(!String.IsNullOrWhiteSpace( mCurrentLibrary )) {
-                    mController.LoadLibrary( mCurrentLibrary );
+                    mPresetController.LoadLibrary( mCurrentLibrary );
                 }
 
                 RaisePropertyChanged( () => CurrentLibrary );
@@ -85,26 +91,36 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool IsLocked {
-            get => !mController.PresetCycling;
-            set => mController.PresetCycling = !value;
+            get => !mPresetController.RandomPresetCycling;
+            set => mPresetController.RandomPresetCycling = !value;
         }
 
         public bool IsBlended {
-            get => mController.BlendPresetTransition;
-            set => mController.BlendPresetTransition = value;
+            get => mPresetController.BlendPresetTransition;
+            set => mPresetController.BlendPresetTransition = value;
         }
 
         public int PresetDuration {
-            get => mController.PresetDuration;
-            set => mController.PresetDuration = value;
+            get => mPresetController.PresetDuration;
+            set => mPresetController.PresetDuration = value;
+        }
+
+        private void OnStart() {
+            mMilkController.StartVisualization();
+            mPresetController.StartPresetCycling();
+        }
+
+        private void OnStop() {
+            mMilkController.StopVisualization();
+            mPresetController.StopPresetCycling();
         }
 
         private void OnNextPreset() {
-            mController.SelectNextPreset();
+            mPresetController.SelectNextPreset();
         }
 
         private void OnPreviousPreset() {
-            mController.SelectPreviousPreset();
+            mPresetController.SelectPreviousPreset();
         }
 
         public void Dispose() {

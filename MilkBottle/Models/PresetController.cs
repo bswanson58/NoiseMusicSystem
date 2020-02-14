@@ -58,6 +58,14 @@ namespace MilkBottle.Models {
             }
         }
 
+        public void StopPresetCycling() {
+            mPresetTimer.Stop();
+        }
+
+        public void StartPresetCycling() {
+            mPresetTimer.Start();
+        }
+
         private bool SwitchLibrary( string libraryName ) {
             var retValue = false;
             var library = mLibrarian.GetLibrary( libraryName );
@@ -123,7 +131,7 @@ namespace MilkBottle.Models {
             mProjectM.selectPrevious( BlendPresetTransition );
         }
 
-        public bool PresetCycling {
+        public bool RandomPresetCycling {
             get => mPlayRandom;
             set {
                 mPlayRandom = value;
@@ -184,9 +192,9 @@ namespace MilkBottle.Models {
         }
 
         public void Dispose() {
-            mPresetTimer.Stop();
-            mCurrentPreset?.Dispose();
+            StopPresetCycling();
 
+            mCurrentPreset?.Dispose();
             mEventAggregator.Unsubscribe( this );
         }
     }
