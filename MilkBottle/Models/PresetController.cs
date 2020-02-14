@@ -123,10 +123,6 @@ namespace MilkBottle.Models {
             mProjectM.selectPrevious( BlendPresetTransition );
         }
 
-        public void SelectRandomPreset() {
-            mProjectM.selectRandom( BlendPresetTransition );
-        }
-
         public bool PresetCycling {
             get => mPlayRandom;
             set {
@@ -142,6 +138,18 @@ namespace MilkBottle.Models {
                 var preferences = mPreferences.Load<MilkPreferences>();
 
                 preferences.PlayPresetsRandomly = mPlayRandom;
+                mPreferences.Save( preferences );
+            }
+        }
+
+        public int PresetDuration {
+            get => mPresetDuration;
+            set {
+                mPresetDuration = Math.Min( 60, Math.Max( 5, value ));
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.PresetPlayDurationInSeconds = mPresetDuration;
                 mPreferences.Save( preferences );
             }
         }

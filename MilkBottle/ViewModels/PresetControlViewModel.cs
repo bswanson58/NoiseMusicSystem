@@ -94,6 +94,11 @@ namespace MilkBottle.ViewModels {
             set => mController.BlendPresetTransition = value;
         }
 
+        public int PresetDuration {
+            get => mController.PresetDuration;
+            set => mController.PresetDuration = value;
+        }
+
         private void OnNextPreset() {
             mController.SelectNextPreset();
         }

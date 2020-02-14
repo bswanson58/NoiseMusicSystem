@@ -9,10 +9,10 @@ namespace MilkBottle.Interfaces {
 
         void    SelectNextPreset();
         void    SelectPreviousPreset();
-        void    SelectRandomPreset();
 
         string  CurrentPresetLibrary { get; }
         bool    BlendPresetTransition {  get; set; }
+        int     PresetDuration { get; set; }
         bool    PresetCycling { get; set; }
     }
 }
