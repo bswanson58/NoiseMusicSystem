@@ -10,6 +10,7 @@
                  xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                  xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
+                 xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
@@ -20,7 +21,17 @@
 
     <Window.Resources>
         <reusableConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
+        <reusableConverters:DefaultValueOpacityConverter x:Key="OpacityConverter" DefaultOpacity="0.5" StandardOpacity="1.0"/>
     </Window.Resources>
+
+    <mah:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Converter={converters:ToUpperConverter}}"
+                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="8,-1,8,0" FontWeight="Light"
+                       Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"
+                       FontSize="{DynamicResource WindowTitleFontSize}" FontFamily="{DynamicResource HeaderFontFamily}" />
+        </DataTemplate>
+    </mah:MetroWindow.TitleTemplate>
 
     <!--
     <mah:MetroWindow.RightWindowCommands>
