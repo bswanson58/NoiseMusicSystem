@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Caliburn.Micro;
 using MilkBottle.Dto;
@@ -85,7 +86,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnPresetChanged( MilkDropPreset preset ) {
-            PresetName = preset.PresetName;
+            PresetName = Path.GetFileNameWithoutExtension( preset.PresetName );
 
             RaisePropertyChanged( () => PresetName );
         }
