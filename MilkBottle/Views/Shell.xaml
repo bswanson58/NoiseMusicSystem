@@ -1,15 +1,26 @@
 ﻿<mah:MetroWindow x:Class="MilkBottle.Views.Shell"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:mvvm="http://prismlibrary.com/"
                  xmlns:views="clr-namespace:MilkBottle.Views"
+                 xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+                 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
-                 Title="Milk Bottle" >
+                 WindowState="{Binding CurrentWindowState, Mode=TwoWay}"
+                 Title="Milk Bottle" 
+                 mc:Ignorable="d" 
+                 d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}">
 
-<!--
+    <Window.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
+    </Window.Resources>
+
+    <!--
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button Content="for sale" />
@@ -25,7 +36,8 @@
 
         <views:MilkView Grid.Row="0"/>
         <views:PresetControlView Grid.Row="1"/>
-        <views:StatusView Grid.Row="2"/>
+        <views:StatusView Grid.Row="2" 
+                          Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
     </Grid>
 </mah:MetroWindow>
 
