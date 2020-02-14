@@ -7,7 +7,9 @@
                  xmlns:mvvm="http://prismlibrary.com/"
                  xmlns:views="clr-namespace:MilkBottle.Views"
                  xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
-                 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+                 xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                 xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
@@ -17,7 +19,7 @@
                  d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}">
 
     <Window.Resources>
-        <valueConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
+        <reusableConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
     </Window.Resources>
 
     <!--
@@ -39,5 +41,10 @@
         <views:StatusView Grid.Row="2" 
                           Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
     </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviors:MetroWindowTitleColor NormalBrush="{DynamicResource AccentColorBrush}" MaximizedBrush="{DynamicResource WindowBackgroundBrush}"/>
+    </i:Interaction.Behaviors>
+
 </mah:MetroWindow>
 

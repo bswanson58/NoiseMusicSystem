@@ -198,6 +198,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
+    <Compile Include="Behaviors\MetroWindowTitleColor.cs" />
     <Compile Include="Dto\LibrarySet.cs" />
     <Compile Include="Dto\MilkDropPreset.cs" />
     <Compile Include="Dto\MilkPreferences.cs" />
