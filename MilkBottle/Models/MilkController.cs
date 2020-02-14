@@ -4,15 +4,18 @@ using Caliburn.Micro;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;
+using WindowState = System.Windows.WindowState;
 
 namespace MilkBottle.Models {
-    class MilkController : IMilkController, IHandle<Events.ApplicationClosing> {
+    class MilkController : IMilkController, IHandle<Events.ApplicationClosing>, IHandle<Events.WindowStateChanged> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IEnvironment               mEnvironment;
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
         private GLControl                           mGlControl;
+
+        public  bool                                IsRunning { get; private set; }
 
         public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IEnvironment environment, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
@@ -22,6 +25,7 @@ namespace MilkBottle.Models {
 
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 34 ) };
             mRenderTimer.Tick += OnTimer;
+            IsRunning = false;
 
             mEventAggregator.Subscribe( this );
         }
@@ -41,16 +45,25 @@ namespace MilkBottle.Models {
             StopVisualization();
         }
 
+        public void Handle( Events.WindowStateChanged args ) {
+            if((!IsRunning ) &&
+               ( args.CurrentState != WindowState.Minimized )) {
+                UpdateVisualization();
+            }
+        }
+
         public void StartVisualization() {
             mAudio.StartCapture( OnAudioData );
-
             mRenderTimer.Start();
+
+            IsRunning = true;
         }
 
         public void StopVisualization() {
             mRenderTimer.Stop();
-
             mAudio.StopCapture();
+
+            IsRunning = false;
         }
 
         public void OnSizeChanged( int width, int height ) {
@@ -60,6 +73,10 @@ namespace MilkBottle.Models {
         }
 
         private void OnTimer( object sender, EventArgs args ) {
+            UpdateVisualization();
+        }
+
+        private void UpdateVisualization() {
             mProjectM.renderFrame();
 
             mGlControl?.SwapBuffers();
