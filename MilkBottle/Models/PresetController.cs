@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
+using MilkBottle.Support;
 
 namespace MilkBottle.Models {
     class PresetController : IPresetController, IHandle<Events.MilkInitialized> {
@@ -16,8 +17,10 @@ namespace MilkBottle.Models {
         private readonly ProjectMWrapper            mProjectM;
         private readonly IPreferences               mPreferences;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
+        private readonly LimitedStack<int>          mPresetHistory;
         private readonly DispatcherTimer            mPresetTimer;
         private readonly Random                     mRandom;
+        private int                                 mCurrentPresetIndex;
         private int                                 mPresetDuration;
         private bool                                mPlayRandom;
 
@@ -33,10 +36,12 @@ namespace MilkBottle.Models {
             mEventAggregator = eventAggregator;
             mLog = log;
 
+            mPresetHistory = new LimitedStack<int>( 100 );
             mRandom = new Random( DateTime.Now.Millisecond );
             mCurrentPreset = new Subject<MilkDropPreset>();
             mPresetTimer = new DispatcherTimer();
             mPresetTimer.Tick += OnPresetTimer;
+            mCurrentPresetIndex = -1;
 
             mEventAggregator.Subscribe( this );
 
@@ -128,7 +133,11 @@ namespace MilkBottle.Models {
         }
 
         public void SelectPreviousPreset() {
-            mProjectM.selectPrevious( BlendPresetTransition );
+            if( mPresetHistory.Count > 0 ) {
+                mCurrentPresetIndex = -1;
+
+                PlayPreset( mPresetHistory.Pop());
+            }
         }
 
         public bool RandomPresetCycling {
@@ -168,19 +177,27 @@ namespace MilkBottle.Models {
 
         private void PlayPreset( int index ) {
             if( index < mProjectM.getPresetListSize()) {
+                if( mCurrentPresetIndex != -1 ) {
+                    mPresetHistory.Push( mCurrentPresetIndex );
+                }
+
                 mProjectM.selectPreset((uint)index, BlendPresetTransition );
+
+                mCurrentPresetIndex = index;
             }
         }
 
         private void LoadPresets( IEnumerable<MilkDropPreset> presetList ) {
             try {
                 mProjectM.clearPresetlist();
+                mPresetHistory.Clear();
+                mCurrentPresetIndex = -1;
 
                 foreach( var preset in presetList ) {
                     mProjectM.addPresetURL( preset.PresetLocation, preset.PresetName );
                 }
 
-                mProjectM.selectNext( BlendPresetTransition );
+                SelectNextPreset();
             }
             catch( Exception ex ) {
                 mLog.LogException( "PresetController:LoadPresets", ex );

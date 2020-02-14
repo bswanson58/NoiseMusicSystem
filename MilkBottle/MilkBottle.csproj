@@ -223,6 +223,7 @@
     <Compile Include="Platform\OperatingEnvironment.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
+    <Compile Include="Support\LimitedStack.cs" />
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
