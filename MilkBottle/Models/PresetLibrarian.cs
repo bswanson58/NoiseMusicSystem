@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -19,6 +20,7 @@ namespace MilkBottle.Models {
         private readonly Dictionary<string, LibrarySet> mLibraries;
 
         public  IEnumerable<string>         AvailableLibraries => mLibraries.Keys;
+        public  bool                        IsInitialized { get; private set; }
 
         public PresetLibrarian( IEventAggregator eventAggregator, IEnvironment environment, IPreferences preferences, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
@@ -28,7 +30,7 @@ namespace MilkBottle.Models {
 
             mLibraries = new Dictionary<string, LibrarySet>();
 
-            LoadLibrary();
+            Task.Run( LoadLibrary );
         }
 
         public LibrarySet GetLibrary( string libraryName ) {
@@ -58,6 +60,8 @@ namespace MilkBottle.Models {
             }
 
             if( mLibraries.Any()) {
+                IsInitialized = true;
+
                 mEventAggregator.PublishOnUIThread( new Events.PresetLibraryUpdated());
             }
         }

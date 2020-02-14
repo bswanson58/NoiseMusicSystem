@@ -10,7 +10,7 @@ using MilkBottle.Interfaces;
 using MilkBottle.Support;
 
 namespace MilkBottle.Models {
-    class PresetController : IPresetController, IHandle<Events.MilkInitialized> {
+    class PresetController : IPresetController, IHandle<Events.MilkInitialized>, IHandle<Events.PresetLibraryUpdated> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
         private readonly IPresetLibrarian           mLibrarian;
@@ -45,15 +45,24 @@ namespace MilkBottle.Models {
 
             mEventAggregator.Subscribe( this );
 
-            if( mProjectM.isInitialized()) {
+            if(( mProjectM.isInitialized()) &&
+               ( mLibrarian.IsInitialized )) {
                 Initialize();
             }
         }
 
         public void Handle( Events.MilkInitialized args ) {
-            Initialize();
+            if( mLibrarian.IsInitialized ) {
+                Initialize();
+            }
         }
 
+        public void Handle( Events.PresetLibraryUpdated args ) {
+            if( mProjectM.isInitialized()) {
+                Initialize();
+            }
+        }
+ 
         public void LoadLibrary( string libraryName ) {
             if( SwitchLibrary( libraryName )) {
                 var preferences = mPreferences.Load<MilkPreferences>();
