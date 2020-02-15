@@ -19,7 +19,7 @@ namespace MilkBottle.Models {
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
         private readonly LimitedStack<int>          mPresetHistory;
         private readonly DispatcherTimer            mPresetTimer;
-        private readonly Random                     mRandom;
+        private readonly LimitedRepeatingRandom     mRandom;
         private int                                 mCurrentPresetIndex;
         private int                                 mPresetDuration;
         private bool                                mPlayRandom;
@@ -39,7 +39,7 @@ namespace MilkBottle.Models {
             mLog = log;
 
             mPresetHistory = new LimitedStack<int>( 100 );
-            mRandom = new Random( DateTime.Now.Millisecond );
+            mRandom = new LimitedRepeatingRandom( 0.6 );
             mCurrentPreset = new Subject<MilkDropPreset>();
             mPresetTimer = new DispatcherTimer();
             mPresetTimer.Tick += OnPresetTimer;

@@ -220,6 +220,7 @@
     <Compile Include="Models\PresetController.cs" />
     <Compile Include="Models\PresetLibrarian.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
+    <Compile Include="Support\LimitedRepeatingRandom.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
