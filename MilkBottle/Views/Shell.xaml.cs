@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using MilkBottle.Properties;
 using MilkBottle.Support;
+using MilkBottle.ViewModels;
 
 namespace MilkBottle.Views {
     /// <summary>
@@ -12,6 +13,7 @@ namespace MilkBottle.Views {
         public Shell() {
             InitializeComponent();
 
+            Loaded += OnLoaded;
             Closing += OnWindowClosing;
 //            StateChanged += OnStateChanged;
         }
@@ -29,6 +31,14 @@ namespace MilkBottle.Views {
             base.OnSourceInitialized( e );
 
             this.SetPlacement( Settings.Default.ShellWindowPlacement );
+        }
+
+        private void OnLoaded( object sender, RoutedEventArgs args ) {
+            if( DataContext is ShellViewModel vm ) {
+                vm.ShellLoaded( this );
+            }
+
+            Loaded -= OnLoaded;
         }
     }
 }

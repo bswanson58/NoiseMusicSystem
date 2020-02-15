@@ -7,6 +7,7 @@ namespace MilkBottle.Dto {
         public  bool    PlayPresetsRandomly { get; set; }
         public  bool    BlendPresetTransition { get; set; }
         public  string  CurrentPresetLibrary { get; set; }
+        public  bool    ShouldMinimizeToTray { get; set; }
 
         public MilkPreferences() {
             InitialPresetFolder = String.Empty;
@@ -15,6 +16,8 @@ namespace MilkBottle.Dto {
             PresetPlayDurationInSeconds = 7;
             PlayPresetsRandomly = true;
             BlendPresetTransition = true;
+
+            ShouldMinimizeToTray = false;
         }
     }
 }
