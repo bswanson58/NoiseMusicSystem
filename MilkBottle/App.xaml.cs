@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -7,15 +8,22 @@ using Caliburn.Micro;
 using Prism.Ioc;
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
+using MilkBottle.Properties;
+using MilkBottle.ViewModels;
 using MilkBottle.Views;
+using ReusableBits.Platform;
 using Serilog.Events;
 
 namespace MilkBottle {
-   public partial class App : IHandle<Events.LaunchRequest> {
+   public partial class App : ISingleInstanceApp, IHandle<Events.LaunchRequest> {
         private IPlatformLog        mLog;
         private IEventAggregator    mEventAggregator;
 
         public App() {
+            if(!SingleInstance<App>.InitializeAsFirstInstance( ApplicationConstants.ApplicationName )) {
+                Shutdown();
+            }
+
             DispatcherUnhandledException += AppDispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
@@ -26,6 +34,20 @@ namespace MilkBottle {
 //			System.Runtime.ProfileOptimization.SetProfileRoot( profileDirectory );
 //          System.Runtime.ProfileOptimization.StartProfile( ApplicationConstants.ApplicationName );
 #endif
+        }
+
+        public bool SignalExternalCommandLineArgs( IList<string> args ) {
+            // Bring initial instance to foreground when a second instance is started.
+            if( MainWindow?.DataContext is ShellViewModel vm ) {
+                vm.DisplayShell();
+            }
+
+            return true;
+        }
+
+        protected override void OnExit( ExitEventArgs e ) {
+            // Allow single instance code to perform cleanup operations
+            SingleInstance<App>.Cleanup();
         }
 
         protected override void RegisterTypes( IContainerRegistry containerRegistry ) {

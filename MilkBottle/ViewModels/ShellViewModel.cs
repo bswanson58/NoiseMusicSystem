@@ -40,7 +40,24 @@ namespace MilkBottle.ViewModels {
             mShell = shell;
         }
 
+        public void DisplayShell() {
+            if( CurrentWindowState == WindowState.Minimized ) {
+               if( ShouldMinimizeToTray()) {
+                    RestoreShell();
+               }
+               else {
+                   mShell.WindowState = mStoredWindowState;
+               }
+            }
+
+            mShell.Activate();
+        }
+
         private void OnNotifyIconClick( object sender, EventArgs args ) {
+            RestoreShell();
+        }
+
+        private void RestoreShell() {
             if( mShell != null ) {
                 mShell.Show();
                 mShell.WindowState = mStoredWindowState;
