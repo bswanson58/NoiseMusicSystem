@@ -86,7 +86,7 @@ namespace MilkBottle.ViewModels {
 
         public void Handle( Events.WindowStateChanged args ) {
             if( args.CurrentState == WindowState.Minimized ) {
-                mWasRunning = mPresetController.IsRunning;
+                mWasRunning = mPresetController.IsRunning && mPresetController.RandomPresetCycling;
 
                 OnStop();
             }
