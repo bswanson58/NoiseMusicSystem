@@ -13,6 +13,8 @@ namespace MilkBottle.Events {
     }
 
     public class MilkInitialized { }
+    public class PresetControllerInitialized { }
+    public class PresetLibraryInitialized { }
     public class PresetLibraryUpdated { }
 
     public class PresetLibrarySwitched {

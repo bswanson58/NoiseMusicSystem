@@ -11,7 +11,8 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class PresetControlViewModel : PropertyChangeBase, IDisposable, 
-                                   IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, IHandle<Events.WindowStateChanged> {
+                                   IHandle<Events.PresetControllerInitialized>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, 
+                                   IHandle<Events.WindowStateChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IMilkController        mMilkController;
         private readonly IPresetController      mPresetController;
@@ -44,14 +45,31 @@ namespace MilkBottle.ViewModels {
             NextPreset = new DelegateCommand( OnNextPreset );
             PreviousPreset = new DelegateCommand( OnPreviousPreset );
 
-            SetDurationTooltip();
+            if( mPresetController.IsInitialized ) {
+                Initialize();
+            }
+
+            if( mLibrarian.IsInitialized ) {
+                UpdateLibraries();
+            }
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
+            mEventAggregator.Subscribe( this );
+        }
+
+        private void Initialize() {
+            SetDurationTooltip();
 
             mCurrentLibrary = mPresetController.CurrentPresetLibrary;
-            UpdateLibraries();
 
-            mEventAggregator.Subscribe( this );
+            RaisePropertyChanged( () => IsBlended );
+            RaisePropertyChanged( () => IsLocked );
+            RaisePropertyChanged( () => PresetDuration );
+            RaisePropertyChanged( () => CurrentLibrary );
+        }
+
+        public void Handle( Events.PresetControllerInitialized args ) {
+            Initialize();
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {
@@ -96,12 +114,14 @@ namespace MilkBottle.ViewModels {
             Libraries.Clear();
             Libraries.AddRange( mLibrarian.AvailableLibraries );
 
+            mCurrentLibrary = mPresetController.CurrentPresetLibrary;
+
             if(( String.IsNullOrWhiteSpace( mCurrentLibrary )) ||
                (!Libraries.Contains( mCurrentLibrary ))) {
                 mCurrentLibrary = Libraries.FirstOrDefault();
-
-                RaisePropertyChanged( () => CurrentLibrary );
             }
+
+            RaisePropertyChanged( () => CurrentLibrary );
         }
 
         private void OnPresetChanged( MilkDropPreset preset ) {

@@ -35,10 +35,9 @@ namespace MilkBottle.Models {
             mGlControl.MakeCurrent();
 
             mProjectM.initialize( mEnvironment.MilkConfigurationFile());
+            mAudio.InitializeAudioCapture();
 
             mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
-
-            mAudio.InitializeAudioCapture();
         }
 
         public void Handle( Events.ApplicationClosing args ) {
