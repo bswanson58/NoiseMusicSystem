@@ -85,8 +85,6 @@ namespace MilkBottle.Models {
                 SwitchLibrary( mLibrarian.AvailableLibraries.FirstOrDefault());
             }
 
-            mPresetTimer.Interval = TimeSpan.FromSeconds( mPresetDuration );
-
             StartPresetCycling();
 
             IsInitialized = true;
@@ -109,6 +107,7 @@ namespace MilkBottle.Models {
         }
 
         public void StartPresetCycling() {
+            UpdateTimer();
             mPresetTimer.Start();
 
             IsRunning = true;
@@ -193,6 +192,10 @@ namespace MilkBottle.Models {
             SelectNextPreset();
         }
 
+        private void UpdateTimer() {
+            mPresetTimer.Interval = TimeSpan.FromSeconds( mPresetDuration );
+        }
+
         private void PlayPreset( int index ) {
             if( index < mProjectM.getPresetListSize()) {
                 if( mCurrentPresetIndex != -1 ) {
@@ -202,6 +205,7 @@ namespace MilkBottle.Models {
                 mProjectM.selectPreset((uint)index, BlendPresetTransition );
 
                 mCurrentPresetIndex = index;
+                UpdateTimer();
             }
         }
 
@@ -229,6 +233,7 @@ namespace MilkBottle.Models {
         public void Dispose() {
             StopPresetCycling();
 
+            mPresetTimer.Tick -= OnPresetTimer;
             mCurrentPreset?.Dispose();
             mEventAggregator.Unsubscribe( this );
         }
