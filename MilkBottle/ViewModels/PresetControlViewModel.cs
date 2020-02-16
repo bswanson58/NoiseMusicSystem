@@ -129,6 +129,7 @@ namespace MilkBottle.ViewModels {
                 mPresetController.PresetDuration = value;
 
                 SetDurationTooltip();
+                RaisePropertyChanged( () => PresetDuration );
             }
         }
 
