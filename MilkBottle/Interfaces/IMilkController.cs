@@ -8,5 +8,7 @@ namespace MilkBottle.Interfaces {
 
         void    StartVisualization();
         void    StopVisualization();
+
+        bool    IsRunning { get; }
     }
 }

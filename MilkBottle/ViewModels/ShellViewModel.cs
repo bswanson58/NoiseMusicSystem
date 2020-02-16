@@ -4,27 +4,27 @@ using System.Windows.Forms;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
+using MilkBottle.Properties;
 using ReusableBits.Mvvm.ViewModelSupport;
 using Application = System.Windows.Application;
 
 namespace MilkBottle.ViewModels {
-    public class ShellViewModel : PropertyChangeBase {
+    class ShellViewModel : PropertyChangeBase {
+        private readonly IStateManager      mStateManager;
         private readonly IEventAggregator   mEventAggregator;
-        private readonly IEnvironment       mEnvironment;
         private readonly IPreferences       mPreferences;
-        private readonly NotifyIcon			mNotifyIcon;
+        private NotifyIcon			        mNotifyIcon;
         private Window                      mShell;
-        private WindowState                 mStoredWindowState;
-        private WindowState                 mCurrentWindowState;
+        private WindowState					mStoredWindowState;
 
         public  bool        DisplayStatus { get; private set; }
 
-        public ShellViewModel( IEnvironment environment, IPreferences preferences, IEventAggregator eventAggregator ) {
-            mEnvironment = environment;
+        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IEventAggregator eventAggregator ) {
+            mStateManager = stateManager;
             mPreferences = preferences;
             mEventAggregator = eventAggregator;
 
-            mNotifyIcon = new NotifyIcon { BalloonTipTitle = mEnvironment.ApplicationName(), Text = mEnvironment.ApplicationName() }; 
+            mNotifyIcon = new NotifyIcon { BalloonTipTitle = ApplicationConstants.ApplicationName, Text = ApplicationConstants.ApplicationName }; 
             mNotifyIcon.Click += OnNotifyIconClick;
 
             var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/MilkBottle;component/Resources/Milk Bottle.ico" ));
@@ -32,58 +32,69 @@ namespace MilkBottle.ViewModels {
                 mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
             }
 
-            mStoredWindowState = WindowState.Normal;
             DisplayStatus = true;
         }
 
         public void ShellLoaded( Window shell ) {
             mShell = shell;
+
+            mShell.StateChanged += OnShellStateChanged;
+            mShell.IsVisibleChanged += OnShellVisibleChanged;
+            mShell.Closing += OnShellClosing;
         }
 
-        public void DisplayShell() {
-            if( CurrentWindowState == WindowState.Minimized ) {
-               if( ShouldMinimizeToTray()) {
-                    RestoreShell();
-               }
-               else {
-                   mShell.WindowState = mStoredWindowState;
-               }
+        private void OnShellStateChanged( object sender, EventArgs args ) {
+            if( mShell != null ) {
+                if( ShouldMinimizeToTray()) {
+                    if( mShell.WindowState == WindowState.Minimized ) {
+                        mShell.Hide();
+                    }
+                    else {
+                        mStoredWindowState = mShell.WindowState;
+                    }
+                }
+
+                DisplayStatus = mShell.WindowState != WindowState.Maximized;
+                RaisePropertyChanged( () => DisplayStatus );
+
+                mStateManager.EnterState( mShell.WindowState == WindowState.Minimized ? eStateTriggers.Suspend : eStateTriggers.Resume );
+
+                mEventAggregator.PublishOnUIThread( new Events.WindowStateChanged( mShell.WindowState ));
             }
-
-            mShell.Activate();
         }
 
-        private void OnNotifyIconClick( object sender, EventArgs args ) {
-            RestoreShell();
+        private void OnShellVisibleChanged( object sender, DependencyPropertyChangedEventArgs e ) {
+            if(( mNotifyIcon != null ) &&
+               ( mShell != null )) {
+                if( ShouldMinimizeToTray()) {
+                    mNotifyIcon.Visible = !mShell.IsVisible;
+                }
+                else {
+                    mNotifyIcon.Visible = false;
+                }
+            }
         }
 
-        private void RestoreShell() {
+        private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
+            mNotifyIcon.Dispose();
+            mNotifyIcon = null;
+
+            if( mShell != null ) {
+                mShell.StateChanged -= OnShellStateChanged;
+                mShell.IsVisibleChanged -= OnShellVisibleChanged;
+                mShell.Closing -= OnShellClosing;
+            }
+        }
+
+        private void OnNotifyIconClick( object sender, EventArgs e ) {
+            ActivateShell();
+        }
+
+        public void ActivateShell() {
             if( mShell != null ) {
                 mShell.Show();
                 mShell.WindowState = mStoredWindowState;
                 mShell.Activate();
-            }
-        }
-
-        public WindowState CurrentWindowState {
-            get => mCurrentWindowState;
-            set {
-                mCurrentWindowState = value;
-
-                DisplayStatus = mCurrentWindowState != WindowState.Maximized;
-                RaisePropertyChanged( () => DisplayStatus );
-
-                if(( mCurrentWindowState == WindowState.Minimized ) &&
-                   ( ShouldMinimizeToTray())) {
-                    mShell?.Hide();
-                    mNotifyIcon.Visible = true;
-                }
-                else {
-                    mStoredWindowState = mShell.WindowState;
-                    mNotifyIcon.Visible = false;
-                }
-
-                mEventAggregator.PublishOnUIThread( new Events.WindowStateChanged( mCurrentWindowState ));
             }
         }
 

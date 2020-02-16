@@ -39,7 +39,7 @@ namespace MilkBottle {
         public bool SignalExternalCommandLineArgs( IList<string> args ) {
             // Bring initial instance to foreground when a second instance is started.
             if( MainWindow?.DataContext is ShellViewModel vm ) {
-                vm.DisplayShell();
+                vm.ActivateShell();
             }
 
             return true;

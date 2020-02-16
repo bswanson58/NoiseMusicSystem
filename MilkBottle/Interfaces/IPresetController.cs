@@ -14,10 +14,11 @@ namespace MilkBottle.Interfaces {
         void    SelectPreviousPreset();
 
         bool    IsInitialized { get; }
+        bool    IsRunning { get; }
+
         string  CurrentPresetLibrary { get; }
         bool    BlendPresetTransition {  get; set; }
         int     PresetDuration { get; set; }
         bool    RandomPresetCycling { get; set; }
-        bool    IsRunning { get; }
     }
 }

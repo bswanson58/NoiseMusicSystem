@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -11,15 +10,13 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class PresetControlViewModel : PropertyChangeBase, IDisposable, 
-                                   IHandle<Events.PresetControllerInitialized>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, 
-                                   IHandle<Events.WindowStateChanged> {
+                                   IHandle<Events.PresetControllerInitialized>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
         private readonly IEventAggregator       mEventAggregator;
-        private readonly IMilkController        mMilkController;
+        private readonly IStateManager          mStateManager;
         private readonly IPresetController      mPresetController;
         private readonly IPresetLibrarian       mLibrarian;
         private IDisposable                     mPresetSubscription;
         private string                          mCurrentLibrary;
-        private bool                            mWasRunning;
 
         public  DelegateCommand                 Start { get; }
         public  DelegateCommand                 Stop { get; }
@@ -30,15 +27,14 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetDurationToolTip { get; private set; }
         public  ObservableCollection<string>    Libraries { get; }
 
-        public PresetControlViewModel( IMilkController milkController, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
-            mMilkController = milkController;
+        public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
+            mStateManager = stateManager;
             mPresetController = presetController;
             mLibrarian = librarian;
             mEventAggregator = eventAggregator;
 
             Libraries = new ObservableCollection<string>();
             mCurrentLibrary = String.Empty;
-            mWasRunning = false;
 
             Start = new DelegateCommand( OnStart );
             Stop = new DelegateCommand( OnStop );
@@ -84,19 +80,6 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public void Handle( Events.WindowStateChanged args ) {
-            if( args.CurrentState == WindowState.Minimized ) {
-                mWasRunning = mPresetController.IsRunning && mPresetController.RandomPresetCycling;
-
-                OnStop();
-            }
-            else {
-                if( mWasRunning ) {
-                    OnStart();
-                }
-            }
-        }
-
         public string CurrentLibrary {
             get => mCurrentLibrary;
             set {
@@ -131,8 +114,8 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool IsLocked {
-            get => !mPresetController.RandomPresetCycling;
-            set => mPresetController.RandomPresetCycling = !value;
+            get => mStateManager.PresetControllerLocked;
+            set => mStateManager.SetPresetLock( value );
         }
 
         public bool IsBlended {
@@ -155,13 +138,11 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnStart() {
-            mMilkController.StartVisualization();
-            mPresetController.StartPresetCycling();
+            mStateManager.EnterState( eStateTriggers.Run );
         }
 
         private void OnStop() {
-            mMilkController.StopVisualization();
-            mPresetController.StopPresetCycling();
+            mStateManager.EnterState( eStateTriggers.Stop );
         }
 
         private void OnNextPreset() {

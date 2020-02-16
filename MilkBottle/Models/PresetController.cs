@@ -23,7 +23,6 @@ namespace MilkBottle.Models {
         private int                                 mCurrentPresetIndex;
         private int                                 mPresetDuration;
         private bool                                mPlayRandom;
-
         public  bool                                IsInitialized { get; private set; }
         public  bool                                BlendPresetTransition { get; set; }
         public  string                              CurrentPresetLibrary { get; private set; }
