@@ -13,6 +13,8 @@ namespace MilkBottle.Interfaces {
         void    SelectNextPreset();
         void    SelectPreviousPreset();
 
+        void    PlayPreset( MilkDropPreset preset );
+
         bool    IsInitialized { get; }
         bool    IsRunning { get; }
 

@@ -3,6 +3,8 @@ using MilkBottle.Interfaces;
 using MilkBottle.Logging;
 using MilkBottle.Models;
 using MilkBottle.Platform;
+using MilkBottle.ViewModels;
+using MilkBottle.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using ReusableBits.Mvvm.VersionSpinner;
@@ -24,6 +26,8 @@ namespace MilkBottle {
             containerRegistry.Register<IPreferences, PreferencesManager>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
+
+            containerRegistry.RegisterDialog<SelectPresetDialog, SelectPresetDialogModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

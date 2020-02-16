@@ -187,6 +187,12 @@ namespace MilkBottle.Models {
             }
         }
 
+        public void PlayPreset( MilkDropPreset preset ) {
+            var index = mProjectM.addPresetURL( preset.PresetLocation, preset.PresetName );
+
+            PlayPreset((int)index );
+        }
+
         private void OnPresetTimer( object sender, EventArgs args ) {
             SelectNextPreset();
         }

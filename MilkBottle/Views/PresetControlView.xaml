@@ -43,10 +43,11 @@
         <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
             <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Prest Library:"/>
             <ComboBox Margin="0,0,5,0" Width="180" VerticalAlignment="Center" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}"/>
+            <Button Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Select" Command="{Binding SelectPreset}"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Duration:"/>
-            <Slider Width="100" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" ToolTip="{Binding PresetDurationToolTip}"/>
+            <Slider Width="80" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
             <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" MinWidth="18" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PresetDuration}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>

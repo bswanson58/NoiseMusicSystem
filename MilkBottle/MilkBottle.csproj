@@ -203,6 +203,7 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Behaviors\DelayedMouseHide.cs" />
     <Compile Include="Behaviors\MetroWindowTitleColor.cs" />
+    <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
     <Compile Include="Dto\LibrarySet.cs" />
     <Compile Include="Dto\MilkDropPreset.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
+    <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="Views\MilkView.xaml.cs">
@@ -243,6 +245,9 @@
     </Compile>
     <Compile Include="Views\PresetControlView.xaml.cs">
       <DependentUpon>PresetControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectPresetDialog.xaml.cs">
+      <DependentUpon>SelectPresetDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -262,11 +267,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\WatermarkTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MilkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PresetControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectPresetDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
