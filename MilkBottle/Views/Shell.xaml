@@ -14,13 +14,17 @@
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
-                 Title="Milk Bottle" 
+                 Title="Milk Bottle"
                  mc:Ignorable="d" 
                  d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}">
 
     <Window.Resources>
         <reusableConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
         <reusableConverters:DefaultValueOpacityConverter x:Key="OpacityConverter" DefaultOpacity="0.3" StandardOpacity="1.0"/>
+
+        <Style x:Key="WindowButtonStyle" TargetType="{x:Type mah:WindowButtonCommands}" BasedOn="{StaticResource {x:Type mah:WindowButtonCommands}}">
+            <Setter Property="Opacity" Value="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
+        </Style>
     </Window.Resources>
 
     <mah:MetroWindow.TitleTemplate>
@@ -32,6 +36,9 @@
         </DataTemplate>
     </mah:MetroWindow.TitleTemplate>
 
+    <mah:MetroWindow.WindowButtonCommands>
+        <mah:WindowButtonCommands Style="{StaticResource WindowButtonStyle}" />
+    </mah:MetroWindow.WindowButtonCommands>
     <!--
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
