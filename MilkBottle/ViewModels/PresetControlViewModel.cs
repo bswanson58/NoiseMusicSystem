@@ -180,7 +180,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnSelectPreset() {
-            var dialogParameters = new DialogParameters($"{SelectPresetDialogModel.cLibraryParameter}={CurrentLibrary}");
+            var dialogParameters = new DialogParameters($"{SelectPresetDialogModel.cLibraryParameter}={CurrentLibrary.LibraryName}");
 
             mDialogService.ShowDialog( "SelectPresetDialog", dialogParameters, OnPresetSelected );
         }
