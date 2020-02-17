@@ -49,7 +49,7 @@
             <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Library:"/>
             <ComboBox Margin="0,0,5,0" Width="180" VerticalAlignment="Center" ItemTemplate="{StaticResource LibrarySet}" ItemsSource="{Binding Libraries}" 
                       SelectedItem="{Binding CurrentLibrary}" ToolTip="{Binding CurrentLibraryTooltip}"/>
-            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Padding="3" Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}"
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}"
                     ToolTip="Select An Individual Preset"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
