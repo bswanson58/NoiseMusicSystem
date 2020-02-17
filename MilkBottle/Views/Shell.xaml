@@ -27,10 +27,20 @@
         </Style>
     </Window.Resources>
 
+    <mah:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0,6,-5,6" Background="Transparent"
+                  Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"
+                  RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality">
+                <Image Source="pack://application:,,,/MilkBottle;component/Resources/Milk Bottle.ico"/>
+            </Grid>
+        </DataTemplate>
+    </mah:MetroWindow.IconTemplate>
+
     <mah:MetroWindow.TitleTemplate>
         <DataTemplate>
             <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Converter={converters:ToUpperConverter}}"
-                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="8,-1,8,0" FontWeight="Light"
+                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,-1,0,0" FontWeight="Light"
                        Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"
                        FontSize="{DynamicResource WindowTitleFontSize}" FontFamily="{DynamicResource HeaderFontFamily}" />
         </DataTemplate>
