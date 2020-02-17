@@ -9,6 +9,7 @@ namespace MilkBottle.Models {
         private bool                        mIsSuspended;
 
         public  bool                        PresetControllerLocked {  get; private set; }
+        public  bool                        IsRunning => mMilkController.IsRunning;
 
         public StateManager( IMilkController milkController, IPresetController presetController ) {
             mMilkController = milkController;

@@ -11,6 +11,8 @@
     interface IStateManager {
         void    EnterState( eStateTriggers toState );
 
+        bool    IsRunning { get; }
+
         bool    PresetControllerLocked { get; }
         void    SetPresetLock( bool toState );
     }

@@ -40,8 +40,8 @@ namespace MilkBottle.ViewModels {
             Libraries = new ObservableCollection<string>();
             mCurrentLibrary = String.Empty;
 
-            Start = new DelegateCommand( OnStart );
-            Stop = new DelegateCommand( OnStop );
+            Start = new DelegateCommand( OnStart, CanStart );
+            Stop = new DelegateCommand( OnStop, CanStop );
             NextPreset = new DelegateCommand( OnNextPreset );
             PreviousPreset = new DelegateCommand( OnPreviousPreset );
             SelectPreset = new DelegateCommand( OnSelectPreset );
@@ -65,6 +65,9 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => IsLocked );
             RaisePropertyChanged( () => PresetDuration );
             RaisePropertyChanged( () => CurrentLibrary );
+
+            Stop.RaiseCanExecuteChanged();
+            Start.RaiseCanExecuteChanged();
         }
 
         public void Handle( Events.PresetControllerInitialized args ) {
@@ -141,10 +144,24 @@ namespace MilkBottle.ViewModels {
 
         private void OnStart() {
             mStateManager.EnterState( eStateTriggers.Run );
+
+            Stop.RaiseCanExecuteChanged();
+            Start.RaiseCanExecuteChanged();
+        }
+
+        private bool CanStart() {
+            return !mStateManager.IsRunning;
         }
 
         private void OnStop() {
             mStateManager.EnterState( eStateTriggers.Stop );
+
+            Stop.RaiseCanExecuteChanged();
+            Start.RaiseCanExecuteChanged();
+        }
+
+        private bool CanStop() {
+            return mStateManager.IsRunning;
         }
 
         private void OnNextPreset() {
