@@ -19,6 +19,7 @@ namespace MilkBottle.Models {
         private readonly Dictionary<string, LibrarySet> mLibraries;
 
         public  IEnumerable<string>         AvailableLibraries => mLibraries.Keys;
+        public  IEnumerable<LibrarySet>     PresetLibraries => mLibraries.Values;
         public  bool                        IsInitialized { get; private set; }
 
         public PresetLibrarian( IEventAggregator eventAggregator, IEnvironment environment, IPreferences preferences, IPlatformLog log ) {

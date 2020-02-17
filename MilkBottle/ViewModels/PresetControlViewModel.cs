@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Data;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -17,8 +19,10 @@ namespace MilkBottle.ViewModels {
         private readonly IStateManager          mStateManager;
         private readonly IPresetController      mPresetController;
         private readonly IPresetLibrarian       mLibrarian;
+        private readonly List<LibrarySet>       mLibraries;
+        private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
-        private string                          mCurrentLibrary;
+        private LibrarySet                      mCurrentLibrary;
 
         public  DelegateCommand                 Start { get; }
         public  DelegateCommand                 Stop { get; }
@@ -27,7 +31,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 SelectPreset { get; }
 
         public  string                          PresetName { get; set; }
-        public  ObservableCollection<string>    Libraries { get; }
+        public  string                          CurrentLibraryTooltip => mCurrentLibrary != null ? $"{mCurrentLibrary.PresetCount} presets in library" : String.Empty;
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibrarian librarian,
                                        IDialogService dialogService, IEventAggregator eventAggregator ) {
@@ -37,8 +41,7 @@ namespace MilkBottle.ViewModels {
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
 
-            Libraries = new ObservableCollection<string>();
-            mCurrentLibrary = String.Empty;
+            mLibraries = new List<LibrarySet>();
 
             Start = new DelegateCommand( OnStart, CanStart );
             Stop = new DelegateCommand( OnStop, CanStop );
@@ -59,8 +62,6 @@ namespace MilkBottle.ViewModels {
         }
 
         private void Initialize() {
-            mCurrentLibrary = mPresetController.CurrentPresetLibrary;
-
             RaisePropertyChanged( () => IsBlended );
             RaisePropertyChanged( () => IsLocked );
             RaisePropertyChanged( () => PresetDuration );
@@ -79,36 +80,42 @@ namespace MilkBottle.ViewModels {
         }
 
         public void Handle( Events.PresetLibrarySwitched  args ) {
-            if( Libraries.Contains( args.LibraryName )) {
-                mCurrentLibrary = args.LibraryName;
+            mCurrentLibrary = mLibraries.FirstOrDefault( l => l.LibraryName.Equals( args.LibraryName ));
 
-                RaisePropertyChanged( () => CurrentLibrary );
+            RaisePropertyChanged( () => CurrentLibrary );
+        }
+
+        public ICollectionView Libraries {
+            get {
+                if( mLibrariesView == null ) {
+                    mLibrariesView = CollectionViewSource.GetDefaultView( mLibraries );
+                    mLibrariesView.SortDescriptions.Add( new SortDescription( "LibraryName", ListSortDirection.Ascending ));
+                }
+
+                return mLibrariesView;
             }
         }
 
-        public string CurrentLibrary {
+        public LibrarySet CurrentLibrary {
             get => mCurrentLibrary;
             set {
                 mCurrentLibrary = value;
 
-                if(!String.IsNullOrWhiteSpace( mCurrentLibrary )) {
-                    mPresetController.LoadLibrary( mCurrentLibrary );
+                if( mCurrentLibrary != null ) {
+                    mPresetController.LoadLibrary( mCurrentLibrary.LibraryName );
                 }
 
                 RaisePropertyChanged( () => CurrentLibrary );
+                RaisePropertyChanged( () => CurrentLibraryTooltip );
             }
         }
 
         private void UpdateLibraries() {
-            Libraries.Clear();
-            Libraries.AddRange( mLibrarian.AvailableLibraries );
+            mLibraries.Clear();
+            mLibraries.AddRange( mLibrarian.PresetLibraries );
 
-            mCurrentLibrary = mPresetController.CurrentPresetLibrary;
-
-            if(( String.IsNullOrWhiteSpace( mCurrentLibrary )) ||
-               (!Libraries.Contains( mCurrentLibrary ))) {
-                mCurrentLibrary = Libraries.FirstOrDefault();
-            }
+            mCurrentLibrary = mLibraries.FirstOrDefault( l => l.LibraryName.Equals( mPresetController.CurrentPresetLibrary )) ??
+                              mLibraries.FirstOrDefault();
 
             RaisePropertyChanged( () => CurrentLibrary );
         }

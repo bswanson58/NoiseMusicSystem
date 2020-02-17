@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace MilkBottle.Dto {
     class LibrarySet {
         public  string                  LibraryName { get; set; }
+        public  int                     PresetCount => Presets.Count;
         public  List<MilkDropPreset>    Presets { get; set; }
 
         public LibrarySet() :

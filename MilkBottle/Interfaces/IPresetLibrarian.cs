@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MilkBottle.Dto;
 
 namespace MilkBottle.Interfaces {
@@ -7,6 +6,8 @@ namespace MilkBottle.Interfaces {
         bool                        IsInitialized { get; }
 
         IEnumerable<string>         AvailableLibraries { get; }
+        IEnumerable<LibrarySet>     PresetLibraries { get; }
+
         LibrarySet                  GetLibrary( string libraryName );
     }
 }
