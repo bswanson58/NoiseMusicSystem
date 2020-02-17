@@ -8,7 +8,7 @@ namespace MilkBottle.Support {
         private int                 mMaximumResult;
 
         public LimitedRepeatingRandom( double repeatFactor ) {
-            mRepeatFactor = Math.Max( 0.0, Math.Min( 1.0, repeatFactor ));
+            mRepeatFactor = Math.Max( 0.0, Math.Min( 0.8, repeatFactor ));
 
             mRandom = new Random( DateTime.Now.Millisecond );
         }
@@ -18,17 +18,21 @@ namespace MilkBottle.Support {
         }
 
         public int Next( int maxValue ) {
-            if( maxValue != mMaximumResult ) {
-                Initialize( maxValue );
-            }
+            var retValue = 0;
 
-            var retValue = GenerateRandom();
+            if( maxValue > 1 ) {
+                if( maxValue != mMaximumResult ) {
+                    Initialize( maxValue );
+                }
 
-            while( mPriorResults.Contains( retValue )) {
                 retValue = GenerateRandom();
-            }
 
-            mPriorResults.Push( retValue );
+                while( mPriorResults.Contains( retValue )) {
+                    retValue = GenerateRandom();
+                }
+
+                mPriorResults.Push( retValue );
+            }
 
             return retValue;
         }
@@ -37,6 +41,11 @@ namespace MilkBottle.Support {
             var repeatSize = Math.Max( 1, (int)( mRepeatFactor * maxValue  ));
 
             mMaximumResult = maxValue;
+
+            if( repeatSize >= mMaximumResult ) {
+                repeatSize = Math.Max( 0, mMaximumResult );
+            }
+
             mPriorResults = new LimitedStack<int>( repeatSize );
         }
 
