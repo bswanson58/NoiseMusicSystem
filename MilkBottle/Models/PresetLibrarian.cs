@@ -39,6 +39,10 @@ namespace MilkBottle.Models {
             mEventAggregator.PublishOnUIThread( new Events.PresetLibraryInitialized());
         }
 
+        public bool ContainsLibrary( string libraryName ) {
+            return mLibraries.Keys.Contains( libraryName );
+        }
+
         public LibrarySet GetLibrary( string libraryName ) {
             var retValue = default( LibrarySet );
 

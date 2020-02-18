@@ -77,7 +77,8 @@ namespace MilkBottle.Models {
             mPlayRandom = preferences.PlayPresetsRandomly;
             BlendPresetTransition = preferences.BlendPresetTransition;
             
-            if(!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) {
+            if((!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) &&
+               ( mLibrarian.ContainsLibrary( preferences.CurrentPresetLibrary ))) {
                 SwitchLibrary( preferences.CurrentPresetLibrary );
             }
             else {
