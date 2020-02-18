@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 using Caliburn.Micro;
+using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;
@@ -9,7 +10,7 @@ using WindowState = System.Windows.WindowState;
 namespace MilkBottle.Models {
     class MilkController : IMilkController, IHandle<Events.ApplicationClosing>, IHandle<Events.WindowStateChanged> {
         private readonly IEventAggregator           mEventAggregator;
-        private readonly IEnvironment               mEnvironment;
+        private readonly IPreferences               mPreferences;
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
@@ -17,10 +18,10 @@ namespace MilkBottle.Models {
 
         public  bool                                IsRunning { get; private set; }
 
-        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IEnvironment environment, IEventAggregator eventAggregator ) {
+        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
-            mEnvironment = environment;
+            mPreferences = preferences;
             mProjectM = projectM;
 
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 34 ) };
@@ -34,7 +35,12 @@ namespace MilkBottle.Models {
             mGlControl = glControl;
             mGlControl.MakeCurrent();
 
-            mProjectM.initialize( mEnvironment.MilkConfigurationFile());
+            var settings = mPreferences.Load<MilkConfiguration>();
+            var nativeSettings = new ProjectMSettings();
+
+            settings.SetNativeConfiguration( nativeSettings );
+
+            mProjectM.initialize( nativeSettings );
             mAudio.InitializeAudioCapture();
 
             mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());

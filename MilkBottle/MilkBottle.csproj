@@ -206,6 +206,7 @@
     <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
     <Compile Include="Dto\LibrarySet.cs" />
+    <Compile Include="Dto\MilkConfiguration.cs" />
     <Compile Include="Dto\MilkDropPreset.cs" />
     <Compile Include="Dto\MilkPreferences.cs" />
     <Compile Include="Events\Events.cs" />
