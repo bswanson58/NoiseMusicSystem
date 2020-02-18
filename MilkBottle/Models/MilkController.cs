@@ -10,6 +10,7 @@ using WindowState = System.Windows.WindowState;
 namespace MilkBottle.Models {
     class MilkController : IMilkController, IHandle<Events.ApplicationClosing>, IHandle<Events.WindowStateChanged> {
         private readonly IEventAggregator           mEventAggregator;
+        private readonly IEnvironment               mEnvironment;
         private readonly IPreferences               mPreferences;
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
@@ -18,10 +19,11 @@ namespace MilkBottle.Models {
 
         public  bool                                IsRunning { get; private set; }
 
-        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEventAggregator eventAggregator ) {
+        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEnvironment environment, IEventAggregator eventAggregator ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
             mPreferences = preferences;
+            mEnvironment = environment;
             mProjectM = projectM;
 
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 34 ) };
@@ -39,6 +41,8 @@ namespace MilkBottle.Models {
             var nativeSettings = new ProjectMSettings();
 
             settings.SetNativeConfiguration( nativeSettings );
+            nativeSettings.DataFolder = mEnvironment.MilkTextureFolder();
+            nativeSettings.PresetFolder = mEnvironment.MilkTextureFolder();
 
             mProjectM.initialize( nativeSettings );
             mAudio.InitializeAudioCapture();

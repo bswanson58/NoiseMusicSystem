@@ -56,5 +56,15 @@ namespace MilkBottle.Platform {
 
             return( retValue );
         }
+
+        public string MilkTextureFolder() {
+            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.MilkTextureFolder );
+
+            if(!Directory.Exists( retValue )) {
+                Directory.CreateDirectory( retValue );
+            }
+
+            return( retValue );
+        }
     }
 }
