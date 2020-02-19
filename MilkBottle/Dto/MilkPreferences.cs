@@ -2,15 +2,14 @@
 
 namespace MilkBottle.Dto {
     class MilkPreferences {
-        public  String  InitialPresetFolder { get; set; }
         public  int     PresetPlayDurationInSeconds {  get; set; }
         public  bool    PlayPresetsRandomly { get; set; }
         public  bool    BlendPresetTransition { get; set; }
         public  string  CurrentPresetLibrary { get; set; }
         public  bool    ShouldMinimizeToTray { get; set; }
+        public  bool    DisplayControllerWhenMaximized { get; set; }
 
         public MilkPreferences() {
-            InitialPresetFolder = String.Empty;
             CurrentPresetLibrary = String.Empty;
 
             PresetPlayDurationInSeconds = 7;
@@ -18,6 +17,7 @@ namespace MilkBottle.Dto {
             BlendPresetTransition = true;
 
             ShouldMinimizeToTray = false;
+            DisplayControllerWhenMaximized = true;
         }
     }
 }

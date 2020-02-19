@@ -1,10 +1,9 @@
-﻿using System;
-using System.Windows;
-using MilkBottle.Dto;
+﻿using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
+using System;
 
 namespace MilkBottle.ViewModels {
     class ConfigurationDialogModel : PropertyChangeBase, IDialogAware {
@@ -18,6 +17,9 @@ namespace MilkBottle.ViewModels {
         public  string                      Title { get; }
         public  DelegateCommand             Ok { get; }
         public  DelegateCommand             Cancel { get; }
+
+        public  bool                        MinimizeToTray { get; set; }
+        public  bool                        DisplayControllerWhenMaximized { get; set; }
 
         public  string                      MeshDescription => $"Width: {mMeshWidth} by Height:{mMeshHeight}";
 
@@ -39,6 +41,11 @@ namespace MilkBottle.ViewModels {
             BeatSensitivity = configuration.BeatSensitivity;
             mMeshWidth = configuration.MeshWidth;
             mMeshHeight = configuration.MeshHeight;
+
+            var uiPreferences = mPreferences.Load<MilkPreferences>();
+
+            MinimizeToTray = uiPreferences.ShouldMinimizeToTray;
+            DisplayControllerWhenMaximized = uiPreferences.DisplayControllerWhenMaximized;
         }
 
         public int MeshWidth {
@@ -97,6 +104,13 @@ namespace MilkBottle.ViewModels {
             configuration.SmoothPresetDuration = SmoothPresetDuration;
 
             mPreferences.Save( configuration );
+
+            var uiPreferences = mPreferences.Load<MilkPreferences>();
+
+            uiPreferences.ShouldMinimizeToTray = MinimizeToTray;
+            uiPreferences.DisplayControllerWhenMaximized = DisplayControllerWhenMaximized;
+
+            mPreferences.Save( uiPreferences );
 
             RaiseRequestClose( new DialogResult( ButtonResult.OK ));
         }

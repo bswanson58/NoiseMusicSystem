@@ -8,7 +8,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ConfigurationDialogModel, IsDesignTimeCreatable=False}"
-             Height="200" Width="550">
+             Height="250" Width="550">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -21,6 +21,7 @@
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -35,6 +36,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" FontSize="14" Text="Visualization Settings:"/>
+
             <!-- MeshWidth/Height -->
             <StackPanel Grid.Row="1" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Mesh Dimensions:"/>
@@ -58,7 +60,26 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+        <Grid Grid.Row="1" Margin="0,12,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" FontSize="14" Text="User Interface Settings:"/>
+
+            <StackPanel Grid.Row="1" Margin="7,3" Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding MinimizeToTray}"/>
+                <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Minimize To Tray"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Margin="7,3" Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding DisplayControllerWhenMaximized}"/>
+                <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Display Controller Panel When Maximized"/>
+            </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
         </StackPanel>
