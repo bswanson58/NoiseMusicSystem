@@ -12,6 +12,7 @@ namespace MilkBottle.ViewModels {
         private int                         mMeshWidth;
         private int                         mMeshHeight;
         private int                         mSmoothPresetDuration;
+        private int                         mFrameRate;
         private float                       mBeatSensitivity;
 
         public  string                      Title { get; }
@@ -39,6 +40,7 @@ namespace MilkBottle.ViewModels {
 
             SmoothPresetDuration = configuration.SmoothPresetDuration;
             BeatSensitivity = configuration.BeatSensitivity;
+            FrameRate = configuration.FrameRate;
             mMeshWidth = configuration.MeshWidth;
             mMeshHeight = configuration.MeshHeight;
 
@@ -88,6 +90,15 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public int FrameRate {
+            get => mFrameRate;
+            set {
+                mFrameRate = value;
+
+                RaisePropertyChanged( () => FrameRate );
+            }
+        }
+
         public bool CanCloseDialog() {
             return true;
         }
@@ -101,6 +112,7 @@ namespace MilkBottle.ViewModels {
             configuration.MeshWidth = MeshWidth;
             configuration.MeshHeight = MeshHeight;
             configuration.BeatSensitivity = BeatSensitivity;
+            configuration.FrameRate = FrameRate;
             configuration.SmoothPresetDuration = SmoothPresetDuration;
 
             mPreferences.Save( configuration );

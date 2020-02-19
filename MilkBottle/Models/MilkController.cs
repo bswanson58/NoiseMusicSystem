@@ -27,7 +27,7 @@ namespace MilkBottle.Models {
             mEnvironment = environment;
             mProjectM = projectM;
 
-            mRenderTimer = new DispatcherTimer( DispatcherPriority.Normal ) { Interval = TimeSpan.FromMilliseconds( 34 ) };
+            mRenderTimer = new DispatcherTimer( DispatcherPriority.Send );
             mRenderTimer.Tick += OnTimer;
             IsRunning = false;
 
@@ -58,6 +58,10 @@ namespace MilkBottle.Models {
             }
 
             mProjectM.initialize( nativeSettings );
+//            mProjectM.showFrameRate( true );
+
+            // the timer gets a little boost to compensate for it's dispatcher priority.
+            mRenderTimer.Interval = TimeSpan.FromTicks(((int)( TimeSpan.TicksPerSecond * 0.8 )) / settings.FrameRate );
         }
 
         public void Handle( Events.ApplicationClosing args ) {

@@ -8,7 +8,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ConfigurationDialogModel, IsDesignTimeCreatable=False}"
-             Height="250" Width="550">
+             Height="270" Width="550">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -33,19 +33,28 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" FontSize="14" Text="Visualization Settings:"/>
 
-            <!-- MeshWidth/Height -->
+            <!-- Frame Rate -->
             <StackPanel Grid.Row="1" Margin="0,5" Orientation="Horizontal">
+                <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Frame Rate:"/>
+                <Slider Width="180" Minimum="10" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding FrameRate}"/>
+                <TextBlock Margin="10,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding FrameRate}"/>
+                <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="frames per second"/>
+            </StackPanel>
+
+            <!-- MeshWidth/Height -->
+            <StackPanel Grid.Row="2" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Mesh Dimensions:"/>
                 <Slider Width="180" Minimum="10" Maximum="200" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MeshWidth}"/>
                 <TextBlock Margin="10,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding MeshDescription}"/>
             </StackPanel>
 
             <!-- SmoothPresetDuration -->
-            <StackPanel Grid.Row="2" Margin="0,5" Orientation="Horizontal">
+            <StackPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Preset Overlap Duration:"/>
                 <Slider Width="180" Minimum="1" Maximum="10" Value="{Binding SmoothPresetDuration}"/>
                 <TextBlock Margin="3,0" MinWidth="18" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding SmoothPresetDuration}"/>
@@ -53,7 +62,7 @@
             </StackPanel>
 
             <!-- BeatSensitivity -->
-            <StackPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal">
+            <StackPanel Grid.Row="4" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Beat Sensitivity:"/>
                 <Slider Width="180" Minimum="0.0" Maximum="5.0" TickFrequency="0.25" IsSnapToTickEnabled="True" Value="{Binding BeatSensitivity}"/>
                 <TextBlock Margin="3,0" MinWidth="18" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding BeatSensitivity}"/>
