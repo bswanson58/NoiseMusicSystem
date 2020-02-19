@@ -23,6 +23,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand             Configuration { get; }
 
         public  bool                        DisplayStatus { get; private set; }
+        public  bool                        DisplayController { get; private set; }
 
         public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
@@ -41,6 +42,7 @@ namespace MilkBottle.ViewModels {
             }
 
             DisplayStatus = true;
+            DisplayController = true;
         }
 
         public void ShellLoaded( Window shell ) {
@@ -64,6 +66,9 @@ namespace MilkBottle.ViewModels {
 
                 DisplayStatus = mShell.WindowState != WindowState.Maximized;
                 RaisePropertyChanged( () => DisplayStatus );
+
+                DisplayController = mShell.WindowState != WindowState.Maximized || ShouldDisplayController();
+                RaisePropertyChanged( () => DisplayController );
 
                 mStateManager.EnterState( mShell.WindowState == WindowState.Minimized ? eStateTriggers.Suspend : eStateTriggers.Resume );
 
@@ -112,6 +117,17 @@ namespace MilkBottle.ViewModels {
 			
             if( configuration != null ) {
                 retValue = configuration.ShouldMinimizeToTray;
+            }
+
+            return( retValue );
+        }
+
+        private bool ShouldDisplayController() {
+            var retValue = false;
+            var configuration = mPreferences.Load<MilkPreferences>();
+			
+            if( configuration != null ) {
+                retValue = configuration.DisplayControllerWhenMaximized;
             }
 
             return( retValue );

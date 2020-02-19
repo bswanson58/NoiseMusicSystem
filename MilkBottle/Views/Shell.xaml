@@ -64,7 +64,8 @@
         </Grid.RowDefinitions>
 
         <views:MilkView Grid.Row="0"/>
-        <views:PresetControlView Grid.Row="1"/>
+        <views:PresetControlView Grid.Row="1"
+                                 Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayController, Converter={StaticResource CollapseOnFalse}}"/>
         <views:StatusView Grid.Row="2" 
                           Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
     </Grid>
