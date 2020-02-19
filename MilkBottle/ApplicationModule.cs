@@ -28,6 +28,7 @@ namespace MilkBottle {
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
 
             containerRegistry.RegisterDialog<SelectPresetDialog, SelectPresetDialogModel>();
+            containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

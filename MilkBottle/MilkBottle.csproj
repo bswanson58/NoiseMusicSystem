@@ -236,11 +236,15 @@
     <Compile Include="Support\LimitedStack.cs" />
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
+    <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
     <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="Views\ConfigurationDialog.xaml.cs">
+      <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MilkView.xaml.cs">
       <DependentUpon>MilkView.xaml</DependentUpon>
     </Compile>
@@ -271,6 +275,10 @@
     <Page Include="Resources\WatermarkTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ConfigurationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MilkView.xaml">
       <SubType>Designer</SubType>

@@ -5,6 +5,8 @@ using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MilkBottle.Properties;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using Application = System.Windows.Application;
 
@@ -12,17 +14,23 @@ namespace MilkBottle.ViewModels {
     class ShellViewModel : PropertyChangeBase {
         private readonly IStateManager      mStateManager;
         private readonly IEventAggregator   mEventAggregator;
+        private readonly IDialogService     mDialogService;
         private readonly IPreferences       mPreferences;
         private NotifyIcon			        mNotifyIcon;
         private Window                      mShell;
         private WindowState					mStoredWindowState;
 
-        public  bool        DisplayStatus { get; private set; }
+        public  DelegateCommand             Configuration { get; }
 
-        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IEventAggregator eventAggregator ) {
+        public  bool                        DisplayStatus { get; private set; }
+
+        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
             mPreferences = preferences;
+            mDialogService = dialogService;
             mEventAggregator = eventAggregator;
+
+            Configuration = new DelegateCommand( OnConfiguration );
 
             mNotifyIcon = new NotifyIcon { BalloonTipTitle = ApplicationConstants.ApplicationName, Text = ApplicationConstants.ApplicationName }; 
             mNotifyIcon.Click += OnNotifyIconClick;
@@ -109,5 +117,10 @@ namespace MilkBottle.ViewModels {
             return( retValue );
         }
 
+        public void OnConfiguration() {
+            mDialogService.ShowDialog( "ConfigurationDialog", null, OnConfigurationCompleted );
+        }
+
+        private void OnConfigurationCompleted( IDialogResult result ) { }
     } 
 }
