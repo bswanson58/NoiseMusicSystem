@@ -54,13 +54,13 @@
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Duration:"/>
-            <Slider Width="80" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
+            <Slider Width="120" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
             <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" MinWidth="18" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PresetDuration}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <CheckBox Margin="3,0" VerticalAlignment="Center" Content="Lock" IsChecked="{Binding IsLocked}" ToolTip="Keep This Preset"/>
-            <CheckBox Margin="5,0,3,0" VerticalAlignment="Center" Content="Blend" IsChecked="{Binding IsBlended}" ToolTip="Overlap Preset Transition"/>
+            <CheckBox Margin="7,0,3,0" VerticalAlignment="Center" Content="Overlap" IsChecked="{Binding IsBlended}" ToolTip="Overlap Preset Transition"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="4" Command="{Binding Start}" ToolTip="Start"/>

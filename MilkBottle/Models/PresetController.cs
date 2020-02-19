@@ -149,6 +149,21 @@ namespace MilkBottle.Models {
             return retValue;
         }
 
+        private void TestPresets() {
+            var presetCount = mProjectM.getPresetListSize();
+
+            for( uint preset = 0; preset < presetCount; preset++ ) {
+                mProjectM.selectPreset( preset, true );
+
+                if( mProjectM.getErrorLoadingCurrentPreset()) {
+                    var presetName = mProjectM.getPresetName( preset );
+                    var presetLocation = mProjectM.getPresetURL( preset );
+
+                    mLog.LogMessage( $"Error loading preset named '{presetName}' at '{presetLocation}'" );
+                }
+            }
+        }
+
         public void SelectNextPreset() {
             var presetCount = mProjectM.getPresetListSize();
 
