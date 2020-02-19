@@ -58,6 +58,8 @@ namespace MilkBottle.ViewModels {
             }
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
+            OnPresetChanged( mPresetController.GetPlayingPreset());
+
             mEventAggregator.Subscribe( this );
         }
 
@@ -121,9 +123,11 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnPresetChanged( MilkDropPreset preset ) {
-            PresetName = Path.GetFileNameWithoutExtension( preset.PresetName );
+            if( preset != null ) {
+                PresetName = Path.GetFileNameWithoutExtension( preset.PresetName );
 
-            RaisePropertyChanged( () => PresetName );
+                RaisePropertyChanged( () => PresetName );
+            }
         }
 
         public bool IsLocked {

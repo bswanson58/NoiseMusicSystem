@@ -5,22 +5,23 @@ namespace MilkBottle.Interfaces {
     interface IPresetController : IDisposable {
         IObservable<MilkDropPreset>     CurrentPreset { get; }
 
-        void    LoadLibrary( string libraryName );
+        void            LoadLibrary( string libraryName );
 
-        void    StopPresetCycling();
-        void    StartPresetCycling();
+        void            StopPresetCycling();
+        void            StartPresetCycling();
 
-        void    SelectNextPreset();
-        void    SelectPreviousPreset();
+        void            SelectNextPreset();
+        void            SelectPreviousPreset();
 
-        void    PlayPreset( MilkDropPreset preset );
+        void            PlayPreset( MilkDropPreset preset );
+        MilkDropPreset  GetPlayingPreset();
 
-        bool    IsInitialized { get; }
-        bool    IsRunning { get; }
+        bool            IsInitialized { get; }
+        bool            IsRunning { get; }
 
-        string  CurrentPresetLibrary { get; }
-        bool    BlendPresetTransition {  get; set; }
-        int     PresetDuration { get; set; }
-        bool    RandomPresetCycling { get; set; }
+        string          CurrentPresetLibrary { get; }
+        bool            BlendPresetTransition {  get; set; }
+        int             PresetDuration { get; set; }
+        bool            RandomPresetCycling { get; set; }
     }
 }

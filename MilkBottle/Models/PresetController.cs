@@ -17,7 +17,7 @@ namespace MilkBottle.Models {
         private readonly ProjectMWrapper            mProjectM;
         private readonly IPreferences               mPreferences;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
-        private readonly LimitedStack<int>          mPresetHistory;
+        private readonly LimitedStack<ulong>        mPresetHistory;
         private readonly DispatcherTimer            mPresetTimer;
         private readonly LimitedRepeatingRandom     mRandom;
         private int                                 mCurrentPresetIndex;
@@ -37,7 +37,7 @@ namespace MilkBottle.Models {
             mEventAggregator = eventAggregator;
             mLog = log;
 
-            mPresetHistory = new LimitedStack<int>( 100 );
+            mPresetHistory = new LimitedStack<ulong>( 100 );
             mRandom = new LimitedRepeatingRandom( 0.6 );
             mCurrentPreset = new Subject<MilkDropPreset>();
             mPresetTimer = new DispatcherTimer();
@@ -110,6 +110,18 @@ namespace MilkBottle.Models {
             }
         }
 
+        public MilkDropPreset GetPlayingPreset() {
+            var retValue = default( MilkDropPreset );
+
+            if( mProjectM.isInitialized()) {
+               var presetIndex = mProjectM.selectedPresetIndex();
+
+                retValue = new MilkDropPreset( mProjectM.getPresetName(presetIndex ), mProjectM.getPresetURL( presetIndex ));
+            }
+
+            return retValue;
+        }
+
         public void LoadLibrary( string libraryName ) {
             if( SwitchLibrary( libraryName )) {
                 var preferences = mPreferences.Load<MilkPreferences>();
@@ -168,12 +180,12 @@ namespace MilkBottle.Models {
             var presetCount = mProjectM.getPresetListSize();
 
             if( mPlayRandom ) {
-                var index = mRandom.Next( 0, (int)presetCount );
+                var index = (ulong)mRandom.Next( 0, (int)presetCount );
 
                 PlayPreset( index );
             }
             else {
-                var currentIndex = (int)mProjectM.selectedPresetIndex() + 1;
+                var currentIndex = mProjectM.selectedPresetIndex() + 1;
 
                 if( currentIndex >= presetCount ) {
                     currentIndex = 0;
@@ -225,7 +237,7 @@ namespace MilkBottle.Models {
         public void PlayPreset( MilkDropPreset preset ) {
             var index = mProjectM.addPresetURL( preset.PresetLocation, preset.PresetName );
 
-            PlayPreset((int)index );
+            PlayPreset( index );
         }
 
         private void OnPresetTimer( object sender, EventArgs args ) {
@@ -236,15 +248,15 @@ namespace MilkBottle.Models {
             mPresetTimer.Interval = TimeSpan.FromSeconds( mPresetDuration );
         }
 
-        private void PlayPreset( int index ) {
+        private void PlayPreset( ulong index ) {
             if( index < mProjectM.getPresetListSize()) {
                 if( mCurrentPresetIndex != -1 ) {
-                    mPresetHistory.Push( mCurrentPresetIndex );
+                    mPresetHistory.Push((ulong)mCurrentPresetIndex );
                 }
 
                 mProjectM.selectPreset((uint)index, BlendPresetTransition );
 
-                mCurrentPresetIndex = index;
+                mCurrentPresetIndex = (int)index;
                 UpdateTimer();
             }
         }
