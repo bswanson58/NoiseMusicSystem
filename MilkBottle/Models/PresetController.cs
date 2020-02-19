@@ -10,7 +10,7 @@ using MilkBottle.Interfaces;
 using MilkBottle.Support;
 
 namespace MilkBottle.Models {
-    class PresetController : IPresetController, IHandle<Events.MilkInitialized>, IHandle<Events.PresetLibraryInitialized> {
+    class PresetController : IPresetController, IHandle<Events.MilkInitialized>, IHandle<Events.MilkUpdated>, IHandle<Events.PresetLibraryInitialized> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
         private readonly IPresetLibrarian           mLibrarian;
@@ -60,6 +60,20 @@ namespace MilkBottle.Models {
             }
         }
 
+        public void Handle( Events.MilkUpdated args ) {
+            var wasRunning = IsRunning;
+
+            if( wasRunning ) {
+                StopPresetCycling();
+            }
+
+            InitializePresets();
+
+            if( wasRunning ) {
+                StartPresetCycling();
+            }
+        }
+
         public void Handle( Events.PresetLibraryInitialized args ) {
             if( mProjectM.isInitialized()) {
                 Initialize();
@@ -76,7 +90,17 @@ namespace MilkBottle.Models {
             mPresetDuration = preferences.PresetPlayDurationInSeconds;
             mPlayRandom = preferences.PlayPresetsRandomly;
             BlendPresetTransition = preferences.BlendPresetTransition;
-            
+
+            InitializePresets();
+            StartPresetCycling();
+
+            IsInitialized = true;
+            mEventAggregator.PublishOnUIThread( new Events.PresetControllerInitialized());
+        }
+
+        private void InitializePresets() {
+            var preferences = mPreferences.Load<MilkPreferences>();
+
             if((!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) &&
                ( mLibrarian.ContainsLibrary( preferences.CurrentPresetLibrary ))) {
                 SwitchLibrary( preferences.CurrentPresetLibrary );
@@ -84,11 +108,6 @@ namespace MilkBottle.Models {
             else {
                 SwitchLibrary( mLibrarian.AvailableLibraries.FirstOrDefault());
             }
-
-            StartPresetCycling();
-
-            IsInitialized = true;
-            mEventAggregator.PublishOnUIThread( new Events.PresetControllerInitialized());
         }
 
         public void LoadLibrary( string libraryName ) {

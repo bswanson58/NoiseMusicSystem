@@ -8,7 +8,8 @@ using OpenTK;
 using WindowState = System.Windows.WindowState;
 
 namespace MilkBottle.Models {
-    class MilkController : IMilkController, IHandle<Events.ApplicationClosing>, IHandle<Events.WindowStateChanged> {
+    class MilkController : IMilkController, 
+                           IHandle<Events.ApplicationClosing>, IHandle<Events.WindowStateChanged>, IHandle<Events.MilkConfigurationUpdated> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IEnvironment               mEnvironment;
         private readonly IPreferences               mPreferences;
@@ -37,6 +38,13 @@ namespace MilkBottle.Models {
             mGlControl = glControl;
             mGlControl.MakeCurrent();
 
+            InitializeMilk();
+            mAudio.InitializeAudioCapture();
+
+            mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
+        }
+
+        private void InitializeMilk() {
             var settings = mPreferences.Load<MilkConfiguration>();
             var nativeSettings = new ProjectMSettings();
 
@@ -44,10 +52,12 @@ namespace MilkBottle.Models {
             nativeSettings.DataFolder = mEnvironment.MilkTextureFolder();
             nativeSettings.PresetFolder = mEnvironment.MilkTextureFolder();
 
-            mProjectM.initialize( nativeSettings );
-            mAudio.InitializeAudioCapture();
+            if( mProjectM.isInitialized()) {
+                nativeSettings.WindowHeight = mProjectM.getWindowHeight();
+                nativeSettings.WindowWidth = mProjectM.getWindowWidth();
+            }
 
-            mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
+            mProjectM.initialize( nativeSettings );
         }
 
         public void Handle( Events.ApplicationClosing args ) {
@@ -59,6 +69,12 @@ namespace MilkBottle.Models {
                ( args.CurrentState != WindowState.Minimized )) {
                 UpdateVisualization();
             }
+        }
+
+        public void Handle( Events.MilkConfigurationUpdated args ) {
+            InitializeMilk();
+
+            mEventAggregator.PublishOnUIThread( new Events.MilkUpdated());
         }
 
         public void StartVisualization() {

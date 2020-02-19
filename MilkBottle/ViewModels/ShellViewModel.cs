@@ -121,6 +121,10 @@ namespace MilkBottle.ViewModels {
             mDialogService.ShowDialog( "ConfigurationDialog", null, OnConfigurationCompleted );
         }
 
-        private void OnConfigurationCompleted( IDialogResult result ) { }
+        private void OnConfigurationCompleted( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                mEventAggregator.PublishOnUIThread( new Events.MilkConfigurationUpdated());
+            }
+        }
     } 
 }
