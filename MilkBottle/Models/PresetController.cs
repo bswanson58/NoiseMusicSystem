@@ -48,16 +48,22 @@ namespace MilkBottle.Models {
 
             mEventAggregator.Subscribe( this );
 
+            Initialize();
+        }
+
+        private void Initialize() {
             if(( mProjectM.isInitialized()) &&
                ( mLibrarian.IsInitialized )) {
-                Initialize();
+                InitializeMilk();
+
+                StartPresetCycling();
+
+                mEventAggregator.PublishOnUIThread( new Events.PresetControllerInitialized());
             }
         }
 
         public void Handle( Events.MilkInitialized args ) {
-            if( mLibrarian.IsInitialized ) {
-                Initialize();
-            }
+            Initialize();
         }
 
         public void Handle( Events.MilkUpdated args ) {
@@ -67,7 +73,7 @@ namespace MilkBottle.Models {
                 StopPresetCycling();
             }
 
-            InitializePresets();
+            InitializeMilk();
 
             if( wasRunning ) {
                 StartPresetCycling();
@@ -75,12 +81,10 @@ namespace MilkBottle.Models {
         }
 
         public void Handle( Events.PresetLibraryInitialized args ) {
-            if( mProjectM.isInitialized()) {
-                Initialize();
-            }
+            Initialize();
         }
  
-        private void Initialize() {
+        private void InitializeMilk() {
             mProjectM.setPresetCallback( OnPresetSwitched );
             mProjectM.setShuffleEnabled( false );
             mProjectM.setPresetLock( true );
@@ -91,16 +95,6 @@ namespace MilkBottle.Models {
             mPlayRandom = preferences.PlayPresetsRandomly;
             BlendPresetTransition = preferences.BlendPresetTransition;
 
-            InitializePresets();
-            StartPresetCycling();
-
-            IsInitialized = true;
-            mEventAggregator.PublishOnUIThread( new Events.PresetControllerInitialized());
-        }
-
-        private void InitializePresets() {
-            var preferences = mPreferences.Load<MilkPreferences>();
-
             if((!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) &&
                ( mLibrarian.ContainsLibrary( preferences.CurrentPresetLibrary ))) {
                 SwitchLibrary( preferences.CurrentPresetLibrary );
@@ -108,6 +102,8 @@ namespace MilkBottle.Models {
             else {
                 SwitchLibrary( mLibrarian.AvailableLibraries.FirstOrDefault());
             }
+
+            IsInitialized = true;
         }
 
         public MilkDropPreset GetPlayingPreset() {
@@ -160,7 +156,7 @@ namespace MilkBottle.Models {
 
             return retValue;
         }
-
+/*
         private void TestPresets() {
             var presetCount = mProjectM.getPresetListSize();
 
@@ -175,7 +171,7 @@ namespace MilkBottle.Models {
                 }
             }
         }
-
+*/
         public void SelectNextPreset() {
             var presetCount = mProjectM.getPresetListSize();
 
@@ -254,7 +250,7 @@ namespace MilkBottle.Models {
                     mPresetHistory.Push((ulong)mCurrentPresetIndex );
                 }
 
-                mProjectM.selectPreset((uint)index, BlendPresetTransition );
+                mProjectM.selectPreset((uint)index, !BlendPresetTransition );
 
                 mCurrentPresetIndex = (int)index;
                 UpdateTimer();
