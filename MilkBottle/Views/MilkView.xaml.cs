@@ -31,7 +31,7 @@ namespace MilkBottle.Views {
 
         private void OnSizeChanged( object sender, SizeChangedEventArgs e ) {
             if( DataContext is MilkViewModel vm ) {
-                vm.OnSizeChanged( (int)e.NewSize.Width, (int)e.NewSize.Height );
+                vm.OnSizeChanged( e.NewSize );
             }
         }
     }

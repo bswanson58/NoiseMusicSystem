@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -31,8 +32,12 @@ namespace MilkBottle.Models {
             mLibraries = new Dictionary<string, LibrarySet>();
         }
 
-        public void Initialize() {
-            LoadLibrary();
+        public Task<bool> Initialize() {
+            return Task.Run( () => {
+                LoadLibrary();
+
+                return true;
+            });
         }
 
         public bool ContainsLibrary( string libraryName ) {

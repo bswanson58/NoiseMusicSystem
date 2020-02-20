@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
@@ -17,6 +18,7 @@ namespace MilkBottle.Models {
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
         private GLControl                           mGlControl;
+        private Size                                mLastWindowSize;
 
         public  bool                                IsRunning { get; private set; }
 
@@ -27,6 +29,7 @@ namespace MilkBottle.Models {
             mEnvironment = environment;
             mProjectM = projectM;
 
+            mLastWindowSize = Size.Empty;
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Send );
             mRenderTimer.Tick += OnTimer;
             IsRunning = false;
@@ -70,6 +73,7 @@ namespace MilkBottle.Models {
             }
 
             mProjectM.initialize( nativeSettings );
+            UpdateWindowSize( mLastWindowSize );
 //            mProjectM.showFrameRate( true );
 
             // the timer gets a little boost to compensate for it's dispatcher priority.
@@ -97,9 +101,16 @@ namespace MilkBottle.Models {
             IsRunning = false;
         }
 
-        public void OnSizeChanged( int width, int height ) {
-            if( mProjectM.isInitialized()) {
-                mProjectM.updateWindowSize( Scaler.Current.ScaleWidth( width ), Scaler.Current.ScaleHeight( height ));
+        public void OnSizeChanged( Size newSize ) {
+            mLastWindowSize = newSize;
+
+            UpdateWindowSize( mLastWindowSize );
+        }
+
+        private void UpdateWindowSize( Size size ) {
+            if(( mProjectM.isInitialized()) &&
+               (!size.IsEmpty )) {
+                mProjectM.updateWindowSize( Scaler.Current.ScaleWidth((int)size.Width ), Scaler.Current.ScaleHeight((int)size.Height ));
             }
         }
 

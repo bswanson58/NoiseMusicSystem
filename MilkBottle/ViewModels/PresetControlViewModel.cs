@@ -59,8 +59,6 @@ namespace MilkBottle.ViewModels {
                 UpdateLibraries();
             }
 
-            OnPresetChanged( mPresetController.GetPlayingPreset());
-
             mEventAggregator.Subscribe( this );
         }
 
@@ -76,6 +74,8 @@ namespace MilkBottle.ViewModels {
 
             Stop.RaiseCanExecuteChanged();
             Start.RaiseCanExecuteChanged();
+
+            OnPresetChanged( mPresetController.GetPlayingPreset());
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {

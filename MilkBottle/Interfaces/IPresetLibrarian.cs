@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MilkBottle.Dto;
 
 namespace MilkBottle.Interfaces {
     interface IPresetLibrarian {
-        void                        Initialize();
+        Task<bool>                  Initialize();
         bool                        IsInitialized { get; }
         bool                        ContainsLibrary( string libraryName );
 

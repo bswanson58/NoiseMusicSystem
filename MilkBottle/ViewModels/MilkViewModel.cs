@@ -1,4 +1,5 @@
-﻿using MilkBottle.Interfaces;
+﻿using System.Windows;
+using MilkBottle.Interfaces;
 using OpenTK;
 
 namespace MilkBottle.ViewModels {
@@ -16,8 +17,8 @@ namespace MilkBottle.ViewModels {
             mInitializationController.ContextReady( glControl );
         }
 
-        public void OnSizeChanged( int width, int height ) {
-            mMilkController.OnSizeChanged( width, height );
+        public void OnSizeChanged( Size size ) {
+            mMilkController.OnSizeChanged( size );
         }
     }
 }

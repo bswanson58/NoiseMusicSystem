@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Threading.Tasks;
+using Caliburn.Micro;
 using MilkBottle.Interfaces;
 using OpenTK;
 
@@ -7,31 +8,33 @@ namespace MilkBottle.Models {
         private readonly IEventAggregator   mEventAggregator;
         private readonly IMilkController    mMilkController;
         private readonly IPresetController  mPresetController;
-        private readonly IPresetLibrarian   mPresetLibrarian;
+        private readonly Task<bool>         mLibraryInitializationTask;
         private GLControl                   mGlControl;
 
         public InitializationController( IMilkController milkController, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
             mEventAggregator = eventAggregator;
             mMilkController = milkController;
             mPresetController = presetController;
-            mPresetLibrarian = librarian;
+
+            mLibraryInitializationTask = librarian.Initialize();
 
             mEventAggregator.Subscribe( this );
         }
 
-        public void ContextReady( GLControl glControl ) {
-            mPresetLibrarian.Initialize();
-
+        public async void ContextReady( GLControl glControl ) {
             mGlControl = glControl;
             mGlControl.MakeCurrent();
 
             mMilkController.Initialize( mGlControl );
-            mPresetController.Initialize();
 
-            mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
+            if( await mLibraryInitializationTask ) {
+                mPresetController.Initialize();
 
-            mMilkController.StartVisualization();
-            mPresetController.StartPresetCycling();
+                mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
+
+                mMilkController.StartVisualization();
+                mPresetController.StartPresetCycling();
+            }
         }
 
         public void Handle( Events.MilkConfigurationUpdated args ) {

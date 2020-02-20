@@ -95,7 +95,8 @@ namespace MilkBottle.Models {
         public MilkDropPreset GetPlayingPreset() {
             var retValue = default( MilkDropPreset );
 
-            if( mProjectM.isInitialized()) {
+            if(( mProjectM.isInitialized()) &&
+               ( mProjectM.getPresetListSize() > 0 )) {
                var presetIndex = mProjectM.selectedPresetIndex();
 
                 retValue = new MilkDropPreset( mProjectM.getPresetName(presetIndex ), mProjectM.getPresetURL( presetIndex ));

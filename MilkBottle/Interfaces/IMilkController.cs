@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using OpenTK;
 
 namespace MilkBottle.Interfaces {
@@ -6,7 +7,7 @@ namespace MilkBottle.Interfaces {
         void    Initialize( GLControl glControl );
         void    MilkConfigurationUpdated();
 
-        void    OnSizeChanged( int width, int height );
+        void    OnSizeChanged( Size size );
 
         void    StartVisualization();
         void    StopVisualization();
