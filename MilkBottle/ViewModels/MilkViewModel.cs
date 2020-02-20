@@ -1,33 +1,23 @@
-﻿using System;
-using Caliburn.Micro;
-using MilkBottle.Interfaces;
+﻿using MilkBottle.Interfaces;
 using OpenTK;
 
 namespace MilkBottle.ViewModels {
-    class MilkViewModel : IDisposable {
-        private readonly IEventAggregator   mEventAggregator;
-        private readonly IMilkController    mMilkController;
+    class MilkViewModel {
+        private readonly IInitializationController  mInitializationController;
+        private readonly IMilkController            mMilkController;
 
 
-        public MilkViewModel( IMilkController milkController, IEventAggregator eventAggregator ) {
-            mEventAggregator = eventAggregator;
+        public MilkViewModel( IInitializationController initializationController, IMilkController milkController ) {
+            mInitializationController = initializationController;
             mMilkController = milkController;
         }
 
         public void Initialize( GLControl glControl ) {
-            mMilkController.Initialize( glControl );
-        }
-
-        public void StartVisualization() {
-            mMilkController.StartVisualization();
+            mInitializationController.ContextReady( glControl );
         }
 
         public void OnSizeChanged( int width, int height ) {
             mMilkController.OnSizeChanged( width, height );
-        }
-
-        public void Dispose() {
-            mEventAggregator.Unsubscribe( this );
         }
     }
 }

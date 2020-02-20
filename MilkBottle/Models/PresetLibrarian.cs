@@ -29,14 +29,10 @@ namespace MilkBottle.Models {
             mLog = log;
 
             mLibraries = new Dictionary<string, LibrarySet>();
-
-            Initialize();
         }
 
-        private void Initialize() {
+        public void Initialize() {
             LoadLibrary();
-
-            mEventAggregator.PublishOnUIThread( new Events.PresetLibraryInitialized());
         }
 
         public bool ContainsLibrary( string libraryName ) {

@@ -5,6 +5,9 @@ namespace MilkBottle.Interfaces {
     interface IPresetController : IDisposable {
         IObservable<MilkDropPreset>     CurrentPreset { get; }
 
+        void            Initialize();
+        void            MilkConfigurationUpdated();
+
         void            LoadLibrary( string libraryName );
 
         void            StopPresetCycling();

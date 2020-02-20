@@ -15,12 +15,6 @@ namespace MilkBottle.Views {
 
         public MilkView() {
             InitializeComponent();
-        
-            if(( DataContext is MilkViewModel vm ) &&
-               ( mGlControl != null )) {
-                vm.Initialize( mGlControl );
-                vm.StartVisualization();
-            }
         }
 
         private void WindowsFormsHost_Initialized(object sender, EventArgs e) {
@@ -28,6 +22,10 @@ namespace MilkBottle.Views {
 
             if( sender is WindowsFormsHost host ) {
                 host.Child = mGlControl;
+            }
+
+            if( DataContext is MilkViewModel vm ) {
+                vm.Initialize( mGlControl );
             }
         }
 

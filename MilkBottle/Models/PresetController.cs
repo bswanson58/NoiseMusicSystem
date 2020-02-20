@@ -10,7 +10,7 @@ using MilkBottle.Interfaces;
 using MilkBottle.Support;
 
 namespace MilkBottle.Models {
-    class PresetController : IPresetController, IHandle<Events.MilkInitialized>, IHandle<Events.MilkUpdated>, IHandle<Events.PresetLibraryInitialized> {
+    class PresetController : IPresetController {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
         private readonly IPresetLibrarian           mLibrarian;
@@ -47,26 +47,16 @@ namespace MilkBottle.Models {
             IsInitialized = false;
 
             mEventAggregator.Subscribe( this );
-
-            Initialize();
         }
 
-        private void Initialize() {
+        public void Initialize() {
             if(( mProjectM.isInitialized()) &&
                ( mLibrarian.IsInitialized )) {
                 InitializeMilk();
-
-                StartPresetCycling();
-
-                mEventAggregator.PublishOnUIThread( new Events.PresetControllerInitialized());
             }
         }
 
-        public void Handle( Events.MilkInitialized args ) {
-            Initialize();
-        }
-
-        public void Handle( Events.MilkUpdated args ) {
+        public void MilkConfigurationUpdated() {
             var wasRunning = IsRunning;
 
             if( wasRunning ) {
@@ -80,10 +70,6 @@ namespace MilkBottle.Models {
             }
         }
 
-        public void Handle( Events.PresetLibraryInitialized args ) {
-            Initialize();
-        }
- 
         private void InitializeMilk() {
             mProjectM.setPresetCallback( OnPresetSwitched );
             mProjectM.setShuffleEnabled( false );

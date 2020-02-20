@@ -13,7 +13,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class PresetControlViewModel : PropertyChangeBase, IDisposable, 
-                                   IHandle<Events.PresetControllerInitialized>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
+                                   IHandle<Events.InitializationComplete>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IDialogService         mDialogService;
         private readonly IStateManager          mStateManager;
@@ -49,6 +49,8 @@ namespace MilkBottle.ViewModels {
             PreviousPreset = new DelegateCommand( OnPreviousPreset );
             SelectPreset = new DelegateCommand( OnSelectPreset );
 
+            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
+
             if( mPresetController.IsInitialized ) {
                 Initialize();
             }
@@ -57,10 +59,13 @@ namespace MilkBottle.ViewModels {
                 UpdateLibraries();
             }
 
-            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
             OnPresetChanged( mPresetController.GetPlayingPreset());
 
             mEventAggregator.Subscribe( this );
+        }
+
+        public void Handle( Events.InitializationComplete args ) {
+            Initialize();
         }
 
         private void Initialize() {
@@ -71,10 +76,6 @@ namespace MilkBottle.ViewModels {
 
             Stop.RaiseCanExecuteChanged();
             Start.RaiseCanExecuteChanged();
-        }
-
-        public void Handle( Events.PresetControllerInitialized args ) {
-            Initialize();
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {

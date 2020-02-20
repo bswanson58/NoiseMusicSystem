@@ -12,12 +12,8 @@ namespace MilkBottle.Events {
         }
     }
 
-    public class MilkInitialized { }
+    public class InitializationComplete { }
     public class MilkConfigurationUpdated { }
-    public class MilkUpdated { }
-
-    public class PresetControllerInitialized { }
-    public class PresetLibraryInitialized { }
     public class PresetLibraryUpdated { }
 
     public class PresetLibrarySwitched {

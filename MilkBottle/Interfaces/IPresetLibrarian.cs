@@ -3,6 +3,7 @@ using MilkBottle.Dto;
 
 namespace MilkBottle.Interfaces {
     interface IPresetLibrarian {
+        void                        Initialize();
         bool                        IsInitialized { get; }
         bool                        ContainsLibrary( string libraryName );
 

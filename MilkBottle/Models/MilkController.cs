@@ -9,7 +9,7 @@ using WindowState = System.Windows.WindowState;
 
 namespace MilkBottle.Models {
     class MilkController : IMilkController, 
-                           IHandle<Events.ApplicationClosing>, IHandle<Events.WindowStateChanged>, IHandle<Events.MilkConfigurationUpdated> {
+                           IHandle<Events.WindowStateChanged> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IEnvironment               mEnvironment;
         private readonly IPreferences               mPreferences;
@@ -40,8 +40,20 @@ namespace MilkBottle.Models {
 
             InitializeMilk();
             mAudio.InitializeAudioCapture();
+        }
 
-            mEventAggregator.PublishOnUIThread( new Events.MilkInitialized());
+        public void MilkConfigurationUpdated() {
+            var wasRunning = IsRunning;
+
+            if( wasRunning ) {
+                StopVisualization();
+            }
+
+            InitializeMilk();
+
+            if( wasRunning ) {
+                StartVisualization();
+            }
         }
 
         private void InitializeMilk() {
@@ -64,31 +76,11 @@ namespace MilkBottle.Models {
             mRenderTimer.Interval = TimeSpan.FromTicks(((int)( TimeSpan.TicksPerSecond * 0.8 )) / settings.FrameRate );
         }
 
-        public void Handle( Events.ApplicationClosing args ) {
-            StopVisualization();
-        }
-
         public void Handle( Events.WindowStateChanged args ) {
             if((!IsRunning ) &&
                ( args.CurrentState != WindowState.Minimized )) {
                 UpdateVisualization();
             }
-        }
-
-        public void Handle( Events.MilkConfigurationUpdated args ) {
-            var wasRunning = IsRunning;
-
-            if( wasRunning ) {
-                StopVisualization();
-            }
-
-            InitializeMilk();
-
-            if( wasRunning ) {
-                StartVisualization();
-            }
-
-            mEventAggregator.PublishOnUIThread( new Events.MilkUpdated());
         }
 
         public void StartVisualization() {
