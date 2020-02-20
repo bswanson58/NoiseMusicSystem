@@ -55,8 +55,7 @@ public:
 				AspectCorrection(true),
 				ShuffleEnabled(false),
 				SoftCutRatingsEnabled(false)
-	{
-	}
+	{}
 
 	int MeshWidth;
 	int MeshHeight;

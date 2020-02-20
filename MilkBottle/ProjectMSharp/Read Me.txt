@@ -1,0 +1,22 @@
+To build the ProjectMSharp project:
+
+Create a local copy of the projectM source tree located at: https://github.com/projectM-visualizer/projectm
+
+Either copy or use symlinks to place the wrapper files into place within the projectM source tree:
+
+in projectM/msvc:
+	ProjectMSharp.sln
+	ProjectMSharp.vcxproj
+
+in projectM/src:
+	the ProjectMSharp directory and it's contents.
+
+after building, the resulting ProjectMSharp.dll will be located under: projectM/msvc/ProjectMSharp
+
+
+to use symlinks:
+
+at a command prompt within the projectM source tree locations discussed above, these commands would be typical:
+mklink ProjectMSharp.sln ..\..\Noise\MilkBottle\ProjectMSharp\ProjectMSharp.sln
+mklink ProjectMSharp.vcxproj ..\..\Noise\MilkBottle\ProjectMSharp\ProjectMSharp.vcxproj
+mklink /D ProjectMSharp ..\..\Noise\MilkBottle\ProjectMSharp\ProjectMSharp
