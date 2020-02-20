@@ -76,7 +76,17 @@ namespace MilkBottle.Models {
         }
 
         public void Handle( Events.MilkConfigurationUpdated args ) {
+            var wasRunning = IsRunning;
+
+            if( wasRunning ) {
+                StopVisualization();
+            }
+
             InitializeMilk();
+
+            if( wasRunning ) {
+                StartVisualization();
+            }
 
             mEventAggregator.PublishOnUIThread( new Events.MilkUpdated());
         }
