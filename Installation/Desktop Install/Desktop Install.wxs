@@ -173,7 +173,8 @@
 				<ComponentGroupRef Id="ReplayGainFiles"/>
 				<ComponentGroupRef Id="SeriLogFiles"/>
 				<ComponentGroupRef Id="StatelessFiles"/>
-				<ComponentGroupRef Id="TagLibSharpFiles"/>
+        <ComponentGroupRef Id="TagLibSharpFiles"/>
+        <ComponentGroupRef Id="TinyIpcFiles"/>
 			</Feature>
 		</Feature>
 

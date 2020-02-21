@@ -128,7 +128,8 @@
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
 			<ComponentGroupRef Id="DotNetZipFiles"/>
-			<ComponentGroupRef Id="MahAppsMetroFiles"/>
+      <ComponentGroupRef Id="MahAppsMetroFiles"/>
+      <ComponentGroupRef Id="TinyIpcFiles"/>
 		</Feature>
 
 		<UIRef Id="InstallUI" />

@@ -60,6 +60,7 @@
     <Content Include="SeriLog.wxi" />
     <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
+    <Content Include="TinyIpc.wxi" />
     <Content Include="Version.wxi" />
   </ItemGroup>
   <ItemGroup>

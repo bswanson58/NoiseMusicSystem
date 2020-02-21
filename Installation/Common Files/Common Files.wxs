@@ -28,6 +28,7 @@
 		<?include ReplayGain.wxi ?>
 		<?include SeriLog.wxi ?>
 		<?include Stateless.wxi ?>
-		<?include TagLibSharp.wxi ?>
+    <?include TagLibSharp.wxi ?>
+    <?include TinyIpc.wxi ?>
 	</Fragment>
 </Wix>

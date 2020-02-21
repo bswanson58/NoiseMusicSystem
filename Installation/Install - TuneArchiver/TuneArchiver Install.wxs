@@ -142,6 +142,7 @@
       <ComponentGroupRef Id="ReplayGainFiles"/>
       <ComponentGroupRef Id="StatelessFiles"/>
       <ComponentGroupRef Id="TagLibSharpFiles"/>
+      <ComponentGroupRef Id="TinyIpcFiles"/>
     </Feature>
 
 		<UIRef Id="InstallUI" />
