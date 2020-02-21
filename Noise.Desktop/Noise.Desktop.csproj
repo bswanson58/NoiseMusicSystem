@@ -249,9 +249,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DesktopModule.cs" />
-    <Compile Include="IpcManager.cs" />
-    <Compile Include="StartupManager.cs" />
-    <Compile Include="WindowManager.cs" />
+    <Compile Include="Models\IpcManager.cs" />
+    <Compile Include="Models\StartupManager.cs" />
+    <Compile Include="Models\WindowManager.cs" />
     <Resource Include="Resources\Noise.ico" />
     <Resource Include="..\Common\Noise.ico">
       <Link>Noise.ico</Link>

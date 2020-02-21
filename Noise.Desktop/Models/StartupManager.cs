@@ -4,7 +4,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Desktop {
+namespace Noise.Desktop.Models {
 	public class StartupManager : IHandle<Events.NoiseSystemReady>, IHandle<Events.LibraryConfigurationLoaded> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPreferences		mPreferences;

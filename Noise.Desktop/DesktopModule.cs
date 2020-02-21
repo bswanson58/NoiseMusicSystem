@@ -1,17 +1,15 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Configuration;
+using Noise.Desktop.Models;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.Platform;
 
 namespace Noise.Desktop {
     public class DesktopModule : IModule {
         private readonly IUnityContainer		mContainer;
-        private readonly NoiseCorePreferences	mPreferences;
 
-        public DesktopModule( IUnityContainer container, NoiseCorePreferences preferences ) {
+        public DesktopModule( IUnityContainer container ) {
             mContainer = container;
-            mPreferences = preferences;
         }
 
         public void Initialize() {

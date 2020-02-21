@@ -14,7 +14,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.Platform;
 
-namespace Noise.Desktop {
+namespace Noise.Desktop.Models {
     class IpcManager : IIpcManager, IRequireInitialization {
         private const int                       cHeartbeatSeconds = 30;
 
@@ -22,7 +22,7 @@ namespace Noise.Desktop {
         private readonly INoiseWindowManager    mWindowManager;
         private readonly DispatcherTimer        mIpcTimer;
         private readonly JavaScriptSerializer   mSerializer;
-        private readonly string                 mIpcIcon;
+        private string                          mIpcIcon;
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
 
@@ -31,14 +31,6 @@ namespace Noise.Desktop {
             mIpcHandler = ipcHandler;
 
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
-
-            var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Resources/ApplicationIcon.xaml" ));
-            if( iconStream != null ) {
-                var reader = new StreamReader( iconStream.Stream );
-
-                mIpcIcon = reader.ReadToEnd();
-            }
-
             mSerializer = new JavaScriptSerializer();
 
             mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( cHeartbeatSeconds )};
@@ -49,6 +41,13 @@ namespace Noise.Desktop {
         }
 
         public void Initialize() {
+            var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Resources/ApplicationIcon.xaml" ));
+            if( iconStream != null ) {
+                var reader = new StreamReader( iconStream.Stream );
+
+                mIpcIcon = reader.ReadToEnd();
+            }
+
             mIpcHandler.Initialize( Constants.ApplicationName, Constants.EcosystemName, OnIpcMessage );
             mIpcTimer.Start();
         }

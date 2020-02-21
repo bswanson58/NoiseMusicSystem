@@ -6,6 +6,7 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.AudioSupport;
+using Noise.Desktop.Models;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata;

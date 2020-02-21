@@ -16,7 +16,7 @@ using Noise.UI.Views;
 using ReusableBits.Ui.Utility;
 using Application = System.Windows.Application;
 
-namespace Noise.Desktop {
+namespace Noise.Desktop.Models {
 	internal class WindowManager : INoiseWindowManager,
                                    IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
@@ -38,16 +38,11 @@ namespace Noise.Desktop {
 			mLayoutManager = LayoutConfigurationManager.LayoutManager;
 			mRegionManager = mContainer.Resolve<IRegionManager>();
 
-			mEventAggregator.Subscribe( this );
-
 			mStoredWindowState = WindowState.Normal;
 			mNotifyIcon = new NotifyIcon { BalloonTipTitle = Constants.ApplicationName, Text = Constants.ApplicationName }; 
 			mNotifyIcon.Click += OnNotifyIconClick;
 
-			var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Noise.ico" ));
-			if( iconStream != null ) {
-				mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
-			}
+            mEventAggregator.Subscribe( this );
 		}
 
 		public void Initialize( Window shell ) {
@@ -57,6 +52,11 @@ namespace Noise.Desktop {
 			mShell.StateChanged += OnShellStateChanged;
 			mShell.IsVisibleChanged += OnShellVisibleChanged;
 			mShell.Closing += OnShellClosing;
+
+            var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Noise.ico" ));
+            if( iconStream != null ) {
+                mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
+            }
 
 			ExecutingEnvironment.ResizeWindowIntoVisibility( mShell );
 		}
