@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -8,30 +10,37 @@ using MilkBottle.Properties;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Platform;
 using Application = System.Windows.Application;
 
 namespace MilkBottle.ViewModels {
     class ShellViewModel : PropertyChangeBase {
-        private readonly IStateManager      mStateManager;
-        private readonly IEventAggregator   mEventAggregator;
-        private readonly IDialogService     mDialogService;
-        private readonly IPreferences       mPreferences;
-        private NotifyIcon			        mNotifyIcon;
-        private Window                      mShell;
-        private WindowState					mStoredWindowState;
+        private readonly IStateManager          mStateManager;
+        private readonly IEventAggregator       mEventAggregator;
+        private readonly IDialogService         mDialogService;
+        private readonly IPreferences           mPreferences;
+        private readonly IIpcHandler            mIpcHandler;
+        private readonly DispatcherTimer        mIpcTimer;
+        private readonly JavaScriptSerializer   mSerializer;
+        private NotifyIcon			            mNotifyIcon;
+        private Window                          mShell;
+        private WindowState					    mStoredWindowState;
 
-        public  DelegateCommand             Configuration { get; }
+        public  DelegateCommand                 Configuration { get; }
+        public  DelegateCommand                 ActivateNoise { get; }
 
-        public  bool                        DisplayStatus { get; private set; }
-        public  bool                        DisplayController { get; private set; }
+        public  bool                            DisplayStatus { get; private set; }
+        public  bool                            DisplayController { get; private set; }
 
-        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
+        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcHandler ipcHandler, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
             mPreferences = preferences;
             mDialogService = dialogService;
             mEventAggregator = eventAggregator;
+            mIpcHandler = ipcHandler;
 
             Configuration = new DelegateCommand( OnConfiguration );
+            ActivateNoise = new DelegateCommand( OnActivateNoise );
 
             mNotifyIcon = new NotifyIcon { BalloonTipTitle = ApplicationConstants.ApplicationName, Text = ApplicationConstants.ApplicationName }; 
             mNotifyIcon.Click += OnNotifyIconClick;
@@ -41,8 +50,42 @@ namespace MilkBottle.ViewModels {
                 mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
             }
 
+            mIpcHandler.Initialize( ApplicationConstants.ApplicationName, ApplicationConstants.EcosystemName, OnIpcMessage );
+            mSerializer = new JavaScriptSerializer();
+
+            mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( 15 )};
+            mIpcTimer.Tick += OnIpcTimer;
+            mIpcTimer.Start();
+
             DisplayStatus = true;
             DisplayController = true;
+        }
+
+        private void OnIpcMessage( BaseIpcMessage message ) {
+            switch( message.Subject ) {
+                case NoiseIpcSubject.cCompanionApplication:
+                    break;
+
+                case NoiseIpcSubject.cActivateApplication:
+                    Execute.OnUIThread( ActivateShell );
+                    break;
+            }
+        }
+
+        private void OnIpcTimer( object sender, EventArgs args ) {
+            var message = new CompanionApplication( ApplicationConstants.ApplicationName, String.Empty );
+            var json = mSerializer.Serialize( message );
+
+            mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );
+        }
+
+        private void OnActivateNoise() {
+            var message = new ActivateApplication();
+            var json = mSerializer.Serialize( message );
+
+            mIpcHandler.SendMessage( "Noise Music System", NoiseIpcSubject.cActivateApplication, json );
+
+            mShell.WindowState = WindowState.Minimized;
         }
 
         public void ShellLoaded( Window shell ) {
@@ -89,6 +132,8 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
+            mIpcTimer.Stop();
+
             mNotifyIcon.Dispose();
             mNotifyIcon = null;
 

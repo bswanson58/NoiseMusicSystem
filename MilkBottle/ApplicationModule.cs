@@ -8,6 +8,7 @@ using MilkBottle.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using ReusableBits.Mvvm.VersionSpinner;
+using ReusableBits.Platform;
 
 namespace MilkBottle {
     class ApplicationModule : IModule {
@@ -30,6 +31,8 @@ namespace MilkBottle {
 
             containerRegistry.RegisterDialog<SelectPresetDialog, SelectPresetDialogModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
+
+            containerRegistry.RegisterSingleton<IIpcHandler, IpcHandler>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

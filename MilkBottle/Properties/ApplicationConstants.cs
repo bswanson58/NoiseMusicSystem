@@ -2,6 +2,7 @@
     public static class ApplicationConstants {
         public	const string			LogFileDirectory = "Logs";
 
+        public const string				EcosystemName = "Noise Music System";
         public const string				ApplicationName = "MilkBottle";
         public const string				CompanyName = "Secret Squirrel Software";
         public const string				ConfigurationDirectory = "Configuration";
