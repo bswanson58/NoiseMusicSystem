@@ -303,6 +303,7 @@
     <Compile Include="Dto\UiArtistTrackNode.cs" />
     <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiCategory.cs" />
+    <Compile Include="Dto\UiCompanionApp.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
