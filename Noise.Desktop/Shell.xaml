@@ -4,6 +4,8 @@
 					  xmlns:properties="clr-namespace:Noise.Desktop.Properties"
 					  xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 					  xmlns:regions="http://www.codeplex.com/CompositeWPF"
+					  xmlns:dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
+					  xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 					  Title="Noise"
 					  ResizeMode="CanResizeWithGrip"
 					  Height="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationHeight, Mode=TwoWay}"
@@ -12,6 +14,13 @@
 					  Left ="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationLeft, Mode=TwoWay}"
 					  WindowState="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationWindowState, Mode=TwoWay}"
 					  >
+	<Window.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideOnFalse" IsHidden="True" TriggerValue="False" />
+
+        <DataTemplate x:Key="CompanionAppTemplate" DataType="dto:UiCompanionApp">
+            <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
+        </DataTemplate>
+    </Window.Resources>
 
     <controls:MetroWindow.IconTemplate>
         <DataTemplate>
@@ -28,7 +37,15 @@
 			<Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
 			<Button Command="{Binding PlaybackLayout}" Content="playback" ToolTip="Display Playback Information"/>
 			<Button Command="{Binding Options}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Edit Options"/>
-			<Button	Command="{Binding MilkBottle}" Content="MilkBottle"/>
+
+            <ItemsControl ItemsSource="{Binding CompanionApplications}" ItemTemplate="{StaticResource CompanionAppTemplate}"
+                          Visibility="{Binding HaveCompanionApplications, Converter={StaticResource HideOnFalse}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
 		</controls:WindowCommands>
 	</controls:MetroWindow.RightWindowCommands>
 

@@ -21,7 +21,7 @@ using Application = System.Windows.Application;
 
 namespace MilkBottle.ViewModels {
     class ShellViewModel : PropertyChangeBase {
-        private const int                       cHeartbeatSeconds = 10;
+        private const int                       cHeartbeatSeconds = 30;
 
         private readonly IStateManager          mStateManager;
         private readonly IEventAggregator       mEventAggregator;

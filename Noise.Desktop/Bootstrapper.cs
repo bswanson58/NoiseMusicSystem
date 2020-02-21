@@ -16,7 +16,7 @@ namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
 		private INoiseManager		mNoiseManager;
 		private StartupManager		mStartupManager;
-		private WindowManager		mWindowManager;
+		private INoiseWindowManager	mWindowManager;
 		private Window				mShell;
 		private	ApplicationSupport	mAppSupport;
 		private IApplicationLog		mLog;
@@ -45,7 +45,9 @@ namespace Noise.Desktop {
 		protected override IModuleCatalog CreateModuleCatalog() {
 			var catalog = new ModuleCatalog();
 
-			catalog.AddModule( typeof( Core.NoiseCoreModule ))
+			catalog
+                .AddModule( typeof( DesktopModule ))
+                .AddModule( typeof( Core.NoiseCoreModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
 				.AddModule( typeof( AudioSupportModule ))
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
@@ -73,7 +75,7 @@ namespace Noise.Desktop {
 		protected override void InitializeModules() {
 			base.InitializeModules();
 
-			mWindowManager = Container.Resolve<WindowManager>();
+			mWindowManager = Container.Resolve<INoiseWindowManager>();
 			mWindowManager.Initialize( mShell );
 
 			var instanceContainer = Container.CreateChildContainer();

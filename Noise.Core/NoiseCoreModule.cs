@@ -168,8 +168,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILogLibraryConfiguration, LogLibraryConfiguration>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterType<ILogUserStatus, LogUserStatus>( new HierarchicalLifetimeManager());
-
-			mContainer.RegisterType<IIpcHandler, IpcHandler>( new ContainerControlledLifetimeManager());
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using System.Windows;
 using Microsoft.Practices.Prism.Commands;
 
-namespace Noise.UI.Dto {
+namespace Noise.Infrastructure.Dto {
     public class UiCompanionApp {
         private readonly Action<UiCompanionApp> mCommandAction;
 

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Composite.Layout;
@@ -12,6 +17,7 @@ using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
 using Noise.UI.Views;
@@ -20,8 +26,11 @@ using ReusableBits.Ui.Utility;
 using Application = System.Windows.Application;
 
 namespace Noise.Desktop {
-	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
+	internal class WindowManager : INoiseWindowManager,
+                                   IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
+        private const int                       cHeartbeatSeconds = 30;
+
 		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IPreferences			mPreferences;
@@ -30,10 +39,13 @@ namespace Noise.Desktop {
         private readonly IIpcHandler            mIpcHandler;
         private readonly DispatcherTimer        mIpcTimer;
         private readonly JavaScriptSerializer   mSerializer;
+        private readonly string                 mIpcIcon;
 		private SmallPlayerView					mPlayerView;
 		private Window							mShell;
 		private NotifyIcon						mNotifyIcon;
 		private WindowState						mStoredWindowState;
+
+        public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
 
 		public WindowManager( IUnityContainer container, IIpcHandler ipcHandler, IEventAggregator eventAggregator, IPreferences preferences ) {
 			mContainer = container;
@@ -43,6 +55,7 @@ namespace Noise.Desktop {
 
 			mLayoutManager = LayoutConfigurationManager.LayoutManager;
 			mRegionManager = mContainer.Resolve<IRegionManager>();
+			CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
 			mEventAggregator.Subscribe( this );
 
@@ -57,9 +70,16 @@ namespace Noise.Desktop {
 				mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
 			}
 
+            iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Resources/ApplicationIcon.xaml" ));
+            if( iconStream != null ) {
+                var reader = new StreamReader( iconStream.Stream );
+
+                mIpcIcon = reader.ReadToEnd();
+            }
+
             mSerializer = new JavaScriptSerializer();
 
-            mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( 15 )};
+            mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( cHeartbeatSeconds )};
             mIpcTimer.Tick += OnIpcTimer;
 		}
 
@@ -82,32 +102,32 @@ namespace Noise.Desktop {
 		}
 
 		public void Handle( Events.WindowLayoutRequest eventArgs ) {
-			switch( eventArgs.LayoutName ) {
-				case Constants.SmallPlayerViewToggle:
-					if( mPlayerView == null ) {
-						ShowSmallPlayer();
-					}
-					else {
-						CloseSmallPlayer();
-					}
-					break;
-
-				case "MilkBottle":
-					ActivateMilkBottle();
-					break;
-
-				default:
-					var currentLayoutName = mLayoutManager.CurrentLayout != null ? mLayoutManager.CurrentLayout.Name : string.Empty;
-
-					if((!string.Equals( currentLayoutName, eventArgs.LayoutName )) &&
-					   ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, eventArgs.LayoutName )))) {
-						mLayoutManager.LoadLayout( eventArgs.LayoutName );
-
-						GC.Collect();
-					}
-					break;
-			}
+			ChangeWindowLayout( eventArgs.LayoutName );
 		}
+
+		public void ChangeWindowLayout( string toLayout ) {
+            switch( toLayout ) {
+                case Constants.SmallPlayerViewToggle:
+                    if( mPlayerView == null ) {
+                        ShowSmallPlayer();
+                    }
+                    else {
+                        CloseSmallPlayer();
+                    }
+                    break;
+
+                default:
+                    var currentLayoutName = mLayoutManager.CurrentLayout != null ? mLayoutManager.CurrentLayout.Name : string.Empty;
+
+                    if((!string.Equals( currentLayoutName, toLayout )) &&
+                       ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, toLayout )))) {
+                        mLayoutManager.LoadLayout( toLayout );
+
+                        GC.Collect();
+                    }
+                    break;
+            }
+        }
 
 		public void Handle( Events.ViewDisplayRequest eventArgs ) {
 			IRegion region;
@@ -257,30 +277,57 @@ namespace Noise.Desktop {
 		}
 
         private void OnIpcMessage( BaseIpcMessage message ) {
-            switch( message.Subject ) {
-                case NoiseIpcSubject.cCompanionApplication:
-                    break;
+			Execute.OnUIThread( () => {
+                switch( message.Subject ) {
+                    case NoiseIpcSubject.cCompanionApplication:
+                        AddCompanionApp( message );
+                        break;
 
-                case NoiseIpcSubject.cActivateApplication:
-                    Execute.OnUIThread( ActivateShell );
-                    break;
+                    case NoiseIpcSubject.cActivateApplication:
+                        ActivateShell();
+                        break;
+                }
+            });
+        }
+
+        private void AddCompanionApp( BaseIpcMessage message ) {
+            var companionApp = mSerializer.Deserialize<CompanionApplication>( message.Body );
+
+            if( companionApp != null ) {
+                if( CompanionApplications.FirstOrDefault( a => a.ApplicationName.Equals( companionApp.Name )) == null ) {
+                    using( var stream = new MemoryStream( Encoding.UTF8.GetBytes( companionApp.Icon ))) {
+                        var icon = XamlReader.Load( stream ) as FrameworkElement;
+
+                        CompanionApplications.Add( new UiCompanionApp( companionApp.Name, icon, $"Switch to {companionApp.Name}", OnCompanionAppRequest ));
+                    }
+                }
             }
         }
 
-        private void OnIpcTimer( object sender, EventArgs args ) {
-            var message = new CompanionApplication( Constants.ApplicationName, String.Empty );
-            var json = mSerializer.Serialize( message );
-
-            mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );
-        }
-
-        private void ActivateMilkBottle() {
+        private void OnCompanionAppRequest( UiCompanionApp app ) {
             var message = new ActivateApplication();
             var json = mSerializer.Serialize( message );
 
-            mIpcHandler.SendMessage( "MilkBottle", NoiseIpcSubject.cActivateApplication, json );
+            mIpcHandler.SendMessage( app.ApplicationName, NoiseIpcSubject.cActivateApplication, json );
 
             mShell.WindowState = WindowState.Minimized;
+        }
+
+        private void OnIpcTimer( object sender, EventArgs args ) {
+            var message = new CompanionApplication( Constants.ApplicationName, mIpcIcon );
+            var json = mSerializer.Serialize( message );
+
+            mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );
+
+            var appList = new List<UiCompanionApp>( CompanionApplications );
+
+            appList.ForEach( a => {
+                var expiration = DateTime.Now - TimeSpan.FromSeconds( cHeartbeatSeconds * 2 );
+
+                if( a.LastHeartbeat < expiration ) {
+                    CompanionApplications.Remove( a );
+                }
+            });
         }
 	}
 }

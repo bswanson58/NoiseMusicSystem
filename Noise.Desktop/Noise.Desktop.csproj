@@ -248,6 +248,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DesktopModule.cs" />
     <Compile Include="StartupManager.cs" />
     <Compile Include="WindowManager.cs" />
     <Resource Include="Resources\Noise.ico" />
