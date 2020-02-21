@@ -17,7 +17,8 @@ namespace ReusableBits.Platform {
             Body = String.Empty;
         }
 
-        public BaseIpcMessage( string from, string to, string subject, string body ) {
+        public BaseIpcMessage( string from, string to, string subject, string body ) :
+            this() {
             From = from;
             To = to;
             Subject = subject;
@@ -58,10 +59,12 @@ namespace ReusableBits.Platform {
         }
 
         public void SendMessage( string to, string subject, string body ) {
-            var message = new BaseIpcMessage( mIdentity, to, subject, body );
-            var json = mSerializer.Serialize( message );
+            if( mMessageBus != null ) {
+                var message = new BaseIpcMessage( mIdentity, to, subject, body );
+                var json = mSerializer.Serialize( message );
 
-            mMessageBus.PublishAsync( Encoding.UTF8.GetBytes( json ));
+                mMessageBus.PublishAsync( Encoding.UTF8.GetBytes( json ));
+            }
         }
 
         private void OnMessageReceived( object sender, TinyMessageReceivedEventArgs args ) {
