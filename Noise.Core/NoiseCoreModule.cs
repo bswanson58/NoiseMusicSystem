@@ -27,6 +27,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using ReusableBits.Platform;
 using ReusableBits.Threading;
 
 namespace Noise.Core {
@@ -167,6 +168,8 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILogLibraryConfiguration, LogLibraryConfiguration>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterType<ILogUserStatus, LogUserStatus>( new HierarchicalLifetimeManager());
+
+			mContainer.RegisterType<IIpcHandler, IpcHandler>( new ContainerControlledLifetimeManager());
 		}
 	}
 }

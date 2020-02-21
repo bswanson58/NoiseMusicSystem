@@ -73,7 +73,7 @@ namespace Noise.Desktop {
 		protected override void InitializeModules() {
 			base.InitializeModules();
 
-			mWindowManager = new WindowManager( Container, Container.Resolve<IEventAggregator>(), Container.Resolve<IPreferences>());
+			mWindowManager = Container.Resolve<WindowManager>();
 			mWindowManager.Initialize( mShell );
 
 			var instanceContainer = Container.CreateChildContainer();

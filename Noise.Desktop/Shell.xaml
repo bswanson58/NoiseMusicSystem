@@ -28,6 +28,7 @@
 			<Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
 			<Button Command="{Binding PlaybackLayout}" Content="playback" ToolTip="Display Playback Information"/>
 			<Button Command="{Binding Options}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Edit Options"/>
+			<Button	Command="{Binding MilkBottle}" Content="MilkBottle"/>
 		</controls:WindowCommands>
 	</controls:MetroWindow.RightWindowCommands>
 

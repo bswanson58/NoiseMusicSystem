@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using Composite.Layout;
 using Composite.Layout.Configuration;
@@ -13,24 +15,29 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
 using Noise.UI.Views;
+using ReusableBits.Platform;
 using ReusableBits.Ui.Utility;
 using Application = System.Windows.Application;
 
 namespace Noise.Desktop {
 	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
-		private readonly IUnityContainer	mContainer;
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IPreferences		mPreferences;
-		private readonly ILayoutManager		mLayoutManager;
-		private readonly IRegionManager		mRegionManager;
-		private SmallPlayerView				mPlayerView;
-		private Window						mShell;
-		private NotifyIcon					mNotifyIcon;
-		private WindowState					mStoredWindowState;
+		private readonly IUnityContainer		mContainer;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IPreferences			mPreferences;
+		private readonly ILayoutManager			mLayoutManager;
+		private readonly IRegionManager			mRegionManager;
+        private readonly IIpcHandler            mIpcHandler;
+        private readonly DispatcherTimer        mIpcTimer;
+        private readonly JavaScriptSerializer   mSerializer;
+		private SmallPlayerView					mPlayerView;
+		private Window							mShell;
+		private NotifyIcon						mNotifyIcon;
+		private WindowState						mStoredWindowState;
 
-		public WindowManager( IUnityContainer container, IEventAggregator eventAggregator, IPreferences preferences ) {
+		public WindowManager( IUnityContainer container, IIpcHandler ipcHandler, IEventAggregator eventAggregator, IPreferences preferences ) {
 			mContainer = container;
+			mIpcHandler = ipcHandler;
 			mEventAggregator = eventAggregator;
 			mPreferences = preferences;
 
@@ -49,6 +56,11 @@ namespace Noise.Desktop {
 			if( iconStream != null ) {
 				mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
 			}
+
+            mSerializer = new JavaScriptSerializer();
+
+            mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( 15 )};
+            mIpcTimer.Tick += OnIpcTimer;
 		}
 
 		public void Initialize( Window shell ) {
@@ -60,6 +72,9 @@ namespace Noise.Desktop {
 			mShell.Closing += OnShellClosing;
 
 			ExecutingEnvironment.ResizeWindowIntoVisibility( mShell );
+
+            mIpcHandler.Initialize( Constants.ApplicationName, Constants.EcosystemName, OnIpcMessage );
+            mIpcTimer.Start();
 		}
 
 		public void Shutdown() {
@@ -75,6 +90,10 @@ namespace Noise.Desktop {
 					else {
 						CloseSmallPlayer();
 					}
+					break;
+
+				case "MilkBottle":
+					ActivateMilkBottle();
 					break;
 
 				default:
@@ -182,6 +201,9 @@ namespace Noise.Desktop {
 		}
 
 		private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
+			mIpcTimer.Stop();
+			mEventAggregator.Unsubscribe( this );
+
 			mNotifyIcon.Dispose();
 			mNotifyIcon = null;
 		}
@@ -233,5 +255,32 @@ namespace Noise.Desktop {
 				region.Activate( extendedView );
 			}
 		}
+
+        private void OnIpcMessage( BaseIpcMessage message ) {
+            switch( message.Subject ) {
+                case NoiseIpcSubject.cCompanionApplication:
+                    break;
+
+                case NoiseIpcSubject.cActivateApplication:
+                    Execute.OnUIThread( ActivateShell );
+                    break;
+            }
+        }
+
+        private void OnIpcTimer( object sender, EventArgs args ) {
+            var message = new CompanionApplication( Constants.ApplicationName, String.Empty );
+            var json = mSerializer.Serialize( message );
+
+            mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );
+        }
+
+        private void ActivateMilkBottle() {
+            var message = new ActivateApplication();
+            var json = mSerializer.Serialize( message );
+
+            mIpcHandler.SendMessage( "MilkBottle", NoiseIpcSubject.cActivateApplication, json );
+
+            mShell.WindowState = WindowState.Minimized;
+        }
 	}
 }

@@ -90,6 +90,10 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
+		public void Execute_MilkBottle() {
+            mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( "MilkBottle" ));
+        }
+
 		private void OnImport() {
 			string	fileName;
 
