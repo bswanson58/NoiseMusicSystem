@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Markup;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using Composite.Layout;
 using Composite.Layout.Configuration;
@@ -17,11 +10,9 @@ using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
 using Noise.UI.Views;
-using ReusableBits.Platform;
 using ReusableBits.Ui.Utility;
 using Application = System.Windows.Application;
 
@@ -29,58 +20,34 @@ namespace Noise.Desktop {
 	internal class WindowManager : INoiseWindowManager,
                                    IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
-        private const int                       cHeartbeatSeconds = 30;
-
 		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IPreferences			mPreferences;
 		private readonly ILayoutManager			mLayoutManager;
 		private readonly IRegionManager			mRegionManager;
-        private readonly IIpcHandler            mIpcHandler;
-        private readonly DispatcherTimer        mIpcTimer;
-        private readonly JavaScriptSerializer   mSerializer;
-        private readonly string                 mIpcIcon;
 		private SmallPlayerView					mPlayerView;
 		private Window							mShell;
 		private NotifyIcon						mNotifyIcon;
 		private WindowState						mStoredWindowState;
 
-        public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
-
-		public WindowManager( IUnityContainer container, IIpcHandler ipcHandler, IEventAggregator eventAggregator, IPreferences preferences ) {
+		public WindowManager( IUnityContainer container, IEventAggregator eventAggregator, IPreferences preferences ) {
 			mContainer = container;
-			mIpcHandler = ipcHandler;
 			mEventAggregator = eventAggregator;
 			mPreferences = preferences;
 
 			mLayoutManager = LayoutConfigurationManager.LayoutManager;
 			mRegionManager = mContainer.Resolve<IRegionManager>();
-			CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
 			mEventAggregator.Subscribe( this );
 
 			mStoredWindowState = WindowState.Normal;
-			mNotifyIcon = new NotifyIcon { //BalloonTipText = "Click the tray icon to show.", 
-										   BalloonTipTitle = Constants.ApplicationName, 
-										   Text = Constants.ApplicationName }; 
+			mNotifyIcon = new NotifyIcon { BalloonTipTitle = Constants.ApplicationName, Text = Constants.ApplicationName }; 
 			mNotifyIcon.Click += OnNotifyIconClick;
 
 			var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Noise.ico" ));
 			if( iconStream != null ) {
 				mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
 			}
-
-            iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/Noise.Desktop;component/Resources/ApplicationIcon.xaml" ));
-            if( iconStream != null ) {
-                var reader = new StreamReader( iconStream.Stream );
-
-                mIpcIcon = reader.ReadToEnd();
-            }
-
-            mSerializer = new JavaScriptSerializer();
-
-            mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( cHeartbeatSeconds )};
-            mIpcTimer.Tick += OnIpcTimer;
 		}
 
 		public void Initialize( Window shell ) {
@@ -92,9 +59,6 @@ namespace Noise.Desktop {
 			mShell.Closing += OnShellClosing;
 
 			ExecutingEnvironment.ResizeWindowIntoVisibility( mShell );
-
-            mIpcHandler.Initialize( Constants.ApplicationName, Constants.EcosystemName, OnIpcMessage );
-            mIpcTimer.Start();
 		}
 
 		public void Shutdown() {
@@ -221,7 +185,6 @@ namespace Noise.Desktop {
 		}
 
 		private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
-			mIpcTimer.Stop();
 			mEventAggregator.Unsubscribe( this );
 
 			mNotifyIcon.Dispose();
@@ -243,6 +206,10 @@ namespace Noise.Desktop {
 				mShell.Activate();
 			}
 		}
+
+		public void DeactivateShell() {
+            mShell.WindowState = WindowState.Minimized;
+        }
 
 		public void Handle( Events.StandardPlayerRequest eventArgs ) {
 			var	region = mRegionManager.Regions["Player"];
@@ -275,59 +242,5 @@ namespace Noise.Desktop {
 				region.Activate( extendedView );
 			}
 		}
-
-        private void OnIpcMessage( BaseIpcMessage message ) {
-			Execute.OnUIThread( () => {
-                switch( message.Subject ) {
-                    case NoiseIpcSubject.cCompanionApplication:
-                        AddCompanionApp( message );
-                        break;
-
-                    case NoiseIpcSubject.cActivateApplication:
-                        ActivateShell();
-                        break;
-                }
-            });
-        }
-
-        private void AddCompanionApp( BaseIpcMessage message ) {
-            var companionApp = mSerializer.Deserialize<CompanionApplication>( message.Body );
-
-            if( companionApp != null ) {
-                if( CompanionApplications.FirstOrDefault( a => a.ApplicationName.Equals( companionApp.Name )) == null ) {
-                    using( var stream = new MemoryStream( Encoding.UTF8.GetBytes( companionApp.Icon ))) {
-                        var icon = XamlReader.Load( stream ) as FrameworkElement;
-
-                        CompanionApplications.Add( new UiCompanionApp( companionApp.Name, icon, $"Switch to {companionApp.Name}", OnCompanionAppRequest ));
-                    }
-                }
-            }
-        }
-
-        private void OnCompanionAppRequest( UiCompanionApp app ) {
-            var message = new ActivateApplication();
-            var json = mSerializer.Serialize( message );
-
-            mIpcHandler.SendMessage( app.ApplicationName, NoiseIpcSubject.cActivateApplication, json );
-
-            mShell.WindowState = WindowState.Minimized;
-        }
-
-        private void OnIpcTimer( object sender, EventArgs args ) {
-            var message = new CompanionApplication( Constants.ApplicationName, mIpcIcon );
-            var json = mSerializer.Serialize( message );
-
-            mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );
-
-            var appList = new List<UiCompanionApp>( CompanionApplications );
-
-            appList.ForEach( a => {
-                var expiration = DateTime.Now - TimeSpan.FromSeconds( cHeartbeatSeconds * 2 );
-
-                if( a.LastHeartbeat < expiration ) {
-                    CompanionApplications.Remove( a );
-                }
-            });
-        }
 	}
 }

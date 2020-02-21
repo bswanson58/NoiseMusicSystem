@@ -1,15 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using Noise.Infrastructure.Dto;
+﻿using System.Windows;
 
 namespace Noise.Infrastructure.Interfaces {
     public interface INoiseWindowManager {
         void	Initialize( Window shell );
         void	ActivateShell();
+        void    DeactivateShell();
         void	Shutdown();
 
         void    ChangeWindowLayout( string toLayout );
-
-        ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
     }
 }

@@ -17,6 +17,7 @@ namespace Noise.Desktop {
         public void Initialize() {
             mContainer.RegisterType<INoiseWindowManager, WindowManager>( new ContainerControlledLifetimeManager());
 
+            mContainer.RegisterType<IIpcManager, IpcManager>( new ContainerControlledLifetimeManager());
             mContainer.RegisterType<IIpcHandler, IpcHandler>( new ContainerControlledLifetimeManager());
         }
     }

@@ -55,16 +55,18 @@ namespace Noise.UI.ViewModels {
 	public class WindowCommandsViewModel : AutomaticCommandBase {
 		private readonly IDialogService			mDialogService;
 		private readonly INoiseWindowManager	mWindowManager;
+		private readonly IIpcManager			mIpcManager;
 		private readonly IPreferences			mPreferences;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly DelegateCommand		mImportCommand;
 
-        public  ObservableCollection<UiCompanionApp>    CompanionApplications => mWindowManager.CompanionApplications;
+        public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
         public  bool									HaveCompanionApplications => CompanionApplications.Any();
 
-		public WindowCommandsViewModel( INoiseWindowManager windowManager, IDialogService dialogService, IPreferences preferences,
+		public WindowCommandsViewModel( INoiseWindowManager windowManager, IIpcManager ipcManager, IDialogService dialogService, IPreferences preferences,
 										IDataExchangeManager dataExchangeManager ) {
 			mWindowManager = windowManager;
+			mIpcManager = ipcManager;
 			mDialogService = dialogService;
 			mPreferences = preferences;
 			mDataExchangeMgr = dataExchangeManager;
