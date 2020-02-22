@@ -42,7 +42,7 @@
 
         <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Tag="dimmed" Text="Now Playing:"/>
         <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Margin="3,0" Text="{Binding PresetName}"
-                   behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                   behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" ToolTip="{Binding PresetHistory}"/>
 
         <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
             <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>

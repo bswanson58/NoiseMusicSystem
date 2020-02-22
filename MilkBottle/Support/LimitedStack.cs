@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MilkBottle.Support {
     /// <summary>
@@ -72,8 +73,12 @@ namespace MilkBottle.Support {
             return result;
         }
 
-        public IEnumerator GetEnumerator() {
+        public IEnumerator<T> GetEnumerator() {
             return mList.GetEnumerator();
+        }
+
+        public IReadOnlyList<T> ToList() {
+            return mList.ToList();
         }
     }
 }

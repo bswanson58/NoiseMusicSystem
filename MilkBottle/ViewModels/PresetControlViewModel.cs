@@ -7,6 +7,7 @@ using System.Windows.Data;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
+using MilkBottle.Support;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -20,6 +21,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetController      mPresetController;
         private readonly IPresetLibrarian       mLibrarian;
         private readonly List<LibrarySet>       mLibraries;
+        private readonly LimitedStack<string>   mHistory;
         private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
         private LibrarySet                      mCurrentLibrary;
@@ -32,6 +34,7 @@ namespace MilkBottle.ViewModels {
 
         public  string                          PresetName { get; set; }
         public  string                          CurrentLibraryTooltip => mCurrentLibrary != null ? $"{mCurrentLibrary.PresetCount} presets in library" : String.Empty;
+        public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibrarian librarian,
                                        IDialogService dialogService, IEventAggregator eventAggregator ) {
@@ -42,6 +45,7 @@ namespace MilkBottle.ViewModels {
             mDialogService = dialogService;
 
             mLibraries = new List<LibrarySet>();
+            mHistory = new LimitedStack<string>( 4 );
 
             Start = new DelegateCommand( OnStart, CanStart );
             Stop = new DelegateCommand( OnStop, CanStop );
@@ -75,7 +79,7 @@ namespace MilkBottle.ViewModels {
             Stop.RaiseCanExecuteChanged();
             Start.RaiseCanExecuteChanged();
 
-            OnPresetChanged( mPresetController.GetPlayingPreset());
+//            OnPresetChanged( mPresetController.GetPlayingPreset());
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {
@@ -127,7 +131,10 @@ namespace MilkBottle.ViewModels {
             if( preset != null ) {
                 PresetName = Path.GetFileNameWithoutExtension( preset.PresetName );
 
+                mHistory.Push( PresetName );
+
                 RaisePropertyChanged( () => PresetName );
+                RaisePropertyChanged( () => PresetHistory );
             }
         }
 
