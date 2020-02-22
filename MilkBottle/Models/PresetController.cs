@@ -81,6 +81,8 @@ namespace MilkBottle.Models {
             mPlayRandom = preferences.PlayPresetsRandomly;
             BlendPresetTransition = preferences.BlendPresetTransition;
 
+            mProjectM.showFrameRate( preferences.DisplayFps );
+
             if((!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) &&
                ( mLibrarian.ContainsLibrary( preferences.CurrentPresetLibrary ))) {
                 SwitchLibrary( preferences.CurrentPresetLibrary );
