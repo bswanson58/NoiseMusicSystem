@@ -40,19 +40,19 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Tag="dimmed" Text="Current Preset:"/>
+        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Tag="dimmed" Text="Now Playing:"/>
         <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Margin="3,0" Text="{Binding PresetName}"
                    behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 
         <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Library:"/>
+            <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
             <ComboBox Margin="0,0,5,0" Width="180" VerticalAlignment="Center" ItemTemplate="{StaticResource LibrarySet}" ItemsSource="{Binding Libraries}" 
                       SelectedItem="{Binding CurrentLibrary}" ToolTip="{Binding CurrentLibraryTooltip}"/>
             <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}"
                     ToolTip="Select An Individual Preset"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
-            <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Duration:"/>
+            <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>
             <Slider Width="120" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
             <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" MinWidth="18" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PresetDuration}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
