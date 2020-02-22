@@ -62,7 +62,8 @@
                     Visibility="{Binding DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
 
             <ItemsControl ItemsSource="{Binding CompanionApplications}" ItemTemplate="{StaticResource CompanionAppTemplate}"
-                          Visibility="{Binding HaveCompanionApplications, Converter={StaticResource HideOnFalse}}">
+                          Visibility="{Binding HaveCompanionApplications, Converter={StaticResource HideOnFalse}}"
+                          Opacity="{Binding DisplayStatus, Converter={StaticResource OpacityConverter}}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
