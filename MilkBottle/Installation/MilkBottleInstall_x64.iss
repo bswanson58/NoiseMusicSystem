@@ -72,6 +72,8 @@ Source: "..\bin\x64\Release\TinyIpc.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Unity.Abstractions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Unity.Container.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
+Source: "..\..\Installation\Prerequisites\VC Runtime\VC_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
 
 [Icons]
 Name: "{group}\Milk Bottle"; Filename: "{app}\MilkBottle.exe"
@@ -80,4 +82,59 @@ Name: "{commondesktop}\Milk Bottle"; Filename: "{app}\MilkBottle.exe"; Tasks: de
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Milk Bottle"; Filename: "{app}\MilkBottle.exe"; Tasks: quicklaunchicon
 
 [Run]
+Filename: "{tmp}\VC_redist.x64.exe"; StatusMsg: "{cm:InstallingVC2019redist}"; Parameters: "/quiet"; Check: VC2019RedistNeedsInstall ; Flags: waituntilterminated
 Filename: "{app}\MilkBottle.exe"; Description: "{cm:LaunchProgram,Milk Bottle}"; Flags: nowait postinstall skipifsilent
+
+[CustomMessages]
+InstallingVC2019redist=Installing Visual C++ runtime
+
+[Code]
+function VC2019RedistNeedsInstall: Boolean;
+var 
+  Version: String;
+begin
+  if (RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Version)) then
+  begin
+    // Is the installed version at least 14.24 ? 
+    Log('VC Redist Version check : found ' + Version);
+    Result := (CompareStr(Version, 'v14.24.28127')<0);
+  end
+  else 
+  begin
+    // Not even an old version installed
+    Result := True;
+  end;
+  if (Result) then
+  begin
+    ExtractTemporaryFile('VC_redist.x64.exe');
+  end;
+end;
+
+function IsVCRedist32BitNeeded(): boolean;
+var
+  strVersion: string;
+begin
+  if (RegQueryStringValue(HKEY_LOCAL_MACHINE,
+    'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Version', strVersion)) then
+  begin
+    // Is the installed version at least 14.24 ? 
+    Log('VC Redist x86 Version : found ' + strVersion);
+    Result := (CompareStr(strVersion, 'v14.24.28127') < 0);
+  end
+  else
+  begin
+    if (RegQueryStringValue(HKEY_LOCAL_MACHINE,
+      'SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Version', strVersion)) then
+    begin
+      // Is the installed version at least 14.24 ? 
+      Log('VC Redist x86 Version : found ' + strVersion);
+      Result := (CompareStr(strVersion, 'v14.24.28127') < 0);
+    end
+    else
+    begin
+      // Not even an old version installed
+      Log('VC Redist x86 is not already installed');
+      Result := True;
+    end;
+  end;
+end;
