@@ -9,6 +9,7 @@ namespace Noise.Infrastructure.Configuration {
 		public	bool		EnableSortPrefixes { get; set; }
 		public	string		SortPrefixes { get; set; }
 		public	bool		MinimizeToTray { get; set; }
+		public	bool		MinimizeOnSwitchToCompanionApp { get; set; }
 		public	UInt16		NewAdditionsHorizonDays { get; set; }
 		public	UInt32		NewAdditionsHorizonCount { get; set; }
         public  string      ThemeName { get; set; }
@@ -23,6 +24,9 @@ namespace Noise.Infrastructure.Configuration {
 			EnablePlaybackLibraryFocus = true;
 			NewAdditionsHorizonDays = 90;
 			NewAdditionsHorizonCount = 500;
+
+			MinimizeToTray = false;
+			MinimizeOnSwitchToCompanionApp = true;
 
 			SortPrefixes = string.Empty;
 

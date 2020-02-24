@@ -20,6 +20,7 @@ namespace Noise.UI.ViewModels {
         public bool HasNetworkAccess { get; set; }
         public bool LoadLastLibraryOnStartup { get; set; }
         public bool MinimizeToTray { get; set; }
+        public bool MinimizeOnSwitchToCompanionApp { get; set; }
         public string SortPrefixes { get; set; }
 
         public BindableCollection<ThemeColors>      AvailableThemes { get; }
@@ -73,6 +74,7 @@ namespace Noise.UI.ViewModels {
             HasNetworkAccess = corePreferences.HasNetworkAccess;
             LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup;
             MinimizeToTray = interfacePreferences.MinimizeToTray;
+            MinimizeOnSwitchToCompanionApp = interfacePreferences.MinimizeOnSwitchToCompanionApp;
             SortPrefixes = interfacePreferences.SortPrefixes;
 
             CurrentTheme = AvailableThemes.FirstOrDefault( t => t.Id.Equals( mThemeManager.CurrentTheme )) ??
@@ -96,6 +98,7 @@ namespace Noise.UI.ViewModels {
             interfacePreferences.EnableSortPrefixes = EnableSortPrefixes;
             interfacePreferences.SortPrefixes = SortPrefixes;
             interfacePreferences.MinimizeToTray = MinimizeToTray;
+            interfacePreferences.MinimizeOnSwitchToCompanionApp = MinimizeOnSwitchToCompanionApp;
 
             if( CurrentTheme != null ) {
                 interfacePreferences.ThemeName = CurrentTheme.Id;

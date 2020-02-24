@@ -10,6 +10,7 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.Platform;
@@ -19,6 +20,7 @@ namespace Noise.Desktop.Models {
         private const int                       cHeartbeatSeconds = 30;
 
         private readonly IIpcHandler            mIpcHandler;
+        private readonly IPreferences           mPreferences;
         private readonly INoiseWindowManager    mWindowManager;
         private readonly DispatcherTimer        mIpcTimer;
         private readonly JavaScriptSerializer   mSerializer;
@@ -26,8 +28,9 @@ namespace Noise.Desktop.Models {
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
 
-        public IpcManager( ILifecycleManager lifecycleManager, INoiseWindowManager windowManager, IIpcHandler ipcHandler ) {
+        public IpcManager( ILifecycleManager lifecycleManager, INoiseWindowManager windowManager, IPreferences preferences, IIpcHandler ipcHandler ) {
             mWindowManager = windowManager;
+            mPreferences = preferences;
             mIpcHandler = ipcHandler;
 
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
@@ -90,7 +93,11 @@ namespace Noise.Desktop.Models {
 
             mIpcHandler.SendMessage( app.ApplicationName, NoiseIpcSubject.cActivateApplication, json );
 
-            mWindowManager.DeactivateShell();
+            var preferences = mPreferences.Load<UserInterfacePreferences>();
+
+            if( preferences.MinimizeOnSwitchToCompanionApp ) {
+                mWindowManager.DeactivateShell();
+            }
         }
 
         private void OnIpcTimer( object sender, EventArgs args ) {
