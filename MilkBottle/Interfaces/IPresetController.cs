@@ -8,6 +8,7 @@ namespace MilkBottle.Interfaces {
         void            Initialize();
         void            MilkConfigurationUpdated();
         void            ConfigurePresetTimer( PresetTimer timerType );
+        void            ConfigurePresetSequencer( PresetSequence forSequence );
 
         void            LoadLibrary( string libraryName );
 

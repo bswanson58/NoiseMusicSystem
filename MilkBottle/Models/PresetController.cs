@@ -17,12 +17,12 @@ namespace MilkBottle.Models {
         private readonly IPreferences               mPreferences;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
         private readonly LimitedStack<ulong>        mPresetHistory;
-        private readonly LimitedRepeatingRandom     mRandom;
         private readonly IPresetTimerFactory        mTimerFactory;
+        private readonly IPresetSequencerFactory    mSequencerFactory;
         private IPresetTimer                        mPresetTimer;
+        private IPresetSequencer                    mPresetSequencer;
         private int                                 mCurrentPresetIndex;
         private int                                 mPresetDuration;
-        private bool                                mPlayRandom;
         public  bool                                IsInitialized { get; private set; }
         public  bool                                BlendPresetTransition { get; set; }
         public  string                              CurrentPresetLibrary { get; private set; }
@@ -30,17 +30,17 @@ namespace MilkBottle.Models {
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
-        public PresetController( ProjectMWrapper projectM, IPresetLibrarian librarian, IPresetTimerFactory timerFactory,
+        public PresetController( ProjectMWrapper projectM, IPresetLibrarian librarian, IPresetTimerFactory timerFactory, IPresetSequencerFactory sequencerFactory,
                                  IPreferences preferences, IEventAggregator eventAggregator, IPlatformLog log ) {
             mProjectM = projectM;
             mLibrarian = librarian;
             mPreferences = preferences;
             mTimerFactory = timerFactory;
+            mSequencerFactory = sequencerFactory;
             mEventAggregator = eventAggregator;
             mLog = log;
 
             mPresetHistory = new LimitedStack<ulong>( 100 );
-            mRandom = new LimitedRepeatingRandom( 0.6 );
             mCurrentPreset = new Subject<MilkDropPreset>();
             mCurrentPresetIndex = -1;
             IsRunning = false;
@@ -55,6 +55,7 @@ namespace MilkBottle.Models {
                 InitializeMilk();
             
                 ConfigurePresetTimer( PresetTimer.Infinite );
+                ConfigurePresetSequencer( PresetSequence.Random );
             }
         }
 
@@ -83,6 +84,10 @@ namespace MilkBottle.Models {
             mPresetTimer.PresetTimeElapsed += OnPresetTimer;
         }
 
+        public void ConfigurePresetSequencer( PresetSequence forSequence ) {
+            mPresetSequencer = mSequencerFactory.CreateSequencer( forSequence );
+        }
+
         private void InitializeMilk() {
             mProjectM.setPresetCallback( OnPresetSwitched );
             mProjectM.setShuffleEnabled( false );
@@ -91,7 +96,6 @@ namespace MilkBottle.Models {
             var preferences = mPreferences.Load<MilkPreferences>();
 
             mPresetDuration = preferences.PresetPlayDurationInSeconds;
-            mPlayRandom = preferences.PlayPresetsRandomly;
             BlendPresetTransition = preferences.BlendPresetTransition;
 
             mProjectM.showFrameRate( preferences.DisplayFps );
@@ -176,21 +180,9 @@ namespace MilkBottle.Models {
 */
         public void SelectNextPreset() {
             var presetCount = mProjectM.getPresetListSize();
+            var currentIndex = mProjectM.selectedPresetIndex();
 
-            if( mPlayRandom ) {
-                var index = (ulong)mRandom.Next( 0, (int)presetCount );
-
-                PlayPreset( index );
-            }
-            else {
-                var currentIndex = mProjectM.selectedPresetIndex() + 1;
-
-                if( currentIndex >= presetCount ) {
-                    currentIndex = 0;
-                }
-
-                PlayPreset( currentIndex );
-            }
+            PlayPreset( mPresetSequencer.SelectNextPreset( presetCount, (uint)currentIndex ));
         }
 
         public void SelectPreviousPreset() {
@@ -231,6 +223,7 @@ namespace MilkBottle.Models {
                 }
 
                 mProjectM.selectPreset((uint)index, !BlendPresetTransition );
+                var newIndex = mProjectM.selectedPresetIndex();
 
                 mCurrentPresetIndex = (int)index;
                 mPresetTimer.ReloadTimer();

@@ -80,6 +80,7 @@ namespace MilkBottle.ViewModels {
             Start.RaiseCanExecuteChanged();
 
             mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
+            mPresetController.ConfigurePresetSequencer( PresetSequence.Random );
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {

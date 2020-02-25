@@ -219,6 +219,8 @@
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IPresetController.cs" />
     <Compile Include="Interfaces\IPresetLibrarian.cs" />
+    <Compile Include="Interfaces\IPresetSequencer.cs" />
+    <Compile Include="Interfaces\IPresetSequencerFactory.cs" />
     <Compile Include="Interfaces\IPresetTimer.cs" />
     <Compile Include="Interfaces\IPresetTimerFactory.cs" />
     <Compile Include="Interfaces\IStateManager.cs" />
@@ -228,6 +230,9 @@
     <Compile Include="Models\MilkController.cs" />
     <Compile Include="Models\PresetController.cs" />
     <Compile Include="Models\PresetLibrarian.cs" />
+    <Compile Include="Models\PresetSequencers\PresetSequencerFactory.cs" />
+    <Compile Include="Models\PresetSequencers\RandomSequencer.cs" />
+    <Compile Include="Models\PresetSequencers\SequentialSequencer.cs" />
     <Compile Include="Models\PresetTimers\FixedDurationTimer.cs" />
     <Compile Include="Models\PresetTimers\InfiniteDurationTimer.cs" />
     <Compile Include="Models\PresetTimers\PresetTimerFactory.cs" />
