@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
@@ -18,8 +17,9 @@ namespace MilkBottle.Models {
         private readonly IPreferences               mPreferences;
         private readonly Subject<MilkDropPreset>    mCurrentPreset;
         private readonly LimitedStack<ulong>        mPresetHistory;
-        private readonly DispatcherTimer            mPresetTimer;
         private readonly LimitedRepeatingRandom     mRandom;
+        private readonly IPresetTimerFactory        mTimerFactory;
+        private IPresetTimer                        mPresetTimer;
         private int                                 mCurrentPresetIndex;
         private int                                 mPresetDuration;
         private bool                                mPlayRandom;
@@ -30,18 +30,18 @@ namespace MilkBottle.Models {
 
         public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
 
-        public PresetController( ProjectMWrapper projectM, IPresetLibrarian librarian, IPreferences preferences, IEventAggregator eventAggregator, IPlatformLog log ) {
+        public PresetController( ProjectMWrapper projectM, IPresetLibrarian librarian, IPresetTimerFactory timerFactory,
+                                 IPreferences preferences, IEventAggregator eventAggregator, IPlatformLog log ) {
             mProjectM = projectM;
             mLibrarian = librarian;
             mPreferences = preferences;
+            mTimerFactory = timerFactory;
             mEventAggregator = eventAggregator;
             mLog = log;
 
             mPresetHistory = new LimitedStack<ulong>( 100 );
             mRandom = new LimitedRepeatingRandom( 0.6 );
             mCurrentPreset = new Subject<MilkDropPreset>();
-            mPresetTimer = new DispatcherTimer();
-            mPresetTimer.Tick += OnPresetTimer;
             mCurrentPresetIndex = -1;
             IsRunning = false;
             IsInitialized = false;
@@ -53,6 +53,8 @@ namespace MilkBottle.Models {
             if(( mProjectM.isInitialized()) &&
                ( mLibrarian.IsInitialized )) {
                 InitializeMilk();
+            
+                ConfigurePresetTimer( PresetTimer.Infinite );
             }
         }
 
@@ -68,6 +70,17 @@ namespace MilkBottle.Models {
             if( wasRunning ) {
                 StartPresetCycling();
             }
+        }
+
+        public void ConfigurePresetTimer( PresetTimer timerType ) {
+            if( mPresetTimer != null ) {
+                mPresetTimer.StopTimer();
+                mPresetTimer.PresetTimeElapsed -= OnPresetTimer;
+            }
+
+            mPresetTimer = mTimerFactory.CreateTimer( timerType );
+            mPresetTimer.SetDuration( mPresetDuration );
+            mPresetTimer.PresetTimeElapsed += OnPresetTimer;
         }
 
         private void InitializeMilk() {
@@ -117,14 +130,14 @@ namespace MilkBottle.Models {
         }
 
         public void StopPresetCycling() {
-            mPresetTimer.Stop();
+            mPresetTimer.StopTimer();
 
             IsRunning = false;
         }
 
         public void StartPresetCycling() {
-            UpdateTimer();
-            mPresetTimer.Start();
+            mPresetTimer.ReloadTimer();
+            mPresetTimer.StartTimer();
 
             IsRunning = true;
         }
@@ -188,29 +201,11 @@ namespace MilkBottle.Models {
             }
         }
 
-        public bool RandomPresetCycling {
-            get => mPlayRandom;
-            set {
-                mPlayRandom = value;
-
-                if( mPlayRandom ) {
-                    mPresetTimer.Start();
-                }
-                else {
-                    mPresetTimer.Stop();
-                }
-
-                var preferences = mPreferences.Load<MilkPreferences>();
-
-                preferences.PlayPresetsRandomly = mPlayRandom;
-                mPreferences.Save( preferences );
-            }
-        }
-
         public int PresetDuration {
             get => mPresetDuration;
             set {
                 mPresetDuration = Math.Min( 60, Math.Max( 5, value ));
+                mPresetTimer.SetDuration( mPresetDuration );
 
                 var preferences = mPreferences.Load<MilkPreferences>();
 
@@ -229,10 +224,6 @@ namespace MilkBottle.Models {
             SelectNextPreset();
         }
 
-        private void UpdateTimer() {
-            mPresetTimer.Interval = TimeSpan.FromSeconds( mPresetDuration );
-        }
-
         private void PlayPreset( ulong index ) {
             if( index < mProjectM.getPresetListSize()) {
                 if( mCurrentPresetIndex != -1 ) {
@@ -242,7 +233,7 @@ namespace MilkBottle.Models {
                 mProjectM.selectPreset((uint)index, !BlendPresetTransition );
 
                 mCurrentPresetIndex = (int)index;
-                UpdateTimer();
+                mPresetTimer.ReloadTimer();
             }
         }
 
@@ -270,7 +261,7 @@ namespace MilkBottle.Models {
         public void Dispose() {
             StopPresetCycling();
 
-            mPresetTimer.Tick -= OnPresetTimer;
+            mPresetTimer?.StopTimer();
             mCurrentPreset?.Dispose();
             mEventAggregator.Unsubscribe( this );
         }

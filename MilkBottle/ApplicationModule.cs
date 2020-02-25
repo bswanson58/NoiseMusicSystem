@@ -2,6 +2,7 @@
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
 using MilkBottle.Models;
+using MilkBottle.Models.PresetTimers;
 using MilkBottle.Platform;
 using MilkBottle.ViewModels;
 using MilkBottle.Views;
@@ -21,6 +22,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IPresetController, PresetController>();
             containerRegistry.RegisterSingleton<IPresetLibrarian, PresetLibrarian>();
             containerRegistry.RegisterSingleton<IStateManager, StateManager>();
+            containerRegistry.RegisterSingleton<IPresetTimerFactory, PresetTimerFactory>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();

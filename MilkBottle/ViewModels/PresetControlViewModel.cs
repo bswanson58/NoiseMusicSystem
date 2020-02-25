@@ -79,7 +79,7 @@ namespace MilkBottle.ViewModels {
             Stop.RaiseCanExecuteChanged();
             Start.RaiseCanExecuteChanged();
 
-//            OnPresetChanged( mPresetController.GetPlayingPreset());
+            mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {

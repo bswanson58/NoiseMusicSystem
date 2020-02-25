@@ -7,6 +7,7 @@ namespace MilkBottle.Interfaces {
 
         void            Initialize();
         void            MilkConfigurationUpdated();
+        void            ConfigurePresetTimer( PresetTimer timerType );
 
         void            LoadLibrary( string libraryName );
 
@@ -25,6 +26,5 @@ namespace MilkBottle.Interfaces {
         string          CurrentPresetLibrary { get; }
         bool            BlendPresetTransition {  get; set; }
         int             PresetDuration { get; set; }
-        bool            RandomPresetCycling { get; set; }
     }
 }
