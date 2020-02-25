@@ -3,10 +3,12 @@
 namespace MilkBottle.Models.PresetTimers {
     class PresetTimerFactory : IPresetTimerFactory {
         private readonly FixedDurationTimer     mFixedTimer;
+        private readonly RandomDurationTimer    mRandomTimer;
         private readonly InfiniteDurationTimer  mInfiniteTimer;
 
-        public PresetTimerFactory( FixedDurationTimer fixedTimer, InfiniteDurationTimer infiniteTimer ) {
+        public PresetTimerFactory( FixedDurationTimer fixedTimer, RandomDurationTimer randomTimer, InfiniteDurationTimer infiniteTimer ) {
             mFixedTimer = fixedTimer;
+            mRandomTimer = randomTimer;
             mInfiniteTimer = infiniteTimer;
         }
 
@@ -16,6 +18,10 @@ namespace MilkBottle.Models.PresetTimers {
             switch( ofType ) {
                 case PresetTimer.FixedDuration:
                     retValue = mFixedTimer;
+                    break;
+
+                case PresetTimer.RandomDuration:
+                    retValue = mRandomTimer;
                     break;
 
                 case PresetTimer.Infinite:

@@ -236,6 +236,7 @@
     <Compile Include="Models\PresetTimers\FixedDurationTimer.cs" />
     <Compile Include="Models\PresetTimers\InfiniteDurationTimer.cs" />
     <Compile Include="Models\PresetTimers\PresetTimerFactory.cs" />
+    <Compile Include="Models\PresetTimers\RandomDurationTimer.cs" />
     <Compile Include="Models\StateManager.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Support\LimitedRepeatingRandom.cs" />

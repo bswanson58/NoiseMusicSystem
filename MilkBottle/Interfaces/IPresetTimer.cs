@@ -3,6 +3,7 @@
 namespace MilkBottle.Interfaces {
     enum PresetTimer {
         FixedDuration,
+        RandomDuration,
         Infinite
     }
 
