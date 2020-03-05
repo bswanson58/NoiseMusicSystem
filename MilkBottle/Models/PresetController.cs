@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
+using MilkBottle.Types;
 
 namespace MilkBottle.Models {
     class PresetController : IPresetController {
@@ -22,7 +23,7 @@ namespace MilkBottle.Models {
         private IPresetTimer                        mPresetTimer;
         private IPresetSequencer                    mPresetSequencer;
         private int                                 mCurrentPresetIndex;
-        private int                                 mPresetDuration;
+        private PresetDuration                      mPresetDuration;
         public  bool                                IsInitialized { get; private set; }
         public  bool                                BlendPresetTransition { get; set; }
         public  string                              CurrentPresetLibrary { get; private set; }
@@ -193,10 +194,10 @@ namespace MilkBottle.Models {
             }
         }
 
-        public int PresetDuration {
+        public PresetDuration PresetDuration {
             get => mPresetDuration;
             set {
-                mPresetDuration = Math.Min( 60, Math.Max( 5, value ));
+                mPresetDuration = value;
                 mPresetTimer.SetDuration( mPresetDuration );
 
                 var preferences = mPreferences.Load<MilkPreferences>();
@@ -223,7 +224,6 @@ namespace MilkBottle.Models {
                 }
 
                 mProjectM.selectPreset((uint)index, !BlendPresetTransition );
-                var newIndex = mProjectM.selectedPresetIndex();
 
                 mCurrentPresetIndex = (int)index;
                 mPresetTimer.ReloadTimer();

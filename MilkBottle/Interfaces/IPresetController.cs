@@ -1,5 +1,6 @@
 ﻿using System;
 using MilkBottle.Dto;
+using MilkBottle.Types;
 
 namespace MilkBottle.Interfaces {
     interface IPresetController : IDisposable {
@@ -26,6 +27,6 @@ namespace MilkBottle.Interfaces {
 
         string          CurrentPresetLibrary { get; }
         bool            BlendPresetTransition {  get; set; }
-        int             PresetDuration { get; set; }
+        PresetDuration  PresetDuration { get; set; }
     }
 }

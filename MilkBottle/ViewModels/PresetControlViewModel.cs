@@ -32,6 +32,9 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 PreviousPreset { get; }
         public  DelegateCommand                 SelectPreset { get; }
 
+        public  int                             PresetDurationMinimum => Types.PresetDuration.MinimumValue;
+        public  int                             PresetDurationMaximum => Types.PresetDuration.MaximumValue;
+
         public  string                          PresetName { get; set; }
         public  string                          CurrentLibraryTooltip => mCurrentLibrary != null ? $"{mCurrentLibrary.PresetCount} presets in library" : String.Empty;
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));

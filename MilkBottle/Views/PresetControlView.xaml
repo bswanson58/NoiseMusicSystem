@@ -53,7 +53,7 @@
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>
-            <Slider Width="120" VerticalAlignment="Center" Minimum="5" Maximum="60" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
+            <Slider Width="120" VerticalAlignment="Center" Minimum="{Binding PresetDurationMinimum}" Maximum="{Binding PresetDurationMaximum}" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
             <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" MinWidth="18" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PresetDuration}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>

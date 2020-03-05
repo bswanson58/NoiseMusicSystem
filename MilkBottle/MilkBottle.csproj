@@ -239,6 +239,7 @@
     <Compile Include="Models\PresetTimers\RandomDurationTimer.cs" />
     <Compile Include="Models\StateManager.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
+    <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\LimitedRepeatingRandom.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="Support\LimitedStack.cs" />
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
+    <Compile Include="Types\PresetDuration.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
