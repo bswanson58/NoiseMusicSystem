@@ -33,6 +33,8 @@ Source: "..\bin\x64\Release\Caliburn.Micro.Platform.dll"; DestDir: "{app}"; Flag
 Source: "..\bin\x64\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\ControlzEx.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\CuttingEdge.Conditions.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\LanguageExt.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\LiteDB.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\MahApps.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Microsoft.Practices.Prism.Composition.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Microsoft.Practices.Prism.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -59,7 +61,10 @@ Source: "..\bin\x64\Release\Serilog.Enrichers.Process.dll"; DestDir: "{app}"; Fl
 Source: "..\bin\x64\Release\Serilog.Sinks.Console.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Serilog.Sinks.RollingFile.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\bin\x64\Release\System.Reactive.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\System.Buffers.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\System.Numerics.Vectors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\System.Reactive.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\System.Reactive.Interfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\System.Reactive.Linq.dll"; DestDir: "{app}"; Flags: ignoreversion
