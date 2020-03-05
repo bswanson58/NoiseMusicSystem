@@ -225,6 +225,7 @@
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
     <Compile Include="Database\EntityCollection.cs" />
     <Compile Include="Database\EntityProvider.cs" />
+    <Compile Include="Database\PresetLibraryProvider.cs" />
     <Compile Include="Database\PresetProvider.cs" />
     <Compile Include="Dto\LibrarySet.cs" />
     <Compile Include="Dto\MilkConfiguration.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Dto\UiCompanionApp.cs" />
     <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="Entities\Preset.cs" />
+    <Compile Include="Entities\PresetLibrary.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IAudioManager.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
@@ -241,6 +243,7 @@
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IPresetController.cs" />
     <Compile Include="Interfaces\IPresetLibrarian.cs" />
+    <Compile Include="Interfaces\IPresetLibraryProvider.cs" />
     <Compile Include="Interfaces\IPresetProvider.cs" />
     <Compile Include="Interfaces\IPresetSequencer.cs" />
     <Compile Include="Interfaces\IPresetSequencerFactory.cs" />
@@ -277,6 +280,7 @@
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="Types\Error.cs" />
     <Compile Include="Types\PresetDuration.cs" />
+    <Compile Include="Types\PresetRating.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
