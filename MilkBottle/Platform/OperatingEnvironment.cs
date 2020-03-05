@@ -27,6 +27,16 @@ namespace MilkBottle.Platform {
             return( retValue );
         }
 
+        public string DatabaseDirectory() {
+            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.DatabaseDirectory );
+
+            if(!Directory.Exists( retValue )) {
+                Directory.CreateDirectory( retValue );
+            }
+
+            return( retValue );
+        }
+
         public string LogFileDirectory() {
             var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.LogFileDirectory );
 

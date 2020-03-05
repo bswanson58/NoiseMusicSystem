@@ -13,7 +13,7 @@ namespace MilkBottle.Database {
         private LiteDatabase            mDatabase;
 
         protected EntityProvider( string databasePath, string collectionName ) {
-            mDatabasePath = Path.Combine( databasePath, "Preset.database" );
+            mDatabasePath = databasePath;
             mCollectionName = collectionName;
         }
 

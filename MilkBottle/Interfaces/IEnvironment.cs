@@ -3,6 +3,7 @@
         string		ApplicationName();
 
         string		ApplicationDirectory();
+        string      DatabaseDirectory();
         string		LogFileDirectory();
         string		PreferencesDirectory();
         string      MilkLibraryFolder();

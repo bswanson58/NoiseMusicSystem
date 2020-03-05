@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Properties;
 using MilkBottle.Types;
 using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
     class PresetProvider : EntityProvider<Preset>, IPresetProvider {
         public PresetProvider( IEnvironment environment ) :
-            base( environment.ApplicationDirectory(), EntityCollection.PresetCollection ) { }
+            base( Path.Combine( environment.DatabaseDirectory(), ApplicationConstants.DatabaseFileName ), EntityCollection.PresetCollection ) { }
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<Preset>().Id( e => e.Id );

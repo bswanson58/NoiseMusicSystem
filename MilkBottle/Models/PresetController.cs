@@ -43,6 +43,7 @@ namespace MilkBottle.Models {
 
             mPresetHistory = new LimitedStack<ulong>( 100 );
             mCurrentPreset = new Subject<MilkDropPreset>();
+            mPresetDuration = PresetDuration.Create( PresetDuration.MaximumValue );
             mCurrentPresetIndex = -1;
             IsRunning = false;
             IsInitialized = false;
