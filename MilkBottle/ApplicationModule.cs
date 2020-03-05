@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using MilkBottle.Database;
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
 using MilkBottle.Models;
@@ -25,6 +26,8 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IStateManager, StateManager>();
             containerRegistry.RegisterSingleton<IPresetTimerFactory, PresetTimerFactory>();
             containerRegistry.RegisterSingleton<IPresetSequencerFactory, PresetSequencerFactory>();
+
+            containerRegistry.RegisterSingleton<IPresetProvider, PresetProvider>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
