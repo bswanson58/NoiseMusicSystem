@@ -9,7 +9,6 @@ namespace MilkBottle.Interfaces {
         Either<Exception, Option<PresetLibrary>>    GetLibraryById( ObjectId id );
         Either<Exception, Option<PresetLibrary>>    GetLibraryByName( string name );
 
-        Either<Exception, Unit>                     QueryLibraries( Action<ILiteQueryable<PresetLibrary>> action );
         Either<Exception, Unit>                     SelectLibraries( Action<IEnumerable<PresetLibrary>> action );
 
         Either<Exception, Option<PresetLibrary>>    FindLibrary( BsonExpression predicate );

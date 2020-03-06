@@ -3,35 +3,43 @@ using System.Collections.Generic;
 using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
+using MilkBottle.Interfaces;
 using MilkBottle.Types;
 
 namespace MilkBottle.Database {
-    class EntityProvider<T> : ValidationBase<T>, IDisposable where T : EntityBase {
-        private readonly string         mDatabasePath;
-        private readonly string         mCollectionName;
-        private LiteDatabase            mDatabase;
+    class EntityProvider<T> : ValidationBase<T> where T : EntityBase {
+        private readonly IDatabaseProvider  mDatabaseProvider;
+        private readonly string             mCollectionName;
+        private LiteDatabase                mDatabase;
 
-        protected EntityProvider( string databasePath, string collectionName ) {
-            mDatabasePath = databasePath;
+        protected EntityProvider( IDatabaseProvider databaseProvider, string collectionName ) {
+            mDatabaseProvider = databaseProvider;
             mCollectionName = collectionName;
         }
 
         protected Either<Exception, LiteDatabase> CreateConnection() {
-            return Prelude.Try( () => {
-                mDatabase = new LiteDatabase( mDatabasePath );
+            if( mDatabase == null ) {
+                return mDatabaseProvider.GetDatabase()
+                    .Map( db => {
+                        mDatabase = db;
 
-                InitializeDatabase( mDatabase );
+                        InitializeDatabase( mDatabase );
+                        
+                        return mDatabase;
+                    });
+            }
 
-                return mDatabase;
-            }).ToEither();
-
+            return mDatabase;
         }
 
         protected virtual void InitializeDatabase( LiteDatabase db ) { }
+        protected virtual ILiteCollection<T> Include( ILiteCollection<T> list ) {
+            return list;
+        }
 
         private Try<Unit> ScanCollection( LiteDatabase db, Action<ILiteCollection<T>> withAction ) {
             return Prelude.Try( () => {
-                withAction( db.GetCollection<T>( mCollectionName ));
+                withAction( Include( db.GetCollection<T>( mCollectionName )));
 
                 return Unit.Default;
             });
@@ -74,7 +82,7 @@ namespace MilkBottle.Database {
 
         private Try<Unit> QueryEntities( LiteDatabase db, Action<ILiteQueryable<T>> queryAction ) {
             return Prelude.Try( () => {
-                queryAction( db.GetCollection<T>( mCollectionName ).Query());
+                queryAction( Include( db.GetCollection<T>( mCollectionName )).Query());
 
                 return Unit.Default;
             });
@@ -88,7 +96,7 @@ namespace MilkBottle.Database {
 
         private Try<Unit> SelectEntities( LiteDatabase db, Action<IEnumerable<T>> withAction ) {
             return Prelude.Try(  () => {
-                withAction( db.GetCollection<T>( mCollectionName ).FindAll());
+                withAction( Include( db.GetCollection<T>( mCollectionName )).FindAll());
 
                 return Unit.Default;
             });
@@ -101,7 +109,7 @@ namespace MilkBottle.Database {
         }
 
         private TryOption<T> GetEntityById( LiteDatabase db, ObjectId id ) {
-            return Prelude.TryOption( () => db.GetCollection<T>( mCollectionName ).FindById( id ));
+            return Prelude.TryOption( () => Include( db.GetCollection<T>( mCollectionName )).FindById( id ));
         }
 
         protected Either<Exception, Option<T>> GetEntityById( ObjectId id ) {
@@ -154,11 +162,6 @@ namespace MilkBottle.Database {
             return ValidateEntity( entity )
                 .Bind( e => CreateConnection())
                     .Bind( db => DeleteEntity( db, entity ).ToEither());
-        }
-
-        public void Dispose() {
-            mDatabase?.Dispose();
-            mDatabase = null;
         }
     }
 }

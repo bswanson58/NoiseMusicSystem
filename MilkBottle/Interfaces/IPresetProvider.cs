@@ -5,12 +5,12 @@ using LiteDB;
 using MilkBottle.Entities;
 
 namespace MilkBottle.Interfaces {
-    interface IPresetProvider : IDisposable {
+    interface IPresetProvider {
         Either<Exception, Option<Preset>>   GetPresetById( ObjectId id );
         Either<Exception, Option<Preset>>   GetPresetByName( string name );
 
-        Either<Exception, Unit>             QueryPresets( Action<ILiteQueryable<Preset>> action );
         Either<Exception, Unit>             SelectPresets( Action<IEnumerable<Preset>> action );
+        Either<Exception, Unit>             SelectPresets( PresetLibrary forLibrary, Action<IEnumerable<Preset>> action );
 
         Either<Exception, Option<Preset>>   FindPreset( BsonExpression expression );
         Either<Exception, Unit>             FindPresetList( BsonExpression expression, Action<IEnumerable<Preset>> action );

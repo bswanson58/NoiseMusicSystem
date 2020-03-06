@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
-using MilkBottle.Properties;
 using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
     class PresetProvider : EntityProvider<Preset>, IPresetProvider {
-        public PresetProvider( IEnvironment environment ) :
-            base( Path.Combine( environment.DatabaseDirectory(), ApplicationConstants.DatabaseFileName ), EntityCollection.PresetCollection ) { }
+        public PresetProvider( IDatabaseProvider databaseProvider ) :
+            base( databaseProvider, EntityCollection.PresetCollection ) { }
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
@@ -20,6 +19,10 @@ namespace MilkBottle.Database {
             WithCollection( collection => {
                 collection.EnsureIndex( p => p.Name );
             });
+        }
+
+        protected override ILiteCollection<Preset> Include( ILiteCollection<Preset> list ) {
+            return list.Include( p => p.Library );
         }
 
         public Either<Exception, Option<Preset>> GetPresetById( ObjectId id ) {
@@ -36,6 +39,10 @@ namespace MilkBottle.Database {
 
         public Either<Exception, Unit> SelectPresets( Action<IEnumerable<Preset>> action ) {
             return SelectEntities( action );
+        }
+
+        public Either<Exception, Unit> SelectPresets( PresetLibrary forLibrary, Action<IEnumerable<Preset>> action ) {
+            return SelectEntities( list => action( from p in list where p.Library.Id == forLibrary.Id select p ));
         }
 
         public Either<Exception, Option<Preset>> FindPreset( BsonExpression predicate ) {

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using LiteDB;
 
 namespace MilkBottle.Entities {
@@ -8,13 +9,16 @@ namespace MilkBottle.Entities {
         public  string  Location { get; }
 
         public PresetLibrary( string name, string location ) :
-            this( ObjectId.NewObjectId(), name, location ) { }
+            this( ObjectId.NewObjectId(), name, location ) {
+            Name = String.Empty;
+            Location = String.Empty;
+        }
 
         [BsonCtorAttribute]
         public PresetLibrary( ObjectId id, string name, string location ) :
             base( id ) {
-            Name = name;
-            Location = location;
+            Name = name ?? String.Empty;
+            Location = location ?? String.Empty;
         }
     }
 }

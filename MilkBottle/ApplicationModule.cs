@@ -18,6 +18,8 @@ namespace MilkBottle {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
             containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
             containerRegistry.RegisterSingleton<IAudioManager, AudioManager>();
+            containerRegistry.RegisterSingleton<IDatabaseBuilder, DatabaseBuilder>();
+            containerRegistry.RegisterSingleton<IDatabaseProvider, DatabaseProvider>();
             containerRegistry.RegisterSingleton<IInitializationController, InitializationController>();
             containerRegistry.RegisterSingleton<IMilkController, MilkController>();
             containerRegistry.RegisterSingleton<ProjectMWrapper, ProjectMWrapper>();

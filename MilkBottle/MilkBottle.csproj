@@ -223,6 +223,7 @@
     <Compile Include="Behaviors\MetroWindowTitleColor.cs" />
     <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
+    <Compile Include="Database\DatabaseProvider.cs" />
     <Compile Include="Database\EntityCollection.cs" />
     <Compile Include="Database\EntityProvider.cs" />
     <Compile Include="Database\PresetLibraryProvider.cs" />
@@ -238,6 +239,8 @@
     <Compile Include="Entities\PresetLibrary.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IAudioManager.cs" />
+    <Compile Include="Interfaces\IDatabaseBuilder.cs" />
+    <Compile Include="Interfaces\IDatabaseProvider.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IInitializationController.cs" />
     <Compile Include="Interfaces\IMilkController.cs" />
@@ -253,6 +256,7 @@
     <Compile Include="Interfaces\IStateManager.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
     <Compile Include="Models\AudioManager.cs" />
+    <Compile Include="Models\DatabaseBuilder.cs" />
     <Compile Include="Models\InitializationController.cs" />
     <Compile Include="Models\MilkController.cs" />
     <Compile Include="Models\PresetController.cs" />
