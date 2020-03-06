@@ -6,7 +6,6 @@ using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Properties;
-using MilkBottle.Types;
 using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
@@ -23,39 +22,39 @@ namespace MilkBottle.Database {
             });
         }
 
-        public Either<DatabaseError, Preset> GetPresetById( ObjectId id ) {
+        public Either<Exception, Option<Preset>> GetPresetById( ObjectId id ) {
             return GetEntityById( id );
         }
 
-        public Either<DatabaseError, Preset> GetPresetByName( string name ) {
+        public Either<Exception, Option<Preset>> GetPresetByName( string name ) {
             return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( Preset.Name ), validName )));
         }
 
-        public Either<DatabaseError, Unit> QueryPresets( Action<ILiteQueryable<Preset>> action ) {
+        public Either<Exception, Unit> QueryPresets( Action<ILiteQueryable<Preset>> action ) {
             return QueryEntities( action );
         }
 
-        public Either<DatabaseError, Unit> SelectPresets( Action<IEnumerable<Preset>> action ) {
+        public Either<Exception, Unit> SelectPresets( Action<IEnumerable<Preset>> action ) {
             return SelectEntities( action );
         }
 
-        public Either<DatabaseError, Preset> FindPreset( BsonExpression predicate ) {
+        public Either<Exception, Option<Preset>> FindPreset( BsonExpression predicate ) {
             return FindEntity( predicate );
         }
 
-        public Either<DatabaseError, Unit> FindPresetList( BsonExpression predicate, Action<IEnumerable<Preset>> action ) {
+        public Either<Exception, Unit> FindPresetList( BsonExpression predicate, Action<IEnumerable<Preset>> action ) {
             return FindEntityList( predicate, action );
         }
 
-        public Either<DatabaseError, Unit> Insert( Preset preset ) {
+        public Either<Exception, Unit> Insert( Preset preset ) {
             return InsertEntity( preset );
         }
 
-        public Either<DatabaseError, Unit> Update( Preset preset ) {
+        public Either<Exception, Unit> Update( Preset preset ) {
             return UpdateEntity( preset );
         }
 
-        public Either<DatabaseError, Unit> Delete( Preset preset ) {
+        public Either<Exception, Unit> Delete( Preset preset ) {
             return DeleteEntity( preset );
         }
     }

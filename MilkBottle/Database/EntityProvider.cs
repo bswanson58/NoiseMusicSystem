@@ -6,7 +6,7 @@ using MilkBottle.Entities;
 using MilkBottle.Types;
 
 namespace MilkBottle.Database {
-    class EntityProvider<T> : IDisposable where T : EntityBase {
+    class EntityProvider<T> : ValidationBase<T>, IDisposable where T : EntityBase {
         private readonly string         mDatabasePath;
         private readonly string         mCollectionName;
         private LiteDatabase            mDatabase;
@@ -16,212 +16,148 @@ namespace MilkBottle.Database {
             mCollectionName = collectionName;
         }
 
-        protected Option<T2> ElevateEntity<T2>( T2 entity ) {
-            return entity != null ? Option<T2>.Some( entity ) : Option<T2>.None;
-        }
+        protected Either<Exception, LiteDatabase> CreateConnection() {
+            return Prelude.Try( () => {
+                mDatabase = new LiteDatabase( mDatabasePath );
 
-        protected Either<DatabaseError, LiteDatabase> CreateConnection() {
-            try {
-                if( mDatabase == null ) {
-                    mDatabase = new LiteDatabase( mDatabasePath );
-
-                    InitializeDatabase( mDatabase );
-                }
+                InitializeDatabase( mDatabase );
 
                 return mDatabase;
-            }
-            catch( Exception ex ) {
-                return new DatabaseError( "Opening database", ex );
-            }
+            }).ToEither();
+
         }
 
         protected virtual void InitializeDatabase( LiteDatabase db ) { }
 
-        protected Either<DatabaseError, Unit> WithCollection( Action<ILiteCollection<T>> action ) {
-            return ValidateAction( action ).Bind( validAction => {
-                try {
-                    return CreateConnection().Map( db => {
-                        action( db.GetCollection<T>( mCollectionName ));
+        private Try<Unit> ScanCollection( LiteDatabase db, Action<ILiteCollection<T>> withAction ) {
+            return Prelude.Try( () => {
+                withAction( db.GetCollection<T>( mCollectionName ));
 
-                        return Unit.Default;
-                    });
-                }
-                catch( Exception ex ) {
-                    return new DatabaseError( "Database Initialize", ex );
-                }
+                return Unit.Default;
             });
         }
 
-        protected Either<DatabaseError, T> FindEntity( BsonExpression predicate ) {
-            return ElevateEntity( predicate ).Match(
-                    FindWithPredicate,
-                    () => new DatabaseError( "Predicate cannot be null" ));
+        protected Either<Exception, Unit> WithCollection( Action<ILiteCollection<T>> action ) {
+            return ValidateAction( action )
+                .Bind( validAction => CreateConnection())
+                    .Bind( db => ScanCollection( db, action ).ToEither());
         }
 
-        private Either<DatabaseError, T> FindWithPredicate( BsonExpression predicate ) {
-            T retValue = default;
+        private TryOption<T> FindWithExpression( BsonExpression expression ) {
+            return Prelude.TryOption( () => {
+                T retValue = default;
 
-            WithCollection( collection => {
-                retValue = collection.FindOne( predicate );
-            });
+                WithCollection( collection => {
+                    retValue = collection.FindOne( expression );
+                });
 
-            if( retValue != null ) {
                 return retValue;
-            }
-
-            return new DatabaseError( "Entity was not located" );
-        }
-
-        protected Either<DatabaseError, Unit> FindEntityList( BsonExpression predicate, Action<IEnumerable<T>> action ) {
-            return ElevateEntity( predicate ).Match(
-                p => FindListWithPredicate( p, action ),
-                () => new DatabaseError( "Predicate cannot be null" ));
-        }
-
-        private Either<DatabaseError, Unit> FindListWithPredicate( BsonExpression predicate, Action<IEnumerable<T>> action ) {
-            return ValidateAction( action  )
-                .Bind( a => WithCollection( collection => a( collection.Find( predicate ))));
-        }
-
-        protected Either<DatabaseError, Unit> QueryEntities( Action<ILiteQueryable<T>> action ) {
-            return ValidateAction( action ).Bind( validAction => {
-                try {
-                    return CreateConnection().Map( db => {
-                        action( db.GetCollection<T>( mCollectionName ).Query());
-
-                        return Unit.Default;
-                    });
-                }
-                catch( Exception ex ) {
-                    return new DatabaseError( "Database GetAllEntities", ex );
-                }
             });
         }
 
-        protected Either<DatabaseError, Unit> SelectEntities( Action<IEnumerable<T>> action ) {
-            return ValidateAction( action ).Bind( validAction => {
-                try {
-                    return CreateConnection().Map( db => {
-                        action( db.GetCollection<T>( mCollectionName ).FindAll());
+        protected Either<Exception, Option<T>> FindEntity( BsonExpression expression ) {
+            return FindWithExpression( expression ).ToEither();
+        }
 
-                        return Unit.Default;
-                    });
-                }
-                catch( Exception ex ) {
-                    return new DatabaseError( "Database GetAllEntities", ex );
-                }
+        private Try<Unit> FindListWithExpression( BsonExpression expression, Action<IEnumerable<T>> action ) {
+            return Prelude.Try( () => {
+                WithCollection( c => action( c.Find( expression )));
+
+                return Unit.Default;
             });
         }
 
-        protected Either<DatabaseError, T> GetEntityById( ObjectId id ) {
-            return ValidateObjectId( id ).Bind( validId => {
-                try {
-                    return CreateConnection().Map( db => db.GetCollection<T>( mCollectionName ).FindById( validId ));
-                }
-                catch( Exception ex ) {
-                    return new DatabaseError( "Database GetEntityById", ex );
-                }
+        protected Either<Exception, Unit> FindEntityList( BsonExpression expression, Action<IEnumerable<T>> action ) {
+            return ValidateAction( action )
+                .Bind( a => FindListWithExpression( expression, action ).ToEither());
+        }
+
+        private Try<Unit> QueryEntities( LiteDatabase db, Action<ILiteQueryable<T>> queryAction ) {
+            return Prelude.Try( () => {
+                queryAction( db.GetCollection<T>( mCollectionName ).Query());
+
+                return Unit.Default;
             });
         }
 
-        protected Either<DatabaseError, Unit> InsertEntity( T entity ) {
-            return ElevateEntity( entity ).Match(
-                e => {
-                    try {
-                        return CreateConnection().Map( db => {
-                            db.GetCollection<T>( mCollectionName ).Insert( e );
-
-                            return Unit.Default;
-                        });
-                    }
-                    catch( Exception ex ) {
-                        return new DatabaseError( "Database InsertEntity", ex );
-                    }
-                },
-
-                () => new DatabaseError( "Entity cannot be null" ));
+        protected Either<Exception, Unit> QueryEntities( Action<ILiteQueryable<T>> action ) {
+            return ValidateAction( action )
+                .Bind( validAction => CreateConnection())
+                    .Bind( db => QueryEntities( db, action ).ToEither());
         }
 
-        protected Either<DatabaseError, Unit> UpdateEntity( T entity ) {
-            return ElevateEntity( entity ).Match(
-                e => CreateConnection().Bind( db => UpdateEntity( db, e )),
-                () => new DatabaseError( "Entity cannot be null" ));
+        private Try<Unit> SelectEntities( LiteDatabase db, Action<IEnumerable<T>> withAction ) {
+            return Prelude.Try(  () => {
+                withAction( db.GetCollection<T>( mCollectionName ).FindAll());
+
+                return Unit.Default;
+            });
         }
 
-        private Either<DatabaseError, Unit> UpdateEntity( LiteDatabase db, T entity ) {
-            try {
-                if(!db.GetCollection<T>( mCollectionName ).Update( entity )) {
-                    return new DatabaseError( "Entity was not located for update" );
+        protected Either<Exception, Unit> SelectEntities( Action<IEnumerable<T>> action ) {
+            return ValidateAction( action )
+                .Bind( validAction => CreateConnection())
+                    .Bind( db => SelectEntities( db, action ).ToEither());
+        }
+
+        private TryOption<T> GetEntityById( LiteDatabase db, ObjectId id ) {
+            return Prelude.TryOption( () => db.GetCollection<T>( mCollectionName ).FindById( id ));
+        }
+
+        protected Either<Exception, Option<T>> GetEntityById( ObjectId id ) {
+            return ValidateObjectId( id )
+                .Bind( validId => CreateConnection())
+                    .Bind( db => GetEntityById( db, id ).ToEither());
+        }
+
+        private Try<Unit> InsertEntity( LiteDatabase db, T entity ) {
+            return Prelude.Try( () => {
+                db.GetCollection<T>( mCollectionName ).Insert( entity );
+
+                return Unit.Default;
+            });
+        }
+
+        protected Either<Exception, Unit> InsertEntity( T entity ) {
+            return ValidateEntity( entity )
+                .Bind( e => CreateConnection())
+                    .Bind( db => InsertEntity( db, entity ).ToEither());
+        }
+
+        private Try<Unit> UpdateEntity( LiteDatabase db, T entity ) {
+            return Prelude.Try( () => {
+                var validUpdate = db.GetCollection<T>( mCollectionName ).Update( entity );
+
+                if(!validUpdate ) {
+                    throw new DatabaseException( "Entity to update was not found" );
                 }
 
                 return Unit.Default;
-            }
-            catch( Exception ex ) {
-                return new DatabaseError( "Database UpdateEntity", ex );
-            }
+            });
         }
 
-        protected Either<DatabaseError, Unit> DeleteEntity( T entity ) {
-            return ElevateEntity( entity ).Match( 
-                e => CreateConnection().Bind( db => DeleteEntity( db, e )),
-                () => new DatabaseError( "Entity cannot be null" ));
+        protected Either<Exception, Unit> UpdateEntity( T entity ) {
+            return ValidateEntity( entity )
+                .Bind( e => CreateConnection())
+                    .Bind( db => UpdateEntity( db, entity ).ToEither());
         }
 
-        private Either<DatabaseError, Unit> DeleteEntity( LiteDatabase db, T entity ) {
-            try {
-                if(!db.GetCollection<T>( mCollectionName ).Delete( entity.Id )) {
-                    return new DatabaseError( "Entity was not located for deletion" );
+        private Try<Unit> DeleteEntity( LiteDatabase db, T entity ) {
+            return Prelude.Try( () => {
+                var validUpdate = db.GetCollection<T>( mCollectionName ).Update( entity );
+
+                if(!validUpdate ) {
+                    throw new DatabaseException( "Entity to delete was not found" );
                 }
 
                 return Unit.Default;
-            }
-            catch( Exception ex ) {
-                return new DatabaseError( "Database DeleteEntity", ex );
-            }
+            });
         }
 
-        private Either<DatabaseError, ObjectId> ValidateObjectId( ObjectId id ) {
-            if( id == null ) {
-                return new DatabaseError( "Object id is null" );
-            }
-
-            if( id.Equals( new ObjectId())) {
-                return new DatabaseError( "ObjectId is not initialized" );
-            }
-
-            return id;
-        }
-
-        private Either<DatabaseError, Action<IEnumerable<T>>> ValidateAction( Action<IEnumerable<T>> action ) {
-            if( action == null ) {
-                return new DatabaseError( "Action cannot be null" );
-            }
-
-            return action;
-        }
-
-        private Either<DatabaseError, Action<ILiteQueryable<T>>> ValidateAction( Action<ILiteQueryable<T>> action ) {
-            if( action == null ) {
-                return new DatabaseError( "Action cannot be null" );
-            }
-
-            return action;
-        }
-
-        private Either<DatabaseError, Action<ILiteCollection<T>>> ValidateAction( Action<ILiteCollection<T>> action ) {
-            if( action == null ) {
-                return new DatabaseError( "Action cannot be null" );
-            }
-
-            return action;
-        }
-
-        protected Either<DatabaseError, string> ValidateString( string value ) {
-            if( String.IsNullOrWhiteSpace( value )) {
-                return new DatabaseError( "String value cannot be empty or null" );
-            }
-
-            return value;
+        protected Either<Exception, Unit> DeleteEntity( T entity ) {
+            return ValidateEntity( entity )
+                .Bind( e => CreateConnection())
+                    .Bind( db => DeleteEntity( db, entity ).ToEither());
         }
 
         public void Dispose() {

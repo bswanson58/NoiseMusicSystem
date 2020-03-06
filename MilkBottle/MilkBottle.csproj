@@ -227,6 +227,7 @@
     <Compile Include="Database\EntityProvider.cs" />
     <Compile Include="Database\PresetLibraryProvider.cs" />
     <Compile Include="Database\PresetProvider.cs" />
+    <Compile Include="Database\ValidationBase.cs" />
     <Compile Include="Dto\LibrarySet.cs" />
     <Compile Include="Dto\MilkConfiguration.cs" />
     <Compile Include="Dto\MilkDropPreset.cs" />
@@ -278,9 +279,10 @@
     <Compile Include="Support\LimitedStack.cs" />
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
-    <Compile Include="Types\Error.cs" />
+    <Compile Include="Types\DatabaseException.cs" />
     <Compile Include="Types\PresetDuration.cs" />
     <Compile Include="Types\PresetRating.cs" />
+    <Compile Include="Types\ValidationException.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />

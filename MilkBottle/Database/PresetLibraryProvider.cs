@@ -6,7 +6,6 @@ using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Properties;
-using MilkBottle.Types;
 using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
@@ -22,39 +21,39 @@ namespace MilkBottle.Database {
             });
         }
 
-        public Either<DatabaseError, PresetLibrary> GetLibraryById( ObjectId id ) {
+        public Either<Exception, Option<PresetLibrary>> GetLibraryById( ObjectId id ) {
             return GetEntityById( id );
         }
 
-        public Either<DatabaseError, PresetLibrary> GetLibraryByName( string name ) {
+        public Either<Exception, Option<PresetLibrary>> GetLibraryByName( string name ) {
             return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( PresetLibrary.Name ), validName )));
         }
 
-        public Either<DatabaseError, Unit> QueryLibraries( Action<ILiteQueryable<PresetLibrary>> action ) {
+        public Either<Exception, Unit> QueryLibraries( Action<ILiteQueryable<PresetLibrary>> action ) {
             return QueryEntities( action );
         }
 
-        public Either<DatabaseError, Unit> SelectLibraries( Action<IEnumerable<PresetLibrary>> action ) {
+        public Either<Exception, Unit> SelectLibraries( Action<IEnumerable<PresetLibrary>> action ) {
             return SelectEntities( action );
         }
 
-        public Either<DatabaseError, PresetLibrary> FindLibrary( BsonExpression predicate ) {
+        public Either<Exception, Option<PresetLibrary>> FindLibrary( BsonExpression predicate ) {
             return FindEntity( predicate );
         }
 
-        public Either<DatabaseError, Unit> FindLibraryList( BsonExpression predicate, Action<IEnumerable<PresetLibrary>> action ) {
+        public Either<Exception, Unit> FindLibraryList( BsonExpression predicate, Action<IEnumerable<PresetLibrary>> action ) {
             return FindEntityList( predicate, action );
         }
 
-        public Either<DatabaseError, Unit> Insert( PresetLibrary library ) {
+        public Either<Exception, Unit> Insert( PresetLibrary library ) {
             return InsertEntity( library );
         }
 
-        public Either<DatabaseError, Unit> Update( PresetLibrary library ) {
+        public Either<Exception, Unit> Update( PresetLibrary library ) {
             return UpdateEntity( library );
         }
 
-        public Either<DatabaseError, Unit> Delete( PresetLibrary library ) {
+        public Either<Exception, Unit> Delete( PresetLibrary library ) {
             return DeleteEntity( library );
         }
     }
