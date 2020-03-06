@@ -126,9 +126,7 @@ namespace MilkBottle.Database {
 
         private Try<Unit> UpdateEntity( LiteDatabase db, T entity ) {
             return Prelude.Try( () => {
-                var validUpdate = db.GetCollection<T>( mCollectionName ).Update( entity );
-
-                if(!validUpdate ) {
+                if(!db.GetCollection<T>( mCollectionName ).Update( entity )) {
                     throw new DatabaseException( "Entity to update was not found" );
                 }
 
@@ -144,9 +142,7 @@ namespace MilkBottle.Database {
 
         private Try<Unit> DeleteEntity( LiteDatabase db, T entity ) {
             return Prelude.Try( () => {
-                var validUpdate = db.GetCollection<T>( mCollectionName ).Update( entity );
-
-                if(!validUpdate ) {
+                if(!db.GetCollection<T>( mCollectionName ).Update( entity )) {
                     throw new DatabaseException( "Entity to delete was not found" );
                 }
 
