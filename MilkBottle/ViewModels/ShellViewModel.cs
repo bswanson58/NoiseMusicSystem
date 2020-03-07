@@ -257,7 +257,7 @@ namespace MilkBottle.ViewModels {
                 var appList = new List<UiCompanionApp>( CompanionApplications );
 
                 appList.ForEach( a => {
-                    var expiration = DateTime.Now - TimeSpan.FromSeconds( cHeartbeatSeconds * 2 );
+                    var expiration = DateTime.Now - TimeSpan.FromSeconds( cHeartbeatSeconds * 3 );
 
                     if( a.LastHeartbeat < expiration ) {
                         CompanionApplications.Remove( a );
