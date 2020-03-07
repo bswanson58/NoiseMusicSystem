@@ -20,6 +20,11 @@ using ReusableBits.Platform;
 using Application = System.Windows.Application;
 
 namespace MilkBottle.ViewModels {
+    public enum ShellView {
+        Manual,
+        Review
+    }
+
     class ShellViewModel : PropertyChangeBase {
         private const int                       cHeartbeatSeconds = 30;
 
@@ -36,7 +41,10 @@ namespace MilkBottle.ViewModels {
         private Window                          mShell;
         private WindowState					    mStoredWindowState;
 
+        public  ShellView                       ShellViewDisplayed { get; private set; }
         public  DelegateCommand                 Configuration { get; }
+        public  DelegateCommand                 DisplayManualController { get; }
+        public  DelegateCommand                 DisplayReviewer { get; }
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
         public  bool                            HaveCompanionApplications => CompanionApplications.Any();
@@ -54,6 +62,8 @@ namespace MilkBottle.ViewModels {
             mIpcHandler = ipcHandler;
 
             Configuration = new DelegateCommand( OnConfiguration );
+            DisplayManualController = new DelegateCommand( OnDisplayManualController );
+            DisplayReviewer = new DelegateCommand( OnDisplayReviewer );
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
             mNotifyIcon = new NotifyIcon { BalloonTipTitle = ApplicationConstants.ApplicationName, Text = ApplicationConstants.ApplicationName }; 
@@ -80,7 +90,7 @@ namespace MilkBottle.ViewModels {
 
             DisplayStatus = true;
             DisplayController = true;
-
+            ShellViewDisplayed = ShellView.Manual;
         }
 
         public void ShellLoaded( Window shell ) {
@@ -259,6 +269,18 @@ namespace MilkBottle.ViewModels {
             catch( Exception ex ) {
                 mLog.LogException( "ShellViewModel.OnIpcTimer", ex );
             }
+        }
+
+        private void OnDisplayManualController() {
+            ShellViewDisplayed = ShellView.Manual;
+
+            RaisePropertyChanged( () => ShellViewDisplayed );
+        }
+
+        private void OnDisplayReviewer() {
+            ShellViewDisplayed = ShellView.Review;
+
+            RaisePropertyChanged( () => ShellViewDisplayed );
         }
     } 
 }

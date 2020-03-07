@@ -5,13 +5,13 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:mvvm="http://prismlibrary.com/"
-                 xmlns:views="clr-namespace:MilkBottle.Views"
                  xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
                  xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                  xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
                  xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
                  xmlns:dto="clr-namespace:MilkBottle.Dto"
+                 xmlns:views="clr-namespace:MilkBottle.Views"
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
@@ -31,6 +31,16 @@
         <DataTemplate x:Key="CompanionAppTemplate" DataType="dto:UiCompanionApp">
             <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
         </DataTemplate>
+
+        <DataTemplate x:Key="ManualView">
+            <views:ManualControlView/>
+        </DataTemplate>
+        <DataTemplate x:Key="ReviewView">
+            <views:ReviewView/>
+        </DataTemplate>
+
+        <views:ShellViewSelector x:Key="ShellViewSelector" ManualView="{StaticResource ManualView}" ReviewView="{StaticResource ReviewView}"/>
+
     </Window.Resources>
 
     <mah:MetroWindow.IconTemplate>
@@ -58,6 +68,9 @@
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
+            <Button Command="{Binding DisplayReviewer}" Content="review"/>
+            <Button Command="{Binding DisplayManualController}" Content="revel"/>
+
             <Button Command="{Binding Configuration}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Configuration"
                     Visibility="{Binding DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
 
@@ -77,13 +90,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <views:MilkView Grid.Row="0"/>
-        <views:PresetControlView Grid.Row="1"
-                                 Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayController, Converter={StaticResource CollapseOnFalse}}"/>
-        <views:StatusView Grid.Row="2" 
+        <mah:TransitioningContentControl Grid.Row="0" Transition="RightReplace" Content="{Binding ShellViewDisplayed}" ContentTemplateSelector="{StaticResource ShellViewSelector}"/>
+
+        <views:StatusView Grid.Row="1" 
                           Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
     </Grid>
 

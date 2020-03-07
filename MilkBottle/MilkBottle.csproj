@@ -296,11 +296,17 @@
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ManualControlView.xaml.cs">
+      <DependentUpon>ManualControlView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MilkView.xaml.cs">
       <DependentUpon>MilkView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PresetControlView.xaml.cs">
       <DependentUpon>PresetControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReviewView.xaml.cs">
+      <DependentUpon>ReviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SelectPresetDialog.xaml.cs">
       <DependentUpon>SelectPresetDialog.xaml</DependentUpon>
@@ -312,6 +318,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\ShellViewSelector.cs" />
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
@@ -334,11 +341,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ManualControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MilkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PresetControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
