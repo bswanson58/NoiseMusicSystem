@@ -290,6 +290,7 @@
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
+    <Compile Include="ViewModels\PresetEditViewModel.cs" />
     <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
@@ -304,6 +305,9 @@
     </Compile>
     <Compile Include="Views\PresetControlView.xaml.cs">
       <DependentUpon>PresetControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PresetEditView.xaml.cs">
+      <DependentUpon>PresetEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReviewView.xaml.cs">
       <DependentUpon>ReviewView.xaml</DependentUpon>
@@ -350,6 +354,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PresetControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PresetEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
