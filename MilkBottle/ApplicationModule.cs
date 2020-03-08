@@ -31,6 +31,7 @@ namespace MilkBottle {
 
             containerRegistry.RegisterSingleton<IPresetProvider, PresetProvider>();
             containerRegistry.RegisterSingleton<IPresetLibraryProvider, PresetLibraryProvider>();
+            containerRegistry.RegisterSingleton<ITagProvider, TagProvider>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();

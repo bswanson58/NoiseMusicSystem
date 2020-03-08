@@ -15,6 +15,7 @@ namespace MilkBottle.Database {
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
             BsonMapper.Global.Entity<Preset>().DbRef( p => p.Library, EntityCollection.LibraryCollection );
+            BsonMapper.Global.Entity<Preset>().DbRef( t => t.Tags, EntityCollection.TagCollection );
 
             WithCollection( collection => {
                 collection.EnsureIndex( p => p.Name );
@@ -22,7 +23,9 @@ namespace MilkBottle.Database {
         }
 
         protected override ILiteCollection<Preset> Include( ILiteCollection<Preset> list ) {
-            return list.Include( p => p.Library );
+            return list
+                .Include( p => p.Library )
+                .Include( p => p.Tags );
         }
 
         public Either<Exception, Option<Preset>> GetPresetById( ObjectId id ) {

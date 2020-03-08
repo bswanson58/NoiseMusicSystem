@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using LiteDB;
 using MilkBottle.Types;
@@ -10,6 +11,7 @@ namespace MilkBottle.Entities {
         public  string          Location { get; }
         public  bool            IsFavorite { get; }
         public  int             Rating { get; }
+        public  List<PresetTag> Tags { get; set; }
         public  PresetLibrary   Library { get; set; }
 
         public Preset( string name, string location, PresetLibrary library ) :
@@ -22,6 +24,7 @@ namespace MilkBottle.Entities {
             IsFavorite = isFavorite;
             Rating = rating;
             Library = library;
+            Tags = new List<PresetTag>();
         }
 
         [BsonCtorAttribute]
@@ -32,6 +35,7 @@ namespace MilkBottle.Entities {
             IsFavorite = isFavorite;
             Rating = rating;
             Library = new PresetLibrary( String.Empty, String.Empty );
+            Tags = new List<PresetTag>();
         }
 
         private Preset( Preset clone, bool isFavorite ) :
@@ -41,6 +45,7 @@ namespace MilkBottle.Entities {
             IsFavorite = isFavorite;
             Rating = clone.Rating;
             Library = clone.Library;
+            Tags = new List<PresetTag>( clone.Tags );
         }
 
         private Preset( Preset clone, PresetRating rating ) :
@@ -50,6 +55,7 @@ namespace MilkBottle.Entities {
             IsFavorite = clone.IsFavorite;
             Rating = rating;
             Library = clone.Library;
+            Tags = new List<PresetTag>( clone.Tags );
         }
 
         public Preset WithFavorite( bool isFavorite ) {
