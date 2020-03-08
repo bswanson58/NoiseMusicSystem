@@ -11,7 +11,8 @@ namespace MilkBottle.Models {
         private readonly Task<bool>         mLibraryInitializationTask;
         private GLControl                   mGlControl;
 
-        public InitializationController( IMilkController milkController, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator ) {
+        public InitializationController( IMilkController milkController, IPresetController presetController, IPresetLibrarian librarian, IEventAggregator eventAggregator,
+                                         IDatabaseBuilder databaseBuilder ) {
             mEventAggregator = eventAggregator;
             mMilkController = milkController;
             mPresetController = presetController;
@@ -19,6 +20,8 @@ namespace MilkBottle.Models {
             mLibraryInitializationTask = librarian.Initialize();
 
             mEventAggregator.Subscribe( this );
+
+            databaseBuilder.ReconcileDatabase();
         }
 
         public async void ContextReady( GLControl glControl ) {
