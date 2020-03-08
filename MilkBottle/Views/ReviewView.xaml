@@ -12,7 +12,14 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <views:PresetEditView Grid.Column="0" Margin="5"/>
+        <TabControl Grid.Column="0" Margin="5">
+            <TabItem Header="Presets">
+                <views:PresetEditView/>
+            </TabItem>
+            <TabItem Header="Tags">
+                <views:TagEditView/>
+            </TabItem>
+        </TabControl>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

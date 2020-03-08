@@ -5,11 +5,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:entities="clr-namespace:MilkBottle.Entities"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:TagEditViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="TagTemplate" DataType="entities:PresetTag">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Tag List:"/>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}" SelectedItem="{Binding CurrentTag}"/>
+
+        <Button Grid.Row="2" Margin="0,5" HorizontalAlignment="Right" Content="New Tag" Command="{Binding NewTag}"/>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Presets Tagged with '"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding CurrentTag.Name}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="':"/>
+        </StackPanel>
+        <ListBox Grid.Row="4" ItemsSource="{Binding TaggedPresets}"/>
     </Grid>
 </UserControl>

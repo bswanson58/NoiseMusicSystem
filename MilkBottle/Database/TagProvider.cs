@@ -9,10 +9,10 @@ using Query = LiteDB.Query;
 namespace MilkBottle.Database {
     class TagProvider : EntityProvider<PresetTag>, ITagProvider {
         public TagProvider( IDatabaseProvider databaseProvider ) :
-            base( databaseProvider, EntityCollection.PresetCollection ) { }
+            base( databaseProvider, EntityCollection.TagCollection ) { }
 
         protected override void InitializeDatabase( LiteDatabase db ) {
-            BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
+            BsonMapper.Global.Entity<PresetTag>().Id( e => e.Id );
 
             WithCollection( collection => {
                 collection.EnsureIndex( p => p.Name );
@@ -24,7 +24,7 @@ namespace MilkBottle.Database {
         }
 
         public Either<Exception, Option<PresetTag>> GetTagByName( string name ) {
-            return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( Preset.Name ), validName )));
+            return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( PresetTag.Name ), validName )));
         }
 
         public Either<Exception, Unit> SelectTags( Action<IEnumerable<PresetTag>> action ) {
