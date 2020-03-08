@@ -7,10 +7,11 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:entities="clr-namespace:MilkBottle.Entities"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:PresetEditViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="350" d:DesignWidth="400">
+             d:DesignHeight="550" d:DesignWidth="400">
     <UserControl.Resources>
         <DataTemplate x:Key="LibraryTemplate" DataType="entities:PresetLibrary">
             <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
@@ -20,33 +21,58 @@
             <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
                        behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
         </DataTemplate>
+
+        <DataTemplate x:Key="TagTemplate" DataType="dto:UiTag">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox />
+                <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Tag.Name}"/>
+            </StackPanel>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Preset Library:"/>
-            <ComboBox Width="300" ItemTemplate="{StaticResource LibraryTemplate}" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}"/>
-        </StackPanel>
-
-        <ListBox Grid.Row="1" Margin="0,5" ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource PresetTemplate}" SelectedItem="{Binding CurrentPreset}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
-
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Orientation="Vertical">
-                <CheckBox Margin="3" Content="Is Favorite" IsChecked="{Binding IsFavorite}"/>
-                <CheckBox Margin="3" Content="Don't Play" IsChecked="{Binding DoNotPlay}"/>
+        <GroupBox Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Header=" Libraries ">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Current Library:"/>
+                <ComboBox Width="300" ItemTemplate="{StaticResource LibraryTemplate}" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}"/>
             </StackPanel>
-        </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="0,5" Style="{StaticResource SectionBorderStyle}" Header=" Library Presets ">
+            <ListBox ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource PresetTemplate}" SelectedItem="{Binding CurrentPreset}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Selected Preset Properties ">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" MinWidth="150"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="3,5" Orientation="Vertical">
+                    <CheckBox Margin="3" Content="Is Favorite" IsChecked="{Binding IsFavorite}"/>
+                    <CheckBox Margin="3" Content="Don't Play" IsChecked="{Binding DoNotPlay}"/>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Margin="15,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Associated Tags:"/>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}"/>
+                    <Button Grid.Row="2" Margin="0,3,0,0" HorizontalAlignment="Right" Content="New Tag..."/>
+                </Grid>
+            </Grid>
+        </GroupBox>
     </Grid>
 </UserControl>

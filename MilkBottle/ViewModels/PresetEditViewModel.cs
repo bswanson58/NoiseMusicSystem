@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Caliburn.Micro;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
@@ -9,20 +10,25 @@ namespace MilkBottle.ViewModels {
     class PresetEditViewModel : PropertyChangeBase {
         private readonly IPresetLibraryProvider     mLibraryProvider;
         private readonly IPresetProvider            mPresetProvider;
+        private readonly ITagProvider               mTagProvider;
         private PresetLibrary                       mCurrentLibrary;
         private Preset                              mCurrentPreset;
 
         public  BindableCollection<PresetLibrary>   Libraries { get; }
         public  BindableCollection<Preset>          Presets { get; }
+        public  BindableCollection<UiTag>           Tags { get; }
 
-        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider ) {
+        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider ) {
             mLibraryProvider = libraryProvider;
             mPresetProvider = presetProvider;
+            mTagProvider = tagProvider;
 
             Libraries = new BindableCollection<PresetLibrary>();
             Presets = new BindableCollection<Preset>();
+            Tags = new BindableCollection<UiTag>();
 
             LoadLibraries();
+            LoadTags();
         }
 
         public PresetLibrary CurrentLibrary {
@@ -84,6 +90,14 @@ namespace MilkBottle.ViewModels {
                 CurrentPreset = Presets.FirstOrDefault();
             }
         }
+
+        private void LoadTags() {
+            Tags.Clear();
+
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected )));
+        }
+
+        private void OnTagSelected( UiTag tag ) { }
 
         public bool IsFavorite {
             get => CurrentPreset?.IsFavorite ?? false;

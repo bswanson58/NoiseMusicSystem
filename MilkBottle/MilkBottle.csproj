@@ -235,6 +235,7 @@
     <Compile Include="Dto\MilkDropPreset.cs" />
     <Compile Include="Dto\MilkPreferences.cs" />
     <Compile Include="Dto\UiCompanionApp.cs" />
+    <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="Entities\Preset.cs" />
     <Compile Include="Entities\PresetLibrary.cs" />
@@ -337,6 +338,10 @@
     <Compile Include="Views\TagEditView.xaml.cs">
       <DependentUpon>TagEditView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\GroupBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\NewTagDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
