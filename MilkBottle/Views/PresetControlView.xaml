@@ -36,20 +36,25 @@
     <Grid Background="Transparent" Margin="10,0,3,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Tag="dimmed" Text="Now Playing:"/>
-        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Margin="3,0" Text="{Binding PresetName}"
-                   behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" ToolTip="{Binding PresetHistory}"/>
-
-        <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <StackPanel Tag="dimmed" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
             <ComboBox Margin="0,0,5,0" Width="180" VerticalAlignment="Center" ItemTemplate="{StaticResource LibrarySet}" ItemsSource="{Binding Libraries}" 
                       SelectedItem="{Binding CurrentLibrary}" ToolTip="{Binding CurrentLibraryTooltip}"/>
             <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}"
                     ToolTip="Select An Individual Preset"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Tag="dimmed" Text="Now Playing:"/>
+        </StackPanel>
+
+        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Margin="3,0" Text="{Binding PresetName}"
+                   behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" ToolTip="{Binding PresetHistory}"/>
+
+        <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>
