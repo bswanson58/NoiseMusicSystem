@@ -92,7 +92,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <mah:TransitioningContentControl Grid.Row="0" Transition="RightReplace" Content="{Binding ShellViewDisplayed}" ContentTemplateSelector="{StaticResource ShellViewSelector}"/>
+        <ContentControl Grid.Row="0" Content="{Binding ShellViewDisplayed}" ContentTemplateSelector="{StaticResource ShellViewSelector}"/>
 
         <views:StatusView Grid.Row="1" 
                           Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>

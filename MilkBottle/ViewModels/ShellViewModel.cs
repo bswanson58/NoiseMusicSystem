@@ -272,12 +272,14 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnDisplayManualController() {
+            mStateManager.EnterState( eStateTriggers.Stop );
             ShellViewDisplayed = ShellView.Manual;
 
             RaisePropertyChanged( () => ShellViewDisplayed );
         }
 
         private void OnDisplayReviewer() {
+            mStateManager.EnterState( eStateTriggers.Stop );
             ShellViewDisplayed = ShellView.Review;
 
             RaisePropertyChanged( () => ShellViewDisplayed );
