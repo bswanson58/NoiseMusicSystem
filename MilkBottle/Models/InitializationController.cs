@@ -9,7 +9,7 @@ namespace MilkBottle.Models {
         private readonly IStateManager      mStateManager;
         private readonly IMilkController    mMilkController;
         private readonly IPresetController  mPresetController;
-        private Task<bool>                  mDatabaseBuildTask;
+        private readonly Task<bool>         mDatabaseBuildTask;
         private GLControl                   mGlControl;
 
         public InitializationController( IStateManager stateManager, IMilkController milkController, IPresetController presetController, IDatabaseBuilder databaseBuilder,
@@ -34,7 +34,6 @@ namespace MilkBottle.Models {
                 mPresetController.Initialize();
 
                 mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
-                mDatabaseBuildTask = null;
             }
         }
 
