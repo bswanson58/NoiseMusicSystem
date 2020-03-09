@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using MilkBottle.ViewModels;
 
 namespace MilkBottle.Events {
     public class ApplicationClosing { }
@@ -29,6 +30,14 @@ namespace MilkBottle.Events {
 
         public LaunchRequest( string target ) {
             Target = target;
+        }
+    }
+
+    public class ModeChanged {
+        public  ShellView   ToView { get; }
+
+        public ModeChanged( ShellView toView ) {
+            ToView = toView;
         }
     }
 

@@ -7,9 +7,12 @@ using MilkBottle.Types;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class PresetEditViewModel : PropertyChangeBase {
+    class PresetEditViewModel : PropertyChangeBase, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
+        private readonly IEventAggregator           mEventAggregator;
         private readonly IPresetLibraryProvider     mLibraryProvider;
         private readonly IPresetProvider            mPresetProvider;
+        private readonly IPresetController          mPresetController;
+        private readonly IStateManager              mStateManager;
         private readonly ITagProvider               mTagProvider;
         private PresetLibrary                       mCurrentLibrary;
         private Preset                              mCurrentPreset;
@@ -18,9 +21,13 @@ namespace MilkBottle.ViewModels {
         public  BindableCollection<Preset>          Presets { get; }
         public  BindableCollection<UiTag>           Tags { get; }
 
-        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider ) {
+        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider,
+                                    IPresetController presetController,  IStateManager stateManager, IEventAggregator eventAggregator ) {
+            mEventAggregator = eventAggregator;
             mLibraryProvider = libraryProvider;
             mPresetProvider = presetProvider;
+            mPresetController = presetController;
+            mStateManager = stateManager;
             mTagProvider = tagProvider;
 
             Libraries = new BindableCollection<PresetLibrary>();
@@ -29,6 +36,18 @@ namespace MilkBottle.ViewModels {
 
             LoadLibraries();
             LoadTags();
+
+            mEventAggregator.Subscribe( this );
+        }
+
+        public void Handle( Events.ModeChanged args ) {
+            if( args.ToView != ShellView.Review ) {
+                mEventAggregator.Unsubscribe( this );
+            }
+        }
+
+        public void Handle( Events.InitializationComplete args ) {
+            mStateManager.EnterState( eStateTriggers.Run );
         }
 
         public PresetLibrary CurrentLibrary {
@@ -53,10 +72,18 @@ namespace MilkBottle.ViewModels {
 
         private void OnLibraryChanged() {
             LoadPresets();
+
+            if( CurrentLibrary != null ) {
+                mPresetController.LoadLibrary( CurrentLibrary.Name );
+            }
         }
 
         private void OnPresetChanged() {
             SetPresetState();
+
+            if( CurrentPreset != null ) {
+                mPresetController.PlayPreset( new MilkDropPreset( CurrentPreset.Name, CurrentPreset.Location ));
+            }
         }
 
         private void LoadLibraries() {

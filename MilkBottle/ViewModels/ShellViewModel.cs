@@ -99,6 +99,8 @@ namespace MilkBottle.ViewModels {
             mShell.StateChanged += OnShellStateChanged;
             mShell.IsVisibleChanged += OnShellVisibleChanged;
             mShell.Closing += OnShellClosing;
+
+            SwitchView( ShellView.Manual );
         }
 
         private void OnShellStateChanged( object sender, EventArgs args ) {
@@ -272,17 +274,19 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnDisplayManualController() {
-            mStateManager.EnterState( eStateTriggers.Stop );
-            ShellViewDisplayed = ShellView.Manual;
-
-            RaisePropertyChanged( () => ShellViewDisplayed );
+            SwitchView( ShellView.Manual );
         }
 
         private void OnDisplayReviewer() {
+            SwitchView( ShellView.Review );
+        }
+
+        private void SwitchView( ShellView toView ) {
             mStateManager.EnterState( eStateTriggers.Stop );
-            ShellViewDisplayed = ShellView.Review;
+            ShellViewDisplayed = toView;
 
             RaisePropertyChanged( () => ShellViewDisplayed );
+            mEventAggregator.PublishOnUIThread( new Events.ModeChanged( toView ));
         }
     } 
 }

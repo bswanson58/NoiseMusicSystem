@@ -10,7 +10,7 @@ using MilkBottle.Support;
 using MilkBottle.Types;
 
 namespace MilkBottle.Models {
-    class PresetController : IPresetController {
+    class PresetController : IPresetController, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
         private readonly IPresetLibrarian           mLibrarian;
@@ -59,6 +59,10 @@ namespace MilkBottle.Models {
                 ConfigurePresetTimer( PresetTimer.Infinite );
                 ConfigurePresetSequencer( PresetSequence.Random );
             }
+        }
+
+        public void Handle( Events.ModeChanged args ) {
+            IsInitialized = false;
         }
 
         public void MilkConfigurationUpdated() {
@@ -136,7 +140,7 @@ namespace MilkBottle.Models {
         }
 
         public void StopPresetCycling() {
-            mPresetTimer.StopTimer();
+            mPresetTimer?.StopTimer();
 
             IsRunning = false;
         }

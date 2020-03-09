@@ -14,7 +14,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class PresetControlViewModel : PropertyChangeBase, IDisposable, 
-                                   IHandle<Events.InitializationComplete>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched> {
+                                   IHandle<Events.InitializationComplete>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IDialogService         mDialogService;
         private readonly IStateManager          mStateManager;
@@ -84,6 +84,17 @@ namespace MilkBottle.ViewModels {
 
             mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
             mPresetController.ConfigurePresetSequencer( PresetSequence.Random );
+
+            mStateManager.EnterState( eStateTriggers.Run );
+        }
+
+        public void Handle( Events.ModeChanged args ) {
+            if( args.ToView != ShellView.Manual ) {
+                mEventAggregator.Unsubscribe( this );
+
+                mPresetSubscription?.Dispose();
+                mPresetSubscription = null;
+            }
         }
 
         public void Handle( Events.PresetLibraryUpdated args ) {
