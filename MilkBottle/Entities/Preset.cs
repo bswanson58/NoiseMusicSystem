@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using LiteDB;
 using MilkBottle.Types;
 
@@ -64,6 +65,23 @@ namespace MilkBottle.Entities {
 
         public Preset WithRating( PresetRating rating ) {
             return new Preset( this, rating );
+        }
+
+        public Preset WithTagState( PresetTag tag, bool added ) {
+            var currentTag = Tags.FirstOrDefault( t => t.Id.Equals( tag.Id ));
+
+            if( added ) {
+                if( currentTag == null ) {
+                    Tags.Add( tag );
+                }
+            }
+            else {
+                if( currentTag != null ) {
+                    Tags.Remove( currentTag );
+                }
+            }
+
+            return this;
         }
     }
 }

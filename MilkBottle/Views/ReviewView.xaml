@@ -27,7 +27,7 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <views:MilkView Grid.Column="0" Margin="5,0,0,0"/>
+            <views:MilkView Grid.Column="0" Margin="5"/>
         </Grid>
     </Grid>
 </UserControl>

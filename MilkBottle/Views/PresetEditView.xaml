@@ -24,7 +24,7 @@
 
         <DataTemplate x:Key="TagTemplate" DataType="dto:UiTag">
             <StackPanel Orientation="Horizontal">
-                <CheckBox />
+                <CheckBox IsChecked="{Binding IsSelected}"/>
                 <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Tag.Name}"/>
             </StackPanel>
         </DataTemplate>
@@ -70,7 +70,7 @@
 
                     <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Associated Tags:"/>
                     <ListBox Grid.Row="1" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}"/>
-                    <Button Grid.Row="2" Margin="0,3,0,0" HorizontalAlignment="Right" Content="New Tag..."/>
+                    <Button Grid.Row="2" Margin="0,3,0,0" HorizontalAlignment="Right" Content="New Tag..." Command="{Binding NewTag}"/>
                 </Grid>
             </Grid>
         </GroupBox>

@@ -4,6 +4,8 @@ using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
@@ -14,6 +16,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetController          mPresetController;
         private readonly IStateManager              mStateManager;
         private readonly ITagProvider               mTagProvider;
+        private readonly IDialogService             mDialogService;
         private PresetLibrary                       mCurrentLibrary;
         private Preset                              mCurrentPreset;
 
@@ -21,18 +24,23 @@ namespace MilkBottle.ViewModels {
         public  BindableCollection<Preset>          Presets { get; }
         public  BindableCollection<UiTag>           Tags { get; }
 
+        public  DelegateCommand                     NewTag { get; }
+
         public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider,
-                                    IPresetController presetController,  IStateManager stateManager, IEventAggregator eventAggregator ) {
+                                    IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mEventAggregator = eventAggregator;
             mLibraryProvider = libraryProvider;
             mPresetProvider = presetProvider;
             mPresetController = presetController;
             mStateManager = stateManager;
             mTagProvider = tagProvider;
+            mDialogService = dialogService;
 
             Libraries = new BindableCollection<PresetLibrary>();
             Presets = new BindableCollection<Preset>();
             Tags = new BindableCollection<UiTag>();
+
+            NewTag = new DelegateCommand( OnNewTag );
 
             LoadLibraries();
             LoadTags();
@@ -124,7 +132,15 @@ namespace MilkBottle.ViewModels {
             mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected )));
         }
 
-        private void OnTagSelected( UiTag tag ) { }
+        private void OnTagSelected( UiTag tag ) {
+            if( CurrentPreset != null ) {
+                var preset = CurrentPreset.WithTagState( tag.Tag, tag.IsSelected );
+
+                mPresetProvider.Update( preset );
+
+                LoadPresets();
+            }
+        }
 
         public bool IsFavorite {
             get => CurrentPreset?.IsFavorite ?? false;
@@ -153,8 +169,34 @@ namespace MilkBottle.ViewModels {
         }
 
         private void SetPresetState() {
+            foreach( var tag in Tags ) {
+                tag.SetSelectedState( false );
+            }
+
+            if( CurrentPreset != null ) {
+                foreach( var tag in CurrentPreset.Tags ) {
+                    var uiTag = Tags.FirstOrDefault( t => t.Tag.Id.Equals( tag.Id ));
+
+                    uiTag?.SetSelectedState( true );
+                }
+            }
+
             RaisePropertyChanged( () => IsFavorite );
             RaisePropertyChanged( () => DoNotPlay );
+        }
+
+        private void OnNewTag() {
+            mDialogService.ShowDialog( "NewTagDialog", null, OnNewTagResult );
+        }
+
+        private void OnNewTagResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var newTag = new PresetTag( result.Parameters.GetValue<string>( NewTagDialogModel.cTagNameParameter ));
+
+                mTagProvider.Insert( newTag );
+
+                LoadTags();
+            }
         }
     }
 }
