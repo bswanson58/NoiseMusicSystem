@@ -105,7 +105,6 @@ namespace MilkBottle.Models {
             var preferences = mPreferences.Load<MilkPreferences>();
 
             mPresetDuration = preferences.PresetPlayDurationInSeconds;
-            BlendPresetTransition = preferences.BlendPresetTransition;
 
             mProjectM.showFrameRate( preferences.DisplayFps );
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using Caliburn.Micro;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
@@ -21,6 +22,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetController      mPresetController;
         private readonly IPresetLibraryProvider mLibraryProvider;
         private readonly List<PresetLibrary>    mLibraries;
+        private readonly IPreferences           mPreferences;
         private readonly LimitedStack<string>   mHistory;
         private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
@@ -40,12 +42,13 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibraryProvider libraryProvider,
-                                       IDialogService dialogService, IEventAggregator eventAggregator ) {
+                                       IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
             mPresetController = presetController;
             mLibraryProvider = libraryProvider;
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
+            mPreferences = preferences;
 
             mLibraries = new List<PresetLibrary>();
             mHistory = new LimitedStack<string>( 4 );
@@ -72,6 +75,12 @@ namespace MilkBottle.ViewModels {
         }
 
         private void Initialize() {
+            var preferences = mPreferences.Load<MilkPreferences>();
+
+            mPresetController.BlendPresetTransition = preferences.BlendPresetTransition;
+            mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
+            mPresetController.ConfigurePresetSequencer( PresetSequence.Random );
+
             RaisePropertyChanged( () => IsBlended );
             RaisePropertyChanged( () => IsLocked );
             RaisePropertyChanged( () => PresetDuration );
@@ -79,9 +88,6 @@ namespace MilkBottle.ViewModels {
 
             Stop.RaiseCanExecuteChanged();
             Start.RaiseCanExecuteChanged();
-
-            mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
-            mPresetController.ConfigurePresetSequencer( PresetSequence.Random );
 
             mStateManager.EnterState( eStateTriggers.Run );
         }

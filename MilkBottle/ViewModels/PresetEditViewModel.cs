@@ -45,6 +45,10 @@ namespace MilkBottle.ViewModels {
             LoadLibraries();
             LoadTags();
 
+            mPresetController.BlendPresetTransition = false;
+            mPresetController.ConfigurePresetSequencer( PresetSequence.Sequential );
+            mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
+
             mEventAggregator.Subscribe( this );
         }
 
