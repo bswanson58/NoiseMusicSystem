@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Caliburn.Micro;
 using MilkBottle.Dto;
+using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using MilkBottle.Types;
@@ -13,10 +14,11 @@ namespace MilkBottle.Models {
     class PresetController : IPresetController, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
-        private readonly IPresetLibrarian           mLibrarian;
+        private readonly IPresetProvider            mPresetProvider;
+        private readonly IPresetLibraryProvider     mLibraryProvider;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IPreferences               mPreferences;
-        private readonly Subject<MilkDropPreset>    mCurrentPreset;
+        private readonly Subject<Preset>            mCurrentPreset;
         private readonly LimitedStack<ulong>        mPresetHistory;
         private readonly IPresetTimerFactory        mTimerFactory;
         private readonly IPresetSequencerFactory    mSequencerFactory;
@@ -29,12 +31,14 @@ namespace MilkBottle.Models {
         public  string                              CurrentPresetLibrary { get; private set; }
         public  bool                                IsRunning { get; private set; }
 
-        public  IObservable<MilkDropPreset>         CurrentPreset => mCurrentPreset.AsObservable();
+        public  IObservable<Preset>                 CurrentPreset => mCurrentPreset.AsObservable();
 
-        public PresetController( ProjectMWrapper projectM, IPresetLibrarian librarian, IPresetTimerFactory timerFactory, IPresetSequencerFactory sequencerFactory,
+        public PresetController( ProjectMWrapper projectM, IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, 
+                                 IPresetTimerFactory timerFactory, IPresetSequencerFactory sequencerFactory,
                                  IPreferences preferences, IEventAggregator eventAggregator, IPlatformLog log ) {
             mProjectM = projectM;
-            mLibrarian = librarian;
+            mPresetProvider = presetProvider;
+            mLibraryProvider = libraryProvider;
             mPreferences = preferences;
             mTimerFactory = timerFactory;
             mSequencerFactory = sequencerFactory;
@@ -42,7 +46,7 @@ namespace MilkBottle.Models {
             mLog = log;
 
             mPresetHistory = new LimitedStack<ulong>( 100 );
-            mCurrentPreset = new Subject<MilkDropPreset>();
+            mCurrentPreset = new Subject<Preset>();
             mPresetDuration = PresetDuration.Create( PresetDuration.MaximumValue );
             mCurrentPresetIndex = -1;
             IsRunning = false;
@@ -52,8 +56,7 @@ namespace MilkBottle.Models {
         }
 
         public void Initialize() {
-            if(( mProjectM.isInitialized()) &&
-               ( mLibrarian.IsInitialized )) {
+            if( mProjectM.isInitialized()) {
                 InitializeMilk();
             
                 ConfigurePresetTimer( PresetTimer.Infinite );
@@ -106,35 +109,39 @@ namespace MilkBottle.Models {
 
             mProjectM.showFrameRate( preferences.DisplayFps );
 
-            if((!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) &&
-               ( mLibrarian.ContainsLibrary( preferences.CurrentPresetLibrary ))) {
-                SwitchLibrary( preferences.CurrentPresetLibrary );
+            var libraries = new List<PresetLibrary>();
+            mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
+            var library = libraries.FirstOrDefault();
+
+            if(!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) {
+               library =  libraries.FirstOrDefault( l => l.Name == preferences.CurrentPresetLibrary );
             }
-            else {
-                SwitchLibrary( mLibrarian.AvailableLibraries.FirstOrDefault());
+
+            if( library != null ) {
+                SwitchLibrary( libraries.FirstOrDefault());
             }
 
             IsInitialized = true;
         }
 
-        public MilkDropPreset GetPlayingPreset() {
-            var retValue = default( MilkDropPreset );
+        public Preset GetPlayingPreset() {
+            var retValue = default( Preset );
 
             if(( mProjectM.isInitialized()) &&
                ( mProjectM.getPresetListSize() > 0 )) {
                var presetIndex = mProjectM.selectedPresetIndex();
 
-                retValue = new MilkDropPreset( mProjectM.getPresetName(presetIndex ), mProjectM.getPresetURL( presetIndex ));
+                retValue = new Preset( mProjectM.getPresetName(presetIndex ), mProjectM.getPresetURL( presetIndex ), PresetLibrary.Default());
             }
 
             return retValue;
         }
 
-        public void LoadLibrary( string libraryName ) {
-            if( SwitchLibrary( libraryName )) {
+        public void LoadLibrary( PresetLibrary library ) {
+            if( SwitchLibrary( library )) {
                 var preferences = mPreferences.Load<MilkPreferences>();
 
-                preferences.CurrentPresetLibrary = libraryName;
+                preferences.CurrentPresetLibrary = library.Name;
                 mPreferences.Save( preferences );
             }
         }
@@ -152,15 +159,16 @@ namespace MilkBottle.Models {
             IsRunning = true;
         }
 
-        private bool SwitchLibrary( string libraryName ) {
+        private bool SwitchLibrary( PresetLibrary forLibrary ) {
             var retValue = false;
-            var library = mLibrarian.GetLibrary( libraryName );
+            var presets = new List<Preset>();
 
-            if(( library != null ) &&
-               ( library.Presets.Any())) {
-                LoadPresets( library.Presets );
+            mPresetProvider.SelectPresets( forLibrary, list => presets.AddRange( list ));
 
-                CurrentPresetLibrary = libraryName;
+            if( presets.Any()) {
+                LoadPresets( presets );
+
+                CurrentPresetLibrary = forLibrary.Name;
                 mEventAggregator.PublishOnUIThread( new Events.PresetLibrarySwitched( CurrentPresetLibrary ));
 
                 retValue = true;
@@ -212,8 +220,8 @@ namespace MilkBottle.Models {
             }
         }
 
-        public void PlayPreset( MilkDropPreset preset ) {
-            var index = mProjectM.addPresetURL( preset.PresetLocation, preset.PresetName );
+        public void PlayPreset( Preset preset ) {
+            var index = mProjectM.addPresetURL( preset.Location, preset.Name );
 
             PlayPreset( index );
         }
@@ -235,14 +243,14 @@ namespace MilkBottle.Models {
             }
         }
 
-        private void LoadPresets( IEnumerable<MilkDropPreset> presetList ) {
+        private void LoadPresets( IEnumerable<Preset> presetList ) {
             try {
                 mProjectM.clearPresetlist();
                 mPresetHistory.Clear();
                 mCurrentPresetIndex = -1;
 
                 foreach( var preset in presetList ) {
-                    mProjectM.addPresetURL( preset.PresetLocation, preset.PresetName );
+                    mProjectM.addPresetURL( preset.Location, preset.Name );
                 }
 
                 SelectNextPreset();
@@ -253,7 +261,7 @@ namespace MilkBottle.Models {
         }
 
         private void OnPresetSwitched(bool isHardCut, ulong presetIndex ) {
-            mCurrentPreset.OnNext( new MilkDropPreset( mProjectM.getPresetName( presetIndex ), mProjectM.getPresetURL( presetIndex )));
+            mCurrentPreset.OnNext( new Preset( mProjectM.getPresetName( presetIndex ), mProjectM.getPresetURL( presetIndex ), PresetLibrary.Default()));
         }
 
         public void Dispose() {

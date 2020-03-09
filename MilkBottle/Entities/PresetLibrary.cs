@@ -20,5 +20,9 @@ namespace MilkBottle.Entities {
             Name = name ?? String.Empty;
             Location = location ?? String.Empty;
         }
+
+        public static PresetLibrary Default() {
+            return new PresetLibrary( String.Empty, String.Empty );
+        }
     }
 }

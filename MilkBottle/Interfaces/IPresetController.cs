@@ -1,17 +1,17 @@
 ﻿using System;
-using MilkBottle.Dto;
+using MilkBottle.Entities;
 using MilkBottle.Types;
 
 namespace MilkBottle.Interfaces {
     interface IPresetController : IDisposable {
-        IObservable<MilkDropPreset>     CurrentPreset { get; }
+        IObservable<Preset>     CurrentPreset { get; }
 
         void            Initialize();
         void            MilkConfigurationUpdated();
         void            ConfigurePresetTimer( PresetTimer timerType );
         void            ConfigurePresetSequencer( PresetSequence forSequence );
 
-        void            LoadLibrary( string libraryName );
+        void            LoadLibrary( PresetLibrary library );
 
         void            StopPresetCycling();
         void            StartPresetCycling();
@@ -19,8 +19,8 @@ namespace MilkBottle.Interfaces {
         void            SelectNextPreset();
         void            SelectPreviousPreset();
 
-        void            PlayPreset( MilkDropPreset preset );
-        MilkDropPreset  GetPlayingPreset();
+        void            PlayPreset( Preset preset );
+        Preset          GetPlayingPreset();
 
         bool            IsInitialized { get; }
         bool            IsRunning { get; }

@@ -2,6 +2,6 @@
 
 namespace MilkBottle.Interfaces {
     interface IDatabaseBuilder {
-        Task    ReconcileDatabase();
+        Task<bool>  ReconcileDatabase();
     }
 }

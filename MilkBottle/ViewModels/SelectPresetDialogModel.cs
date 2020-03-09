@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
-using MilkBottle.Dto;
+using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using Prism.Commands;
 using Prism.Services.Dialogs;
@@ -13,36 +14,40 @@ namespace MilkBottle.ViewModels {
         public  const string                cLibraryParameter = "library";
         public  const string                cPresetParameter = "preset";
 
-        private readonly IPresetLibrarian                       mPresetLibrarian;
-        private readonly ObservableCollection<MilkDropPreset>   mPresets;
-        private ICollectionView                                 mPresetView;
-        private string                                          mCurrentLibrary;
-        private string                                          mFilterText;
+        private readonly IPresetProvider                mPresetProvider;
+        private readonly ObservableCollection<Preset>   mPresets;
+        private ICollectionView                         mPresetView;
+        private PresetLibrary                           mCurrentLibrary;
+        private string                                  mFilterText;
 
-        public string                       Title { get; }
-        public DelegateCommand              Ok { get; }
-        public DelegateCommand              Cancel { get; }
+        public string                                   Title { get; }
+        public DelegateCommand                          Ok { get; }
+        public DelegateCommand                          Cancel { get; }
 
-        public ObservableCollection<string> Libraries { get; }
-        public MilkDropPreset               CurrentPreset { get; set; }
+        public ObservableCollection<PresetLibrary>      Libraries { get; }
+        public Preset                                   CurrentPreset { get; set; }
 
-        public event Action<IDialogResult>  RequestClose;
+        public event Action<IDialogResult>          RequestClose;
 
-        public SelectPresetDialogModel( IPresetLibrarian librarian ) {
-            mPresetLibrarian = librarian;
+        public SelectPresetDialogModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider ) {
+            mPresetProvider = presetProvider;
 
             Title = "Select Preset";
-            Libraries = new ObservableCollection<string>();
-            mPresets = new ObservableCollection<MilkDropPreset>();
+            Libraries = new ObservableCollection<PresetLibrary>();
+            mPresets = new ObservableCollection<Preset>();
 
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
 
-            Libraries.AddRange( mPresetLibrarian.AvailableLibraries );
+            libraryProvider.SelectLibraries( list => Libraries.AddRange( from l in list orderby l.Name select l ));
         }
 
         public void OnDialogOpened( IDialogParameters parameters ) {
-            CurrentLibrary = parameters.GetValue<string>( cLibraryParameter );
+            var libraryName = parameters.GetValue<string>( cLibraryParameter );
+
+            if(!String.IsNullOrWhiteSpace( libraryName )) {
+                CurrentLibrary = Libraries.FirstOrDefault( l => l.Name.Equals( libraryName ));
+            }
         }
 
         public ICollectionView PresetList {
@@ -69,9 +74,9 @@ namespace MilkBottle.ViewModels {
         private bool OnPresetFilter( object listItem ) {
             var retValue = true;
 
-            if(( listItem is MilkDropPreset preset ) &&
+            if(( listItem is Preset preset ) &&
                (!string.IsNullOrWhiteSpace( FilterText ))) {
-                if( preset.PresetName.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+                if( preset.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
                     retValue = false;
                 }
             }
@@ -79,7 +84,7 @@ namespace MilkBottle.ViewModels {
             return ( retValue );
         }
 
-        public string CurrentLibrary {
+        public PresetLibrary CurrentLibrary {
             get => mCurrentLibrary;
             set {
                 mCurrentLibrary = value;
@@ -89,15 +94,11 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void LoadLibrary( string libraryName ) {
+        private void LoadLibrary( PresetLibrary library ) {
             mPresets.Clear();
 
-            if(!String.IsNullOrWhiteSpace( libraryName )) {
-                var library = mPresetLibrarian.GetLibrary( libraryName );
-
-                if( library != null ) {
-                    mPresets.AddRange( library.Presets );
-                }
+            if( library != null ) {
+                mPresetProvider.SelectPresets( library, list => mPresets.AddRange( from p in list orderby p.Name select p ));
             }
         }
 

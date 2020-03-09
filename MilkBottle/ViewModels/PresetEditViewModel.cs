@@ -74,7 +74,7 @@ namespace MilkBottle.ViewModels {
             LoadPresets();
 
             if( CurrentLibrary != null ) {
-                mPresetController.LoadLibrary( CurrentLibrary.Name );
+                mPresetController.LoadLibrary( CurrentLibrary );
             }
         }
 
@@ -82,7 +82,7 @@ namespace MilkBottle.ViewModels {
             SetPresetState();
 
             if( CurrentPreset != null ) {
-                mPresetController.PlayPreset( new MilkDropPreset( CurrentPreset.Name, CurrentPreset.Location ));
+                mPresetController.PlayPreset( CurrentPreset );
             }
         }
 

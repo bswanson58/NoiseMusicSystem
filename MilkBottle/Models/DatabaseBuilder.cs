@@ -11,39 +11,52 @@ namespace MilkBottle.Models {
         private readonly IEnvironment           mEnvironment;
         private readonly IPresetProvider        mPresetProvider;
         private readonly IPresetLibraryProvider mLibraryProvider;
+        private readonly IPlatformLog           mLog;
 
-        public DatabaseBuilder( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, IEnvironment environment ) {
+        public DatabaseBuilder( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, IEnvironment environment, IPlatformLog log ) {
             mEnvironment = environment;
             mPresetProvider = presetProvider;
             mLibraryProvider = libraryProvider;
+            mLog = log;
         }
 
-        public Task ReconcileDatabase() {
+        public Task<bool> ReconcileDatabase() {
             return Task.Run( ReconcileLibraries );
         }
 
-        private void ReconcileLibraries() {
-            var root = mEnvironment.MilkLibraryFolder();
+        private bool ReconcileLibraries() {
+            var retValue = false;
 
-            if( Directory.Exists( root )) {
-                var directories = Directory.EnumerateDirectories( root ).ToList();
-                var libraries = new List<PresetLibrary>();
+            try {
+                var root = mEnvironment.MilkLibraryFolder();
+
+                if( Directory.Exists( root )) {
+                    var directories = Directory.EnumerateDirectories( root ).ToList();
+                    var libraries = new List<PresetLibrary>();
                 
-                mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
+                    mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
 
-                // add any new directories as libraries
-                var missingLibraries = directories.Where( d => !libraries.Any( l => l.Name.Equals( Path.GetFileName( d )))).ToList();
-                missingLibraries.ForEach( l => mLibraryProvider.Insert( new PresetLibrary( Path.GetFileName( l ), l )).IfLeft( LogException ));
+                    // add any new directories as libraries
+                    var missingLibraries = directories.Where( d => !libraries.Any( l => l.Name.Equals( Path.GetFileName( d )))).ToList();
+                    missingLibraries.ForEach( l => mLibraryProvider.Insert( new PresetLibrary( Path.GetFileName( l ), l )).IfLeft( LogException ));
 
-                // remove any deleted directories
-                var missingDirectories = libraries.Where( l => !directories.Any( d => d.Equals( l.Location ))).ToList();
-                missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( LogException ));
+                    // remove any deleted directories
+                    var missingDirectories = libraries.Where( l => !directories.Any( d => d.Equals( l.Location ))).ToList();
+                    missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( LogException ));
 
-                // reconcile the presets in each library
-                libraries.Clear();
-                mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
-                libraries.ForEach( ReconcilePresets );
+                    // reconcile the presets in each library
+                    libraries.Clear();
+                    mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
+                    libraries.ForEach( ReconcilePresets );
+
+                    retValue = true;
+                }
             }
+            catch( Exception ex ) {
+                mLog.LogException( "DatabaseBuilder.ReconcileLibraries", ex );
+            }
+
+            return retValue;
         }
 
         private void ReconcilePresets( PresetLibrary forLibrary ) {
