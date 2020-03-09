@@ -10,8 +10,8 @@ namespace MilkBottle.Entities {
 
         public PresetLibrary( string name, string location ) :
             this( ObjectId.NewObjectId(), name, location ) {
-            Name = String.Empty;
-            Location = String.Empty;
+            Name = name ?? String.Empty;
+            Location = location ?? String.Empty;
         }
 
         [BsonCtorAttribute]
