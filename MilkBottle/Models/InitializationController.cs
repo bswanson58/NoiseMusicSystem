@@ -6,7 +6,6 @@ using OpenTK;
 namespace MilkBottle.Models {
     class InitializationController : IInitializationController, IHandle<Events.MilkConfigurationUpdated>, IHandle<Events.ApplicationClosing> {
         private readonly IEventAggregator   mEventAggregator;
-        private readonly IDatabaseBuilder   mDatabaseBuilder;
         private readonly IStateManager      mStateManager;
         private readonly IMilkController    mMilkController;
         private readonly IPresetController  mPresetController;
@@ -19,7 +18,6 @@ namespace MilkBottle.Models {
             mStateManager = stateManager;
             mMilkController = milkController;
             mPresetController = presetController;
-            mDatabaseBuilder = databaseBuilder;
 
             mEventAggregator.Subscribe( this );
 
@@ -36,6 +34,7 @@ namespace MilkBottle.Models {
                 mPresetController.Initialize();
 
                 mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
+                mDatabaseBuildTask = null;
             }
         }
 

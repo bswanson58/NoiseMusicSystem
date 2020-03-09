@@ -282,11 +282,13 @@ namespace MilkBottle.ViewModels {
         }
 
         private void SwitchView( ShellView toView ) {
-            mStateManager.EnterState( eStateTriggers.Stop );
-            ShellViewDisplayed = toView;
+            if( toView != ShellViewDisplayed ) {
+                mStateManager.EnterState( eStateTriggers.Stop );
+                ShellViewDisplayed = toView;
 
-            RaisePropertyChanged( () => ShellViewDisplayed );
-            mEventAggregator.PublishOnUIThread( new Events.ModeChanged( toView ));
+                RaisePropertyChanged( () => ShellViewDisplayed );
+                mEventAggregator.PublishOnUIThread( new Events.ModeChanged( toView ));
+            }
         }
     } 
 }
