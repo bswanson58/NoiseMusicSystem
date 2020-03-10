@@ -17,6 +17,7 @@ namespace MilkBottle.ViewModels {
         private readonly IStateManager              mStateManager;
         private readonly ITagProvider               mTagProvider;
         private readonly IDialogService             mDialogService;
+        private readonly IPreferences               mPreferences;
         private PresetLibrary                       mCurrentLibrary;
         private Preset                              mCurrentPreset;
 
@@ -26,7 +27,7 @@ namespace MilkBottle.ViewModels {
 
         public  DelegateCommand                     NewTag { get; }
 
-        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider,
+        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
                                     IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mEventAggregator = eventAggregator;
             mLibraryProvider = libraryProvider;
@@ -35,6 +36,7 @@ namespace MilkBottle.ViewModels {
             mStateManager = stateManager;
             mTagProvider = tagProvider;
             mDialogService = dialogService;
+            mPreferences = preferences;
 
             Libraries = new BindableCollection<PresetLibrary>();
             Presets = new BindableCollection<Preset>();
@@ -42,24 +44,35 @@ namespace MilkBottle.ViewModels {
 
             NewTag = new DelegateCommand( OnNewTag );
 
-            LoadLibraries();
-            LoadTags();
-
             mPresetController.BlendPresetTransition = false;
             mPresetController.ConfigurePresetSequencer( PresetSequence.Sequential );
             mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
+            mStateManager.EnterState( eStateTriggers.Stop );
+
+            LoadLibraries();
+            LoadTags();
+
+            if( mPresetController.IsInitialized ) {
+                Initialize();
+            }
 
             mEventAggregator.Subscribe( this );
+        }
+
+        private void Initialize() {
+            var milkPreferences = mPreferences.Load<MilkPreferences>();
+
+            CurrentLibrary = Libraries.FirstOrDefault( l => l.Name.Equals( milkPreferences.CurrentPresetLibrary ));
+        }
+
+        public void Handle( Events.InitializationComplete args ) {
+            Initialize();
         }
 
         public void Handle( Events.ModeChanged args ) {
             if( args.ToView != ShellView.Review ) {
                 mEventAggregator.Unsubscribe( this );
             }
-        }
-
-        public void Handle( Events.InitializationComplete args ) {
-            mStateManager.EnterState( eStateTriggers.Run );
         }
 
         public PresetLibrary CurrentLibrary {
@@ -69,6 +82,14 @@ namespace MilkBottle.ViewModels {
 
                 OnLibraryChanged();
                 RaisePropertyChanged( () => CurrentLibrary );
+
+                if( mCurrentLibrary != null ) {
+                    var preferences = mPreferences.Load<MilkPreferences>();
+
+                    preferences.CurrentPresetLibrary = mCurrentLibrary.Name;
+
+                    mPreferences.Save( preferences );
+                }
             }
         }
 
@@ -95,6 +116,11 @@ namespace MilkBottle.ViewModels {
 
             if( CurrentPreset != null ) {
                 mPresetController.PlayPreset( CurrentPreset );
+
+                mStateManager.EnterState( eStateTriggers.Run );
+            }
+            else {
+                mStateManager.EnterState( eStateTriggers.Stop );
             }
         }
 
@@ -102,14 +128,6 @@ namespace MilkBottle.ViewModels {
             Libraries.Clear();
 
             mLibraryProvider.SelectLibraries( list => Libraries.AddRange( from l in list orderby l.Name select l ));
-
-            if( CurrentLibrary != null ) {
-                CurrentLibrary = Libraries.FirstOrDefault( l => l.Id.Equals( mCurrentLibrary.Id ));
-            }
-
-            if( CurrentLibrary == null ) {
-                CurrentLibrary = Libraries.FirstOrDefault();
-            }
         }
 
         private void LoadPresets() {
