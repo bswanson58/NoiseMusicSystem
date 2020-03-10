@@ -208,11 +208,17 @@ namespace MilkBottle.Models {
         }
 
         public void PlayPreset( Preset preset ) {
-            var index = mProjectM.addPresetURL( preset.Location, preset.Id.ToString());
+            if( mLoadedPresets.FirstOrDefault( p => p.Id.Equals( preset.Id )) == null ) {
+                mLoadedPresets.Add( preset );
 
-            PlayPreset( index );
+                mProjectM.addPresetURL( preset.Location, preset.Id.ToString());
+            }
 
-            mLoadedPresets.Add( preset );
+            var index = mLoadedPresets.FindIndex( p => p.Id.Equals( preset.Id ));
+
+            if( index >= 0 ) {
+                PlayPreset((ulong)index );
+            }
         }
 
         private void OnPresetTimer( object sender, EventArgs args ) {
