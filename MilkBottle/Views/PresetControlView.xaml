@@ -8,12 +8,15 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:entities="clr-namespace:MilkBottle.Entities"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:PresetControlViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="1100">
 
     <UserControl.Resources>
+        <valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+
         <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="25"/>
@@ -30,6 +33,47 @@
             <Grid Margin="5,2">
                 <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
             </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FavoriteTemplate">
+            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center" Width="18"
+                      Opacity="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource FavoriteCheckBoxStyle}" />
+            <DataTemplate.Triggers>
+                <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DoNotPlayTemplate">
+            <CheckBox x:Name="DoNotPlay"  HorizontalAlignment="Center" Width="18"
+                      Opacity="{Binding Path=DoNotPlay, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=DoNotPlay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource DoNotPlayCheckBoxStyle}" />
+            <DataTemplate.Triggers>
+                <Trigger SourceName="DoNotPlay" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="DoNotPlay" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Tags Template -->
+        <DataTemplate x:Key="TagsTemplate" DataType="dto:UiTrack">
+            <ContentControl x:Name="TagContainer" Opacity="0.3">
+                <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                        Command="{Binding Path=EditTags}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TagContainer" Property="Opacity" Value="1.0"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasTags}" Value="True">
+                    <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -55,6 +99,10 @@
                    behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" ToolTip="{Binding PresetHistory}"/>
 
         <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DoNotPlayTemplate}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>

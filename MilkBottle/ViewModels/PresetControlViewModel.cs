@@ -9,6 +9,7 @@ using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
+using MilkBottle.Types;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -20,6 +21,7 @@ namespace MilkBottle.ViewModels {
         private readonly IDialogService         mDialogService;
         private readonly IStateManager          mStateManager;
         private readonly IPresetController      mPresetController;
+        private readonly IPresetProvider        mPresetProvider;
         private readonly IPresetLibraryProvider mLibraryProvider;
         private readonly List<PresetLibrary>    mLibraries;
         private readonly IPreferences           mPreferences;
@@ -27,12 +29,14 @@ namespace MilkBottle.ViewModels {
         private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
         private PresetLibrary                   mCurrentLibrary;
+        private Preset                          mCurrentPreset;
 
         public  DelegateCommand                 Start { get; }
         public  DelegateCommand                 Stop { get; }
         public  DelegateCommand                 NextPreset { get; }
         public  DelegateCommand                 PreviousPreset { get; }
         public  DelegateCommand                 SelectPreset { get; }
+        public  DelegateCommand                 EditTags { get; }
 
         public  int                             PresetDurationMinimum => Types.PresetDuration.MinimumValue;
         public  int                             PresetDurationMaximum => Types.PresetDuration.MaximumValue;
@@ -40,11 +44,14 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetName { get; set; }
         public  string                          CurrentLibraryTooltip => null; // mCurrentLibrary != null ? $"{mCurrentLibrary.PresetCount} presets in library" : String.Empty;
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
+        public  string                          TagsTooltip => mCurrentPreset != null ? mCurrentPreset.Tags.Any() ? String.Join( Environment.NewLine, mCurrentPreset.Tags ) : "Set Preset Tags" : "Set Preset Tags";
+        public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
-        public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibraryProvider libraryProvider,
+        public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider,
                                        IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
             mPresetController = presetController;
+            mPresetProvider = presetProvider;
             mLibraryProvider = libraryProvider;
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
@@ -58,6 +65,7 @@ namespace MilkBottle.ViewModels {
             NextPreset = new DelegateCommand( OnNextPreset );
             PreviousPreset = new DelegateCommand( OnPreviousPreset );
             SelectPreset = new DelegateCommand( OnSelectPreset );
+            EditTags = new DelegateCommand( OnTagEdit );
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
 
@@ -148,6 +156,8 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnPresetChanged( Preset preset ) {
+            mCurrentPreset = preset;
+
             if( preset != null ) {
                 PresetName = Path.GetFileNameWithoutExtension( preset.Name );
 
@@ -155,6 +165,35 @@ namespace MilkBottle.ViewModels {
 
                 RaisePropertyChanged( () => PresetName );
                 RaisePropertyChanged( () => PresetHistory );
+            }
+
+            RaisePropertyChanged( () => HasTags );
+            RaisePropertyChanged( () => TagsTooltip );
+        }
+
+        public bool IsFavorite {
+            get => mCurrentPreset?.IsFavorite ?? false;
+            set => OnIsFavoriteChanged( value );
+        }
+
+        private void OnIsFavoriteChanged( bool toValue ) {
+            var preset = mCurrentPreset?.WithFavorite( toValue );
+
+            if( preset != null ) {
+                mPresetProvider.Update( preset );
+            }
+        }
+
+        public bool DoNotPlay {
+            get => mCurrentPreset != null && mCurrentPreset.Rating == PresetRating.DoNotPlayValue;
+            set => OnDoNotPlayChanged( value );
+        }
+         
+        private void OnDoNotPlayChanged( bool toValue ) {
+            var preset = mCurrentPreset?.WithRating( toValue ? PresetRating.DoNotPlayValue : PresetRating.MinimumValue );
+
+            if( preset != null ) {
+                mPresetProvider.Update( preset );
             }
         }
 
@@ -180,6 +219,8 @@ namespace MilkBottle.ViewModels {
                 RaisePropertyChanged( () => PresetDuration );
             }
         }
+
+        private void OnTagEdit() { }
 
         private void OnStart() {
             mStateManager.EnterState( eStateTriggers.Run );

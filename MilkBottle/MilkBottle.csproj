@@ -334,6 +334,10 @@
     <Compile Include="Views\TagEditView.xaml.cs">
       <DependentUpon>TagEditView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\FavoriteCheckbox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\GroupBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
