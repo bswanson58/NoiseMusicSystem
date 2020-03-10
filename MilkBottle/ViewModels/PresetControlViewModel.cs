@@ -68,11 +68,11 @@ namespace MilkBottle.ViewModels {
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
 
+            UpdateLibraries();
+
             if( mPresetController.IsInitialized ) {
                 Initialize();
             }
-            
-            UpdateLibraries();
 
             mEventAggregator.Subscribe( this );
         }
@@ -87,6 +87,8 @@ namespace MilkBottle.ViewModels {
             mPresetController.BlendPresetTransition = preferences.BlendPresetTransition;
             mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
             mPresetController.ConfigurePresetSequencer( PresetSequence.Random );
+
+            CurrentLibrary = mLibraries.FirstOrDefault( l => l.Name.Equals( preferences.CurrentPresetLibrary ));
 
             RaisePropertyChanged( () => IsBlended );
             RaisePropertyChanged( () => IsLocked );
@@ -221,7 +223,21 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnTagEdit() { }
+        private void OnTagEdit() {
+            var parameters = new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset } };
+
+            mDialogService.ShowDialog( "TagEditDialog", parameters, OnTagsEdited );
+        }
+
+        private void OnTagsEdited( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
+
+                if( preset != null ) {
+                    mPresetProvider.Update( preset );
+                }
+            }
+        }
 
         public string TagsTooltip => 
             mCurrentPreset != null ? 

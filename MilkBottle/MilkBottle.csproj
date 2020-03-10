@@ -297,6 +297,7 @@
     <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="ViewModels\TagEditDialogModel.cs" />
     <Compile Include="ViewModels\TagEditViewModel.cs" />
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
@@ -333,6 +334,9 @@
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TagEditDialog.xaml.cs">
+      <DependentUpon>TagEditDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TagEditView.xaml.cs">
       <DependentUpon>TagEditView.xaml</DependentUpon>
     </Compile>
@@ -345,6 +349,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\NewTagDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
