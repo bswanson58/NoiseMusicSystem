@@ -15,7 +15,6 @@ namespace MilkBottle.Models {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
         private readonly IPresetProvider            mPresetProvider;
-        private readonly IPresetLibraryProvider     mLibraryProvider;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IPreferences               mPreferences;
         private readonly Subject<Preset>            mCurrentPreset;
@@ -34,12 +33,11 @@ namespace MilkBottle.Models {
 
         public  IObservable<Preset>                 CurrentPreset => mCurrentPreset.AsObservable();
 
-        public PresetController( ProjectMWrapper projectM, IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, 
+        public PresetController( ProjectMWrapper projectM, IPresetProvider presetProvider, 
                                  IPresetTimerFactory timerFactory, IPresetSequencerFactory sequencerFactory,
                                  IPreferences preferences, IEventAggregator eventAggregator, IPlatformLog log ) {
             mProjectM = projectM;
             mPresetProvider = presetProvider;
-            mLibraryProvider = libraryProvider;
             mPreferences = preferences;
             mTimerFactory = timerFactory;
             mSequencerFactory = sequencerFactory;
@@ -109,18 +107,6 @@ namespace MilkBottle.Models {
             mPresetDuration = preferences.PresetPlayDurationInSeconds;
 
             mProjectM.showFrameRate( preferences.DisplayFps );
-
-            var libraries = new List<PresetLibrary>();
-            mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
-            var library = libraries.FirstOrDefault();
-
-            if(!String.IsNullOrWhiteSpace( preferences.CurrentPresetLibrary )) {
-               library =  libraries.FirstOrDefault( l => l.Name == preferences.CurrentPresetLibrary );
-            }
-
-            if( library != null ) {
-                SwitchLibrary( libraries.FirstOrDefault());
-            }
 
             IsInitialized = true;
         }
