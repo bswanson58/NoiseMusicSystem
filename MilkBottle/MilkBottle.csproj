@@ -283,6 +283,8 @@
     <Compile Include="Support\LimitedStack.cs" />
     <Compile Include="Support\Scaler.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
+    <Compile Include="Themes\ThemeCatalog.cs" />
+    <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="Types\DatabaseException.cs" />
     <Compile Include="Types\PresetDuration.cs" />
     <Compile Include="Types\PresetRating.cs" />

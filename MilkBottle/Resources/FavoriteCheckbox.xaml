@@ -150,7 +150,7 @@
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Dislike" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                            <Setter TargetName="Dislike" Property="Foreground" Value="Red"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -80,8 +80,8 @@
     <Grid Background="Transparent" Margin="10,0,3,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
@@ -98,11 +98,14 @@
         <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Margin="3,0" Text="{Binding PresetName}"
                    behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" ToolTip="{Binding PresetHistory}"/>
 
-        <StackPanel Tag="dimmed" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <ContentPresenter Tag="dimmed" ContentTemplate="{StaticResource HorizontalSeparator}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DoNotPlayTemplate}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
+        </StackPanel>
+
+        <StackPanel Tag="dimmed" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
@@ -9,6 +10,7 @@ using Prism.Ioc;
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
 using MilkBottle.Properties;
+using MilkBottle.Themes;
 using MilkBottle.ViewModels;
 using MilkBottle.Views;
 using ReusableBits.Platform;
@@ -70,6 +72,9 @@ namespace MilkBottle {
             var retValue = Container.Resolve<Shell>();
 
             retValue.Closing += OnShellClose;
+
+            var themeCatalog = Container.Resolve<ThemeCatalog>();
+            ThemeManager.SetApplicationTheme( String.Empty, String.Empty, themeCatalog.Signatures.FirstOrDefault( t => t.Name.Equals( "Orange" ))?.Location );
 
             return retValue;
         }
