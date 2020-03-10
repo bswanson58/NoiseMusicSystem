@@ -44,7 +44,6 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetName { get; set; }
         public  string                          CurrentLibraryTooltip => null; // mCurrentLibrary != null ? $"{mCurrentLibrary.PresetCount} presets in library" : String.Empty;
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
-        public  string                          TagsTooltip => mCurrentPreset != null ? mCurrentPreset.Tags.Any() ? String.Join( Environment.NewLine, mCurrentPreset.Tags ) : "Set Preset Tags" : "Set Preset Tags";
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider,
@@ -167,6 +166,8 @@ namespace MilkBottle.ViewModels {
                 RaisePropertyChanged( () => PresetHistory );
             }
 
+            RaisePropertyChanged( () => IsFavorite );
+            RaisePropertyChanged( () => DoNotPlay );
             RaisePropertyChanged( () => HasTags );
             RaisePropertyChanged( () => TagsTooltip );
         }
@@ -221,6 +222,11 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnTagEdit() { }
+
+        public string TagsTooltip => 
+            mCurrentPreset != null ? 
+                mCurrentPreset.Tags.Any() ? 
+                    String.Join( Environment.NewLine, from t in mCurrentPreset.Tags select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
 
         private void OnStart() {
             mStateManager.EnterState( eStateTriggers.Run );

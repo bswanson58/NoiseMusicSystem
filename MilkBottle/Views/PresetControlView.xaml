@@ -36,10 +36,10 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FavoriteTemplate">
-            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center" Width="18"
+            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center" Margin="0,0,3,3"
                       Opacity="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
                       IsChecked="{Binding Path=IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      Style="{StaticResource FavoriteCheckBoxStyle}" />
+                      Style="{StaticResource FavoriteCheckBoxStyle}" ToolTip="Set Favorite Status"/>
             <DataTemplate.Triggers>
                 <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
                     <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
@@ -48,10 +48,10 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DoNotPlayTemplate">
-            <CheckBox x:Name="DoNotPlay"  HorizontalAlignment="Center" Width="18"
+            <CheckBox x:Name="DoNotPlay"  HorizontalAlignment="Center" Margin="3"
                       Opacity="{Binding Path=DoNotPlay, Converter={StaticResource DefaultValueOpacityConverter}}"
                       IsChecked="{Binding Path=DoNotPlay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      Style="{StaticResource DoNotPlayCheckBoxStyle}" />
+                      Style="{StaticResource DoNotPlayCheckBoxStyle}" ToolTip="Set Do Not Play Status"/>
             <DataTemplate.Triggers>
                 <Trigger SourceName="DoNotPlay" Property="IsMouseOver" Value="True">
                     <Setter TargetName="DoNotPlay" Property="Opacity" Value="1.0"/>
@@ -60,18 +60,19 @@
         </DataTemplate>
 
         <!-- Tags Template -->
-        <DataTemplate x:Key="TagsTemplate" DataType="dto:UiTrack">
-            <ContentControl x:Name="TagContainer" Opacity="0.3">
-                <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+        <DataTemplate x:Key="TagsTemplate">
+            <ContentControl x:Name="TagContainer" Margin="3,0,0,0">
+                <Button x:Name="TagButton" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.15" BorderThickness="0" Padding="0,1,0,0" Background="Transparent"
                         Command="{Binding Path=EditTags}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
             </ContentControl>
             <DataTemplate.Triggers>
-                <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
-                    <Setter TargetName="TagContainer" Property="Opacity" Value="1.0"/>
+                <Trigger SourceName="TagContainer" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="0.8"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding HasTags}" Value="True">
-                    <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
-                    <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                    <Setter TargetName="TagButton" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>

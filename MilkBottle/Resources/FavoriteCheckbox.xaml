@@ -53,8 +53,8 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" FontSize="16"/>
-                        <TextBlock x:Name="Shine" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" FontSize="16" Opacity="0" Panel.ZIndex="1">
+                        <TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" FontSize="18"/>
+                        <TextBlock x:Name="Shine" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" FontSize="18" Opacity="0" Panel.ZIndex="1">
                             <TextBlock.Foreground>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <LinearGradientBrush.RelativeTransform>
@@ -138,8 +138,8 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <ContentControl x:Name="Dislike" Margin="0,2,0,0" Content="{StaticResource Path_Dislike}" Foreground="{TemplateBinding Foreground}"/>
-                        <ContentControl x:Name="Shine" Margin="0,2,0,0" Content="{StaticResource Path_Dislike}" Opacity="0" Panel.ZIndex="1" Foreground="DarkGray"/>
+                        <ContentControl x:Name="Dislike" Margin="0,1,0,0" Content="{StaticResource Path_Dislike}" Foreground="{TemplateBinding Foreground}"/>
+                        <ContentControl x:Name="Shine" Margin="0,1,0,0" Content="{StaticResource Path_Dislike}" Opacity="0" Panel.ZIndex="1" Foreground="LightCoral"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasContent" Value="true">
