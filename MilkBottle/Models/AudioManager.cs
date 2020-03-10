@@ -22,12 +22,15 @@ namespace MilkBottle.Models {
 
         public void StartCapture( Action<byte[], int, int> onAudioData ) {
             mOnAudioData = onAudioData;
-            mCapture.DataAvailable += OnAudioCapture;
-            mCapture.StartRecording();
+
+            if( mCapture.CaptureState != CaptureState.Capturing ) {
+                mCapture.DataAvailable += OnAudioCapture;
+                mCapture.StartRecording();
+            }
         }
 
         public void StopCapture() {
-            if( mCapture != null ) {
+            if( mCapture.CaptureState == CaptureState.Capturing ) {
                 mCapture.StopRecording();
                 mCapture.DataAvailable -= OnAudioCapture;
             }
