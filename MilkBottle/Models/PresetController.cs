@@ -22,6 +22,7 @@ namespace MilkBottle.Models {
         private readonly LimitedStack<ulong>        mPresetHistory;
         private readonly IPresetTimerFactory        mTimerFactory;
         private readonly IPresetSequencerFactory    mSequencerFactory;
+        private readonly List<Preset>               mLoadedPresets;
         private IPresetTimer                        mPresetTimer;
         private IPresetSequencer                    mPresetSequencer;
         private int                                 mCurrentPresetIndex;
@@ -48,6 +49,7 @@ namespace MilkBottle.Models {
             mPresetHistory = new LimitedStack<ulong>( 100 );
             mCurrentPreset = new Subject<Preset>();
             mPresetDuration = PresetDuration.Create( PresetDuration.MaximumValue );
+            mLoadedPresets = new List<Preset>();
             mCurrentPresetIndex = -1;
             IsRunning = false;
             IsInitialized = false;
@@ -160,12 +162,12 @@ namespace MilkBottle.Models {
 
         private bool SwitchLibrary( PresetLibrary forLibrary ) {
             var retValue = false;
-            var presets = new List<Preset>();
 
-            mPresetProvider.SelectPresets( forLibrary, list => presets.AddRange( list ));
+            mLoadedPresets.Clear();
+            mPresetProvider.SelectPresets( forLibrary, list => mLoadedPresets.AddRange( list ));
 
-            if( presets.Any()) {
-                LoadPresets( presets );
+            if( mLoadedPresets.Any()) {
+                LoadPresets( mLoadedPresets );
 
                 CurrentPresetLibrary = forLibrary.Name;
                 mEventAggregator.PublishOnUIThread( new Events.PresetLibrarySwitched( CurrentPresetLibrary ));
@@ -220,9 +222,11 @@ namespace MilkBottle.Models {
         }
 
         public void PlayPreset( Preset preset ) {
-            var index = mProjectM.addPresetURL( preset.Location, preset.Name );
+            var index = mProjectM.addPresetURL( preset.Location, preset.Id.ToString());
 
             PlayPreset( index );
+
+            mLoadedPresets.Add( preset );
         }
 
         private void OnPresetTimer( object sender, EventArgs args ) {
@@ -249,7 +253,7 @@ namespace MilkBottle.Models {
                 mCurrentPresetIndex = -1;
 
                 foreach( var preset in presetList ) {
-                    mProjectM.addPresetURL( preset.Location, preset.Name );
+                    mProjectM.addPresetURL( preset.Location, preset.Id.ToString());
                 }
 
                 SelectNextPreset();
@@ -260,7 +264,15 @@ namespace MilkBottle.Models {
         }
 
         private void OnPresetSwitched(bool isHardCut, ulong presetIndex ) {
-            mCurrentPreset.OnNext( new Preset( mProjectM.getPresetName( presetIndex ), mProjectM.getPresetURL( presetIndex ), PresetLibrary.Default()));
+            var id = mProjectM.getPresetName( presetIndex );
+
+            if(!String.IsNullOrWhiteSpace( id )) {
+                var preset = mLoadedPresets.FirstOrDefault( p => p.Id.ToString().Equals( id ));
+
+                if( preset != null ) {
+                    mCurrentPreset.OnNext( preset );
+                }
+            }
         }
 
         public void Dispose() {
