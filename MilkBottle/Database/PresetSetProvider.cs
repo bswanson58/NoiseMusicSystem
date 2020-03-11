@@ -17,6 +17,8 @@ namespace MilkBottle.Database {
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<PresetSet>().Id( e => e.Id );
+            BsonMapper.Global.EnumAsInteger = true;
+            BsonMapper.Global.TrimWhitespace = false;
 
             WithCollection( collection => {
                 collection.EnsureIndex( p => p.Name );
@@ -83,7 +85,7 @@ namespace MilkBottle.Database {
             var qualifierString = String.Empty;
 
             foreach( var qualifier in qualifierParts ) {
-                if(!String.IsNullOrWhiteSpace( qualifierString )) {
+                if( String.IsNullOrWhiteSpace( qualifierString )) {
                     qualifierString = qualifier;
                 }
                 else {

@@ -20,8 +20,8 @@ namespace MilkBottle.Entities {
 
         public Preset( ObjectId id, string name, string location, bool isFavorite, int rating, PresetLibrary library ) :
             base( id ) {
-            Name = name ?? String.Empty;
-            Location = location ?? String.Empty;
+            Name = ( name ?? String.Empty ).Trim();
+            Location = ( location ?? String.Empty ).Trim();
             IsFavorite = isFavorite;
             Rating = rating;
             Library = library;
@@ -31,8 +31,8 @@ namespace MilkBottle.Entities {
         [BsonCtorAttribute]
         public Preset( ObjectId id, string name, string location, bool isFavorite, int rating ) :
             base( id ) {
-            Name = name ?? String.Empty;
-            Location = location ?? String.Empty;
+            Name = ( name ?? String.Empty ).Trim();
+            Location = ( location ?? String.Empty ).Trim();
             IsFavorite = isFavorite;
             Rating = rating;
             Library = new PresetLibrary( String.Empty, String.Empty );

@@ -1,27 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using LiteDB;
 
 namespace MilkBottle.Entities {
     enum QualifierField {
-        IsFavorite,
-        Rating,
-        Name,
-        Tags
+        IsFavorite = 1,
+        Rating = 2,
+        Name = 3,
+        Tags = 4,
+        Unknown = 0
     }
 
     enum QualifierOperation {
-        Equal,
-        NotEqual,
-        Contains
+        Equal = 1,
+        NotEqual = 2,
+        Contains = 3
     }
 
-    [DebuggerDisplay("Qualifier: {" + nameof( Field ) + ":" + nameof( Operation ) + ":" + nameof( Value ) + "}")]
+    [DebuggerDisplay("{" + nameof( DebugDisplay ) + "}")]
     class SetQualifier {
         public  QualifierField      Field { get; }
         public  QualifierOperation  Operation { get; }
         public  string              Value {  get; }
+
+        public  string              DebugDisplay => $"Qualifier: {Field}-{Operation}-{Value}";
+
+        [BsonCtorAttribute]
+        public SetQualifier( int field, int operation, string value ) {
+            Field = (QualifierField)field;
+            Operation = (QualifierOperation)operation;
+            Value = value;
+        }
 
         public SetQualifier( QualifierField field, QualifierOperation operation, string value ) {
             Field = field;
@@ -37,7 +48,7 @@ namespace MilkBottle.Entities {
 
         public PresetSet( string name ) :
             base( ObjectId.NewObjectId()) {
-            Name = name ?? String.Empty;
+            Name = ( name ?? String.Empty ).Trim();
 
             Qualifiers = new List<SetQualifier>();
         }
@@ -45,9 +56,27 @@ namespace MilkBottle.Entities {
         [BsonCtorAttribute]
         public PresetSet( ObjectId id, string name ) :
             base( id ) {
-            Name = name ?? String.Empty;
+            Name = ( name ?? String.Empty ).Trim();
 
             Qualifiers = new List<SetQualifier>();
+        }
+
+        public PresetSet WithQualifier( SetQualifier qualifier ) {
+            var retValue = WithoutQualifier( qualifier.Field );
+
+            retValue.Qualifiers.Add( qualifier );
+
+            return retValue;
+        }
+
+        public PresetSet WithoutQualifier( QualifierField field ) {
+            var qualifier = Qualifiers.FirstOrDefault( q => q.Field.Equals( field ));
+
+            if( qualifier != null ) {
+                Qualifiers.Remove( qualifier );
+            }
+
+            return this;
         }
     }
 }
