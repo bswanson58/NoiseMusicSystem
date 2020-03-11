@@ -233,6 +233,7 @@
     <Compile Include="Database\ValidationBase.cs" />
     <Compile Include="Dto\MilkConfiguration.cs" />
     <Compile Include="Dto\MilkPreferences.cs" />
+    <Compile Include="Dto\PresetList.cs" />
     <Compile Include="Dto\UiCompanionApp.cs" />
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Entities\EntityBase.cs" />
@@ -256,6 +257,7 @@
     <Compile Include="Interfaces\IPresetSetProvider.cs" />
     <Compile Include="Interfaces\IPresetTimer.cs" />
     <Compile Include="Interfaces\IPresetTimerFactory.cs" />
+    <Compile Include="Interfaces\IPresetListProvider.cs" />
     <Compile Include="Interfaces\IStateManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
@@ -264,6 +266,7 @@
     <Compile Include="Models\InitializationController.cs" />
     <Compile Include="Models\MilkController.cs" />
     <Compile Include="Models\PresetController.cs" />
+    <Compile Include="Models\PresetListProvider.cs" />
     <Compile Include="Models\PresetSequencers\PresetSequencerFactory.cs" />
     <Compile Include="Models\PresetSequencers\RandomSequencer.cs" />
     <Compile Include="Models\PresetSequencers\SequentialSequencer.cs" />

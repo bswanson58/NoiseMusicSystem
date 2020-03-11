@@ -14,7 +14,6 @@ namespace MilkBottle.Models {
     class PresetController : IPresetController, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPlatformLog               mLog;
-        private readonly IPresetProvider            mPresetProvider;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IPreferences               mPreferences;
         private readonly Subject<Preset>            mCurrentPreset;
@@ -33,11 +32,10 @@ namespace MilkBottle.Models {
 
         public  IObservable<Preset>                 CurrentPreset => mCurrentPreset.AsObservable();
 
-        public PresetController( ProjectMWrapper projectM, IPresetProvider presetProvider, 
+        public PresetController( ProjectMWrapper projectM, 
                                  IPresetTimerFactory timerFactory, IPresetSequencerFactory sequencerFactory,
                                  IPreferences preferences, IEventAggregator eventAggregator, IPlatformLog log ) {
             mProjectM = projectM;
-            mPresetProvider = presetProvider;
             mPreferences = preferences;
             mTimerFactory = timerFactory;
             mSequencerFactory = sequencerFactory;
@@ -124,11 +122,11 @@ namespace MilkBottle.Models {
             return retValue;
         }
 
-        public void LoadLibrary( PresetLibrary library ) {
-            if( SwitchLibrary( library )) {
+        public void LoadLibrary( PresetList list ) {
+            if( SwitchLibrary( list )) {
                 var preferences = mPreferences.Load<MilkPreferences>();
 
-                preferences.CurrentPresetLibrary = library.Name;
+                preferences.CurrentPresetLibrary = list.Name;
                 mPreferences.Save( preferences );
             }
         }
@@ -146,16 +144,16 @@ namespace MilkBottle.Models {
             IsRunning = true;
         }
 
-        private bool SwitchLibrary( PresetLibrary forLibrary ) {
+        private bool SwitchLibrary( PresetList forList ) {
             var retValue = false;
 
             mLoadedPresets.Clear();
-            mPresetProvider.SelectPresets( forLibrary, list => mLoadedPresets.AddRange( list ));
+            mLoadedPresets.AddRange( forList.GetPresets());
 
             if( mLoadedPresets.Any()) {
                 LoadPresets( mLoadedPresets );
 
-                CurrentPresetLibrary = forLibrary.Name;
+                CurrentPresetLibrary = forList.Name;
                 mEventAggregator.PublishOnUIThread( new Events.PresetLibrarySwitched( CurrentPresetLibrary ));
 
                 retValue = true;

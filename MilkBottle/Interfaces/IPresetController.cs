@@ -1,4 +1,5 @@
 ﻿using System;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Types;
 
@@ -11,7 +12,7 @@ namespace MilkBottle.Interfaces {
         void            ConfigurePresetTimer( PresetTimer timerType );
         void            ConfigurePresetSequencer( PresetSequence forSequence );
 
-        void            LoadLibrary( PresetLibrary library );
+        void            LoadLibrary( PresetList list );
 
         void            StopPresetCycling();
         void            StartPresetCycling();

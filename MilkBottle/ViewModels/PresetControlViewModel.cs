@@ -22,13 +22,13 @@ namespace MilkBottle.ViewModels {
         private readonly IStateManager          mStateManager;
         private readonly IPresetController      mPresetController;
         private readonly IPresetProvider        mPresetProvider;
-        private readonly IPresetLibraryProvider mLibraryProvider;
-        private readonly List<PresetLibrary>    mLibraries;
+        private readonly IPresetListProvider    mListProvider;
+        private readonly List<PresetList>       mLibraries;
         private readonly IPreferences           mPreferences;
         private readonly LimitedStack<string>   mHistory;
         private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
-        private PresetLibrary                   mCurrentLibrary;
+        private PresetList                      mCurrentLibrary;
         private Preset                          mCurrentPreset;
 
         public  DelegateCommand                 Start { get; }
@@ -46,17 +46,17 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
-        public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider,
+        public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetListProvider listProvider, IPresetProvider presetProvider,
                                        IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
             mPresetController = presetController;
             mPresetProvider = presetProvider;
-            mLibraryProvider = libraryProvider;
+            mListProvider = listProvider;
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
             mPreferences = preferences;
 
-            mLibraries = new List<PresetLibrary>();
+            mLibraries = new List<PresetList>();
             mHistory = new LimitedStack<string>( 4 );
 
             Start = new DelegateCommand( OnStart, CanStart );
@@ -131,7 +131,7 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public PresetLibrary CurrentLibrary {
+        public PresetList CurrentLibrary {
             get => mCurrentLibrary;
             set {
                 mCurrentLibrary = value;
@@ -148,7 +148,7 @@ namespace MilkBottle.ViewModels {
         private void UpdateLibraries() {
             mLibraries.Clear();
 
-            mLibraryProvider.SelectLibraries( list => mLibraries.AddRange( from l in list orderby l.Name select l ));
+            mLibraries.AddRange( mListProvider.GetLists());
 
             mCurrentLibrary = mLibraries.FirstOrDefault( l => l.Name.Equals( mPresetController.CurrentPresetLibrary )) ??
                               mLibraries.FirstOrDefault();

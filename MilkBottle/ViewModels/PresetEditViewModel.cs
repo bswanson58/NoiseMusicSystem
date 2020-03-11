@@ -14,7 +14,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace MilkBottle.ViewModels {
     class PresetEditViewModel : PropertyChangeBase, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
         private readonly IEventAggregator           mEventAggregator;
-        private readonly IPresetLibraryProvider     mLibraryProvider;
+        private readonly IPresetListProvider        mListProvider;
         private readonly IPresetProvider            mPresetProvider;
         private readonly IPresetController          mPresetController;
         private readonly IStateManager              mStateManager;
@@ -23,27 +23,27 @@ namespace MilkBottle.ViewModels {
         private readonly IPreferences               mPreferences;
         private readonly BindableCollection<Preset> mPresets;
         private ICollectionView                     mPresetView;
-        private PresetLibrary                       mCurrentLibrary;
+        private PresetList                          mCurrentLibrary;
         private Preset                              mCurrentPreset;
         private string                              mFilterText;
 
-        public  BindableCollection<PresetLibrary>   Libraries { get; }
+        public  BindableCollection<PresetList>      Libraries { get; }
         public  BindableCollection<UiTag>           Tags { get; }
 
         public  DelegateCommand                     NewTag { get; }
 
-        public PresetEditViewModel( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
+        public PresetEditViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
                                     IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mEventAggregator = eventAggregator;
-            mLibraryProvider = libraryProvider;
             mPresetProvider = presetProvider;
+            mListProvider = listProvider;
             mPresetController = presetController;
             mStateManager = stateManager;
             mTagProvider = tagProvider;
             mDialogService = dialogService;
             mPreferences = preferences;
 
-            Libraries = new BindableCollection<PresetLibrary>();
+            Libraries = new BindableCollection<PresetList>();
             mPresets = new BindableCollection<Preset>();
             Tags = new BindableCollection<UiTag>();
 
@@ -114,7 +114,7 @@ namespace MilkBottle.ViewModels {
             return ( retValue );
         }
 
-        public PresetLibrary CurrentLibrary {
+        public PresetList CurrentLibrary {
             get => mCurrentLibrary;
             set {
                 mCurrentLibrary = value;
@@ -166,7 +166,7 @@ namespace MilkBottle.ViewModels {
         private void LoadLibraries() {
             Libraries.Clear();
 
-            mLibraryProvider.SelectLibraries( list => Libraries.AddRange( from l in list orderby l.Name select l ));
+            Libraries.AddRange( mListProvider.GetLists());
         }
 
         private void LoadPresets() {
@@ -175,7 +175,7 @@ namespace MilkBottle.ViewModels {
             mPresets.Clear();
 
             if( mCurrentLibrary != null ) {
-                mPresetProvider.SelectPresets( mCurrentLibrary, list => mPresets.AddRange( from p in list orderby p.Name select p ));
+                mPresets.AddRange( mCurrentLibrary.GetPresets());
             }
 
             if( restoreToPreset != null ) {

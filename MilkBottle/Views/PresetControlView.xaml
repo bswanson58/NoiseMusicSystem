@@ -7,8 +7,8 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:entities="clr-namespace:MilkBottle.Entities"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:PresetControlViewModel, IsDesignTimeCreatable=False}"
@@ -25,7 +25,7 @@
             <Setter Property="FontSize" Value="16"/>
         </Style>
 
-        <DataTemplate x:Key="LibrarySet" DataType="entities:PresetLibrary">
+        <DataTemplate x:Key="LibrarySet" DataType="dto:PresetList">
             <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="{Binding Name}"/>
         </DataTemplate>
 
