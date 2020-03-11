@@ -30,7 +30,7 @@ namespace MilkBottle.Models {
         }
 
         public void StopCapture() {
-            if( mCapture.CaptureState == CaptureState.Capturing ) {
+            if( mCapture?.CaptureState == CaptureState.Capturing ) {
                 mCapture.StopRecording();
                 mCapture.DataAvailable -= OnAudioCapture;
             }
