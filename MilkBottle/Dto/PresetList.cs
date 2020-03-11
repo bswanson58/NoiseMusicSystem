@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MilkBottle.Entities;
 
 namespace MilkBottle.Dto {
@@ -13,6 +14,7 @@ namespace MilkBottle.Dto {
         }
     }
 
+    [DebuggerDisplay("List(Set): {" + nameof( Name ) + "}")]
     class LibraryPresetList : PresetList {
         private readonly PresetLibrary                              mLibrary;
         private readonly Func<PresetLibrary, IEnumerable<Preset>>   mRetrievalAction;
@@ -28,6 +30,7 @@ namespace MilkBottle.Dto {
         }
     }
 
+    [DebuggerDisplay("List(Library): {" + nameof( Name ) + "}")]
     class SetPresetList : PresetList {
         private readonly PresetSet                              mSet;
         private readonly Func<PresetSet, IEnumerable<Preset>>   mRetrievalAction;
