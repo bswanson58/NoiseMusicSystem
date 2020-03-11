@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Data;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
@@ -18,11 +21,13 @@ namespace MilkBottle.ViewModels {
         private readonly ITagProvider               mTagProvider;
         private readonly IDialogService             mDialogService;
         private readonly IPreferences               mPreferences;
+        private readonly BindableCollection<Preset> mPresets;
+        private ICollectionView                     mPresetView;
         private PresetLibrary                       mCurrentLibrary;
         private Preset                              mCurrentPreset;
+        private string                              mFilterText;
 
         public  BindableCollection<PresetLibrary>   Libraries { get; }
-        public  BindableCollection<Preset>          Presets { get; }
         public  BindableCollection<UiTag>           Tags { get; }
 
         public  DelegateCommand                     NewTag { get; }
@@ -39,7 +44,7 @@ namespace MilkBottle.ViewModels {
             mPreferences = preferences;
 
             Libraries = new BindableCollection<PresetLibrary>();
-            Presets = new BindableCollection<Preset>();
+            mPresets = new BindableCollection<Preset>();
             Tags = new BindableCollection<UiTag>();
 
             NewTag = new DelegateCommand( OnNewTag );
@@ -73,6 +78,40 @@ namespace MilkBottle.ViewModels {
             if( args.ToView != ShellView.Review ) {
                 mEventAggregator.Unsubscribe( this );
             }
+        }
+
+        public ICollectionView PresetList {
+            get{ 
+                if( mPresetView == null ) {
+                    mPresetView = CollectionViewSource.GetDefaultView( mPresets );
+
+                    mPresetView.Filter += OnPresetFilter;
+                }
+
+                return( mPresetView );
+            }
+        }
+
+        public string FilterText {
+            get => mFilterText;
+            set {
+                mFilterText = value;
+
+                mPresetView.Refresh();
+            }
+        }
+
+        private bool OnPresetFilter( object listItem ) {
+            var retValue = true;
+
+            if(( listItem is Preset preset ) &&
+               (!string.IsNullOrWhiteSpace( FilterText ))) {
+                if( preset.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+                    retValue = false;
+                }
+            }
+
+            return ( retValue );
         }
 
         public PresetLibrary CurrentLibrary {
@@ -133,18 +172,18 @@ namespace MilkBottle.ViewModels {
         private void LoadPresets() {
             var restoreToPreset = CurrentPreset;
 
-            Presets.Clear();
+            mPresets.Clear();
 
             if( mCurrentLibrary != null ) {
-                mPresetProvider.SelectPresets( mCurrentLibrary, list => Presets.AddRange( from p in list orderby p.Name select p ));
+                mPresetProvider.SelectPresets( mCurrentLibrary, list => mPresets.AddRange( from p in list orderby p.Name select p ));
             }
 
             if( restoreToPreset != null ) {
-                CurrentPreset = Presets.FirstOrDefault( p => p.Id.Equals( restoreToPreset.Id ));
+                CurrentPreset = mPresets.FirstOrDefault( p => p.Id.Equals( restoreToPreset.Id ));
             }
 
             if( CurrentPreset == null ) {
-                CurrentPreset = Presets.FirstOrDefault();
+                CurrentPreset = mPresets.FirstOrDefault();
             }
         }
 
