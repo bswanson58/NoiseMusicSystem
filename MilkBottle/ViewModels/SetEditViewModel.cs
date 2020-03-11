@@ -22,6 +22,7 @@ namespace MilkBottle.ViewModels {
         public  ObservableCollection<PresetSet> Sets {  get; }
 
         public  DelegateCommand                 CreateSet { get; }
+        public  DelegateCommand                 DeleteSet { get; }
 
         public SetEditViewModel( IPresetSetProvider setProvider, IDialogService dialogService, IPlatformLog log ) {
             mSetProvider = setProvider;
@@ -30,6 +31,7 @@ namespace MilkBottle.ViewModels {
 
             Sets = new ObservableCollection<PresetSet>();
             CreateSet = new DelegateCommand( OnCreateSet );
+            DeleteSet = new DelegateCommand( OnDeleteSet, CanDeleteSet );
 
             LoadSets();
         }
@@ -58,6 +60,8 @@ namespace MilkBottle.ViewModels {
 
         private void OnSetChanged() {
             DisplaySetQualifiers();
+
+            DeleteSet.RaiseCanExecuteChanged();
         }
 
         private void OnCreateSet() {
@@ -75,6 +79,26 @@ namespace MilkBottle.ViewModels {
                             ex => LogException( "OnCreateSet", ex ));
                 }
             }
+        }
+
+        private void OnDeleteSet() {
+            if( mCurrentSet != null ) {
+                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), new DialogParameters( $"{ConfirmDeleteDialogModel.cEntityNameParameter}={mCurrentSet.Name}" ), OnDeleteSetResult );
+            }
+        }
+
+        private void OnDeleteSetResult( IDialogResult result ) {
+            if(( result.Result == ButtonResult.OK ) &&
+               ( mCurrentSet != null )) {
+                mSetProvider.Delete( mCurrentSet )
+                    .Match( 
+                        unit => LoadSets(), 
+                        ex => LogException( "DeleteSet", ex ));
+            }
+        }
+
+        private bool CanDeleteSet() {
+            return mCurrentSet != null;
         }
 
         public bool UseFavoriteQualifier {

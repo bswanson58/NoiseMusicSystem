@@ -32,7 +32,8 @@
                 <ListBox Grid.Row="0" ItemsSource="{Binding Sets}" SelectedItem="{Binding CurrentSet}" ItemTemplate="{StaticResource SetTemplate}"/>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10">
-                    <Button Style="{StaticResource GeneralButtonStyle}" Content="New Set..." Command="{Binding CreateSet}"/>
+                    <Button Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Delete Set" Command="{Binding DeleteSet}"/>
+                    <Button Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="New Set..." Command="{Binding CreateSet}"/>
                 </StackPanel>
             </Grid>
         </GroupBox>

@@ -40,6 +40,7 @@ namespace MilkBottle {
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
 
+            containerRegistry.RegisterDialog<ConfirmDeleteDialog, ConfirmDeleteDialogModel>();
             containerRegistry.RegisterDialog<SelectPresetDialog, SelectPresetDialogModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
             containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
