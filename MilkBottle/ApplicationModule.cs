@@ -44,6 +44,7 @@ namespace MilkBottle {
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
             containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
             containerRegistry.RegisterDialog<NewTagDialog, NewTagDialogModel>();
+            containerRegistry.RegisterDialog<NewSetDialog, NewSetDialogModel>();
 
             containerRegistry.RegisterSingleton<IIpcHandler, IpcHandler>();
         }

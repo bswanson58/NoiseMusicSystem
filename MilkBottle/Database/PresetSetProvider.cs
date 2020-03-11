@@ -8,8 +8,12 @@ using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
     class PresetSetProvider : EntityProvider<PresetSet>, IPresetSetProvider {
-        public PresetSetProvider( IDatabaseProvider databaseProvider ) :
-            base( databaseProvider, EntityCollection.SetCollection ) { }
+        private readonly IPresetProvider    mPresetProvider;
+
+        public PresetSetProvider( IDatabaseProvider databaseProvider, IPresetProvider presetProvider ) :
+            base( databaseProvider, EntityCollection.SetCollection ) {
+            mPresetProvider = presetProvider;
+        }
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<PresetSet>().Id( e => e.Id );
@@ -24,11 +28,7 @@ namespace MilkBottle.Database {
         }
 
         public Either<Exception, Option<PresetSet>> GetSetByName( string name ) {
-            return ValidateString( name ).Bind<Option<PresetSet>>( validName => FindEntity( Query.EQ( nameof( PresetSet.Name ), validName )));
-        }
-
-        public Either<Exception, Unit> QuerySets( Action<ILiteQueryable<PresetSet>> action ) {
-            return QueryEntities( action );
+            return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( PresetSet.Name ), validName )));
         }
 
         public Either<Exception, Unit> SelectSets( Action<IEnumerable<PresetSet>> action ) {
@@ -53,6 +53,45 @@ namespace MilkBottle.Database {
 
         public Either<Exception, Unit> Delete( PresetSet set ) {
             return DeleteEntity( set );
+        }
+
+        public Either<Exception, Unit> GetPresetList( PresetSet forSet, Action<IEnumerable<Preset>> action ) {
+            var expression = BuildExpression( forSet.Qualifiers );
+
+            return mPresetProvider.FindPresetList( expression, action );
+        }
+
+        private BsonExpression BuildExpression( List<SetQualifier> qualifiers ) {
+            var qualifierParts = new List<string>();
+
+            foreach( var qualifier in qualifiers ) {
+                switch( qualifier.Operation ) {
+                    case QualifierOperation.Equal:
+                        qualifierParts.Add( Query.EQ( qualifier.Field.ToString(), qualifier.Value ));
+                        break;
+
+                    case QualifierOperation.NotEqual:
+                        qualifierParts.Add( Query.Not( qualifier.Field.ToString(), qualifier.Value ));
+                        break;
+
+                    case QualifierOperation.Contains:
+                        qualifierParts.Add( Query.Contains( qualifier.Field.ToString(), qualifier.Value ));
+                        break;
+                }
+            }
+
+            var qualifierString = String.Empty;
+
+            foreach( var qualifier in qualifierParts ) {
+                if(!String.IsNullOrWhiteSpace( qualifierString )) {
+                    qualifierString = qualifier;
+                }
+                else {
+                    qualifierString = Query.And( qualifierString, qualifier );
+                }
+            }
+
+            return BsonExpression.Create( qualifierString );
         }
     }
 }

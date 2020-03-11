@@ -19,6 +19,9 @@
             <TabItem Header="Tags">
                 <views:TagEditView/>
             </TabItem>
+            <TabItem Header="Sets">
+                <views:SetEditView/>
+            </TabItem>
         </TabControl>
 
         <Grid Grid.Column="1">

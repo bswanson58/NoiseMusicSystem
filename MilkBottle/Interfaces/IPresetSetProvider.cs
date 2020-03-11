@@ -14,6 +14,8 @@ namespace MilkBottle.Interfaces {
         Either<Exception, Option<PresetSet>>    FindSet( BsonExpression predicate );
         Either<Exception, Unit>                 FindSetList( BsonExpression predicate, Action<IEnumerable<PresetSet>> action );
 
+        Either<Exception, Unit>                 GetPresetList( PresetSet forSet, Action<IEnumerable<Preset>> action );
+
         Either<Exception, Unit>                 Insert( PresetSet set );
         Either<Exception, Unit>                 Update( PresetSet set );
         Either<Exception, Unit>                 Delete( PresetSet set );

@@ -294,10 +294,12 @@
     <Compile Include="Types\ValidationException.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
+    <Compile Include="ViewModels\NewSetDialogModel.cs" />
     <Compile Include="ViewModels\NewTagDialogModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
     <Compile Include="ViewModels\PresetEditViewModel.cs" />
     <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
+    <Compile Include="ViewModels\SetEditViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\TagEditDialogModel.cs" />
@@ -310,6 +312,9 @@
     </Compile>
     <Compile Include="Views\MilkView.xaml.cs">
       <DependentUpon>MilkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewSetDialog.xaml.cs">
+      <DependentUpon>NewSetDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewTagDialog.xaml.cs">
       <DependentUpon>NewTagDialog.xaml</DependentUpon>
@@ -325,6 +330,9 @@
     </Compile>
     <Compile Include="Views\SelectPresetDialog.xaml.cs">
       <DependentUpon>SelectPresetDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetEditView.xaml.cs">
+      <DependentUpon>SetEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -351,7 +359,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\NewSetDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\NewTagDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SetEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
