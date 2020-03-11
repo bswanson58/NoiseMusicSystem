@@ -37,6 +37,20 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Style="{StaticResource SectionBorderStyle}" Header=" Set Properties "></GroupBox>
+        <GroupBox Grid.Row="1" Style="{StaticResource SectionBorderStyle}" Header=" Set Properties ">
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Row="0" Content="Favorites" IsChecked="{Binding UseFavoriteQualifier}"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
+                    <CheckBox VerticalAlignment="Center" Margin="0,0,5,0" Content="Name Contains:" IsChecked="{Binding UseNameQualifier}"/>
+                    <TextBox Width="200" Text="{Binding NameQualifier, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
     </Grid>
 </UserControl>
