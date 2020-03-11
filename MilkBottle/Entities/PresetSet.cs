@@ -23,7 +23,7 @@ namespace MilkBottle.Entities {
     class SetQualifier {
         public  QualifierField      Field { get; }
         public  QualifierOperation  Operation { get; }
-        public  string              Value {  get; }
+        public  string              Value { get; }
 
         public  string              DebugDisplay => $"Qualifier: {Field}-{Operation}-{Value}";
 
@@ -38,6 +38,22 @@ namespace MilkBottle.Entities {
             Field = field;
             Operation = operation;
             Value = value;
+        }
+
+        public BsonValue TypedValue() {
+            BsonValue retValue = Value;
+
+            switch( Field ) {
+                case QualifierField.IsFavorite:
+                    retValue = Boolean.Parse( Value );
+                    break;
+
+                case QualifierField.Rating:
+                    retValue = Int16.Parse( Value );
+                    break;
+            }
+
+            return retValue;
         }
     }
 

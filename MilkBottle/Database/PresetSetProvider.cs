@@ -69,15 +69,15 @@ namespace MilkBottle.Database {
             foreach( var qualifier in qualifiers ) {
                 switch( qualifier.Operation ) {
                     case QualifierOperation.Equal:
-                        qualifierParts.Add( Query.EQ( qualifier.Field.ToString(), qualifier.Value ));
+                        qualifierParts.Add( Query.EQ( qualifier.Field.ToString(), qualifier.TypedValue()));
                         break;
 
                     case QualifierOperation.NotEqual:
-                        qualifierParts.Add( Query.Not( qualifier.Field.ToString(), qualifier.Value ));
+                        qualifierParts.Add( Query.Not( qualifier.Field.ToString(), qualifier.TypedValue()));
                         break;
 
                     case QualifierOperation.Contains:
-                        qualifierParts.Add( Query.Contains( qualifier.Field.ToString(), qualifier.Value ));
+                        qualifierParts.Add( Query.Contains( qualifier.Field.ToString(), qualifier.TypedValue()));
                         break;
                 }
             }
