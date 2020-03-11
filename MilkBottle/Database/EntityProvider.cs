@@ -150,7 +150,7 @@ namespace MilkBottle.Database {
 
         private Try<Unit> DeleteEntity( LiteDatabase db, T entity ) {
             return Prelude.Try( () => {
-                if(!db.GetCollection<T>( mCollectionName ).Update( entity )) {
+                if(!db.GetCollection<T>( mCollectionName ).Delete( entity.Id )) {
                     throw new DatabaseException( "Entity to delete was not found" );
                 }
 
