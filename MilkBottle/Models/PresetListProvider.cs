@@ -4,6 +4,7 @@ using System.Linq;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MoreLinq;
 
 namespace MilkBottle.Models {
     class PresetListProvider : IPresetListProvider {
@@ -33,7 +34,7 @@ namespace MilkBottle.Models {
 
             mPresetProvider.SelectPresets( forLibrary, list => retValue.AddRange( list )).IfLeft( LogException );
 
-            return retValue;
+            return retValue.DistinctBy( p => p.Name );
         }
 
         private IEnumerable<Preset> GetPresets( PresetSet forSet ) {
@@ -41,7 +42,7 @@ namespace MilkBottle.Models {
 
             mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( LogException );
 
-            return retValue;
+            return retValue.DistinctBy( p => p.Name );
         }
 
         private void LogException( Exception ex ) {

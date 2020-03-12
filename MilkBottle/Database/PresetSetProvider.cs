@@ -4,6 +4,7 @@ using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Types;
 using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
@@ -82,15 +83,11 @@ namespace MilkBottle.Database {
                 }
             }
 
-            var qualifierString = String.Empty;
+            // always eliminate presets marked as Do Not Play
+            var qualifierString = Query.Not( nameof( Preset.Rating ), PresetRating.DoNotPlayValue );
 
             foreach( var qualifier in qualifierParts ) {
-                if( String.IsNullOrWhiteSpace( qualifierString )) {
-                    qualifierString = qualifier;
-                }
-                else {
-                    qualifierString = Query.And( qualifierString, qualifier );
-                }
+                qualifierString = Query.And( qualifierString, qualifier );
             }
 
             return BsonExpression.Create( qualifierString );

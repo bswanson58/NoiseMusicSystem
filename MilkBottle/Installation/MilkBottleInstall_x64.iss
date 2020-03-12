@@ -42,6 +42,7 @@ Source: "..\bin\x64\Release\Microsoft.Practices.Prism.PubSubEvents.dll"; DestDir
 Source: "..\bin\x64\Release\Microsoft.Practices.Prism.SharedInterfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Microsoft.Practices.Unity.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\MilkBottle.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\x64\Release\MoreLinq.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Noise.UI.Style.dll"; DestDir: "{app}"; Flags: ignoreversion
