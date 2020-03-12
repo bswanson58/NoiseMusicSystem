@@ -31,8 +31,8 @@ namespace MilkBottle.ViewModels {
         public void OnOk() {
             RaiseRequestClose(
                 !String.IsNullOrWhiteSpace( Name )
-                    ? new DialogResult( ButtonResult.OK, new DialogParameters( $"{cSetNameParameter}={Name}" ) )
-                    : new DialogResult( ButtonResult.Cancel ) );
+                    ? new DialogResult( ButtonResult.OK, new DialogParameters { { cSetNameParameter, Name } } )
+                    : new DialogResult( ButtonResult.Cancel ));
         }
 
         public void OnCancel() {
