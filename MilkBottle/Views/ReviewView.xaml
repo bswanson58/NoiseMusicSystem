@@ -4,25 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:MilkBottle.Views"
+             xmlns:regions="http://prismlibrary.com/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="TabItem" BasedOn="{StaticResource MetroTabItem}">
+            <Setter Property="Header" Value="{Binding DataContext.Title}" />
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <TabControl Grid.Column="0" Margin="5">
-            <TabItem Header="Presets">
-                <views:PresetEditView/>
-            </TabItem>
-            <TabItem Header="Tags">
-                <views:TagEditView/>
-            </TabItem>
-            <TabItem Header="Sets">
-                <views:SetEditView/>
-            </TabItem>
-        </TabControl>
+        <TabControl Grid.Column="0" Margin="5" regions:RegionManager.RegionName="{x:Static views:RegionNames.ReviewRegion}"/>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

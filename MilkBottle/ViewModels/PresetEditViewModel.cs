@@ -7,12 +7,13 @@ using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
+using Prism;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class PresetEditViewModel : PropertyChangeBase, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
+    class PresetEditViewModel : PropertyChangeBase, IActiveAware, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
         private readonly IEventAggregator           mEventAggregator;
         private readonly IPresetListProvider        mListProvider;
         private readonly IPresetProvider            mPresetProvider;
@@ -26,11 +27,15 @@ namespace MilkBottle.ViewModels {
         private PresetList                          mCurrentLibrary;
         private Preset                              mCurrentPreset;
         private string                              mFilterText;
+        private bool                                mIsActive;
 
         public  BindableCollection<PresetList>      Libraries { get; }
         public  BindableCollection<UiTag>           Tags { get; }
 
         public  DelegateCommand                     NewTag { get; }
+
+        public  string                              Title => "Presets";
+        public  event EventHandler                  IsActiveChanged = delegate { };
 
         public PresetEditViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
                                     IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
@@ -62,6 +67,18 @@ namespace MilkBottle.ViewModels {
             }
 
             mEventAggregator.Subscribe( this );
+        }
+
+        public bool IsActive {
+            get => mIsActive;
+            set {
+                mIsActive = value;
+
+                if( mIsActive ) {
+                    LoadLibraries();
+                    LoadTags();
+                }
+            }
         }
 
         private void Initialize() {
@@ -164,9 +181,15 @@ namespace MilkBottle.ViewModels {
         }
 
         private void LoadLibraries() {
+            var previousLibrary = CurrentLibrary;
+
             Libraries.Clear();
 
             Libraries.AddRange( mListProvider.GetLists());
+
+            if( previousLibrary != null ) {
+                CurrentLibrary = Libraries.FirstOrDefault( l => l.Name.Equals( previousLibrary.Name ));
+            }
         }
 
         private void LoadPresets() {

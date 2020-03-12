@@ -335,6 +335,7 @@
     <Compile Include="Views\PresetEditView.xaml.cs">
       <DependentUpon>PresetEditView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\RegionNames.cs" />
     <Compile Include="Views\ReviewView.xaml.cs">
       <DependentUpon>ReviewView.xaml</DependentUpon>
     </Compile>

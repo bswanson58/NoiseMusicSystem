@@ -10,6 +10,7 @@ using MilkBottle.ViewModels;
 using MilkBottle.Views;
 using Prism.Ioc;
 using Prism.Modularity;
+using Prism.Regions;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Platform;
 
@@ -52,6 +53,11 @@ namespace MilkBottle {
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {
+            var regionManager = containerProvider.Resolve<IRegionManager>();
+
+            regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( PresetEditView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( TagEditView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( SetEditView ));
         }
     }
 }

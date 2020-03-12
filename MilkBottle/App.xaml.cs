@@ -69,12 +69,14 @@ namespace MilkBottle {
         }
 
         protected override Window CreateShell() {
-            var retValue = Container.Resolve<Shell>();
-
-            retValue.Closing += OnShellClose;
+            var module = new ApplicationModule();
+            module.OnInitialized( Container );
 
             var themeCatalog = Container.Resolve<ThemeCatalog>();
             ThemeManager.SetApplicationTheme( String.Empty, String.Empty, themeCatalog.Signatures.FirstOrDefault( t => t.Name.Equals( "Orange" ))?.Location );
+
+            var retValue = Container.Resolve<Shell>();
+            retValue.Closing += OnShellClose;
 
             return retValue;
         }

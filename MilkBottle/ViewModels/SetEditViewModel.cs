@@ -6,12 +6,13 @@ using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Views;
 using MoreLinq.Extensions;
+using Prism;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class SetEditViewModel : PropertyChangeBase {
+    class SetEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly IPresetSetProvider     mSetProvider;
         private readonly ITagProvider           mTagProvider;
         private readonly IDialogService         mDialogService;
@@ -21,12 +22,16 @@ namespace MilkBottle.ViewModels {
         private bool                            mUseNameQualifier;
         private string                          mNameQualifier;
         private bool                            mUseTagQualifier;
+        private bool                            mIsActive;
 
         public  ObservableCollection<PresetSet> Sets {  get; }
         public  ObservableCollection<UiTag>     Tags { get; }
 
         public  DelegateCommand                 CreateSet { get; }
         public  DelegateCommand                 DeleteSet { get; }
+
+        public  string                          Title => "Sets";
+        public  event EventHandler              IsActiveChanged = delegate { };
 
         public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IDialogService dialogService, IPlatformLog log ) {
             mSetProvider = setProvider;
@@ -42,6 +47,18 @@ namespace MilkBottle.ViewModels {
 
             LoadSets();
             LoadTags();
+        }
+
+        public bool IsActive {
+            get => mIsActive;
+            set {
+                mIsActive = value;
+
+                if( mIsActive ) {
+                    LoadTags();
+                    LoadSets();
+                }
+            }
         }
 
         public PresetSet CurrentSet {
