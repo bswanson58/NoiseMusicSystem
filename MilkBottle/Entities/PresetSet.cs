@@ -17,7 +17,7 @@ namespace MilkBottle.Entities {
         Equal = 1,
         NotEqual = 2,
         Contains = 3,
-        HasMember
+        HasMemberName = 4
     }
 
     [DebuggerDisplay("{" + nameof( DebugDisplay ) + "}")]

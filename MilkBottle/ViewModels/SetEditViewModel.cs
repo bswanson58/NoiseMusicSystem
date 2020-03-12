@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Views;
+using MoreLinq.Extensions;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -12,28 +13,35 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace MilkBottle.ViewModels {
     class SetEditViewModel : PropertyChangeBase {
         private readonly IPresetSetProvider     mSetProvider;
+        private readonly ITagProvider           mTagProvider;
         private readonly IDialogService         mDialogService;
         private readonly IPlatformLog           mLog;
         private PresetSet                       mCurrentSet;
         private bool                            mUseFavoriteQualifier;
         private bool                            mUseNameQualifier;
         private string                          mNameQualifier;
+        private bool                            mUseTagQualifier;
 
         public  ObservableCollection<PresetSet> Sets {  get; }
+        public  ObservableCollection<UiTag>     Tags { get; }
 
         public  DelegateCommand                 CreateSet { get; }
         public  DelegateCommand                 DeleteSet { get; }
 
-        public SetEditViewModel( IPresetSetProvider setProvider, IDialogService dialogService, IPlatformLog log ) {
+        public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IDialogService dialogService, IPlatformLog log ) {
             mSetProvider = setProvider;
+            mTagProvider = tagProvider;
             mDialogService = dialogService;
             mLog = log;
 
             Sets = new ObservableCollection<PresetSet>();
+            Tags = new ObservableCollection<UiTag>();
+
             CreateSet = new DelegateCommand( OnCreateSet );
             DeleteSet = new DelegateCommand( OnDeleteSet, CanDeleteSet );
 
             LoadSets();
+            LoadTags();
         }
 
         public PresetSet CurrentSet {
@@ -56,6 +64,12 @@ namespace MilkBottle.ViewModels {
             if( currentSet != null ) {
                 CurrentSet = Sets.FirstOrDefault( s => s.Id.Equals( currentSet.Id ));
             }
+        }
+
+        private void LoadTags() {
+            Tags.Clear();
+
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected )));
         }
 
         private void OnSetChanged() {
@@ -111,6 +125,20 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        private void OnFavoriteQualifierChanged() {
+            if( mCurrentSet != null ) {
+                var preset = mUseFavoriteQualifier ? 
+                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.IsFavorite, QualifierOperation.Equal, true.ToString())) :
+                    mCurrentSet.WithoutQualifier( QualifierField.IsFavorite );
+
+                mSetProvider.Update( preset )
+                    .Match(
+                        unit => LoadSets(),
+                        ex => LogException( "OnFavoriteQualifierChanged", ex )
+                        );
+            }
+        }
+
         public bool UseNameQualifier {
             get => mUseNameQualifier;
             set {
@@ -131,22 +159,6 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnFavoriteQualifierChanged() {
-            if( mCurrentSet != null ) {
-                var preset = mUseFavoriteQualifier ? 
-                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.IsFavorite, QualifierOperation.Equal, true.ToString())) :
-                    mCurrentSet.WithoutQualifier( QualifierField.IsFavorite );
-
-                mSetProvider.Update( preset )
-                    .Match(
-                        unit => LoadSets(),
-                        ex => LogException( "OnFavoriteQualifierChanged", ex )
-                        );
-
-                PeekAtPresets();
-            }
-        }
-
         private void OnNameQualifierChanged() {
             if(( mCurrentSet != null ) &&
                (!String.IsNullOrWhiteSpace( mNameQualifier ))) {
@@ -159,8 +171,36 @@ namespace MilkBottle.ViewModels {
                         unit => LoadSets(),
                         ex => LogException( "OnNameQualifierChanged", ex )
                     );
+            }
+        }
 
-                PeekAtPresets();
+        public bool UseTagQualifier {
+            get => mUseTagQualifier;
+            set {
+                mUseTagQualifier = value;
+
+                OnTagQualifierChanged();
+                RaisePropertyChanged( () => UseTagQualifier );
+            }
+        }
+
+        private void OnTagSelected( UiTag tag ) {
+            OnTagQualifierChanged();
+        }
+
+        private void OnTagQualifierChanged() {
+            var setTags = Tags.Where( t => t.IsSelected );
+
+            if( mCurrentSet != null ) {
+                var preset = mUseTagQualifier ?
+                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.Tags, QualifierOperation.HasMemberName, from t in setTags select t.Tag.Name )) :
+                    mCurrentSet.WithoutQualifier( QualifierField.Tags );
+
+                mSetProvider.Update( preset )
+                    .Match(
+                        unit => LoadSets(),
+                        ex => LogException( "OnTagQualifierChanged", ex )
+                    );
             }
         }
 
@@ -168,6 +208,7 @@ namespace MilkBottle.ViewModels {
             mUseFavoriteQualifier = false;
             mUseNameQualifier = false;
             mNameQualifier = String.Empty;
+            mUseTagQualifier = false;
 
             mCurrentSet?.Qualifiers.ForEach( q => {
                 switch( q.Field ) {
@@ -179,29 +220,36 @@ namespace MilkBottle.ViewModels {
                         mUseNameQualifier = true;
                         mNameQualifier = q.Value;
                         break;
+
+                    case QualifierField.Tags:
+                        ReconcileTags( q );
+                        mUseTagQualifier = true;
+                        break;
                 }
             });
 
             RaisePropertyChanged( () => UseFavoriteQualifier );
             RaisePropertyChanged( () => UseNameQualifier );
             RaisePropertyChanged( () => NameQualifier );
+            RaisePropertyChanged( () => UseTagQualifier );
+        }
+
+        private void ReconcileTags( SetQualifier q ) {
+            Tags.ForEach( t => t.SetSelectedState( false ));
+
+            if( q?.Value != null ) {
+                var qualifierTags = q.Value.Split( SetQualifier.cValueSeparator );
+
+                foreach( var tag in qualifierTags ) {
+                    var uiTag = Tags.FirstOrDefault( t => t.Tag.Name.Equals( tag ));
+
+                    uiTag?.SetSelectedState( true );
+                }
+            }
         }
 
         private void LogException( string message, Exception ex ) {
             mLog.LogException( message, ex );
-        }
-
-        private void PeekAtPresets() {
-            if( mCurrentSet != null ) {
-                var presetList = new List<Preset>();
-
-                mSetProvider.GetPresetList( mCurrentSet, list => presetList.AddRange( list ))
-                    .Match( 
-                        init => { },
-                        ex => mLog.LogException( "PeekAtPresets", ex ));
-
-                var count = presetList.Count;
-            }
         }
     }
 }
