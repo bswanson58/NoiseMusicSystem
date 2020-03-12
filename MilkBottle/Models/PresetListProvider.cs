@@ -23,8 +23,8 @@ namespace MilkBottle.Models {
         public IEnumerable<PresetList> GetLists() {
             var retValue = new List<PresetList>();
 
-            mLibraryProvider.SelectLibraries( list => retValue.AddRange( from l in list select new LibraryPresetList( l, GetPresets )));
-            mSetProvider.SelectSets( list => retValue.AddRange( from s in list select new SetPresetList( s, GetPresets )));
+            mLibraryProvider.SelectLibraries( list => retValue.AddRange( from l in list select new LibraryPresetList( l, GetPresets ))).IfLeft( ex => LogException( "SelectLibraries", ex ));
+            mSetProvider.SelectSets( list => retValue.AddRange( from s in list select new SetPresetList( s, GetPresets ))).IfLeft( ex => LogException( "SelectSets", ex ));
 
             return from p in retValue orderby p.Name select p;
         }
@@ -32,7 +32,7 @@ namespace MilkBottle.Models {
         private IEnumerable<Preset> GetPresets( PresetLibrary forLibrary ) {
             var retValue = new List<Preset>();
 
-            mPresetProvider.SelectPresets( forLibrary, list => retValue.AddRange( list )).IfLeft( LogException );
+            mPresetProvider.SelectPresets( forLibrary, list => retValue.AddRange( list )).IfLeft( ex => LogException( "SelectPresets", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }
@@ -40,13 +40,13 @@ namespace MilkBottle.Models {
         private IEnumerable<Preset> GetPresets( PresetSet forSet ) {
             var retValue = new List<Preset>();
 
-            mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( LogException );
+            mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( ex => LogException( "GetPresetList", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }
 
-        private void LogException( Exception ex ) {
-            mLog.LogException( "PresetListProvider:GetPresets", ex );
+        private void LogException( string message, Exception ex ) {
+            mLog.LogException( $"PresetListProvider:{message}", ex );
         }
     }
 }
