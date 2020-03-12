@@ -5,6 +5,7 @@ using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
+using MoreLinq.Extensions;
 using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
@@ -64,7 +65,7 @@ namespace MilkBottle.Database {
             return mPresetProvider.FindPresetList( expression, action );
         }
 
-        private BsonExpression BuildExpression( List<SetQualifier> qualifiers ) {
+        private string BuildExpression( List<SetQualifier> qualifiers ) {
             var qualifierParts = new List<string>();
 
             foreach( var qualifier in qualifiers ) {
@@ -80,17 +81,25 @@ namespace MilkBottle.Database {
                     case QualifierOperation.Contains:
                         qualifierParts.Add( Query.Contains( qualifier.Field.ToString(), qualifier.TypedValue()));
                         break;
+
+                    case QualifierOperation.HasMember:
+                        qualifierParts.Add( BuildMemberQualifiers( $"$.{qualifier.Field.ToString()}[*].Name", qualifier.Value.Split( SetQualifier.cValueSeparator )));
+                        break;
                 }
             }
 
             // always eliminate presets marked as Do Not Play
-            var qualifierString = Query.Not( nameof( Preset.Rating ), PresetRating.DoNotPlayValue );
+            qualifierParts.Add( Query.Not( nameof( Preset.Rating ), PresetRating.DoNotPlayValue ));
 
-            foreach( var qualifier in qualifierParts ) {
-                qualifierString = Query.And( qualifierString, qualifier );
-            }
+            return String.Join( " AND ", qualifierParts );
+        }
 
-            return BsonExpression.Create( qualifierString );
+        private string BuildMemberQualifiers( string forMember, IEnumerable<string> qualifiers ) {
+            var predicateList = new List<string>();
+
+            qualifiers.ForEach( q => predicateList.Add( $"{forMember} ANY='{q}'" ));
+
+            return "(" + String.Join( " OR ", predicateList ) + ")";
         }
     }
 }

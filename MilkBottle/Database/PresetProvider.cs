@@ -48,11 +48,11 @@ namespace MilkBottle.Database {
             return SelectEntities( list => action( from p in list where p.Library.Id == forLibrary.Id select p ));
         }
 
-        public Either<Exception, Option<Preset>> FindPreset( BsonExpression predicate ) {
+        public Either<Exception, Option<Preset>> FindPreset( string predicate ) {
             return FindEntity( predicate );
         }
 
-        public Either<Exception, Unit> FindPresetList( BsonExpression predicate, Action<IEnumerable<Preset>> action ) {
+        public Either<Exception, Unit> FindPresetList( string predicate, Action<IEnumerable<Preset>> action ) {
             return FindEntityList( predicate, action );
         }
 

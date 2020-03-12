@@ -16,11 +16,14 @@ namespace MilkBottle.Entities {
     enum QualifierOperation {
         Equal = 1,
         NotEqual = 2,
-        Contains = 3
+        Contains = 3,
+        HasMember
     }
 
     [DebuggerDisplay("{" + nameof( DebugDisplay ) + "}")]
     class SetQualifier {
+        public  const char          cValueSeparator = '|';
+
         public  QualifierField      Field { get; }
         public  QualifierOperation  Operation { get; }
         public  string              Value { get; }
@@ -31,13 +34,19 @@ namespace MilkBottle.Entities {
         public SetQualifier( int field, int operation, string value ) {
             Field = (QualifierField)field;
             Operation = (QualifierOperation)operation;
-            Value = value;
+            Value = value ?? String.Empty;
         }
 
         public SetQualifier( QualifierField field, QualifierOperation operation, string value ) {
             Field = field;
             Operation = operation;
-            Value = value;
+            Value = value ?? String.Empty;
+        }
+
+        public SetQualifier( QualifierField field, QualifierOperation operation, IEnumerable<string> value ) {
+            Field = field;
+            Operation = operation;
+            Value = String.Join( cValueSeparator.ToString(), value );
         }
 
         public BsonValue TypedValue() {
@@ -50,6 +59,11 @@ namespace MilkBottle.Entities {
 
                 case QualifierField.Rating:
                     retValue = Int16.Parse( Value );
+                    break;
+
+                case QualifierField.Tags:
+                    var tags = Value.Split( cValueSeparator );
+                    retValue = new BsonArray( from t in tags select new BsonValue( t ));
                     break;
             }
 

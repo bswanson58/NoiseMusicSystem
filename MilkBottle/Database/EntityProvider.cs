@@ -51,7 +51,7 @@ namespace MilkBottle.Database {
                     .Bind( db => ScanCollection( db, action ).ToEither());
         }
 
-        private TryOption<T> FindWithExpression( BsonExpression expression ) {
+        private TryOption<T> FindWithExpression( string expression ) {
             return Prelude.TryOption( () => {
                 T retValue = default;
 
@@ -63,11 +63,11 @@ namespace MilkBottle.Database {
             });
         }
 
-        protected Either<Exception, Option<T>> FindEntity( BsonExpression expression ) {
+        protected Either<Exception, Option<T>> FindEntity( string expression ) {
             return FindWithExpression( expression ).ToEither();
         }
 
-        private Try<Unit> FindListWithExpression( BsonExpression expression, Action<IEnumerable<T>> action ) {
+        private Try<Unit> FindListWithExpression( string expression, Action<IEnumerable<T>> action ) {
             return Prelude.Try( () => {
                 WithCollection( c => action( c.Find( expression )));
 
@@ -75,7 +75,7 @@ namespace MilkBottle.Database {
             });
         }
 
-        protected Either<Exception, Unit> FindEntityList( BsonExpression expression, Action<IEnumerable<T>> action ) {
+        protected Either<Exception, Unit> FindEntityList( string expression, Action<IEnumerable<T>> action ) {
             return ValidateAction( action )
                 .Bind( a => FindListWithExpression( expression, action ).ToEither());
         }
