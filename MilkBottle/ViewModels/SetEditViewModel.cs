@@ -31,6 +31,7 @@ namespace MilkBottle.ViewModels {
 
         public  DelegateCommand                 CreateSet { get; }
         public  DelegateCommand                 DeleteSet { get; }
+        public  DelegateCommand                 CreateTag { get; }
 
         public  string                          Title => "Sets";
         public  event EventHandler              IsActiveChanged = delegate { };
@@ -48,6 +49,7 @@ namespace MilkBottle.ViewModels {
 
             CreateSet = new DelegateCommand( OnCreateSet );
             DeleteSet = new DelegateCommand( OnDeleteSet, CanDeleteSet );
+            CreateTag = new DelegateCommand( OnCreateTag );
 
             LoadSets();
             LoadTags();
@@ -110,6 +112,23 @@ namespace MilkBottle.ViewModels {
             DeleteSet.RaiseCanExecuteChanged();
         }
 
+        private void OnCreateTag() {
+            mDialogService.ShowDialog( nameof( NewTagDialog ), new DialogParameters(), OnCreateTagResult );
+        }
+
+        private void OnCreateTagResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var tagName = result.Parameters.GetValue<string>( NewTagDialogModel.cTagNameParameter );
+
+                if(!String.IsNullOrWhiteSpace( tagName )) {
+                    mTagProvider.Insert( new PresetTag( tagName ))
+                        .Match( 
+                            unit => LoadTags(),
+                            ex => LogException( "OnCreateTagResult", ex ));
+                }
+            }
+        }
+
         private void OnCreateSet() {
             mDialogService.ShowDialog( nameof( NewSetDialog ), new DialogParameters(), OnCreateSetResult  );
         }
@@ -119,10 +138,12 @@ namespace MilkBottle.ViewModels {
                 var setName = result.Parameters.GetValue<string>( NewSetDialogModel.cSetNameParameter );
 
                 if(!String.IsNullOrWhiteSpace( setName )) {
-                    mSetProvider.Insert( new PresetSet( setName ))
-                        .Match( 
-                            unit => LoadSets(),
-                            ex => LogException( "OnCreateSet", ex ));
+                    var newSet = new PresetSet( setName );
+
+                    mSetProvider.Insert( newSet ).IfLeft( ex => LogException( "OnCreateSetResult", ex ));
+
+                    LoadSets();
+                    CurrentSet = Sets.FirstOrDefault( s => s.Set.Id.Equals( newSet.Id ));
                 }
             }
         }
