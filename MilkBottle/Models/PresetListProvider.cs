@@ -40,7 +40,9 @@ namespace MilkBottle.Models {
         public IEnumerable<Preset> GetPresets( PresetSet forSet ) {
             var retValue = new List<Preset>();
 
-            mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( ex => LogException( "GetPresetList", ex ));
+            if( forSet.Qualifiers.Any()) {
+                mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( ex => LogException( "GetPresetList", ex ));
+            }
 
             return retValue.DistinctBy( p => p.Name );
         }
