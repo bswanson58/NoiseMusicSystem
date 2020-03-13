@@ -115,6 +115,19 @@ namespace MilkBottle.ViewModels {
                 mFilterText = value;
 
                 mPresetView.Refresh();
+                RaisePropertyChanged( () => PresetListTitle );
+            }
+        }
+
+        public string PresetListTitle {
+            get {
+                var retValue = " Library Presets ";
+
+                if( mPresetView is CollectionView view ) {
+                    retValue = $"({view.Count}) Library Presets ";
+                }
+
+                return retValue;
             }
         }
 
@@ -208,6 +221,8 @@ namespace MilkBottle.ViewModels {
             if( CurrentPreset == null ) {
                 CurrentPreset = mPresets.FirstOrDefault();
             }
+
+            RaisePropertyChanged( () => PresetListTitle );
         }
 
         private void LoadTags() {

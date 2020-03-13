@@ -67,7 +67,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Tagged Presets ">
+        <GroupBox Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header="{Binding PresetListTitle}">
             <ListBox Grid.Row="4" ItemsSource="{Binding TaggedPresets}" ItemTemplate="{StaticResource PresetTemplate}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         </GroupBox>

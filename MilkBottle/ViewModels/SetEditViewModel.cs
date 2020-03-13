@@ -34,6 +34,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 CreateTag { get; }
 
         public  string                          Title => "Sets";
+        public  string                          PresetListTitle => Presets.Any() ? $"({Presets.Count}) Presets In Set " : " Presets In Set ";
         public  event EventHandler              IsActiveChanged = delegate { };
 
         public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IPresetListProvider listProvider, IDialogService dialogService, IPlatformLog log ) {
@@ -103,6 +104,8 @@ namespace MilkBottle.ViewModels {
 
                 Presets.AddRange( from p in presets orderby p.Name select p );
             }
+
+            RaisePropertyChanged( () => PresetListTitle );
         }
 
         private void OnSetChanged() {

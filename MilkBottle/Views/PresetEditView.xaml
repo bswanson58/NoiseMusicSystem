@@ -45,7 +45,7 @@
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Margin="0,5" Style="{StaticResource SectionBorderStyle}" Header=" Library Presets ">
+        <GroupBox Grid.Row="1" Margin="0,5" Style="{StaticResource SectionBorderStyle}" Header="{Binding PresetListTitle}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

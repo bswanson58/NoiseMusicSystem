@@ -21,6 +21,7 @@ namespace MilkBottle.ViewModels {
 
         public  ObservableCollection<UiTag>     Tags { get; }
         public  ObservableCollection<Preset>    TaggedPresets {  get; }
+        public  string                          PresetListTitle => TaggedPresets.Any() ? $"({TaggedPresets.Count}) Tagged Presets" : " Tagged Presets ";
 
         public  DelegateCommand                 NewTag { get; }
         public  DelegateCommand                 DeleteTag {  get; }
@@ -84,6 +85,8 @@ namespace MilkBottle.ViewModels {
                 mPresetProvider.SelectPresets( mCurrentTag.Tag, list => TaggedPresets.AddRange( from t in list orderby t.Name select t ))
                     .IfLeft( ex => LogException( "LoadPresets", ex ));
             }
+
+            RaisePropertyChanged( () => PresetListTitle );
         }
 
         private void OnNewTag() {
