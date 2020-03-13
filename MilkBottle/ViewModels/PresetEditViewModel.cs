@@ -173,11 +173,11 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnLibraryChanged() {
-            LoadPresets();
-
             if( CurrentLibrary != null ) {
                 mPresetController.LoadLibrary( CurrentLibrary );
             }
+
+            LoadPresets();
         }
 
         private void OnPresetChanged() {
@@ -197,8 +197,7 @@ namespace MilkBottle.ViewModels {
             var previousLibrary = CurrentLibrary;
 
             Libraries.Clear();
-
-            Libraries.AddRange( mListProvider.GetLists());
+            Libraries.AddRange( from l in mListProvider.GetLists() orderby l.Name select l );
 
             if( previousLibrary != null ) {
                 CurrentLibrary = Libraries.FirstOrDefault( l => l.Name.Equals( previousLibrary.Name ));
