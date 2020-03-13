@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;

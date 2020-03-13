@@ -32,8 +32,8 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
         </StackPanel>
     </Grid>
 </UserControl>
