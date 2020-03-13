@@ -1,9 +1,10 @@
 ﻿using System;
 using Prism.Commands;
 using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class NewSetDialogModel : IDialogAware {
+    class NewSetDialogModel : PropertyChangeBase, IDialogAware {
         public  const string    cSetNameParameter = "setName";
 
         public  String          Name { get; set; }
@@ -26,7 +27,15 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnDialogClosed() { }
-        public void OnDialogOpened( IDialogParameters parameters ) { }
+        public void OnDialogOpened( IDialogParameters parameters ) {
+            var setName = parameters.GetValue<string>( cSetNameParameter );
+
+            if(!String.IsNullOrWhiteSpace( setName )) {
+                Name = setName;
+
+                RaisePropertyChanged( () => Name );
+            }
+        }
 
         public void OnOk() {
             RaiseRequestClose(

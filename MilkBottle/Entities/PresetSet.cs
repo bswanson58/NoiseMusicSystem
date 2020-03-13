@@ -108,5 +108,9 @@ namespace MilkBottle.Entities {
 
             return this;
         }
+
+        public PresetSet WithName( string name ) {
+            return new PresetSet( Id, name );
+        }
     }
 }

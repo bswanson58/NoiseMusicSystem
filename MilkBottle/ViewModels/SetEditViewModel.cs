@@ -18,14 +18,14 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetListProvider    mPresetListProvider;
         private readonly IDialogService         mDialogService;
         private readonly IPlatformLog           mLog;
-        private PresetSet                       mCurrentSet;
+        private UiSet                           mCurrentSet;
         private bool                            mUseFavoriteQualifier;
         private bool                            mUseNameQualifier;
         private string                          mNameQualifier;
         private bool                            mUseTagQualifier;
         private bool                            mIsActive;
 
-        public  ObservableCollection<PresetSet> Sets {  get; }
+        public  ObservableCollection<UiSet>     Sets {  get; }
         public  ObservableCollection<UiTag>     Tags { get; }
         public  ObservableCollection<Preset>    Presets { get; }
 
@@ -42,7 +42,7 @@ namespace MilkBottle.ViewModels {
             mDialogService = dialogService;
             mLog = log;
 
-            Sets = new ObservableCollection<PresetSet>();
+            Sets = new ObservableCollection<UiSet>();
             Tags = new ObservableCollection<UiTag>();
             Presets = new ObservableCollection<Preset>();
 
@@ -65,7 +65,7 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public PresetSet CurrentSet {
+        public UiSet CurrentSet {
             get => mCurrentSet;
             set {
                 mCurrentSet = value;
@@ -80,10 +80,10 @@ namespace MilkBottle.ViewModels {
 
             Sets.Clear();
 
-            mSetProvider.SelectSets( list => Sets.AddRange( from s in list orderby s.Name select s ));
+            mSetProvider.SelectSets( list => Sets.AddRange( from s in list orderby s.Name select new UiSet( s, OnEditSet, OnDeleteSet )));
 
             if( currentSet != null ) {
-                CurrentSet = Sets.FirstOrDefault( s => s.Id.Equals( currentSet.Id ));
+                CurrentSet = Sets.FirstOrDefault( s => s.Set.Id.Equals( currentSet.Set.Id ));
             }
         }
 
@@ -97,7 +97,7 @@ namespace MilkBottle.ViewModels {
             Presets.Clear();
 
             if( mCurrentSet != null ) {
-                var presets = mPresetListProvider.GetPresets( mCurrentSet );
+                var presets = mPresetListProvider.GetPresets( mCurrentSet.Set );
 
                 Presets.AddRange( from p in presets orderby p.Name select p );
             }
@@ -127,16 +127,49 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        private void OnEditSet( UiSet set ) {
+            mCurrentSet = set;
+
+            if( set != null ) {
+                mDialogService.ShowDialog( nameof( NewSetDialog ), new DialogParameters{{ NewSetDialogModel.cSetNameParameter, set.Name }}, OnEditSetResult  );
+            }
+        }
+
+        private void OnEditSetResult( IDialogResult result ) {
+            if(( result.Result == ButtonResult.OK ) &&
+               ( mCurrentSet != null )) {
+                var newName = result.Parameters.GetValue<string>( NewSetDialogModel.cSetNameParameter );
+
+                if(!String.IsNullOrWhiteSpace( newName )) {
+                    var set = mCurrentSet.Set.WithName( newName );
+
+                    mSetProvider.Update( set ).IfLeft( ex => LogException( "OnEditSetResult", ex ));
+
+                    LoadSets();
+                }
+            }
+        }
+
+        private void OnDeleteSet( UiSet set ) {
+            mCurrentSet = set;
+
+            OnDeleteSet( mCurrentSet?.Set );
+        }
+
         private void OnDeleteSet() {
-            if( mCurrentSet != null ) {
-                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), new DialogParameters( $"{ConfirmDeleteDialogModel.cEntityNameParameter}={mCurrentSet.Name}" ), OnDeleteSetResult );
+            OnDeleteSet( mCurrentSet?.Set );
+        }
+
+        private void OnDeleteSet( PresetSet set ) {
+            if( set != null ) {
+                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), new DialogParameters{{ ConfirmDeleteDialogModel.cEntityNameParameter, set.Name} }, OnDeleteSetResult );
             }
         }
 
         private void OnDeleteSetResult( IDialogResult result ) {
             if(( result.Result == ButtonResult.OK ) &&
                ( mCurrentSet != null )) {
-                mSetProvider.Delete( mCurrentSet )
+                mSetProvider.Delete( mCurrentSet.Set )
                     .Match( 
                         unit => LoadSets(), 
                         ex => LogException( "DeleteSet", ex ));
@@ -160,8 +193,8 @@ namespace MilkBottle.ViewModels {
         private void OnFavoriteQualifierChanged() {
             if( mCurrentSet != null ) {
                 var preset = mUseFavoriteQualifier ? 
-                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.IsFavorite, QualifierOperation.Equal, true.ToString())) :
-                    mCurrentSet.WithoutQualifier( QualifierField.IsFavorite );
+                    mCurrentSet.Set.WithQualifier( new SetQualifier( QualifierField.IsFavorite, QualifierOperation.Equal, true.ToString())) :
+                    mCurrentSet.Set.WithoutQualifier( QualifierField.IsFavorite );
 
                 mSetProvider.Update( preset )
                     .Match(
@@ -195,8 +228,8 @@ namespace MilkBottle.ViewModels {
             if(( mCurrentSet != null ) &&
                (!String.IsNullOrWhiteSpace( mNameQualifier ))) {
                 var preset = mUseNameQualifier ?
-                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.Name, QualifierOperation.Contains, mNameQualifier )) :
-                    mCurrentSet.WithoutQualifier( QualifierField.Name );
+                    mCurrentSet.Set.WithQualifier( new SetQualifier( QualifierField.Name, QualifierOperation.Contains, mNameQualifier )) :
+                    mCurrentSet.Set.WithoutQualifier( QualifierField.Name );
 
                 mSetProvider.Update( preset )
                     .Match(
@@ -231,8 +264,8 @@ namespace MilkBottle.ViewModels {
 
             if( mCurrentSet != null ) {
                 var preset = mUseTagQualifier ?
-                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.Tags, QualifierOperation.HasMemberIdentity, from t in setTags select t.Tag.Identity )) :
-                    mCurrentSet.WithoutQualifier( QualifierField.Tags );
+                    mCurrentSet.Set.WithQualifier( new SetQualifier( QualifierField.Tags, QualifierOperation.HasMemberIdentity, from t in setTags select t.Tag.Identity )) :
+                    mCurrentSet.Set.WithoutQualifier( QualifierField.Tags );
 
                 mSetProvider.Update( preset )
                     .Match(
@@ -250,7 +283,7 @@ namespace MilkBottle.ViewModels {
 
             Tags.ForEach( t => t.SetSelectedState( false ));
 
-            mCurrentSet?.Qualifiers.ForEach( q => {
+            mCurrentSet?.Set.Qualifiers.ForEach( q => {
                 switch( q.Field ) {
                     case QualifierField.IsFavorite:
                         mUseFavoriteQualifier = true;

@@ -61,8 +61,8 @@
 
                 <ListBox Grid.Row="0" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}" SelectedItem="{Binding CurrentTag}"/>
 
-                <StackPanel Grid.Row="1" Margin="0,10,0,5" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Margin="5,0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="New Tag..." Command="{Binding NewTag}"/>
+                <StackPanel Grid.Row="1" Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="New Tag..." Command="{Binding NewTag}"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
