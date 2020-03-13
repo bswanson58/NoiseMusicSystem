@@ -21,6 +21,7 @@ SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=X64
 SetupIconFile=..\Resources\Milk Bottle.ico
+UninstallDisplayIcon={app}\MilkBottle.exe
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
