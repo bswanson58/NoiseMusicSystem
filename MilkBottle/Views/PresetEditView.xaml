@@ -35,7 +35,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Header=" Libraries ">

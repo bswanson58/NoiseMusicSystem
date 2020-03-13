@@ -84,7 +84,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <CheckBox Margin="5,0" Grid.Row="0" Content="Favorites" IsChecked="{Binding UseFavoriteQualifier}"/>
+                <CheckBox Margin="5" Grid.Row="0" Content="Favorites" IsChecked="{Binding UseFavoriteQualifier}"/>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
                     <CheckBox VerticalAlignment="Center" Margin="0,0,5,0" Content="Name Contains:" IsChecked="{Binding UseNameQualifier}"/>
