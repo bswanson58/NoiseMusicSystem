@@ -15,6 +15,7 @@ namespace MilkBottle.ViewModels {
     class SetEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly IPresetSetProvider     mSetProvider;
         private readonly ITagProvider           mTagProvider;
+        private readonly IPresetListProvider    mPresetListProvider;
         private readonly IDialogService         mDialogService;
         private readonly IPlatformLog           mLog;
         private PresetSet                       mCurrentSet;
@@ -26,6 +27,7 @@ namespace MilkBottle.ViewModels {
 
         public  ObservableCollection<PresetSet> Sets {  get; }
         public  ObservableCollection<UiTag>     Tags { get; }
+        public  ObservableCollection<Preset>    Presets { get; }
 
         public  DelegateCommand                 CreateSet { get; }
         public  DelegateCommand                 DeleteSet { get; }
@@ -33,14 +35,16 @@ namespace MilkBottle.ViewModels {
         public  string                          Title => "Sets";
         public  event EventHandler              IsActiveChanged = delegate { };
 
-        public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IDialogService dialogService, IPlatformLog log ) {
+        public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IPresetListProvider listProvider, IDialogService dialogService, IPlatformLog log ) {
             mSetProvider = setProvider;
             mTagProvider = tagProvider;
+            mPresetListProvider = listProvider;
             mDialogService = dialogService;
             mLog = log;
 
             Sets = new ObservableCollection<PresetSet>();
             Tags = new ObservableCollection<UiTag>();
+            Presets = new ObservableCollection<Preset>();
 
             CreateSet = new DelegateCommand( OnCreateSet );
             DeleteSet = new DelegateCommand( OnDeleteSet, CanDeleteSet );
@@ -89,8 +93,19 @@ namespace MilkBottle.ViewModels {
             mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected, null, null )));
         }
 
+        private void LoadPresets() {
+            Presets.Clear();
+
+            if( mCurrentSet != null ) {
+                var presets = mPresetListProvider.GetPresets( mCurrentSet );
+
+                Presets.AddRange( from p in presets orderby p.Name select p );
+            }
+        }
+
         private void OnSetChanged() {
             DisplaySetQualifiers();
+            LoadPresets();
 
             DeleteSet.RaiseCanExecuteChanged();
         }

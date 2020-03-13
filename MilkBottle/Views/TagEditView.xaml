@@ -7,6 +7,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:entities="clr-namespace:MilkBottle.Entities"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:TagEditViewModel, IsDesignTimeCreatable=False}"
@@ -40,7 +41,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="PresetTemplate" DataType="entities:Preset">
-            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                       behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -66,7 +68,8 @@
         </GroupBox>
 
         <GroupBox Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Tagged Presets ">
-            <ListBox Grid.Row="4" ItemsSource="{Binding TaggedPresets}" ItemTemplate="{StaticResource TagTemplate}"/>
+            <ListBox Grid.Row="4" ItemsSource="{Binding TaggedPresets}" ItemTemplate="{StaticResource PresetTemplate}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         </GroupBox>
     </Grid>
 </UserControl>
