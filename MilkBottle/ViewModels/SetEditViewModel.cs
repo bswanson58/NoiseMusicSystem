@@ -5,7 +5,7 @@ using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Views;
-using MoreLinq.Extensions;
+using MoreLinq;
 using Prism;
 using Prism.Commands;
 using Prism.Services.Dialogs;
@@ -232,6 +232,8 @@ namespace MilkBottle.ViewModels {
             mUseNameQualifier = false;
             mNameQualifier = String.Empty;
             mUseTagQualifier = false;
+
+            Tags.ForEach( t => t.SetSelectedState( false ));
 
             mCurrentSet?.Qualifiers.ForEach( q => {
                 switch( q.Field ) {
