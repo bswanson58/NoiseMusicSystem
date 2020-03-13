@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Views;
 using Prism;
 using Prism.Commands;
 using Prism.Services.Dialogs;
@@ -12,6 +13,7 @@ namespace MilkBottle.ViewModels {
     class TagEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly IDialogService mDialogService;
         private readonly ITagProvider   mTagProvider;
+        private readonly IPlatformLog   mLog;
         private PresetTag               mCurrentTag;
         private bool                    mIsActive;
 
@@ -19,18 +21,21 @@ namespace MilkBottle.ViewModels {
         public  ObservableCollection<Preset>    TaggedPresets {  get; }
 
         public  DelegateCommand                 NewTag { get; }
+        public  DelegateCommand                 DeleteTag {  get; }
 
         public  string                          Title => "Tags";
         public  event EventHandler              IsActiveChanged = delegate { };
 
-        public TagEditViewModel( ITagProvider tagProvider, IDialogService dialogService ) {
+        public TagEditViewModel( ITagProvider tagProvider, IDialogService dialogService, IPlatformLog log ) {
             mTagProvider = tagProvider;
             mDialogService = dialogService;
+            mLog = log;
 
             Tags = new ObservableCollection<PresetTag>();
             TaggedPresets = new ObservableCollection<Preset>();
 
             NewTag = new DelegateCommand( OnNewTag );
+            DeleteTag = new DelegateCommand( OnDeleteTag, CanDeleteTag );
 
             LoadTags();
         }
@@ -63,7 +68,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnTagChanged() {
-
+            DeleteTag.RaiseCanExecuteChanged();
         }
 
         private void OnNewTag() {
@@ -74,10 +79,35 @@ namespace MilkBottle.ViewModels {
             if( result.Result == ButtonResult.OK ) {
                 var newTag = new PresetTag( result.Parameters.GetValue<string>( NewTagDialogModel.cTagNameParameter ));
 
-                mTagProvider.Insert( newTag );
+                mTagProvider.Insert( newTag ).IfLeft( ex => LogException( "OnNewTagResult", ex ));
 
                 LoadTags();
+                CurrentTag = Tags.FirstOrDefault( t => t.Identity.Equals( newTag.Identity ));
             }
+        }
+
+        private void OnDeleteTag() {
+            if( mCurrentTag != null ) {
+                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), new DialogParameters( $"{ConfirmDeleteDialogModel.cEntityNameParameter}={mCurrentTag.Name}" ), OnDeleteTagResult );
+            }
+        }
+
+        private void OnDeleteTagResult( IDialogResult result ) {
+            if(( result.Result == ButtonResult.OK ) &&
+               ( mCurrentTag != null )) {
+                mTagProvider.Delete( mCurrentTag )
+                    .Match( 
+                        unit => LoadTags(), 
+                        ex => LogException( "DeleteTag", ex ));
+            }
+        }
+
+        private bool CanDeleteTag() {
+            return mCurrentTag != null;
+        }
+
+        private void LogException( string message, Exception ex ) {
+            mLog.LogException( message, ex );
         }
     }
 }
