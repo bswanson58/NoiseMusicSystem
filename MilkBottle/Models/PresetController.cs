@@ -131,6 +131,13 @@ namespace MilkBottle.Models {
             }
         }
 
+        public void LoadPresets( IEnumerable<Preset> list ) {
+            mLoadedPresets.Clear();
+            mLoadedPresets.AddRange( list );
+
+            QueuePresets( mLoadedPresets );
+        }
+
         public void StopPresetCycling() {
             mPresetTimer?.StopTimer();
 
@@ -151,7 +158,7 @@ namespace MilkBottle.Models {
             mLoadedPresets.AddRange( forList.GetPresets());
 
             if( mLoadedPresets.Any()) {
-                LoadPresets( mLoadedPresets );
+                QueuePresets( mLoadedPresets );
 
                 CurrentPresetLibrary = forList.Name;
                 mEventAggregator.PublishOnUIThread( new Events.PresetLibrarySwitched( CurrentPresetLibrary ));
@@ -236,7 +243,7 @@ namespace MilkBottle.Models {
             }
         }
 
-        private void LoadPresets( IEnumerable<Preset> presetList ) {
+        private void QueuePresets( IEnumerable<Preset> presetList ) {
             try {
                 mProjectM.clearPresetlist();
                 mPresetHistory.Clear();

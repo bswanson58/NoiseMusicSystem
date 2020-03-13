@@ -106,7 +106,8 @@
         </GroupBox>
 
         <GroupBox Grid.Row="2" Margin="0,10,0,0" Style="{StaticResource SectionBorderStyle}" Header="{Binding PresetListTitle}">
-            <ListBox ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource PresetTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+            <ListBox ItemsSource="{Binding Presets}" SelectedItem="{Binding CurrentPreset}" ItemTemplate="{StaticResource PresetTemplate}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         </GroupBox>
     </Grid>
 </UserControl>

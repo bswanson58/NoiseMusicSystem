@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Types;
@@ -13,6 +14,7 @@ namespace MilkBottle.Interfaces {
         void            ConfigurePresetSequencer( PresetSequence forSequence );
 
         void            LoadLibrary( PresetList list );
+        void            LoadPresets( IEnumerable<Preset> list );
 
         void            StopPresetCycling();
         void            StartPresetCycling();
