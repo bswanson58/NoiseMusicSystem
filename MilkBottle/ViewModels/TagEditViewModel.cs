@@ -15,8 +15,11 @@ namespace MilkBottle.ViewModels {
         private readonly IDialogService         mDialogService;
         private readonly ITagProvider           mTagProvider;
         private readonly IPresetProvider        mPresetProvider;
+        private readonly IPresetController      mPresetController;
+        private readonly IStateManager          mStateManager;
         private readonly IPlatformLog           mLog;
         private UiTag                           mCurrentTag;
+        private Preset                          mCurrentPreset;
         private bool                            mIsActive;
 
         public  ObservableCollection<UiTag>     Tags { get; }
@@ -29,10 +32,13 @@ namespace MilkBottle.ViewModels {
         public  string                          Title => "Tags";
         public  event EventHandler              IsActiveChanged = delegate { };
 
-        public TagEditViewModel( ITagProvider tagProvider, IPresetProvider presetProvider, IDialogService dialogService, IPlatformLog log ) {
+        public TagEditViewModel( ITagProvider tagProvider, IPresetProvider presetProvider, IPresetController presetController, 
+                                 IStateManager stateManager, IDialogService dialogService, IPlatformLog log ) {
             mTagProvider = tagProvider;
             mPresetProvider = presetProvider;
             mDialogService = dialogService;
+            mPresetController = presetController;
+            mStateManager = stateManager;
             mLog = log;
 
             Tags = new ObservableCollection<UiTag>();
@@ -40,6 +46,11 @@ namespace MilkBottle.ViewModels {
 
             NewTag = new DelegateCommand( OnNewTag );
             DeleteTag = new DelegateCommand( OnDeleteTag, CanDeleteTag );
+
+            mPresetController.BlendPresetTransition = false;
+            mPresetController.ConfigurePresetSequencer( PresetSequence.Sequential );
+            mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
+            mStateManager.EnterState( eStateTriggers.Stop );
 
             LoadTags();
         }
@@ -65,6 +76,27 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public Preset CurrentPreset {
+            get => mCurrentPreset;
+            set {
+                mCurrentPreset = value;
+
+                OnPresetChanged();
+                RaisePropertyChanged( () => CurrentPreset );
+            }
+        }
+
+        private void OnPresetChanged() {
+            if( mCurrentPreset != null ) {
+                mPresetController.PlayPreset( mCurrentPreset );
+
+                mStateManager.EnterState( eStateTriggers.Run );
+            }
+            else {
+                mStateManager.EnterState( eStateTriggers.Stop );
+            }
+        }
+
         private void LoadTags() {
             Tags.Clear();
 
@@ -85,6 +117,9 @@ namespace MilkBottle.ViewModels {
                 mPresetProvider.SelectPresets( mCurrentTag.Tag, list => TaggedPresets.AddRange( from t in list orderby t.Name select t ))
                     .IfLeft( ex => LogException( "LoadPresets", ex ));
             }
+
+            mPresetController.LoadPresets( TaggedPresets );
+            CurrentPreset = TaggedPresets.FirstOrDefault();
 
             RaisePropertyChanged( () => PresetListTitle );
         }
