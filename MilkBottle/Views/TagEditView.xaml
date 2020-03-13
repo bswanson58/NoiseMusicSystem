@@ -38,6 +38,10 @@
                 </Trigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+
+        <DataTemplate x:Key="PresetTemplate" DataType="entities:Preset">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
@@ -61,8 +65,8 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Style="{StaticResource SectionBorderStyle}" Header=" Tagged Presets ">
-            <ListBox Grid.Row="4" ItemsSource="{Binding TaggedPresets}"/>
+        <GroupBox Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Tagged Presets ">
+            <ListBox Grid.Row="4" ItemsSource="{Binding TaggedPresets}" ItemTemplate="{StaticResource TagTemplate}"/>
         </GroupBox>
     </Grid>
 </UserControl>

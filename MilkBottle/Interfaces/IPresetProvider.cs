@@ -11,8 +11,8 @@ namespace MilkBottle.Interfaces {
 
         Either<Exception, Unit>             SelectPresets( Action<IEnumerable<Preset>> action );
         Either<Exception, Unit>             SelectPresets( PresetLibrary forLibrary, Action<IEnumerable<Preset>> action );
+        Either<Exception, Unit>             SelectPresets( PresetTag forTag, Action<IEnumerable<Preset>> action );
 
-        Either<Exception, Option<Preset>>   FindPreset( string expression );
         Either<Exception, Unit>             FindPresetList( string expression, Action<IEnumerable<Preset>> action );
 
         Either<Exception, Unit>             Insert( Preset preset );

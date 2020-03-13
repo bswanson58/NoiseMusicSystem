@@ -48,8 +48,8 @@ namespace MilkBottle.Database {
             return SelectEntities( list => action( from p in list where p.Library.Id == forLibrary.Id select p ));
         }
 
-        public Either<Exception, Option<Preset>> FindPreset( string predicate ) {
-            return FindEntity( predicate );
+        public Either<Exception, Unit> SelectPresets( PresetTag forTag, Action<IEnumerable<Preset>> action ) {
+            return SelectEntities( list => action( from p in list where p.Tags.Any( t => t.Identity.Equals( forTag.Identity )) select p ));
         }
 
         public Either<Exception, Unit> FindPresetList( string predicate, Action<IEnumerable<Preset>> action ) {

@@ -14,6 +14,7 @@ namespace MilkBottle.ViewModels {
     class TagEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly IDialogService         mDialogService;
         private readonly ITagProvider           mTagProvider;
+        private readonly IPresetProvider        mPresetProvider;
         private readonly IPlatformLog           mLog;
         private UiTag                           mCurrentTag;
         private bool                            mIsActive;
@@ -27,8 +28,9 @@ namespace MilkBottle.ViewModels {
         public  string                          Title => "Tags";
         public  event EventHandler              IsActiveChanged = delegate { };
 
-        public TagEditViewModel( ITagProvider tagProvider, IDialogService dialogService, IPlatformLog log ) {
+        public TagEditViewModel( ITagProvider tagProvider, IPresetProvider presetProvider, IDialogService dialogService, IPlatformLog log ) {
             mTagProvider = tagProvider;
+            mPresetProvider = presetProvider;
             mDialogService = dialogService;
             mLog = log;
 
@@ -71,6 +73,17 @@ namespace MilkBottle.ViewModels {
 
         private void OnTagChanged() {
             DeleteTag.RaiseCanExecuteChanged();
+
+            LoadPresets();
+        }
+
+        private void LoadPresets() {
+            TaggedPresets.Clear();
+
+            if( mCurrentTag != null ) {
+                mPresetProvider.SelectPresets( mCurrentTag.Tag, list => TaggedPresets.AddRange( from t in list orderby t.Name select t ))
+                    .IfLeft( ex => LogException( "LoadPresets", ex ));
+            }
         }
 
         private void OnNewTag() {
