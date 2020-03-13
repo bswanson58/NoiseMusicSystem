@@ -8,7 +8,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:NewTagDialogModel, IsDesignTimeCreatable=False}"
-             Height="90" Width="300">
+             Height="100" Width="300">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -28,7 +28,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Tag Name:"/>
-        <TextBox Grid.Row="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" Margin="0,3,0,10" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>

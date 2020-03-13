@@ -1,9 +1,10 @@
 ﻿using System;
 using Prism.Commands;
 using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class NewTagDialogModel : IDialogAware {
+    class NewTagDialogModel : PropertyChangeBase, IDialogAware {
         public  const string    cTagNameParameter = "tagName";
 
         public  String          Name { get; set; }
@@ -26,12 +27,23 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnDialogClosed() { }
-        public void OnDialogOpened( IDialogParameters parameters ) { }
+
+        public void OnDialogOpened( IDialogParameters parameters ) {
+            if( parameters != null ) {
+                var tagName = parameters.GetValue<string>( cTagNameParameter );
+
+                if(!String.IsNullOrWhiteSpace( tagName )) {
+                    Name = tagName;
+
+                    RaisePropertyChanged( () => Name );
+                }
+            }
+        }
 
         public void OnOk() {
             RaiseRequestClose(
                 !String.IsNullOrWhiteSpace( Name )
-                    ? new DialogResult( ButtonResult.OK, new DialogParameters( $"{cTagNameParameter}={Name}" ) )
+                    ? new DialogResult( ButtonResult.OK, new DialogParameters {{ cTagNameParameter, Name }} )
                     : new DialogResult( ButtonResult.Cancel ) );
         }
 

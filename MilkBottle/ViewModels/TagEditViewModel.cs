@@ -65,7 +65,8 @@ namespace MilkBottle.ViewModels {
         private void LoadTags() {
             Tags.Clear();
 
-            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag(  t, null, OnEditTag, OnDeleteTag )));
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag(  t, null, OnEditTag, OnDeleteTag )))
+                .IfLeft( ex => LogException( "LoadTags", ex ));
         }
 
         private void OnTagChanged() {
@@ -73,7 +74,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnNewTag() {
-            mDialogService.ShowDialog( "NewTagDialog", null, OnNewTagResult );
+            mDialogService.ShowDialog( "NewTagDialog", new DialogParameters(), OnNewTagResult );
         }
 
         private void OnNewTagResult( IDialogResult result ) {
@@ -87,10 +88,35 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnEditTag( UiTag tag ) { }
+        private void OnEditTag( UiTag tag ) {
+            if( tag != null ) {
+                mCurrentTag = tag;
+
+                mDialogService.ShowDialog( nameof( NewTagDialog), new DialogParameters {{ NewTagDialogModel.cTagNameParameter, tag.Name }}, OnEditTagResult );
+            }
+        }
+
+        private void OnEditTagResult( IDialogResult result ) {
+            if(( result.Result == ButtonResult.OK ) &&
+               ( mCurrentTag != null )) {
+                var newName = result.Parameters.GetValue<string>( NewTagDialogModel.cTagNameParameter );
+
+                if(!String.IsNullOrWhiteSpace( newName )) {
+                    var tag = mCurrentTag.Tag.WithName( newName );
+
+                    mTagProvider.Update( tag ).IfLeft( ex => LogException( "OnEditTagResult", ex ));
+
+                    LoadTags();
+                }
+            }
+        }
 
         private void OnDeleteTag( UiTag tag ) {
-            TagDelete( tag.Tag );
+            if( tag != null ) {
+                mCurrentTag = tag;
+
+                TagDelete( tag.Tag );
+            }
         }
 
         private void OnDeleteTag() {
@@ -100,7 +126,7 @@ namespace MilkBottle.ViewModels {
         private void TagDelete( PresetTag tag ) {
             if( tag != null ) {
                 mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), 
-                    new DialogParameters( $"{ConfirmDeleteDialogModel.cEntityNameParameter}={tag.Name}" ), 
+                    new DialogParameters {{ ConfirmDeleteDialogModel.cEntityNameParameter, tag.Name }}, 
                     OnTagDeleteResult );
             }
         }
@@ -111,7 +137,7 @@ namespace MilkBottle.ViewModels {
                 mTagProvider.Delete( mCurrentTag.Tag )
                     .Match( 
                         unit => LoadTags(), 
-                        ex => LogException( "DeleteTag", ex ));
+                        ex => LogException( "OnTagDeleteResult", ex ));
             }
         }
 

@@ -8,7 +8,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:NewTagDialogModel, IsDesignTimeCreatable=False}"
-             Height="90" Width="300">
+             Height="100" Width="300">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Do you want to delete: '"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Name}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="'?"/>
