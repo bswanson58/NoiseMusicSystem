@@ -82,8 +82,8 @@ namespace MilkBottle.Database {
                         qualifierParts.Add( Query.Contains( qualifier.Field.ToString(), qualifier.TypedValue()));
                         break;
 
-                    case QualifierOperation.HasMemberName:
-                        qualifierParts.Add( BuildMemberQualifiers( $"$.{qualifier.Field.ToString()}[*].Name", qualifier.Value.Split( SetQualifier.cValueSeparator )));
+                    case QualifierOperation.HasMemberIdentity:
+                        qualifierParts.Add( BuildMemberQualifiers( $"$.{qualifier.Field.ToString()}[*].Identity", qualifier.Value.Split( SetQualifier.cValueSeparator )));
                         break;
                 }
             }

@@ -202,6 +202,12 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnTagSelected( UiTag tag ) {
+            if( tag.IsSelected ) {
+                mUseTagQualifier = true;
+
+                RaisePropertyChanged( () => UseTagQualifier );
+            }
+
             OnTagQualifierChanged();
         }
 
@@ -210,7 +216,7 @@ namespace MilkBottle.ViewModels {
 
             if( mCurrentSet != null ) {
                 var preset = mUseTagQualifier ?
-                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.Tags, QualifierOperation.HasMemberName, from t in setTags select t.Tag.Name )) :
+                    mCurrentSet.WithQualifier( new SetQualifier( QualifierField.Tags, QualifierOperation.HasMemberIdentity, from t in setTags select t.Tag.Identity )) :
                     mCurrentSet.WithoutQualifier( QualifierField.Tags );
 
                 mSetProvider.Update( preset )
@@ -258,7 +264,7 @@ namespace MilkBottle.ViewModels {
                 var qualifierTags = q.Value.Split( SetQualifier.cValueSeparator );
 
                 foreach( var tag in qualifierTags ) {
-                    var uiTag = Tags.FirstOrDefault( t => t.Tag.Name.Equals( tag ));
+                    var uiTag = Tags.FirstOrDefault( t => t.Tag.Identity.Equals( tag ));
 
                     uiTag?.SetSelectedState( true );
                 }
