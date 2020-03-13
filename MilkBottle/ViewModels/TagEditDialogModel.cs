@@ -10,7 +10,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class TagEditDialogModel : PropertyChangeBase, IDialogAware {
-        public  const string            cPresetParameter = "tagName";
+        public  const string                cPresetParameter = "tagName";
 
         private readonly ITagProvider       mTagProvider;
         private Preset                      mPreset;
@@ -24,7 +24,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand             Ok { get; }
         public  DelegateCommand             Cancel { get; }
 
-        public  event   Action<IDialogResult> RequestClose;
+        public  event Action<IDialogResult> RequestClose;
 
         public TagEditDialogModel( ITagProvider tagProvider ) {
             mTagProvider = tagProvider;
@@ -44,7 +44,7 @@ namespace MilkBottle.ViewModels {
             mPreset = parameters.GetValue<Preset>( cPresetParameter );
 
             Tags.Clear();
-            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagChanged )));
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagChanged, null, null )));
 
             foreach( var tag in Tags ) {
                 tag.SetSelectedState( mPreset.Tags.FirstOrDefault( t => t.Id.Equals( tag.Tag.Id )) != null );

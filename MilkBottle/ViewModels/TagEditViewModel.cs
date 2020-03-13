@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Views;
@@ -11,13 +12,13 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class TagEditViewModel : PropertyChangeBase, IActiveAware {
-        private readonly IDialogService mDialogService;
-        private readonly ITagProvider   mTagProvider;
-        private readonly IPlatformLog   mLog;
-        private PresetTag               mCurrentTag;
-        private bool                    mIsActive;
+        private readonly IDialogService         mDialogService;
+        private readonly ITagProvider           mTagProvider;
+        private readonly IPlatformLog           mLog;
+        private UiTag                           mCurrentTag;
+        private bool                            mIsActive;
 
-        public  ObservableCollection<PresetTag> Tags { get; }
+        public  ObservableCollection<UiTag>     Tags { get; }
         public  ObservableCollection<Preset>    TaggedPresets {  get; }
 
         public  DelegateCommand                 NewTag { get; }
@@ -31,7 +32,7 @@ namespace MilkBottle.ViewModels {
             mDialogService = dialogService;
             mLog = log;
 
-            Tags = new ObservableCollection<PresetTag>();
+            Tags = new ObservableCollection<UiTag>();
             TaggedPresets = new ObservableCollection<Preset>();
 
             NewTag = new DelegateCommand( OnNewTag );
@@ -51,7 +52,7 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public PresetTag CurrentTag {
+        public UiTag CurrentTag {
             get => mCurrentTag;
             set {
                 mCurrentTag = value;
@@ -64,7 +65,7 @@ namespace MilkBottle.ViewModels {
         private void LoadTags() {
             Tags.Clear();
 
-            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select t ));
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag(  t, null, OnEditTag, OnDeleteTag )));
         }
 
         private void OnTagChanged() {
@@ -82,20 +83,32 @@ namespace MilkBottle.ViewModels {
                 mTagProvider.Insert( newTag ).IfLeft( ex => LogException( "OnNewTagResult", ex ));
 
                 LoadTags();
-                CurrentTag = Tags.FirstOrDefault( t => t.Identity.Equals( newTag.Identity ));
+                CurrentTag = Tags.FirstOrDefault( t => t.Tag.Identity.Equals( newTag.Identity ));
             }
+        }
+
+        private void OnEditTag( UiTag tag ) { }
+
+        private void OnDeleteTag( UiTag tag ) {
+            TagDelete( tag.Tag );
         }
 
         private void OnDeleteTag() {
-            if( mCurrentTag != null ) {
-                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), new DialogParameters( $"{ConfirmDeleteDialogModel.cEntityNameParameter}={mCurrentTag.Name}" ), OnDeleteTagResult );
+            TagDelete( mCurrentTag?.Tag );
+        }
+
+        private void TagDelete( PresetTag tag ) {
+            if( tag != null ) {
+                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), 
+                    new DialogParameters( $"{ConfirmDeleteDialogModel.cEntityNameParameter}={tag.Name}" ), 
+                    OnTagDeleteResult );
             }
         }
 
-        private void OnDeleteTagResult( IDialogResult result ) {
+        private void OnTagDeleteResult( IDialogResult result ) {
             if(( result.Result == ButtonResult.OK ) &&
                ( mCurrentTag != null )) {
-                mTagProvider.Delete( mCurrentTag )
+                mTagProvider.Delete( mCurrentTag.Tag )
                     .Match( 
                         unit => LoadTags(), 
                         ex => LogException( "DeleteTag", ex ));

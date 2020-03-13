@@ -1,17 +1,30 @@
 ﻿using System;
 using MilkBottle.Entities;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.Dto {
     class UiTag : PropertyChangeBase {
         private readonly Action<UiTag>  mOnTagSelected;
-        private bool            mIsSelected;
+        private readonly Action<UiTag>  mOnTagEdit;
+        private readonly Action<UiTag>  mOnTagDelete;
 
-        public PresetTag        Tag { get; }
+        private bool                    mIsSelected;
 
-        public UiTag( PresetTag tag, Action<UiTag> onSelected ) {
+        public  PresetTag               Tag { get; }
+        public  string                  Name => Tag.Name;
+
+        public  DelegateCommand         Edit { get; }
+        public  DelegateCommand         Delete { get; }
+
+        public UiTag( PresetTag tag, Action<UiTag> onSelected, Action<UiTag> onTagEdit, Action<UiTag> onTagDelete ) {
             mOnTagSelected = onSelected;
+            mOnTagDelete = onTagDelete;
+            mOnTagEdit = onTagEdit;
             Tag = tag;
+
+            Delete = new DelegateCommand( OnTagDelete );
+            Edit = new DelegateCommand( OnTagEdit );
         }
 
         public bool IsSelected {
@@ -28,6 +41,14 @@ namespace MilkBottle.Dto {
             mIsSelected = state;
 
             RaisePropertyChanged( () => IsSelected );
+        }
+
+        private void OnTagDelete() {
+            mOnTagDelete?.Invoke( this );
+        }
+
+        private void OnTagEdit() {
+            mOnTagEdit?.Invoke( this );
         }
     }
 }

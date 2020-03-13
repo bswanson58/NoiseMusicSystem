@@ -213,7 +213,7 @@ namespace MilkBottle.ViewModels {
         private void LoadTags() {
             Tags.Clear();
 
-            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected )));
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected, null, null )));
         }
 
         private void OnTagSelected( UiTag tag ) {
