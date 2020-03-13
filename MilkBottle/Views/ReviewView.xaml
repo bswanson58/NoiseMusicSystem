@@ -24,11 +24,12 @@
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
+                <RowDefinition Height="4*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
-            <views:MilkView Grid.Column="0" Margin="15"/>
+            <views:MilkView Grid.Row="0" Margin="15"/>
+            <views:ReviewStatusView Grid.Row="1" Margin="15,0"/>
         </Grid>
     </Grid>
 </UserControl>

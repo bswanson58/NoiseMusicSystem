@@ -307,6 +307,7 @@
     <Compile Include="ViewModels\NewTagDialogModel.cs" />
     <Compile Include="ViewModels\PresetControlViewModel.cs" />
     <Compile Include="ViewModels\PresetEditViewModel.cs" />
+    <Compile Include="ViewModels\ReviewStatusViewModel.cs" />
     <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
     <Compile Include="ViewModels\SetEditViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
@@ -338,6 +339,9 @@
       <DependentUpon>PresetEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegionNames.cs" />
+    <Compile Include="Views\ReviewStatusView.xaml.cs">
+      <DependentUpon>ReviewStatusView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReviewView.xaml.cs">
       <DependentUpon>ReviewView.xaml</DependentUpon>
     </Compile>
@@ -381,6 +385,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NewTagDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReviewStatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
