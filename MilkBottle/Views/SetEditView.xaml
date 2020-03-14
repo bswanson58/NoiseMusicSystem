@@ -47,9 +47,26 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="PresetTemplate" DataType="entities:Preset">
-            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
-                       behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+        <DataTemplate x:Key="PresetTemplate" DataType="dto:UiPreset">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+
+                <Button x:Name="Edit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
+                        Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tags" />
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Edit" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 

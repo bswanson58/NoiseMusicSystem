@@ -15,13 +15,14 @@ namespace MilkBottle.ViewModels {
     class SetEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly IPresetSetProvider     mSetProvider;
         private readonly ITagProvider           mTagProvider;
+        private readonly IPresetProvider        mPresetProvider;
         private readonly IPresetListProvider    mPresetListProvider;
         private readonly IPresetController      mPresetController;
         private readonly IStateManager          mStateManager;
         private readonly IDialogService         mDialogService;
         private readonly IPlatformLog           mLog;
         private UiSet                           mCurrentSet;
-        private Preset                          mCurrentPreset;
+        private UiPreset                        mCurrentPreset;
         private bool                            mUseFavoriteQualifier;
         private bool                            mUseNameQualifier;
         private string                          mNameQualifier;
@@ -30,7 +31,7 @@ namespace MilkBottle.ViewModels {
 
         public  ObservableCollection<UiSet>     Sets {  get; }
         public  ObservableCollection<UiTag>     Tags { get; }
-        public  ObservableCollection<Preset>    Presets { get; }
+        public  ObservableCollection<UiPreset>  Presets { get; }
 
         public  DelegateCommand                 CreateSet { get; }
         public  DelegateCommand                 DeleteSet { get; }
@@ -40,11 +41,12 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetListTitle => Presets.Any() ? $"({Presets.Count}) Presets In Set " : " Presets In Set ";
         public  event EventHandler              IsActiveChanged = delegate { };
 
-        public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IPresetListProvider listProvider, IPresetController presetController,
-                                 IStateManager stateManager, IDialogService dialogService, IPlatformLog log ) {
+        public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IPresetProvider presetProvider, IPresetListProvider listProvider,
+                                 IPresetController presetController, IStateManager stateManager, IDialogService dialogService, IPlatformLog log ) {
             mSetProvider = setProvider;
             mTagProvider = tagProvider;
             mPresetListProvider = listProvider;
+            mPresetProvider = presetProvider;
             mPresetController = presetController;
             mStateManager = stateManager;
             mDialogService = dialogService;
@@ -52,7 +54,7 @@ namespace MilkBottle.ViewModels {
 
             Sets = new ObservableCollection<UiSet>();
             Tags = new ObservableCollection<UiTag>();
-            Presets = new ObservableCollection<Preset>();
+            Presets = new ObservableCollection<UiPreset>();
 
             CreateSet = new DelegateCommand( OnCreateSet );
             DeleteSet = new DelegateCommand( OnDeleteSet, CanDeleteSet );
@@ -89,7 +91,7 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public Preset CurrentPreset {
+        public UiPreset CurrentPreset {
             get => mCurrentPreset;
             set {
                 mCurrentPreset = value;
@@ -101,7 +103,7 @@ namespace MilkBottle.ViewModels {
 
         private void OnPresetChanged() {
             if( mCurrentPreset != null ) {
-                mPresetController.PlayPreset( mCurrentPreset );
+                mPresetController.PlayPreset( mCurrentPreset.Preset );
 
                 mStateManager.EnterState( eStateTriggers.Run );
             }
@@ -134,13 +136,29 @@ namespace MilkBottle.ViewModels {
             if( mCurrentSet != null ) {
                 var presets = mPresetListProvider.GetPresets( mCurrentSet.Set );
 
-                Presets.AddRange( from p in presets orderby p.Name select p );
+                Presets.AddRange( from p in presets orderby p.Name select new UiPreset( p, OnPresetEdit, null ));
             }
 
-            mPresetController.LoadPresets( Presets );
+            mPresetController.LoadPresets( from p in Presets select p.Preset );
             CurrentPreset = Presets.FirstOrDefault();
 
             RaisePropertyChanged( () => PresetListTitle );
+        }
+
+        private void OnPresetEdit( Preset preset ) {
+            mDialogService.ShowDialog( nameof( TagEditDialog ), new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset.Preset } }, OnPresetEditResult );
+        }
+
+        private void OnPresetEditResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
+
+                if( preset != null ) {
+                    mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnTagsEdited", ex ));
+
+                    LoadPresets();
+                }
+            }
         }
 
         private void OnSetChanged() {
