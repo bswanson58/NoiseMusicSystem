@@ -14,29 +14,29 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class PresetEditViewModel : PropertyChangeBase, IActiveAware, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
-        private readonly IEventAggregator           mEventAggregator;
-        private readonly IPresetListProvider        mListProvider;
-        private readonly IPresetProvider            mPresetProvider;
-        private readonly IPresetController          mPresetController;
-        private readonly IStateManager              mStateManager;
-        private readonly ITagProvider               mTagProvider;
-        private readonly IDialogService             mDialogService;
-        private readonly IPreferences               mPreferences;
-        private readonly BindableCollection<Preset> mPresets;
-        private ICollectionView                     mPresetView;
-        private PresetList                          mCurrentLibrary;
-        private Preset                              mCurrentPreset;
-        private string                              mFilterText;
-        private bool                                mIsActive;
-        private bool                                mDisplayDoNotPlay;
+        private readonly IEventAggregator               mEventAggregator;
+        private readonly IPresetListProvider            mListProvider;
+        private readonly IPresetProvider                mPresetProvider;
+        private readonly IPresetController              mPresetController;
+        private readonly IStateManager                  mStateManager;
+        private readonly ITagProvider                   mTagProvider;
+        private readonly IDialogService                 mDialogService;
+        private readonly IPreferences                   mPreferences;
+        private readonly BindableCollection<UiPreset>   mPresets;
+        private ICollectionView                         mPresetView;
+        private PresetList                              mCurrentLibrary;
+        private UiPreset                                mCurrentPreset;
+        private string                                  mFilterText;
+        private bool                                    mIsActive;
+        private bool                                    mDisplayDoNotPlay;
 
-        public  BindableCollection<PresetList>      Libraries { get; }
-        public  BindableCollection<UiTag>           Tags { get; }
+        public  BindableCollection<PresetList>          Libraries { get; }
+        public  BindableCollection<UiTag>               Tags { get; }
 
-        public  DelegateCommand                     NewTag { get; }
+        public  DelegateCommand                         NewTag { get; }
 
-        public  string                              Title => "Presets";
-        public  event EventHandler                  IsActiveChanged = delegate { };
+        public  string                                  Title => "Presets";
+        public  event EventHandler                      IsActiveChanged = delegate { };
 
         public PresetEditViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
                                     IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
@@ -50,7 +50,7 @@ namespace MilkBottle.ViewModels {
             mPreferences = preferences;
 
             Libraries = new BindableCollection<PresetList>();
-            mPresets = new BindableCollection<Preset>();
+            mPresets = new BindableCollection<UiPreset>();
             Tags = new BindableCollection<UiTag>();
 
             NewTag = new DelegateCommand( OnNewTag );
@@ -145,7 +145,7 @@ namespace MilkBottle.ViewModels {
         private bool OnPresetFilter( object listItem ) {
             var retValue = true;
 
-            if( listItem is Preset preset ) {
+            if( listItem is UiPreset preset ) {
                 if(!string.IsNullOrWhiteSpace( FilterText )) {
                     if( preset.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
                         retValue = false;
@@ -153,7 +153,7 @@ namespace MilkBottle.ViewModels {
                 }
 
                 if( mDisplayDoNotPlay ) {
-                    retValue &= preset.Rating == PresetRating.DoNotPlayValue;
+                    retValue &= preset.Preset.Rating == PresetRating.DoNotPlayValue;
                 }
             }
 
@@ -178,7 +178,7 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public Preset CurrentPreset {
+        public UiPreset CurrentPreset {
             get => mCurrentPreset;
             set {
                 mCurrentPreset = value;
@@ -200,7 +200,7 @@ namespace MilkBottle.ViewModels {
             SetPresetState();
 
             if( CurrentPreset != null ) {
-                mPresetController.PlayPreset( CurrentPreset );
+                mPresetController.PlayPreset( CurrentPreset.Preset );
 
                 mStateManager.EnterState( eStateTriggers.Run );
             }
@@ -226,11 +226,11 @@ namespace MilkBottle.ViewModels {
             mPresets.Clear();
 
             if( mCurrentLibrary != null ) {
-                mPresets.AddRange( mCurrentLibrary.GetPresets());
+                mPresets.AddRange( from p in mCurrentLibrary.GetPresets() select new UiPreset( p, null, null ));
             }
 
             if( restoreToPreset != null ) {
-                CurrentPreset = mPresets.FirstOrDefault( p => p.Id.Equals( restoreToPreset.Id ));
+                CurrentPreset = mPresets.FirstOrDefault( p => p.Preset.Id.Equals( restoreToPreset.Preset.Id ));
             }
 
             if( CurrentPreset == null ) {
@@ -248,7 +248,7 @@ namespace MilkBottle.ViewModels {
 
         private void OnTagSelected( UiTag tag ) {
             if( CurrentPreset != null ) {
-                var preset = CurrentPreset.WithTagState( tag.Tag, tag.IsSelected );
+                var preset = CurrentPreset.Preset.WithTagState( tag.Tag, tag.IsSelected );
 
                 mPresetProvider.Update( preset );
 
@@ -257,10 +257,10 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool IsFavorite {
-            get => CurrentPreset?.IsFavorite ?? false;
+            get => CurrentPreset?.Preset.IsFavorite ?? false;
             set {
                 if( CurrentPreset != null ) {
-                    var preset = CurrentPreset.WithFavorite( value );
+                    var preset = CurrentPreset.Preset.WithFavorite( value );
 
                     mPresetProvider.Update( preset );
 
@@ -270,10 +270,10 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool DoNotPlay {
-            get => CurrentPreset != null && CurrentPreset.Rating == PresetRating.DoNotPlayValue;
+            get => CurrentPreset != null && CurrentPreset.Preset.Rating == PresetRating.DoNotPlayValue;
             set {
                 if( CurrentPreset != null ) {
-                    var preset = CurrentPreset.WithRating( value ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
+                    var preset = CurrentPreset.Preset.WithRating( value ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
 
                     mPresetProvider.Update( preset );
 
@@ -288,7 +288,7 @@ namespace MilkBottle.ViewModels {
             }
 
             if( CurrentPreset != null ) {
-                foreach( var tag in CurrentPreset.Tags ) {
+                foreach( var tag in CurrentPreset.Preset.Tags ) {
                     var uiTag = Tags.FirstOrDefault( t => t.Tag.Id.Equals( tag.Id ));
 
                     uiTag?.SetSelectedState( true );

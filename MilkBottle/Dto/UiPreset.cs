@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using MilkBottle.Entities;
+using MilkBottle.Types;
 using Prism.Commands;
 
 namespace MilkBottle.Dto {
@@ -9,6 +11,10 @@ namespace MilkBottle.Dto {
 
         public  Preset                  Preset { get; }
         public  string                  Name => Preset.Name;
+
+        public  bool                    IsFavorite => Preset.IsFavorite;
+        public  bool                    DoNotPlay => Preset.Rating == PresetRating.DoNotPlayValue;
+        public  bool                    HasTags => Preset.Tags.Any();
 
         public  DelegateCommand         Delete { get; }
         public  DelegateCommand         Edit { get; }

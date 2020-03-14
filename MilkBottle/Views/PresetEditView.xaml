@@ -9,18 +9,38 @@
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
              xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:PresetEditViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="550" d:DesignWidth="400">
+
     <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" TriggerValue="False" IsHidden="False"/>
+
         <DataTemplate x:Key="LibraryTemplate" DataType="entities:PresetLibrary">
             <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="PresetTemplate" DataType="entities:Preset">
-            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
-                       behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+        <DataTemplate x:Key="PresetTemplate" DataType="dto:UiPreset">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+
+                <StackPanel Grid.Column="1" Margin="0,0,3,0" Orientation="Horizontal">
+                    <TextBlock Text="Y" FontFamily="Webdings" FontSize="18" VerticalAlignment="Center" Foreground="#80EA6500" 
+                               Visibility="{Binding IsFavorite, Converter={StaticResource CollapseOnFalse}}"/>
+                    <ContentControl Height="15" Width="15" Margin="2,0,0,0" VerticalAlignment="Center" Content="{StaticResource Path_Dislike}" Foreground="Red"
+                                    Visibility="{Binding DoNotPlay, Converter={StaticResource CollapseOnFalse}}"/>
+                    <ContentControl Height="18" Width="18" Margin="2,0,0,0" VerticalAlignment="Center" Content="{StaticResource Path_HasCategories}"
+                                    Visibility="{Binding HasTags, Converter={StaticResource CollapseOnFalse}}"/>
+                </StackPanel>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TagTemplate" DataType="dto:UiTag">
