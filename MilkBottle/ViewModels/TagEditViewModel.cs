@@ -19,11 +19,11 @@ namespace MilkBottle.ViewModels {
         private readonly IStateManager          mStateManager;
         private readonly IPlatformLog           mLog;
         private UiTag                           mCurrentTag;
-        private Preset                          mCurrentPreset;
+        private UiPreset                        mCurrentPreset;
         private bool                            mIsActive;
 
         public  ObservableCollection<UiTag>     Tags { get; }
-        public  ObservableCollection<Preset>    TaggedPresets {  get; }
+        public  ObservableCollection<UiPreset>  TaggedPresets {  get; }
         public  string                          PresetListTitle => TaggedPresets.Any() ? $"({TaggedPresets.Count}) Tagged Presets" : " Tagged Presets ";
 
         public  DelegateCommand                 NewTag { get; }
@@ -42,7 +42,7 @@ namespace MilkBottle.ViewModels {
             mLog = log;
 
             Tags = new ObservableCollection<UiTag>();
-            TaggedPresets = new ObservableCollection<Preset>();
+            TaggedPresets = new ObservableCollection<UiPreset>();
 
             NewTag = new DelegateCommand( OnNewTag );
             DeleteTag = new DelegateCommand( OnDeleteTag, CanDeleteTag );
@@ -76,7 +76,7 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        public Preset CurrentPreset {
+        public UiPreset CurrentPreset {
             get => mCurrentPreset;
             set {
                 mCurrentPreset = value;
@@ -88,7 +88,7 @@ namespace MilkBottle.ViewModels {
 
         private void OnPresetChanged() {
             if( mCurrentPreset != null ) {
-                mPresetController.PlayPreset( mCurrentPreset );
+                mPresetController.PlayPreset( mCurrentPreset.Preset );
 
                 mStateManager.EnterState( eStateTriggers.Run );
             }
@@ -114,18 +114,47 @@ namespace MilkBottle.ViewModels {
             TaggedPresets.Clear();
 
             if( mCurrentTag != null ) {
-                mPresetProvider.SelectPresets( mCurrentTag.Tag, list => TaggedPresets.AddRange( from t in list orderby t.Name select t ))
+                mPresetProvider.SelectPresets( mCurrentTag.Tag, list => TaggedPresets.AddRange( from t in list orderby t.Name select new UiPreset( t, OnPresetEdit, OnPresetDelete )))
                     .IfLeft( ex => LogException( "LoadPresets", ex ));
             }
 
-            mPresetController.LoadPresets( TaggedPresets );
+            mPresetController.LoadPresets( from p in TaggedPresets select p.Preset );
             CurrentPreset = TaggedPresets.FirstOrDefault();
 
             RaisePropertyChanged( () => PresetListTitle );
         }
 
+        private void OnPresetEdit( Preset preset ) {
+            mDialogService.ShowDialog( nameof( TagEditDialog ), new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset.Preset } }, OnPresetEditResult );
+        }
+
+        private void OnPresetEditResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
+
+                if( preset != null ) {
+                    mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnTagsEdited", ex ));
+
+                    LoadPresets();
+                }
+            }
+        }
+
+        private void OnPresetDelete( Preset preset ) {
+            if(( preset != null ) &&
+               ( mCurrentTag != null )) {
+                preset = preset.WithoutTag( mCurrentTag.Tag );
+
+                if( preset != null ) {
+                    mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnPresetDelete (Tag)", ex ));
+
+                    LoadPresets();
+                }
+            }
+        }
+
         private void OnNewTag() {
-            mDialogService.ShowDialog( "NewTagDialog", new DialogParameters(), OnNewTagResult );
+            mDialogService.ShowDialog( nameof( NewTagDialog ), new DialogParameters(), OnNewTagResult );
         }
 
         private void OnNewTagResult( IDialogResult result ) {

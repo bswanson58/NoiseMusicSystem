@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
-             xmlns:entities="clr-namespace:MilkBottle.Entities"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
@@ -40,9 +39,31 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <DataTemplate x:Key="PresetTemplate" DataType="entities:Preset">
-            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
-                       behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+        <DataTemplate x:Key="PresetTemplate" DataType="dto:UiPreset">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+
+                <Button x:Name="Edit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
+                        Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tags" />
+                <Button x:Name="Delete" Grid.Column="2" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Delete}" Content="{StaticResource Path_Delete}" ToolTip="Delete Tag" />
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Delete" Property="Opacity" Value="1"/>
+                    <Setter TargetName="Edit" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 

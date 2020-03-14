@@ -83,5 +83,15 @@ namespace MilkBottle.Entities {
 
             return this;
         }
+
+        public Preset WithoutTag( PresetTag tag ) {
+            var currentTag = Tags.FirstOrDefault( t => t.Id.Equals( tag.Id ));
+
+            if(currentTag != null ) {
+                Tags.Remove( currentTag );
+            }
+
+            return this;
+        }
     }
 }
