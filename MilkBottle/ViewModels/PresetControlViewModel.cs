@@ -25,6 +25,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetListProvider    mListProvider;
         private readonly List<PresetList>       mLibraries;
         private readonly IPreferences           mPreferences;
+        private readonly IPlatformLog           mLog;
         private readonly LimitedStack<string>   mHistory;
         private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
@@ -47,7 +48,7 @@ namespace MilkBottle.ViewModels {
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetListProvider listProvider, IPresetProvider presetProvider,
-                                       IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator ) {
+                                       IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator, IPlatformLog log ) {
             mStateManager = stateManager;
             mPresetController = presetController;
             mPresetProvider = presetProvider;
@@ -55,6 +56,7 @@ namespace MilkBottle.ViewModels {
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
             mPreferences = preferences;
+            mLog = log;
 
             mLibraries = new List<PresetList>();
             mHistory = new LimitedStack<string>( 4 );
@@ -234,7 +236,7 @@ namespace MilkBottle.ViewModels {
                 var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
 
                 if( preset != null ) {
-                    mPresetProvider.Update( preset );
+                    mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnTagsEdited", ex ));
                 }
             }
         }
@@ -290,6 +292,10 @@ namespace MilkBottle.ViewModels {
                     IsLocked = true;
                 }
             }
+        }
+
+        private void LogException( string message, Exception ex ) {
+            mLog.LogException( message, ex );
         }
 
         public void Dispose() {
