@@ -54,6 +54,9 @@
 
                 <ListBox Grid.Row="0" ItemsSource="{Binding PresetList}" ItemTemplate="{StaticResource PresetTemplate}" SelectedItem="{Binding CurrentPreset}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+
+                <CheckBox Grid.Row="1" Margin="3" VerticalAlignment="Bottom" Content="Only Display 'Don't Play'" IsChecked="{Binding DisplayDoNotPlayOnly}"/>
+
                 <TextBox Grid.Row="1" Margin="0,3" HorizontalAlignment="Right" Width="300" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
                          behaviors:TextBoxHelper.Watermark="enter album filter text..." behaviors:TextBoxHelper.ClearTextButton="True"
                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>

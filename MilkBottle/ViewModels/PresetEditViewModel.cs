@@ -28,6 +28,7 @@ namespace MilkBottle.ViewModels {
         private Preset                              mCurrentPreset;
         private string                              mFilterText;
         private bool                                mIsActive;
+        private bool                                mDisplayDoNotPlay;
 
         public  BindableCollection<PresetList>      Libraries { get; }
         public  BindableCollection<UiTag>           Tags { get; }
@@ -91,6 +92,16 @@ namespace MilkBottle.ViewModels {
             Initialize();
         }
 
+        public bool DisplayDoNotPlayOnly {
+            get => mDisplayDoNotPlay;
+            set {
+                mDisplayDoNotPlay = value;
+
+                mPresetView.Refresh();
+                RaisePropertyChanged( () => PresetListTitle );
+            }
+        }
+
         public void Handle( Events.ModeChanged args ) {
             if( args.ToView != ShellView.Review ) {
                 mEventAggregator.Unsubscribe( this );
@@ -134,10 +145,15 @@ namespace MilkBottle.ViewModels {
         private bool OnPresetFilter( object listItem ) {
             var retValue = true;
 
-            if(( listItem is Preset preset ) &&
-               (!string.IsNullOrWhiteSpace( FilterText ))) {
-                if( preset.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
-                    retValue = false;
+            if( listItem is Preset preset ) {
+                if(!string.IsNullOrWhiteSpace( FilterText )) {
+                    if( preset.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+                        retValue = false;
+                    }
+                }
+
+                if( mDisplayDoNotPlay ) {
+                    retValue &= preset.Rating == PresetRating.DoNotPlayValue;
                 }
             }
 
