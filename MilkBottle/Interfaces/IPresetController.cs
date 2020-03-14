@@ -29,6 +29,7 @@ namespace MilkBottle.Interfaces {
         bool            IsRunning { get; }
 
         string          CurrentPresetLibrary { get; }
+        int             CurrentPresetCount { get; }
         bool            BlendPresetTransition {  get; set; }
         PresetDuration  PresetDuration { get; set; }
     }

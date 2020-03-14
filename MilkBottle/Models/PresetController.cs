@@ -30,6 +30,7 @@ namespace MilkBottle.Models {
         public  string                              CurrentPresetLibrary { get; private set; }
         public  bool                                IsRunning { get; private set; }
 
+        public  int                                 CurrentPresetCount => mLoadedPresets.Count;
         public  IObservable<Preset>                 CurrentPreset => mCurrentPreset.AsObservable();
 
         public PresetController( ProjectMWrapper projectM, 

@@ -44,7 +44,7 @@ namespace MilkBottle.ViewModels {
         public  int                             PresetDurationMaximum => Types.PresetDuration.MaximumValue;
 
         public  string                          PresetName { get; set; }
-        public  string                          CurrentLibraryTooltip => null; // mCurrentLibrary != null ? $"{mCurrentLibrary.PresetCount} presets in library" : String.Empty;
+        public  string                          CurrentLibraryTooltip => $"{mPresetController.CurrentPresetCount} presets in library";
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
