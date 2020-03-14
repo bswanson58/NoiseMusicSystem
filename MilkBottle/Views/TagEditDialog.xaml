@@ -44,6 +44,8 @@
 
         <ListBox Grid.Row="2" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}"/>
 
+        <CheckBox Grid.Row="3" Margin="30,0,0,0" VerticalAlignment="Center" Content="Is Favorite" IsChecked="{Binding IsFavorite}"/>
+
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
