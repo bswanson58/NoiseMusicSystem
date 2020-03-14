@@ -10,6 +10,7 @@ using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using MilkBottle.Types;
+using MilkBottle.Views;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -126,7 +127,7 @@ namespace MilkBottle.ViewModels {
             get {
                 if( mLibrariesView == null ) {
                     mLibrariesView = CollectionViewSource.GetDefaultView( mLibraries );
-                    mLibrariesView.SortDescriptions.Add( new SortDescription( "LibraryName", ListSortDirection.Ascending ));
+                    mLibrariesView.SortDescriptions.Add( new SortDescription( "Name", ListSortDirection.Ascending ));
                 }
 
                 return mLibrariesView;
@@ -240,7 +241,7 @@ namespace MilkBottle.ViewModels {
         private void OnTagEdit() {
             var parameters = new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset } };
 
-            mDialogService.ShowDialog( "TagEditDialog", parameters, OnTagsEdited );
+            mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, OnTagsEdited );
         }
 
         private void OnTagsEdited( IDialogResult result ) {
