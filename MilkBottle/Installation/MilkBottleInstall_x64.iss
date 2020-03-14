@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{CBCC3752-C35B-4D15-A31F-D5B687C2ED95}
 AppName=Milk Bottle
-AppVersion=0.1
+AppVersion=0.2
 ;AppVerName=Milk Bottle 0.1
 AppPublisher=Secret Squirrel Software
 DefaultDirName={commonpf}\Secret Squirrel Software\Milk Bottle
