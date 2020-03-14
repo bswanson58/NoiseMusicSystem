@@ -186,6 +186,12 @@ namespace MilkBottle.ViewModels {
 
             if( preset != null ) {
                 mPresetProvider.Update( preset );
+
+                if( preset.Id.Equals( mCurrentPreset?.Id )) {
+                    mCurrentPreset = preset;
+
+                    RaisePropertyChanged( () => IsFavorite );
+                }
             }
         }
 
@@ -199,6 +205,12 @@ namespace MilkBottle.ViewModels {
 
             if( preset != null ) {
                 mPresetProvider.Update( preset );
+
+                if( preset.Id.Equals( mCurrentPreset?.Id )) {
+                    mCurrentPreset = preset;
+
+                    RaisePropertyChanged( () => DoNotPlay );
+                }
             }
         }
 
@@ -237,6 +249,15 @@ namespace MilkBottle.ViewModels {
 
                 if( preset != null ) {
                     mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnTagsEdited", ex ));
+
+
+                    if( preset.Id.Equals( mCurrentPreset?.Id )) {
+                        mCurrentPreset = preset;
+
+                        RaisePropertyChanged( () => IsFavorite );
+                        RaisePropertyChanged( () => HasTags );
+                        RaisePropertyChanged( () => TagsTooltip );
+                    }
                 }
             }
         }
