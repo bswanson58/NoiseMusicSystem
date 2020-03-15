@@ -61,7 +61,6 @@ Source: "..\bin\x64\Release\OpenTK.GLControl.dll"; DestDir: "{app}"; Flags: igno
 Source: "..\bin\x64\Release\Prism.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Prism.Unity.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Prism.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\bin\x64\Release\ProjectMSharp.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\protobuf-net.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\ReusableBits.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\ReusableBits.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -86,6 +85,8 @@ Source: "..\bin\x64\Release\System.Windows.Interactivity.dll"; DestDir: "{app}";
 Source: "..\bin\x64\Release\TinyIpc.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Unity.Abstractions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\x64\Release\Unity.Container.dll"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "..\..\lib\ProjectMSharp\v0.1.0.0\x64\ProjectMSharp.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 Source: "..\..\Installation\Prerequisites\VC Runtime\VC_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
