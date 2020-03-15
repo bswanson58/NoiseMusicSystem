@@ -6,16 +6,23 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{CBCC3752-C35B-4D15-A31F-D5B687C2ED95}
-AppName=Milk Bottle
-AppVersion=0.2
-;AppVerName=Milk Bottle 0.1
-AppPublisher=Secret Squirrel Software
-DefaultDirName={commonpf}\Secret Squirrel Software\Milk Bottle
+
+#define ApplicationName "Milk Bottle"
+#define ApplicationVersion GetFileVersion("..\bin\x64\Release\MilkBottle.exe")
+#define ApplicationGroup "Secret Squirrel Software"
+
+AppVersion={#ApplicationVersion}
+AppVerName={#ApplicationName} {#ApplicationVersion}
+OutputBaseFilename=Setup_{#ApplicationName}_v{#ApplicationVersion}_x64
+VersionInfoVersion={#ApplicationVersion}
+
+AppName={#ApplicationName}
+AppPublisher={#ApplicationGroup}
+DefaultDirName={commonpf}\{#ApplicationGroup}\{#ApplicationName}
 UsePreviousAppDir=yes
-DefaultGroupName=Milk Bottle
+DefaultGroupName={#ApplicationName}
 AllowNoIcons=yes
 LicenseFile=..\..\Installation\Resources\license.rtf
-OutputBaseFilename=MilkBottleInstall_x64
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
