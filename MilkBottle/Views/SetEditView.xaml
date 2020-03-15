@@ -118,6 +118,7 @@
                     <ListBox Grid.Row="1" Margin="25,3,0,0" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}"/>
                 </Grid>
 
+                <TextBlock Grid.Row="3" Margin="60,3,0,0" VerticalAlignment="Top" Style="{StaticResource ControlTitleStyle}" Text="Note: Presets must be tagged with all selected tags."/>
                 <Button Grid.Row="3" Margin="0,5,0,0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="New Tag..." Command="{Binding CreateTag}"/>
             </Grid>
         </GroupBox>

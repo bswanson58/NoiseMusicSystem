@@ -99,7 +99,7 @@ namespace MilkBottle.Database {
 
             qualifiers.ForEach( q => predicateList.Add( $"{forMember} ANY='{q}'" ));
 
-            return "(" + String.Join( " OR ", predicateList ) + ")";
+            return String.Join( " AND ", predicateList );
         }
     }
 }
