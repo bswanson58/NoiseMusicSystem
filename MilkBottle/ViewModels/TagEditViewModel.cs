@@ -98,10 +98,16 @@ namespace MilkBottle.ViewModels {
         }
 
         private void LoadTags() {
+            var previousTag = mCurrentTag;
+
             Tags.Clear();
 
             mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag(  t, null, OnEditTag, OnDeleteTag )))
                 .IfLeft( ex => LogException( "LoadTags", ex ));
+
+            CurrentTag = previousTag != null ? 
+                Tags.FirstOrDefault( t => t.Tag.Id.Equals( previousTag.Tag.Id )) : 
+                Tags.FirstOrDefault();
         }
 
         private void OnTagChanged() {
