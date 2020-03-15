@@ -39,6 +39,7 @@ namespace MilkBottle.ViewModels {
 
         public  string                          Title => "Sets";
         public  string                          PresetListTitle => Presets.Any() ? $"({Presets.Count}) Presets In Set " : " Presets In Set ";
+        public  bool                            IsSetSelected => mCurrentSet != null;
         public  event EventHandler              IsActiveChanged = delegate { };
 
         public SetEditViewModel( IPresetSetProvider setProvider, ITagProvider tagProvider, IPresetProvider presetProvider, IPresetListProvider listProvider,
@@ -88,6 +89,7 @@ namespace MilkBottle.ViewModels {
 
                 OnSetChanged();
                 RaisePropertyChanged( () => CurrentSet );
+                RaisePropertyChanged( () => IsSetSelected );
             }
         }
 
@@ -119,9 +121,8 @@ namespace MilkBottle.ViewModels {
 
             mSetProvider.SelectSets( list => Sets.AddRange( from s in list orderby s.Name select new UiSet( s, OnEditSet, OnDeleteSet )));
 
-            if( currentSet != null ) {
-                CurrentSet = Sets.FirstOrDefault( s => s.Set.Id.Equals( currentSet.Set.Id ));
-            }
+            CurrentSet = currentSet != null ? Sets.FirstOrDefault( s => s.Set.Id.Equals( currentSet.Set.Id )) : 
+                                              Sets.FirstOrDefault();
         }
 
         private void LoadTags() {
@@ -177,10 +178,7 @@ namespace MilkBottle.ViewModels {
                 var tagName = result.Parameters.GetValue<string>( NewTagDialogModel.cTagNameParameter );
 
                 if(!String.IsNullOrWhiteSpace( tagName )) {
-                    mTagProvider.Insert( new PresetTag( tagName ))
-                        .Match( 
-                            unit => LoadTags(),
-                            ex => LogException( "OnCreateTagResult", ex ));
+                    mTagProvider.Insert( new PresetTag( tagName )).IfLeft( ex => LogException( "OnCreateTagResult", ex ));
                 }
             }
         }

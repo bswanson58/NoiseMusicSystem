@@ -36,6 +36,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                         NewTag { get; }
 
         public  string                                  Title => "Presets";
+        public  bool                                    IsPresetSelected => mCurrentPreset != null;
         public  event EventHandler                      IsActiveChanged = delegate { };
 
         public PresetEditViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
@@ -185,6 +186,7 @@ namespace MilkBottle.ViewModels {
 
                 OnPresetChanged();
                 RaisePropertyChanged( () => CurrentPreset );
+                RaisePropertyChanged( () => IsPresetSelected );
             }
         }
 

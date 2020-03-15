@@ -83,7 +83,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="2" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Selected Preset Properties ">
+        <GroupBox Grid.Row="2" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Selected Preset Properties " IsEnabled="{Binding IsPresetSelected}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" MinWidth="150"/>
