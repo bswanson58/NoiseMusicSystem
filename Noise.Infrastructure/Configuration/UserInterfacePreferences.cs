@@ -23,7 +23,7 @@ namespace Noise.Infrastructure.Configuration {
 
 			EnablePlaybackLibraryFocus = true;
 			NewAdditionsHorizonDays = 90;
-			NewAdditionsHorizonCount = 500;
+			NewAdditionsHorizonCount = 50;
 
 			MinimizeToTray = false;
 			MinimizeOnSwitchToCompanionApp = true;

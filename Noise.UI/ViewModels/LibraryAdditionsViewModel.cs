@@ -13,7 +13,7 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class LibraryAdditionsViewModel : AutomaticCommandBase,
+	internal class LibraryAdditionsViewModel : AutomaticCommandBase, IDisposable,
 											   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 											   IHandle<Events.LibraryUpdateCompleted> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -22,13 +22,16 @@ namespace Noise.UI.ViewModels {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IPlayCommand			mPlayCommand;
-		private readonly ISelectionState		mSelectionState;
         private readonly IPlayingItemHandler    mPlayingItemHandler;
 		private readonly DateTime				mHorizonTime;
 		private readonly UInt32					mHorizonCount;
+		private IDisposable						mArtistSubscription;
+		private IDisposable						mAlbumSubscription;
 		private readonly BindableCollection<LibraryAdditionNode>	mNodeList;
 		private LibraryAdditionNode									mSelectedNode;
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
+
+        public BindableCollection<LibraryAdditionNode>				NodeList => ( mNodeList );
 
 		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, UserInterfacePreferences preferences, IDatabaseInfo databaseInfo, ISelectionState selectionState,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, 
@@ -38,7 +41,6 @@ namespace Noise.UI.ViewModels {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
-			mSelectionState = selectionState;
             mPlayingItemHandler = playingItemHandler;
 			mPlayCommand = playCommand;
 
@@ -51,8 +53,8 @@ namespace Noise.UI.ViewModels {
 				RetrieveWhatsNew();
 			}
 
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
-			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+			mArtistSubscription = selectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mAlbumSubscription = selectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mPlayingItemHandler.StartHandler( mNodeList );
 			mEventAggregator.Subscribe( this );
 		}
@@ -65,8 +67,8 @@ namespace Noise.UI.ViewModels {
 
 				return( mTaskHandler );
 			}
-			set{ mTaskHandler = value; }
-		}
+			set => mTaskHandler = value;
+        }
 
 		private void RetrieveWhatsNew() {
 			TracksRetrievalTaskHandler.StartTask( RetrieveAdditions, UpdateList,
@@ -126,14 +128,12 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<LibraryAdditionNode> RetrieveAdditions() {
 			var	retValue = new List<LibraryAdditionNode>();
 			var	trackList = new List<DbTrack>();
+			var	albums = new Dictionary<long, long>();
 
 			using( var additions = mTrackProvider.GetNewlyAddedTracks()) {
-				if(( additions != null ) &&
-				   ( additions.List != null )) {
-					UInt32	count = 0;
-
+				if(additions?.List != null) {
 					foreach( var track in additions.List ) {
-						if(( count < mHorizonCount ) &&
+						if(( albums.Count < mHorizonCount ) &&
 						   ( track.DateAdded > mHorizonTime )) {
 							trackList.Add( track );
 						}
@@ -141,7 +141,9 @@ namespace Noise.UI.ViewModels {
 							break;
 						}
 
-						count++;
+						if(!albums.ContainsKey( track.Album )) {
+							albums.Add( track.Album, track.Album );
+                        }
 					}
 				}
 			}
@@ -176,13 +178,9 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		public BindableCollection<LibraryAdditionNode> NodeList {
-			get{ return( mNodeList ); }
-		}
-
-		public LibraryAdditionNode SelectedNode {
-			get { return( mSelectedNode ); }
-			set {
+        public LibraryAdditionNode SelectedNode {
+			get => ( mSelectedNode );
+            set {
 				mSelectedNode = value;
 
 				if( mSelectedNode != null ) {
@@ -208,5 +206,17 @@ namespace Noise.UI.ViewModels {
 		public void Execute_ViewDisplayed( bool state ) {
 			DisplayMarker = false;
 		}
-	}
+
+        public void Dispose() {
+			mEventAggregator.Unsubscribe( this );
+
+			mArtistSubscription?.Dispose();
+			mArtistSubscription = null;
+
+			mAlbumSubscription?.Dispose();
+			mAlbumSubscription = null;
+
+			mPlayingItemHandler.StopHandler();
+        }
+    }
 }
