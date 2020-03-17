@@ -88,7 +88,9 @@ Source: "..\bin\{#Platform}\Release\Unity.Abstractions.dll"; DestDir: "{app}"; F
 Source: "..\bin\{#Platform}\Release\Unity.Container.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "..\..\lib\ProjectMSharp\v0.1.0.0\{#Platform}\ProjectMSharp.dll"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+; Presets
+Source: "..\Presets\EyeTune\*.milk"; DestDir: "{commonappdata}\{#ApplicationGroup}\MilkBottle\Milk Preset Library\EyeTune"; Flags: Ignoreversion
 ; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 Source: "..\..\Installation\Prerequisites\VC Runtime\VC_redist.{#Platform}.exe"; DestDir: {tmp}; Flags: dontcopy
 
