@@ -68,7 +68,8 @@ namespace TuneArchiver.ViewModels {
             mArchivePath = archivePreferences.ArchiveRootPath;
             mArchiveLabelFormat = archivePreferences.ArchiveLabelFormat;
             mArchiveLabelIdentifier = archivePreferences.ArchiveLabelIdentifier;
-            mSelectedMedia = MediaList.FirstOrDefault( media => media.Name.Equals( archivePreferences.ArchiveMediaType ));
+            mSelectedMedia = MediaList.FirstOrDefault( media => media.Name.Equals( archivePreferences.ArchiveMediaType )) ??
+                             MediaList.FirstOrDefault();
 
             FormatArchiveLabel();
             UpdateStagingDirectory();
@@ -189,6 +190,8 @@ namespace TuneArchiver.ViewModels {
 
                 preferences.ArchiveMediaType = mSelectedMedia.Name;
                 mPreferences.Save( preferences );
+
+                RaiseCanExecuteChangedEvent( nameof( CanExecute_SelectSet ));
             }
         }
 
