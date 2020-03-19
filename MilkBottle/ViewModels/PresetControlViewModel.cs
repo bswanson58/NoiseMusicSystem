@@ -202,7 +202,7 @@ namespace MilkBottle.ViewModels {
         }
          
         private void OnDoNotPlayChanged( bool toValue ) {
-            var preset = mCurrentPreset?.WithRating( toValue ? PresetRating.DoNotPlayValue : PresetRating.MinimumValue );
+            var preset = mCurrentPreset?.WithRating( toValue ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
 
             if( preset != null ) {
                 mPresetProvider.Update( preset );
