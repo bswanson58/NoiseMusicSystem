@@ -77,12 +77,17 @@ namespace Noise.Desktop.Models {
             var companionApp = mSerializer.Deserialize<CompanionApplication>( message.Body );
 
             if( companionApp != null ) {
-                if( CompanionApplications.FirstOrDefault( a => a.ApplicationName.Equals( companionApp.Name )) == null ) {
+                var existingApp = CompanionApplications.FirstOrDefault( a => a.ApplicationName.Equals( companionApp.Name ));
+
+                if( existingApp == null ) {
                     using( var stream = new MemoryStream( Encoding.UTF8.GetBytes( companionApp.Icon ))) {
                         var icon = XamlReader.Load( stream ) as FrameworkElement;
 
                         CompanionApplications.Add( new UiCompanionApp( companionApp.Name, icon, $"Switch to {companionApp.Name}", OnCompanionAppRequest ));
                     }
+                }
+                else {
+                    existingApp.UpdateHeartbeat();
                 }
             }
         }
