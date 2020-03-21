@@ -312,6 +312,7 @@ namespace MilkBottle.ViewModels {
                 mTagProvider.Insert( newTag );
 
                 LoadTags();
+                SetPresetState();
             }
         }
     }
