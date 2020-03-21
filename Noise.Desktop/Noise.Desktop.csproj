@@ -250,6 +250,7 @@
     </ApplicationDefinition>
     <Compile Include="DesktopModule.cs" />
     <Compile Include="Models\IpcManager.cs" />
+    <Compile Include="Models\PlaybackPublisher.cs" />
     <Compile Include="Models\StartupManager.cs" />
     <Compile Include="Models\WindowManager.cs" />
     <Resource Include="Resources\Noise.ico" />

@@ -294,6 +294,7 @@
     <Compile Include="Interfaces\IPlatformLog.cs" />
     <Compile Include="Interfaces\IPlaybackContextManager.cs" />
     <Compile Include="Interfaces\IPlaybackContextWriter.cs" />
+    <Compile Include="Interfaces\IPlaybackPublisher.cs" />
     <Compile Include="Interfaces\IPlayCommand.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayingItem.cs" />

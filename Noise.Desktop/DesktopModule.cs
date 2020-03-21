@@ -17,6 +17,7 @@ namespace Noise.Desktop {
 
             mContainer.RegisterType<IIpcManager, IpcManager>( new ContainerControlledLifetimeManager());
             mContainer.RegisterType<IIpcHandler, IpcHandler>( new ContainerControlledLifetimeManager());
+            mContainer.RegisterType<IPlaybackPublisher, PlaybackPublisher>( new HierarchicalLifetimeManager());
         }
     }
 }

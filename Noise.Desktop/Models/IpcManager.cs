@@ -20,18 +20,22 @@ namespace Noise.Desktop.Models {
         private const int                       cHeartbeatSeconds = 30;
 
         private readonly IIpcHandler            mIpcHandler;
+        private readonly IPlaybackPublisher     mPlaybackPublisher;
         private readonly IPreferences           mPreferences;
         private readonly INoiseWindowManager    mWindowManager;
         private readonly DispatcherTimer        mIpcTimer;
         private readonly JavaScriptSerializer   mSerializer;
+        private IDisposable                     mPlaybackPublisherSubscription;
         private string                          mIpcIcon;
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
 
-        public IpcManager( ILifecycleManager lifecycleManager, INoiseWindowManager windowManager, IPreferences preferences, IIpcHandler ipcHandler ) {
+        public IpcManager( ILifecycleManager lifecycleManager, INoiseWindowManager windowManager, IPreferences preferences,
+                           IPlaybackPublisher playbackPublisher, IIpcHandler ipcHandler ) {
             mWindowManager = windowManager;
             mPreferences = preferences;
             mIpcHandler = ipcHandler;
+            mPlaybackPublisher = playbackPublisher;
 
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
             mSerializer = new JavaScriptSerializer();
@@ -52,11 +56,23 @@ namespace Noise.Desktop.Models {
             }
 
             mIpcHandler.Initialize( Constants.ApplicationName, Constants.EcosystemName, OnIpcMessage );
+
+            mPlaybackPublisher.PlaybackEvents.Subscribe( OnPlaybackEvent );
+
             mIpcTimer.Start();
         }
 
         public void Shutdown() {
             mIpcTimer.Stop();
+
+            mPlaybackPublisherSubscription?.Dispose();
+            mPlaybackPublisherSubscription = null;
+        }
+
+        private void OnPlaybackEvent( PlaybackEvent args ) {
+            var json = mSerializer.Serialize( args );
+
+            mIpcHandler.BroadcastMessage( NoiseIpcSubject.cPlaybackEvent, json );
         }
 
         private void OnIpcMessage( BaseIpcMessage message ) {

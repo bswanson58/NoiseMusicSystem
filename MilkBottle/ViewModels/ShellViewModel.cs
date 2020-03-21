@@ -205,6 +205,10 @@ namespace MilkBottle.ViewModels {
                     case NoiseIpcSubject.cActivateApplication:
                         ActivateShell();
                         break;
+
+                    case NoiseIpcSubject.cPlaybackEvent:
+                        PublishPlaybackEvent( message );
+                        break;
                 }
             });
         }
@@ -245,7 +249,20 @@ namespace MilkBottle.ViewModels {
                 mShell.WindowState = WindowState.Minimized;
             }
             catch( Exception ex ) {
-                mLog.LogException( "ShellVIewModel.OnCompanionAppRequest", ex );
+                mLog.LogException( "ShellViewModel.OnCompanionAppRequest", ex );
+            }
+        }
+
+        private void PublishPlaybackEvent( BaseIpcMessage message ) {
+            try {
+                var playbackEvent = mSerializer.Deserialize<PlaybackEvent>( message.Body );
+
+                if( playbackEvent != null ) {
+                    mEventAggregator.PublishOnUIThread( new Events.PlaybackNotification( playbackEvent ) );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "ShellViewModel.PublishPlaybackEvent", ex );
             }
         }
 
