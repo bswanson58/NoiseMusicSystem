@@ -45,4 +45,20 @@ namespace MilkBottle.Dto {
             return mRetrievalAction?.Invoke( mSet );
         }
     }
+
+    [DebuggerDisplay("List(Tag): {" + nameof( Name ) + "}")]
+    class TagPresetList : PresetList {
+        private readonly PresetTag  mTag;
+        private readonly Func<PresetTag, IEnumerable<Preset>>   mRetrievalAction;
+
+        public TagPresetList( PresetTag tag, Func<PresetTag, IEnumerable<Preset>> retrieval ) :
+            base( tag.Name ) {
+            mTag = tag;
+            mRetrievalAction = retrieval;
+        }
+
+        public override IEnumerable<Preset> GetPresets() {
+            return mRetrievalAction?.Invoke( mTag );
+        }
+    }
 }

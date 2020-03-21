@@ -11,12 +11,15 @@ namespace MilkBottle.Models {
         private readonly IPresetLibraryProvider mLibraryProvider;
         private readonly IPresetSetProvider     mSetProvider;
         private readonly IPresetProvider        mPresetProvider;
+        private readonly ITagProvider           mTagProvider;
         private readonly IPlatformLog           mLog;
 
-        public PresetListProvider( IPresetLibraryProvider libraryProvider, IPresetSetProvider setProvider, IPresetProvider presetProvider, IPlatformLog log ) {
+        public PresetListProvider( IPresetLibraryProvider libraryProvider, IPresetSetProvider setProvider, IPresetProvider presetProvider, ITagProvider tagProvider,
+                                   IPlatformLog log ) {
             mLibraryProvider = libraryProvider;
             mSetProvider = setProvider;
             mPresetProvider = presetProvider;
+            mTagProvider = tagProvider;
             mLog = log;
         }
 
@@ -25,6 +28,7 @@ namespace MilkBottle.Models {
 
             mLibraryProvider.SelectLibraries( list => retValue.AddRange( from l in list select new LibraryPresetList( l, GetPresets ))).IfLeft( ex => LogException( "SelectLibraries", ex ));
             mSetProvider.SelectSets( list => retValue.AddRange( from s in list select new SetPresetList( s, GetPresets ))).IfLeft( ex => LogException( "SelectSets", ex ));
+            mTagProvider.SelectTags( list => retValue.AddRange( from t in list select new TagPresetList( t, GetPresets ))).IfLeft( ex => LogException( "SelectTags", ex ));
 
             return from p in retValue orderby p.Name select p;
         }
@@ -43,6 +47,14 @@ namespace MilkBottle.Models {
             if( forSet.Qualifiers.Any()) {
                 mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( ex => LogException( "GetPresetList", ex ));
             }
+
+            return retValue.DistinctBy( p => p.Name );
+        }
+
+        public IEnumerable<Preset> GetPresets( PresetTag forTag ) {
+            var retValue = new List<Preset>();
+
+            mPresetProvider.SelectPresets( forTag, list => retValue.AddRange( list )).IfLeft( ex => LogException( "SelectPresets (forTag)", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }
