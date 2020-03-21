@@ -101,8 +101,8 @@
                        behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" ToolTip="{Binding PresetHistory}"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <ContentPresenter Tag="dimmed" ContentTemplate="{StaticResource HorizontalSeparator}"/>
+        <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DoNotPlayTemplate}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
