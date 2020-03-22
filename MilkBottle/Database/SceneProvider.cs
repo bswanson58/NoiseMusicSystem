@@ -11,7 +11,7 @@ namespace MilkBottle.Database {
             base( databaseProvider, EntityCollection.SceneCollection ) { }
 
         protected override void InitializeDatabase( LiteDatabase db ) {
-            BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
+            BsonMapper.Global.Entity<PresetScene>().Id( e => e.Id );
         }
 
         public Either<Exception, Unit> SelectScenes( Action<IEnumerable<PresetScene>> action ) {

@@ -48,6 +48,7 @@ namespace MilkBottle {
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
             containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
             containerRegistry.RegisterDialog<NewTagDialog, NewTagDialogModel>();
+            containerRegistry.RegisterDialog<NewSceneDialog, NewSceneDialogModel>();
             containerRegistry.RegisterDialog<NewSetDialog, NewSetDialogModel>();
 
             containerRegistry.RegisterSingleton<IIpcHandler, IpcHandler>();
@@ -59,6 +60,7 @@ namespace MilkBottle {
             regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( PresetEditView ));
             regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( TagEditView ));
             regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( SetEditView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ReviewRegion, typeof( SceneEditView ));
         }
     }
 }

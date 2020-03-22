@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using LiteDB;
 
 namespace MilkBottle.Entities {
@@ -24,14 +25,37 @@ namespace MilkBottle.Entities {
 
         public  string              DebugDisplay => $"Scene: {Name}";
 
-        [BsonCtor]
-        public PresetScene( ObjectId sceneId, string name, SceneSource source, ObjectId sourceId, PresetCycling cycling, int presetDuration,
-                            bool overlapPresets, int overlapDuration ) :
-                base( sceneId ) {
+        public PresetScene( string name ) :
+            base( ObjectId.NewObjectId()) {
+            Name = name ?? String.Empty;
+            SceneSource = SceneSource.SinglePreset;
+            SourceId = ObjectId.Empty;
+            PresetCycle = PresetCycling.CountPerScene;
+            PresetDuration = 1;
+            OverlapPresets = false;
+            OverlapDuration = 0;
+        }
+
+        public PresetScene( ObjectId id, string name, SceneSource sceneSource, ObjectId sourceId, PresetCycling presetCycle, int presetDuration,
+            bool overlapPresets, int overlapDuration ) :
+            base( id ) {
             Name = name;
-            SceneSource = source;
+            SceneSource = sceneSource;
             SourceId = sourceId;
-            PresetCycle = cycling;
+            PresetCycle = presetCycle;
+            PresetDuration = presetDuration;
+            OverlapPresets = overlapPresets;
+            OverlapDuration = overlapDuration;
+        }
+
+        [BsonCtor]
+        public PresetScene( ObjectId id, string name, int sceneSource, ObjectId sourceId, int presetCycle, int presetDuration,
+                            bool overlapPresets, int overlapDuration ) :
+                base( id ) {
+            Name = name;
+            SceneSource = (SceneSource)sceneSource;
+            SourceId = sourceId;
+            PresetCycle = (PresetCycling)presetCycle;
             PresetDuration = presetDuration;
             OverlapPresets = overlapPresets;
             OverlapDuration = overlapDuration;
