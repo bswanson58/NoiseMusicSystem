@@ -102,6 +102,7 @@
         </StackPanel>
 
         <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding PlaybackTitle}"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DoNotPlayTemplate}"/>

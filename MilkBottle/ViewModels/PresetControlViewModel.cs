@@ -16,7 +16,7 @@ using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class PresetControlViewModel : PropertyChangeBase, IDisposable, 
+    class PresetControlViewModel : PropertyChangeBase, IDisposable, IHandle<Events.PlaybackNotification>,
                                    IHandle<Events.InitializationComplete>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IDialogService         mDialogService;
@@ -47,6 +47,8 @@ namespace MilkBottle.ViewModels {
         public  string                          CurrentLibraryTooltip => $"{mPresetController.CurrentPresetCount} presets in library";
         public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
+
+        public  string                          PlaybackTitle { get; private set; }
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetListProvider listProvider, IPresetProvider presetProvider,
                                        IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator, IPlatformLog log ) {
@@ -82,6 +84,12 @@ namespace MilkBottle.ViewModels {
 
         public void Handle( Events.InitializationComplete args ) {
             Initialize();
+        }
+
+        public void Handle( Events.PlaybackNotification args ) {
+            PlaybackTitle = $"{args.PlaybackEvent.ArtistName}/{args.PlaybackEvent.TrackName}";
+
+            RaisePropertyChanged( () => PlaybackTitle );
         }
 
         private void Initialize() {
