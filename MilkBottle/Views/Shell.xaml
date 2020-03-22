@@ -68,8 +68,10 @@
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <Button Command="{Binding DisplayReviewer}" Content="review"/>
-            <Button Command="{Binding DisplayManualController}" Content="revel"/>
+            <Button Command="{Binding DisplayReviewer}" Content="review"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
+            <Button Command="{Binding DisplayManualController}" Content="revel"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
             <Button Command="{Binding Configuration}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Configuration"
                     Visibility="{Binding DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
