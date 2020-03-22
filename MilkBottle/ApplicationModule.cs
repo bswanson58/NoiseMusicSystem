@@ -33,6 +33,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IPresetLibraryProvider, PresetLibraryProvider>();
             containerRegistry.RegisterSingleton<IPresetListProvider, PresetListProvider>();
             containerRegistry.RegisterSingleton<IPresetSetProvider, PresetSetProvider>();
+            containerRegistry.RegisterSingleton<ISceneProvider, SceneProvider>();
             containerRegistry.RegisterSingleton<ITagProvider, TagProvider>();
 
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();

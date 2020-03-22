@@ -233,6 +233,7 @@
     <Compile Include="Database\PresetLibraryProvider.cs" />
     <Compile Include="Database\PresetProvider.cs" />
     <Compile Include="Database\PresetSetProvider.cs" />
+    <Compile Include="Database\SceneProvider.cs" />
     <Compile Include="Database\TagProvider.cs" />
     <Compile Include="Database\ValidationBase.cs" />
     <Compile Include="Dto\MilkConfiguration.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="Entities\Preset.cs" />
     <Compile Include="Entities\PresetLibrary.cs" />
+    <Compile Include="Entities\PresetScene.cs" />
     <Compile Include="Entities\PresetSet.cs" />
     <Compile Include="Entities\PresetTag.cs" />
     <Compile Include="Events\Events.cs" />
@@ -264,6 +266,7 @@
     <Compile Include="Interfaces\IPresetTimer.cs" />
     <Compile Include="Interfaces\IPresetTimerFactory.cs" />
     <Compile Include="Interfaces\IPresetListProvider.cs" />
+    <Compile Include="Interfaces\ISceneProvider.cs" />
     <Compile Include="Interfaces\IStateManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
