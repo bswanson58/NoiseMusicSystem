@@ -266,7 +266,7 @@ namespace MilkBottle.ViewModels {
         public string TagsTooltip => 
             mCurrentPreset != null ? 
                 mCurrentPreset.Tags.Any() ? 
-                    String.Join( Environment.NewLine, from t in mCurrentPreset.Tags select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
+                    String.Join( Environment.NewLine, from t in mCurrentPreset.Tags orderby t.Name select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
 
         private void OnStart() {
             mStateManager.EnterState( eStateTriggers.Run );
