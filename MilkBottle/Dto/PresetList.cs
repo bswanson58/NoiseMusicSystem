@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LiteDB;
 using MilkBottle.Entities;
 
 namespace MilkBottle.Dto {
+    enum PresetListType {
+        Library = 1,
+        Set = 2,
+        Tag = 3,
+        Preset = 4
+    }
+
     abstract class PresetList {
         public string   Name { get; }
 
         public abstract IEnumerable<Preset> GetPresets();
+        public abstract PresetListType      ListType { get; }
+        public abstract ObjectId            ListIdentifier { get; }
 
         protected PresetList( string name ) {
             Name = name;
@@ -18,6 +28,9 @@ namespace MilkBottle.Dto {
     class LibraryPresetList : PresetList {
         private readonly PresetLibrary                              mLibrary;
         private readonly Func<PresetLibrary, IEnumerable<Preset>>   mRetrievalAction;
+
+        public override PresetListType  ListType => PresetListType.Library;
+        public override ObjectId        ListIdentifier => mLibrary?.Id;
 
         public LibraryPresetList( PresetLibrary library, Func<PresetLibrary, IEnumerable<Preset>> retrieval ) :
             base( library.Name ) {
@@ -35,6 +48,9 @@ namespace MilkBottle.Dto {
         private readonly PresetSet                              mSet;
         private readonly Func<PresetSet, IEnumerable<Preset>>   mRetrievalAction;
 
+        public override PresetListType  ListType => PresetListType.Set;
+        public override ObjectId        ListIdentifier => mSet?.Id;
+
         public SetPresetList( PresetSet set, Func<PresetSet, IEnumerable<Preset>> retrieval ) :
             base( set.Name ) {
             mSet = set;
@@ -50,6 +66,9 @@ namespace MilkBottle.Dto {
     class TagPresetList : PresetList {
         private readonly PresetTag  mTag;
         private readonly Func<PresetTag, IEnumerable<Preset>>   mRetrievalAction;
+
+        public override PresetListType  ListType => PresetListType.Tag;
+        public override ObjectId        ListIdentifier => mTag?.Id;
 
         public TagPresetList( PresetTag tag, Func<PresetTag, IEnumerable<Preset>> retrieval ) :
             base( tag.Name ) {

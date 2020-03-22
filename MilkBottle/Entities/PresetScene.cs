@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using LiteDB;
+using MilkBottle.Dto;
 
 namespace MilkBottle.Entities {
     enum SceneSource {
@@ -17,6 +18,7 @@ namespace MilkBottle.Entities {
     class PresetScene : EntityBase {
         public  string              Name { get; }
         public SceneSource          SceneSource { get; }
+        public PresetListType       SourceListType { get; }
         public ObjectId             SourceId { get; }
         public PresetCycling        PresetCycle { get; }
         public int                  PresetDuration { get; }
@@ -29,6 +31,7 @@ namespace MilkBottle.Entities {
             base( ObjectId.NewObjectId()) {
             Name = name ?? String.Empty;
             SceneSource = SceneSource.SinglePreset;
+            SourceListType = PresetListType.Library;
             SourceId = ObjectId.Empty;
             PresetCycle = PresetCycling.CountPerScene;
             PresetDuration = 1;
@@ -36,11 +39,12 @@ namespace MilkBottle.Entities {
             OverlapDuration = 0;
         }
 
-        public PresetScene( ObjectId id, string name, SceneSource sceneSource, ObjectId sourceId, PresetCycling presetCycle, int presetDuration,
+        public PresetScene( ObjectId id, string name, SceneSource sceneSource, PresetListType listType, ObjectId sourceId, PresetCycling presetCycle, int presetDuration,
             bool overlapPresets, int overlapDuration ) :
             base( id ) {
             Name = name;
             SceneSource = sceneSource;
+            SourceListType = listType;
             SourceId = sourceId;
             PresetCycle = presetCycle;
             PresetDuration = presetDuration;
@@ -49,11 +53,12 @@ namespace MilkBottle.Entities {
         }
 
         [BsonCtor]
-        public PresetScene( ObjectId id, string name, int sceneSource, ObjectId sourceId, int presetCycle, int presetDuration,
+        public PresetScene( ObjectId id, string name, int sceneSource, int sourceListType, ObjectId sourceId, int presetCycle, int presetDuration,
                             bool overlapPresets, int overlapDuration ) :
                 base( id ) {
             Name = name;
             SceneSource = (SceneSource)sceneSource;
+            SourceListType = (PresetListType)sourceListType;
             SourceId = sourceId;
             PresetCycle = (PresetCycling)presetCycle;
             PresetDuration = presetDuration;
@@ -62,19 +67,19 @@ namespace MilkBottle.Entities {
         }
 
         public PresetScene WithName( string name ) {
-            return new PresetScene( Id, name, SceneSource, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration );
+            return new PresetScene( Id, name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration );
         }
 
-        public PresetScene WithSource( SceneSource source, ObjectId sourceId ) {
-            return new PresetScene( Id, Name, source, sourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration );
+        public PresetScene WithSource( SceneSource source, PresetListType sourceListType, ObjectId sourceId ) {
+            return new PresetScene( Id, Name, source, sourceListType, sourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration );
         }
 
         public PresetScene WithCycle( PresetCycling cycling, int duration ) {
-            return new PresetScene( Id, Name, SceneSource, SourceId, cycling, duration, OverlapPresets, OverlapDuration );
+            return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, cycling, duration, OverlapPresets, OverlapDuration );
         }
 
         public PresetScene WithOverlap( bool overlap, int overlapDuration ) {
-            return new PresetScene( Id, Name, SceneSource, SourceId, PresetCycle, PresetDuration, overlap, overlapDuration );
+            return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, overlap, overlapDuration );
         }
     }
 }

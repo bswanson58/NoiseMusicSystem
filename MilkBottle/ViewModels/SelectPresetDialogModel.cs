@@ -45,9 +45,9 @@ namespace MilkBottle.ViewModels {
         public void OnDialogOpened( IDialogParameters parameters ) {
             var libraryName = parameters.GetValue<string>( cLibraryParameter );
 
-            if(!String.IsNullOrWhiteSpace( libraryName )) {
-                CurrentLibrary = Libraries.FirstOrDefault( l => l.Name.Equals( libraryName ));
-            }
+            CurrentLibrary = !String.IsNullOrWhiteSpace( libraryName ) ? 
+                Libraries.FirstOrDefault( l => l.Name.Equals( libraryName )) : 
+                Libraries.FirstOrDefault();
         }
 
         public ICollectionView PresetList {

@@ -6,12 +6,27 @@
              xmlns:dto="clr-namespace:MilkBottle.Dto"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SceneEditViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
+
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <DataTemplate x:Key="PresetListTemplate" DataType="dto:PresetList">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+
         <DataTemplate x:Key="SceneTemplate" DataType="dto:UiScene">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -61,7 +76,37 @@
         </GroupBox>
 
         <GroupBox Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Scene Properties">
-        </GroupBox>
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-</Grid>
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,5" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
+                        <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding SceneSources}" DisplayMemberPath="Title" SelectedItem="{Binding SelectedSource}"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Visibility="{Binding IsPresetSource, Converter={StaticResource CollapseIfFalse}}">
+                        <TextBlock Margin="55,0,30,0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding CurrentPresetName}"/>
+                        <Button HorizontalAlignment="Right" Style="{StaticResource ControllerButtonStyle}" Padding="4"
+                                Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}" ToolTip="Select An Individual Preset"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Visibility="{Binding IsListSource, Converter={StaticResource CollapseIfFalse}}">
+                        <ComboBox Margin="55,0,0,0" Width="250" HorizontalAlignment="Left" ItemsSource="{Binding PresetLists}" 
+                                  SelectedItem="{Binding SelectedList}" ItemTemplate="{StaticResource PresetListTemplate}"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </GroupBox>
+    </Grid>
 </UserControl>
