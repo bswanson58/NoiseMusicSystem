@@ -45,6 +45,7 @@ namespace MilkBottle.ViewModels {
         private Preset                              mCurrentPreset;
         private PresetList                          mCurrentList;
         private int                                 mCurrentCycleDuration;
+        private int                                 mCurrentPresetOverlap;
         private bool                                mIsActive;
 
         public  ObservableCollection<UiScene>       Scenes { get; }
@@ -68,6 +69,12 @@ namespace MilkBottle.ViewModels {
         public  string                              CycleDurationLegend => mCurrentCycling?.Cycling == Entities.PresetCycling.Duration ? 
                                                                                     $"{mCurrentCycleDuration} seconds per preset" : 
                                                                                     $"{mCurrentCycleDuration} presets per track";
+        public  bool                                CanCycle => IsListSource;
+
+        public  int                                 MinimumPresetOverlap => 0;
+        public  int                                 MaximumPresetOverlap => 5;
+        public  string                              PresetOverlapLegend => mCurrentPresetOverlap > 0 ? $"{mCurrentPresetOverlap} seconds" : "No Overlap";
+        public  bool                                CanOverlap => IsListSource;
 
         public  event EventHandler                  IsActiveChanged = delegate { };
 
@@ -138,6 +145,8 @@ namespace MilkBottle.ViewModels {
                 mCurrentCycling = PresetCycling.FirstOrDefault( c => c.Cycling.Equals( mCurrentScene.Scene.PresetCycle ));
                 mCurrentCycleDuration = mCurrentScene.Scene.PresetDuration;
                 UpdateCycling();
+
+                mCurrentPresetOverlap = mCurrentScene.Scene.OverlapDuration;
             }
 
             RaisePropertyChanged( () => ArePropertiesValid );
@@ -147,7 +156,11 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => SelectedSource );
             RaisePropertyChanged( () => CurrentCycling );
             RaisePropertyChanged( () => CurrentCycleDuration );
+            RaisePropertyChanged( () => CanCycle );
             RaisePropertyChanged( () => CycleDurationLegend );
+            RaisePropertyChanged( () => CurrentPresetOverlap );
+            RaisePropertyChanged( () => PresetOverlapLegend );
+            RaisePropertyChanged( () => CanOverlap );
         }
 
         private void LoadLists() {
@@ -274,6 +287,9 @@ namespace MilkBottle.ViewModels {
 
                     mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnSceneSourceChanged", ex ));
                 }
+
+                RaisePropertyChanged( () => CanCycle );
+                RaisePropertyChanged( () => CanOverlap );
             }
         }
 
@@ -347,6 +363,24 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => MaximumCycleDuration );
         }
 
+        public int CurrentPresetOverlap {
+            get => mCurrentPresetOverlap;
+            set {
+                mCurrentPresetOverlap = value;
+
+                OnPresetOverlapChanged();
+                RaisePropertyChanged( () => CurrentPresetOverlap );
+                RaisePropertyChanged( () => PresetOverlapLegend );
+            }
+        }
+
+        private void OnPresetOverlapChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithOverlap( mCurrentPresetOverlap != 0, mCurrentPresetOverlap );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnPresetOverlapChanged-Update", ex ));
+            }
+        }
         private void LogException( string message, Exception ex ) {
             mLog.LogException( message, ex );
         }
