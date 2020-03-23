@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Caliburn.Micro;
 using LiteDB;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
@@ -47,8 +48,13 @@ namespace MilkBottle.ViewModels {
         private int                                 mCurrentCycleDuration;
         private int                                 mCurrentPresetOverlap;
         private bool                                mIsActive;
+        private string                              mArtistNames;
+        private string                              mAlbumNames;
+        private string                              mTrackNames;
+        private string                              mGenres;
+        private string                              mTags;
 
-        public  ObservableCollection<UiScene>       Scenes { get; }
+        public  BindableCollection<UiScene>         Scenes { get; }
         public  ObservableCollection<UiSource>      SceneSources { get; }
         public  ObservableCollection<UiCycling>     PresetCycling { get; }
         public  ObservableCollection<PresetList>    PresetLists { get; }
@@ -86,7 +92,7 @@ namespace MilkBottle.ViewModels {
             mDialogService = dialogService;
             mLog = log;
 
-            Scenes = new ObservableCollection<UiScene>();
+            Scenes = new BindableCollection<UiScene>();
             PresetLists = new ObservableCollection<PresetList>();
             SceneSources = new ObservableCollection<UiSource> {
                 new UiSource( "Preset List", SceneSource.PresetList ),
@@ -147,6 +153,12 @@ namespace MilkBottle.ViewModels {
                 UpdateCycling();
 
                 mCurrentPresetOverlap = mCurrentScene.Scene.OverlapDuration;
+
+                mArtistNames = mCurrentScene.Scene.ArtistNames;
+                mAlbumNames = mCurrentScene.Scene.AlbumNames;
+                mTrackNames = mCurrentScene.Scene.TrackNames;
+                mGenres = mCurrentScene.Scene.Genres;
+                mTags = mCurrentScene.Scene.Tags;
             }
 
             RaisePropertyChanged( () => ArePropertiesValid );
@@ -161,6 +173,11 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => CurrentPresetOverlap );
             RaisePropertyChanged( () => PresetOverlapLegend );
             RaisePropertyChanged( () => CanOverlap );
+            RaisePropertyChanged( () => ArtistNames );
+            RaisePropertyChanged( () => AlbumNames );
+            RaisePropertyChanged( () => TrackNames );
+            RaisePropertyChanged( () => Genres );
+            RaisePropertyChanged( () => Tags );
         }
 
         private void LoadLists() {
@@ -175,7 +192,7 @@ namespace MilkBottle.ViewModels {
 
             Scenes.Clear();
             mSceneProvider.SelectScenes( list => Scenes.AddRange( from s in list orderby s.Name select new UiScene( s, OnEditScene, OnDeleteScene )))
-                .IfLeft( ex => LogException( "SelectScenes", ex ));
+                .IfLeft( ex => LogException( nameof( LoadScenes ), ex ));
 
             if( previousScene != null ) {
                 CurrentScene = Scenes.FirstOrDefault( s => s.Scene.Id.Equals( previousScene.Scene.Id ));
@@ -194,7 +211,7 @@ namespace MilkBottle.ViewModels {
             if( result.Result == ButtonResult.OK ) {
                 var newScene = new PresetScene( result.Parameters.GetValue<string>( NewSceneDialogModel.cSceneNameParameter ));
 
-                mSceneProvider.Insert( newScene ).IfLeft( ex => LogException( "OnNewSceneResult", ex ));
+                mSceneProvider.Insert( newScene ).IfLeft( ex => LogException( nameof( OnNewSceneResult ), ex ));
 
                 LoadScenes();
                 CurrentScene = Scenes.FirstOrDefault( t => t.Scene.Id.Equals( newScene.Id ));
@@ -217,7 +234,7 @@ namespace MilkBottle.ViewModels {
                 if(!String.IsNullOrWhiteSpace( newName )) {
                     var tag = mCurrentScene.Scene.WithName( newName );
 
-                    mSceneProvider.Update( tag ).IfLeft( ex => LogException( "OnEditSceneResult", ex ));
+                    mSceneProvider.Update( tag ).IfLeft( ex => LogException( nameof( OnEditSceneResult ), ex ));
 
                     LoadScenes();
                 }
@@ -246,7 +263,7 @@ namespace MilkBottle.ViewModels {
                 mSceneProvider.Delete( mCurrentScene.Scene )
                     .Match( 
                         unit => LoadScenes(), 
-                        ex => LogException( "OnSceneDeleteResult", ex ));
+                        ex => LogException( nameof( OnSceneDeleteResult ), ex ));
             }
         }
 
@@ -278,14 +295,16 @@ namespace MilkBottle.ViewModels {
                    ( mCurrentList != null )) {
                     var newScene = mCurrentScene.Scene.WithSource( SceneSource.PresetList, mCurrentList.ListType, mCurrentList.ListIdentifier );
 
-                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnSceneSourceChanged", ex ));
+                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnSceneSourceChanged ), ex ));
+                    UpdateScene( newScene );
                 }
 
                 if(( mCurrentSource?.Source == SceneSource.SinglePreset ) &&
                    ( mCurrentPreset != null )) {
                     var newScene = mCurrentScene.Scene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
 
-                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnSceneSourceChanged", ex ));
+                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnSceneSourceChanged ), ex ));
+                    UpdateScene( newScene );
                 }
 
                 RaisePropertyChanged( () => CanCycle );
@@ -295,7 +314,7 @@ namespace MilkBottle.ViewModels {
 
         private void OnSelectPreset() {
             if( mCurrentScene != null ) {
-                mDialogService.ShowDialog( "SelectPresetDialog", new DialogParameters(), OnPresetSelected );
+                mDialogService.ShowDialog( nameof( SelectPresetDialog ), new DialogParameters(), OnPresetSelected );
             }
         }
 
@@ -307,7 +326,8 @@ namespace MilkBottle.ViewModels {
                 if( mCurrentPreset != null ) {
                     var newScene = mCurrentScene.Scene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
 
-                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnPresetSelected", ex ));
+                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnPresetSelected ), ex ));
+                    UpdateScene( newScene );
 
                     RaisePropertyChanged( () => CurrentPresetName );
                 }
@@ -340,7 +360,8 @@ namespace MilkBottle.ViewModels {
             if( mCurrentScene != null ) {
                 var newScene = mCurrentScene.Scene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
 
-                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnPresetCyclingChanged-Update", ex ));
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnPresetCyclingChanged ), ex ));
+                UpdateScene( newScene );
             }
         }
 
@@ -374,13 +395,116 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public string ArtistNames {
+            get => mArtistNames;
+            set {
+                mArtistNames = value;
+
+                OnArtistNamesChanged();
+                RaisePropertyChanged( () => ArtistNames );
+            }
+        }
+
+        private void OnArtistNamesChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithArtists( mArtistNames );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnArtistNamesChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
+        public string AlbumNames {
+            get => mAlbumNames;
+            set {
+                mAlbumNames = value;
+
+                OnAlbumNamesChanged();
+                RaisePropertyChanged( () => AlbumNames );
+            }
+        }
+
+        private void OnAlbumNamesChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithAlbums( mAlbumNames );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnAlbumNamesChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
+        public string TrackNames {
+            get => mTrackNames;
+            set {
+                mTrackNames = value;
+
+                OnTrackNamesChanged();
+                RaisePropertyChanged( () => TrackNames );
+            }
+        }
+
+        private void OnTrackNamesChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithTracks( mTrackNames );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnTrackNamesChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
+        public string Genres {
+            get => mGenres;
+            set {
+                mGenres = value;
+
+                OnGenresChanged();
+                RaisePropertyChanged( () => Genres );
+            }
+        }
+
+        private void OnGenresChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithGenres( mGenres );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnGenresChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
+        public string Tags {
+            get => mTags;
+            set {
+                mTags = value;
+
+                OnTagsChanged();
+                RaisePropertyChanged( () => Tags );
+            }
+        }
+
+        private void OnTagsChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithTags( mTags );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnTagsChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
         private void OnPresetOverlapChanged() {
             if( mCurrentScene != null ) {
                 var newScene = mCurrentScene.Scene.WithOverlap( mCurrentPresetOverlap != 0, mCurrentPresetOverlap );
 
-                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnPresetOverlapChanged-Update", ex ));
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnPresetOverlapChanged ), ex ));
+                UpdateScene( newScene );
             }
         }
+
+        private void UpdateScene( PresetScene newScene ) {
+            var currentScene = Scenes.FirstOrDefault( s => s.Scene.Id.Equals( newScene.Id ));
+
+            currentScene?.UpdateScene( newScene );
+        }
+
         private void LogException( string message, Exception ex ) {
             mLog.LogException( message, ex );
         }

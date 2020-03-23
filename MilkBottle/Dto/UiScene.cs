@@ -8,7 +8,7 @@ namespace MilkBottle.Dto {
         private readonly Action<UiScene>    mOnSceneEdit;
         private readonly Action<UiScene>    mOnSceneDelete;
 
-        public PresetScene              Scene { get; }
+        public PresetScene              Scene { get; private set; }
         public  string                  Name => Scene.Name;
 
         public  DelegateCommand         Edit { get; }
@@ -22,6 +22,10 @@ namespace MilkBottle.Dto {
 
             Delete = new DelegateCommand( OnSceneDelete );
             Edit = new DelegateCommand( OnSceneEdit );
+        }
+
+        public void UpdateScene( PresetScene newScene ) {
+            Scene = newScene;
         }
 
         private void OnSceneDelete() {

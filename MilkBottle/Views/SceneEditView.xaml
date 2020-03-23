@@ -10,7 +10,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SceneEditViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800">
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
@@ -81,6 +81,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Source -->
@@ -130,6 +131,40 @@
                     <Slider Width="150" Minimum="{Binding MinimumPresetOverlap}" Maximum="{Binding MaximumPresetOverlap}" Value="{Binding CurrentPresetOverlap}"/>
                     <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding PresetOverlapLegend}"/>
                 </StackPanel>
+
+                <!-- Scene Selection -->
+                <Grid Grid.Row="3" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,10,0,5" Style="{StaticResource ControlTitleStyle}"
+                               Text="Scene Selection: (separate multiple values with commas)"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Artist Names:"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding ArtistNames, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Album Names:"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding AlbumNames, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Track Names:"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding TrackNames, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Genres:"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding Genres, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Tags:"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
             </Grid>
         </GroupBox>
     </Grid>
