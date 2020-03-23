@@ -5,6 +5,7 @@ using LiteDB;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Types;
 using MilkBottle.Views;
 using Prism;
 using Prism.Commands;
@@ -22,6 +23,16 @@ namespace MilkBottle.ViewModels {
         }
     }
 
+    class UiCycling {
+        public  PresetCycling   Cycling { get; }
+        public  string          Title { get; }
+
+        public UiCycling( string title, PresetCycling cycling ) {
+            Cycling = cycling;
+            Title = title;
+        }
+    }
+
     class SceneEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly ISceneProvider             mSceneProvider;
         private readonly IPresetProvider            mPresetProvider;
@@ -30,12 +41,15 @@ namespace MilkBottle.ViewModels {
         private readonly IPlatformLog               mLog;
         private UiScene                             mCurrentScene;
         private UiSource                            mCurrentSource;
+        private UiCycling                           mCurrentCycling;
         private Preset                              mCurrentPreset;
         private PresetList                          mCurrentList;
+        private int                                 mCurrentCycleDuration;
         private bool                                mIsActive;
 
         public  ObservableCollection<UiScene>       Scenes { get; }
         public  ObservableCollection<UiSource>      SceneSources { get; }
+        public  ObservableCollection<UiCycling>     PresetCycling { get; }
         public  ObservableCollection<PresetList>    PresetLists { get; }
 
         public  DelegateCommand                     NewScene { get; }
@@ -48,6 +62,12 @@ namespace MilkBottle.ViewModels {
         public  string                              CurrentPresetName => mCurrentPreset?.Name;
         public  bool                                IsPresetSource => mCurrentSource?.Source == SceneSource.SinglePreset;
         public  bool                                IsListSource => mCurrentSource?.Source == SceneSource.PresetList;
+
+        public  int                                 MinimumCycleDuration { get; private set; }
+        public  int                                 MaximumCycleDuration { get; private set; }
+        public  string                              CycleDurationLegend => mCurrentCycling?.Cycling == Entities.PresetCycling.Duration ? 
+                                                                                    $"{mCurrentCycleDuration} seconds per preset" : 
+                                                                                    $"{mCurrentCycleDuration} presets per track";
 
         public  event EventHandler                  IsActiveChanged = delegate { };
 
@@ -64,6 +84,10 @@ namespace MilkBottle.ViewModels {
             SceneSources = new ObservableCollection<UiSource> {
                 new UiSource( "Preset List", SceneSource.PresetList ),
                 new UiSource( "Single Preset", SceneSource.SinglePreset )
+            };
+            PresetCycling = new ObservableCollection<UiCycling> {
+                new UiCycling( "Count", Entities.PresetCycling.CountPerScene ),
+                new UiCycling( "Duration", Entities.PresetCycling.Duration )
             };
 
             NewScene = new DelegateCommand( OnNewScene );
@@ -110,6 +134,10 @@ namespace MilkBottle.ViewModels {
                         SelectedList = PresetLists.FirstOrDefault( l => l.ListIdentifier.Equals( mCurrentScene.Scene.SourceId ));
                     }
                 }
+
+                mCurrentCycling = PresetCycling.FirstOrDefault( c => c.Cycling.Equals( mCurrentScene.Scene.PresetCycle ));
+                mCurrentCycleDuration = mCurrentScene.Scene.PresetDuration;
+                UpdateCycling();
             }
 
             RaisePropertyChanged( () => ArePropertiesValid );
@@ -117,6 +145,9 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => IsPresetSource );
             RaisePropertyChanged( () => CurrentPresetName );
             RaisePropertyChanged( () => SelectedSource );
+            RaisePropertyChanged( () => CurrentCycling );
+            RaisePropertyChanged( () => CurrentCycleDuration );
+            RaisePropertyChanged( () => CycleDurationLegend );
         }
 
         private void LoadLists() {
@@ -196,6 +227,16 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        private void OnSceneDeleteResult( IDialogResult result ) {
+            if(( result.Result == ButtonResult.OK ) &&
+               ( mCurrentScene != null )) {
+                mSceneProvider.Delete( mCurrentScene.Scene )
+                    .Match( 
+                        unit => LoadScenes(), 
+                        ex => LogException( "OnSceneDeleteResult", ex ));
+            }
+        }
+
         public UiSource SelectedSource {
             get => mCurrentSource;
             set {
@@ -236,16 +277,6 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnSceneDeleteResult( IDialogResult result ) {
-            if(( result.Result == ButtonResult.OK ) &&
-               ( mCurrentScene != null )) {
-                mSceneProvider.Delete( mCurrentScene.Scene )
-                    .Match( 
-                        unit => LoadScenes(), 
-                        ex => LogException( "OnSceneDeleteResult", ex ));
-            }
-        }
-
         private void OnSelectPreset() {
             if( mCurrentScene != null ) {
                 mDialogService.ShowDialog( "SelectPresetDialog", new DialogParameters(), OnPresetSelected );
@@ -265,6 +296,55 @@ namespace MilkBottle.ViewModels {
                     RaisePropertyChanged( () => CurrentPresetName );
                 }
             }
+        }
+
+        public UiCycling CurrentCycling {
+            get => mCurrentCycling;
+            set {
+                mCurrentCycling = value;
+
+                OnPresetCyclingChanged();
+                RaisePropertyChanged( () => PresetCycling );
+            }
+        }
+
+        public int CurrentCycleDuration {
+            get => mCurrentCycleDuration;
+            set {
+                mCurrentCycleDuration = value;
+
+                OnPresetCyclingChanged();
+                RaisePropertyChanged( () => CurrentCycleDuration );
+            }
+        }
+
+        private void OnPresetCyclingChanged() {
+            UpdateCycling();
+
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( "OnPresetCyclingChanged-Update", ex ));
+            }
+        }
+
+        private void UpdateCycling() {
+            MinimumCycleDuration = mCurrentCycling.Cycling == Entities.PresetCycling.CountPerScene ? 1 : PresetDuration.MinimumValue;
+            MaximumCycleDuration = mCurrentCycling.Cycling == Entities.PresetCycling.CountPerScene ? 10 : PresetDuration.MaximumValue;
+
+            if( mCurrentCycling.Cycling.Equals( Entities.PresetCycling.CountPerScene  )) {
+                mCurrentCycleDuration = Math.Min( mCurrentCycleDuration, 10 );
+                mCurrentCycleDuration = Math.Max( mCurrentCycleDuration, 1 );
+            }
+            else {
+                mCurrentCycleDuration = Math.Min( mCurrentCycleDuration, PresetDuration.MaximumValue );
+                mCurrentCycleDuration = Math.Max( mCurrentCycleDuration, PresetDuration.MinimumValue );
+            }
+
+            RaisePropertyChanged( () => CycleDurationLegend );
+            RaisePropertyChanged( () => CurrentCycleDuration );
+            RaisePropertyChanged( () => MinimumCycleDuration );
+            RaisePropertyChanged( () => MaximumCycleDuration );
         }
 
         private void LogException( string message, Exception ex ) {
