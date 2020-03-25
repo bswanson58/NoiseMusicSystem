@@ -11,6 +11,14 @@
              Height="34" d:DesignWidth="1100">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
+        <TextBlock Grid.Column="0" Text="{Binding TrackName}"/>
+        <TextBlock Grid.Column="1" Text="{Binding PresetName}"/>
+        <TextBlock Grid.Column="2" Text="{Binding SceneName}"/>
     </Grid>
 </UserControl>

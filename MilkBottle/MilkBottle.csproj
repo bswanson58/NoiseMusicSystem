@@ -269,6 +269,7 @@
     <Compile Include="Interfaces\IPresetListProvider.cs" />
     <Compile Include="Interfaces\ISceneProvider.cs" />
     <Compile Include="Interfaces\IStateManager.cs" />
+    <Compile Include="Interfaces\ISyncManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
     <Compile Include="Models\AudioManager.cs" />
@@ -285,6 +286,7 @@
     <Compile Include="Models\PresetTimers\PresetTimerFactory.cs" />
     <Compile Include="Models\PresetTimers\RandomDurationTimer.cs" />
     <Compile Include="Models\StateManager.cs" />
+    <Compile Include="Models\SyncManager.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\LimitedRepeatingRandom.cs" />

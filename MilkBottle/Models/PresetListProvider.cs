@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LiteDB;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
@@ -31,6 +32,62 @@ namespace MilkBottle.Models {
             mTagProvider.SelectTags( list => retValue.AddRange( from t in list select new TagPresetList( t, GetPresets ))).IfLeft( ex => LogException( "SelectTags", ex ));
 
             return from p in retValue orderby p.Name select p;
+        }
+
+        public IEnumerable<Preset> GetPresets( PresetListType ofType, ObjectId id ) {
+            var retValue = new List<Preset>() as IEnumerable<Preset>;
+
+            switch( ofType ) {
+                case PresetListType.Library:
+                    retValue = GetLibraryPresets( id );
+                    break;
+
+                case PresetListType.Preset:
+                    retValue = GetPreset( id );
+                    break;
+
+                case PresetListType.Set:
+                    retValue = GetSetPresets( id );
+                    break;
+
+                case PresetListType.Tag:
+                    retValue = GetTagPresets( id );
+                    break;
+            }
+
+            return retValue.DistinctBy( p => p.Name );
+        }
+
+        private IEnumerable<Preset> GetLibraryPresets( ObjectId id ) {
+            var retValue = new List<Preset>() as IEnumerable<Preset>;
+
+            mLibraryProvider.GetLibraryById( id ).IfRight( opt => opt.Do( lib => retValue = GetPresets( lib )));
+
+            return retValue;
+        }
+
+        private IEnumerable<Preset> GetSetPresets( ObjectId id ) {
+            var retValue = new List<Preset>() as IEnumerable<Preset>;
+
+            mSetProvider.GetSetById( id ).IfRight( opt => opt.Do( set => retValue = GetPresets( set )));
+
+            return retValue;
+        }
+
+        private IEnumerable<Preset> GetTagPresets( ObjectId id ) {
+            var retValue = new List<Preset>() as IEnumerable<Preset>;
+
+            mTagProvider.GetTagById( id ).IfRight( opt => opt.Do( tag => retValue = GetPresets( tag )));
+
+            return retValue;
+        }
+
+        private IEnumerable<Preset> GetPreset( ObjectId id ) {
+            var retValue = new List<Preset>();
+
+            mPresetProvider.GetPresetById( id ).IfRight( opt => opt.Do( preset => retValue.Add( preset )));
+
+            return retValue;
         }
 
         private IEnumerable<Preset> GetPresets( PresetLibrary forLibrary ) {
