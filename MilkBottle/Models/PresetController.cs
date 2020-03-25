@@ -116,8 +116,9 @@ namespace MilkBottle.Models {
             if(( mProjectM.isInitialized()) &&
                ( mProjectM.getPresetListSize() > 0 )) {
                var presetIndex = mProjectM.selectedPresetIndex();
-
-                retValue = new Preset( mProjectM.getPresetName(presetIndex ), mProjectM.getPresetURL( presetIndex ), PresetLibrary.Default());
+               var presetId = mProjectM.getPresetName( presetIndex );
+                
+               retValue = mLoadedPresets.FirstOrDefault( p => p.Id.ToString().Equals( presetId ));
             }
 
             return retValue;
