@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Caliburn.Micro;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
@@ -94,17 +95,21 @@ namespace MilkBottle.ViewModels {
 
                     switch( scene.PresetCycle ) {
                         case PresetCycling.Duration:
-                            mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
                             mPresetController.PresetDuration = PresetDuration.Create( scene.PresetDuration );
                             break;
 
                         case PresetCycling.CountPerScene:
-                            mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
                             mPresetController.PresetDuration = PresetDuration.Create((int)((double)trackDuration / scene.PresetDuration ));
                             break;
                     }
 
+                    mPresetController.ConfigurePresetTimer( PresetTimer.FixedDuration );
                     mPresetController.BlendPresetTransition = scene.OverlapPresets;
+                }
+                else {
+                    mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
+
+                    OnPresetChanged( mPresetController.GetPlayingPreset());
                 }
 
                 SceneName = scene.Name;

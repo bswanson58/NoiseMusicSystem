@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding TrackName}"/>
-        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding PresetName}"/>
+        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
         <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
     </Grid>
 
