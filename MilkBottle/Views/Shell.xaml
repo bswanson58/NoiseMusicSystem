@@ -38,8 +38,11 @@
         <DataTemplate x:Key="ReviewView">
             <views:ReviewView/>
         </DataTemplate>
+        <DataTemplate x:Key="SyncView">
+            <views:SyncView/>
+        </DataTemplate>
 
-        <views:ShellViewSelector x:Key="ShellViewSelector" ManualView="{StaticResource ManualView}" ReviewView="{StaticResource ReviewView}"/>
+        <views:ShellViewSelector x:Key="ShellViewSelector" ManualView="{StaticResource ManualView}" ReviewView="{StaticResource ReviewView}" SyncView="{StaticResource SyncView}"/>
 
     </Window.Resources>
 
@@ -68,6 +71,8 @@
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
+            <Button Command="{Binding DisplaySyncView}" Content="sync"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
             <Button Command="{Binding DisplayReviewer}" Content="review"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
             <Button Command="{Binding DisplayManualController}" Content="revel"

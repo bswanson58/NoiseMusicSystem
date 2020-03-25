@@ -6,19 +6,25 @@ namespace MilkBottle.Views {
     class ShellViewSelector : DataTemplateSelector {
         public  DataTemplate    ManualView { get; set; }
         public  DataTemplate    ReviewView { get ;set; }
+        public  DataTemplate    SyncView { get; set; }
 
         public override DataTemplate SelectTemplate( object item, DependencyObject container ) {
             var retValue = ManualView;
-            var viewEnum = (ShellView)item;
 
-            switch( viewEnum ) {
-                case ShellView.Manual:
-                    retValue = ManualView;
-                    break;
+            if( item is ShellView viewEnum ) {
+                switch( viewEnum ) {
+                    case ShellView.Manual:
+                        retValue = ManualView;
+                        break;
 
-                case ShellView.Review:
-                    retValue = ReviewView;
-                    break;
+                    case ShellView.Review:
+                        retValue = ReviewView;
+                        break;
+
+                    case ShellView.Sync:
+                        retValue = SyncView;
+                        break;
+                }
             }
 
             return retValue;

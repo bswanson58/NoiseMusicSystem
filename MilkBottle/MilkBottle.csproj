@@ -319,6 +319,7 @@
     <Compile Include="ViewModels\SetEditViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="ViewModels\SyncStatusViewModel.cs" />
     <Compile Include="ViewModels\TagEditDialogModel.cs" />
     <Compile Include="ViewModels\TagEditViewModel.cs" />
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
@@ -375,6 +376,12 @@
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SyncStatusView.xaml.cs">
+      <DependentUpon>SyncStatusView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SyncView.xaml.cs">
+      <DependentUpon>SyncView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TagEditDialog.xaml.cs">
       <DependentUpon>TagEditDialog.xaml</DependentUpon>
     </Compile>
@@ -414,6 +421,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SetEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SyncStatusView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SyncView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
