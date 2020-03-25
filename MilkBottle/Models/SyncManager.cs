@@ -62,9 +62,9 @@ namespace MilkBottle.Models {
         }
 
         private IEnumerable<SceneRating> ValuesForScene( PresetScene scene, PlaybackEvent forEvent ) {
-            yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, ',' ), 10 );
+            yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, ',' ), 10 );
             yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, ',' ), 9 );
-            yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, ',' ), 8 );
+            yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, ',' ), 8 );
             yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, ',' ), 7 );
             yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, ',' ), 6 );
         }
