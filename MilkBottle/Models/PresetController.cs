@@ -82,6 +82,8 @@ namespace MilkBottle.Models {
         }
 
         public void ConfigurePresetTimer( PresetTimer timerType ) {
+            var wasRunning = IsRunning;
+
             if( mPresetTimer != null ) {
                 mPresetTimer.StopTimer();
                 mPresetTimer.PresetTimeElapsed -= OnPresetTimer;
@@ -90,6 +92,10 @@ namespace MilkBottle.Models {
             mPresetTimer = mTimerFactory.CreateTimer( timerType );
             mPresetTimer.SetDuration( mPresetDuration );
             mPresetTimer.PresetTimeElapsed += OnPresetTimer;
+
+            if( wasRunning ) {
+                StartPresetCycling();
+            }
         }
 
         public void ConfigurePresetSequencer( PresetSequence forSequence ) {
