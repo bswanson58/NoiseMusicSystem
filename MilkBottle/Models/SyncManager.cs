@@ -19,5 +19,13 @@ namespace MilkBottle.Models {
 
             return sceneList.FirstOrDefault();
         }
+
+        public PresetScene GetDefaultScene() {
+            var sceneList = new List<PresetScene>();
+
+            mSceneProvider.SelectScenes( list => sceneList.AddRange( list ));
+
+            return sceneList.FirstOrDefault();
+        }
     }
 }

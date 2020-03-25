@@ -5,20 +5,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SyncStatusViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="1100">
 
-    <Grid>
+    <Grid Margin="10,0" Tag="dimmed">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Text="{Binding TrackName}"/>
-        <TextBlock Grid.Column="1" Text="{Binding PresetName}"/>
-        <TextBlock Grid.Column="2" Text="{Binding SceneName}"/>
+        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding TrackName}"/>
+        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding PresetName}"/>
+        <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
     </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+    </i:Interaction.Behaviors>
 </UserControl>
