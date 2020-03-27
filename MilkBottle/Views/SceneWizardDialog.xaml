@@ -5,21 +5,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SceneWizardDialogModel, IsDesignTimeCreatable=False}"
-             Height="400" Width="700">
+             Height="460" Width="700">
+
+    <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
+
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <DataTemplate x:Key="PresetListTemplate" DataType="dto:PresetList">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="End the current scene based upon the playing track, or create a new scene:"/>
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Edit the current scene based upon the playing track, or create a new scene:"/>
 
-        <Grid Grid.Row="1" Margin="10,5">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0" Text="Current Scene:"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding SceneName}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="10,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -97,7 +124,74 @@
 
         </Grid>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="2" Grid.Row="0" Margin="5,0" Style="{StaticResource ControlTitleStyle}" Text="Scene Properties:"/>
+
+            <!-- Source -->
+            <Grid Grid.Column="2" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <StackPanel Grid.Row="0" Margin="0,0,0,5" Orientation="Horizontal">
+                    <TextBlock MinWidth="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
+                    <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding SceneSources}" DisplayMemberPath="Title" SelectedItem="{Binding SelectedSource}"/>
+                </StackPanel>
+
+                <Grid Grid.Row="1" Visibility="{Binding IsPresetSource, Converter={StaticResource CollapseIfFalse}}">
+                    <TextBlock Margin="55,0,30,0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding CurrentPresetName}"/>
+                    <Button HorizontalAlignment="Right" Style="{StaticResource ControllerButtonStyle}" Height="20" Padding="4"
+                                Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}" ToolTip="Select An Individual Preset"/>
+                </Grid>
+
+                <Grid Grid.Row="2" Visibility="{Binding IsListSource, Converter={StaticResource CollapseIfFalse}}">
+                    <ComboBox Margin="55,0,0,0" Width="250" HorizontalAlignment="Left" ItemsSource="{Binding PresetLists}" 
+                                  SelectedItem="{Binding SelectedList}" ItemTemplate="{StaticResource PresetListTemplate}"/>
+                </Grid>
+            </Grid>
+
+            <!-- Cycling / Duration -->
+            <Grid Grid.Column="2" Grid.Row="2" Margin="0,10,0,0" IsEnabled="{Binding CanCycle}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock MinWidth="50" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Cycling:"/>
+                    <ComboBox Width="150" ItemsSource="{Binding PresetCycling}" DisplayMemberPath="Title" SelectedItem="{Binding CurrentCycling}"/>
+                    <Slider Margin="10,0,0,0" VerticalAlignment="Center" Width="150" 
+                                Minimum="{Binding MinimumCycleDuration}" Maximum="{Binding MaximumCycleDuration}" Value="{Binding CurrentCycleDuration}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding CycleDurationLegend}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Preset Overlap -->
+            <StackPanel Grid.Column="2" Grid.Row="3" Margin="0,15,0,0" Orientation="Horizontal" IsEnabled="{Binding CanOverlap}">
+                <TextBlock MinWidth="50" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="0,0,5,0" Text="Overlap:"/>
+                <Slider Width="150" Minimum="{Binding MinimumPresetOverlap}" Maximum="{Binding MaximumPresetOverlap}" Value="{Binding CurrentPresetOverlap}"/>
+                <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding PresetOverlapLegend}"/>
+            </StackPanel>
+        </Grid>
+
+        <Button Grid.Row="5" Margin="0,0,0,10" HorizontalAlignment="Right" Padding="5,0" Style="{StaticResource GeneralButtonStyle}"
+                Content="Create New Scene..." Command="{Binding CreateScene}"/>
+
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
         </StackPanel>

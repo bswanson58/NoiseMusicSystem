@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Types;
+using MilkBottle.Views;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -9,62 +13,99 @@ using ReusableBits.Platform;
 
 namespace MilkBottle.ViewModels {
     class SceneWizardDialogModel : PropertyChangeBase, IDialogAware {
-        public  const string                cSceneParameter = "scene";
-        public  const string                cPlaybackParameter = "playback";
+        public  const string                        cSceneParameter = "scene";
+        public  const string                        cPlaybackParameter = "playback";
 
-        private readonly ISceneProvider     mSceneProvider;
-        private PresetScene                 mActiveScene;
-        private PlaybackEvent               mPlaybackEvent;
-        private string                      mArtistNames;
-        private string                      mAlbumNames;
-        private string                      mTrackNames;
-        private string                      mGenres;
-        private string                      mTags;
-        private bool                        mUtilizeArtist;
-        private bool                        mUtilizeAlbum;
-        private bool                        mUtilizeTrack;
-        private bool                        mUtilizeGenre;
-        private bool                        mUtilizeTags;
+        private readonly ISceneProvider             mSceneProvider;
+        private readonly IDialogService             mDialogService;
+        private PresetScene                         mScene;
+        private PlaybackEvent                       mPlaybackEvent;
+        private string                              mArtistNames;
+        private string                              mAlbumNames;
+        private string                              mTrackNames;
+        private string                              mGenres;
+        private string                              mTags;
+        private bool                                mUtilizeArtist;
+        private bool                                mUtilizeAlbum;
+        private bool                                mUtilizeTrack;
+        private bool                                mUtilizeGenre;
+        private bool                                mUtilizeTags;
+        private UiSource                            mCurrentSource;
+        private UiCycling                           mCurrentCycling;
+        private PresetList                          mCurrentList;
+        private Preset                              mCurrentPreset;
+        private int                                 mCurrentCycleDuration;
+        private int                                 mCurrentPresetOverlap;
 
-        public  String                      Name { get; set; }
-        public  string                      Title { get; }
+        public  String                              Name { get; set; }
+        public  string                              Title { get; }
 
-        public  DelegateCommand             Ok { get; }
-        public  DelegateCommand             Cancel { get; }
+        public  ObservableCollection<UiSource>      SceneSources { get; }
+        public  ObservableCollection<UiCycling>     PresetCycling { get; }
+        public  ObservableCollection<PresetList>    PresetLists { get; }
 
-        public  string                      PlayingArtist => mPlaybackEvent?.ArtistName;
-        public  string                      PlayingAlbum => mPlaybackEvent?.AlbumName;
-        public  string                      PlayingTrack => mPlaybackEvent?.TrackName;
-        public  string                      PlayingGenre => mPlaybackEvent?.ArtistGenre;
-        public  string                      PlayingTags => mPlaybackEvent != null ? String.Join( ", ", mPlaybackEvent.TrackTags ) : String.Empty;
+        public  DelegateCommand                     CreateScene { get; }
+        public  DelegateCommand                     SelectPreset { get; }
+        public  DelegateCommand                     Ok { get; }
+        public  DelegateCommand                     Cancel { get; }
+
+        public  string                              PlayingArtist => mPlaybackEvent?.ArtistName;
+        public  string                              PlayingAlbum => mPlaybackEvent?.AlbumName;
+        public  string                              PlayingTrack => mPlaybackEvent?.TrackName;
+        public  string                              PlayingGenre => mPlaybackEvent?.ArtistGenre;
+        public  string                              PlayingTags => mPlaybackEvent != null ? String.Join( ", ", mPlaybackEvent.TrackTags ) : String.Empty;
+
+        public  string                              SceneName => mScene?.Name;
+        public  string                              CurrentPresetName => mCurrentPreset?.Name;
+        public  bool                                IsPresetSource => mCurrentSource?.Source == SceneSource.SinglePreset;
+        public  bool                                IsListSource => mCurrentSource?.Source == SceneSource.PresetList;
+
+        public  int                                 MinimumCycleDuration { get; private set; }
+        public  int                                 MaximumCycleDuration { get; private set; }
+        public  string                              CycleDurationLegend => mCurrentCycling?.Cycling == Entities.PresetCycling.Duration ? 
+                                                                                                $"{mCurrentCycleDuration} seconds per preset" : 
+                                                                                                $"{mCurrentCycleDuration} presets per track";
+        public  bool                                CanCycle => IsListSource;
+
+        public  int                                 MinimumPresetOverlap => 0;
+        public  int                                 MaximumPresetOverlap => 5;
+        public  string                              PresetOverlapLegend => mCurrentPresetOverlap > 0 ? $"{mCurrentPresetOverlap} seconds" : "No Overlap";
+        public  bool                                CanOverlap => IsListSource;
 
         public  event Action<IDialogResult> RequestClose;
 
-        public SceneWizardDialogModel( ISceneProvider sceneProvider ) {
+        public SceneWizardDialogModel( ISceneProvider sceneProvider, IDialogService dialogService ) {
             mSceneProvider = sceneProvider;
+            mDialogService = dialogService;
 
             Title = "Scene Wizard";
 
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
-        }
+            CreateScene = new DelegateCommand( OnCreateScene );
+            SelectPreset = new DelegateCommand( OnSelectPreset );
 
-        public bool CanCloseDialog() {
-            return true;
+            PresetLists = new ObservableCollection<PresetList>();
+            SceneSources = new ObservableCollection<UiSource> {
+                new UiSource( "Preset List", SceneSource.PresetList ),
+                new UiSource( "Single Preset", SceneSource.SinglePreset )
+            };
+            PresetCycling = new ObservableCollection<UiCycling> {
+                new UiCycling( "Count", Entities.PresetCycling.CountPerScene ),
+                new UiCycling( "Duration", Entities.PresetCycling.Duration )
+            };
         }
-
-        public void OnDialogClosed() { }
 
         public void OnDialogOpened( IDialogParameters parameters ) {
             if( parameters != null ) {
-                mActiveScene = parameters.GetValue<PresetScene>( cSceneParameter );
+                mScene = parameters.GetValue<PresetScene>( cSceneParameter );
                 mPlaybackEvent = parameters.GetValue<PlaybackEvent>( cPlaybackParameter );
 
-                mArtistNames = mActiveScene.ArtistNames;
-                mAlbumNames = mActiveScene.AlbumNames;
-                mTrackNames = mActiveScene.TrackNames;
-                mGenres = mActiveScene.Genres;
-                mTags = mActiveScene.Tags;
+                mArtistNames = mScene.ArtistNames;
+                mAlbumNames = mScene.AlbumNames;
+                mTrackNames = mScene.TrackNames;
+                mGenres = mScene.Genres;
+                mTags = mScene.Tags;
 
                 mUtilizeArtist = ContainsText( PlayingArtist, ArtistNames );
                 mUtilizeAlbum = ContainsText( PlayingAlbum, AlbumNames );
@@ -89,8 +130,130 @@ namespace MilkBottle.ViewModels {
                 RaisePropertyChanged( () => UtilizeTrack );
                 RaisePropertyChanged( () => UtilizeGenre );
                 RaisePropertyChanged( () => UtilizeTags );
+
+                RaisePropertyChanged( () => SceneName );
             }
         }
+
+        public void OnCreateScene() {
+            mDialogService.ShowDialog( nameof( NewSceneDialog ), new DialogParameters(), OnCreateSceneResult );
+        }
+
+        private void OnCreateSceneResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var sceneName = result.Parameters.GetValue<string>( NewSceneDialogModel.cSceneNameParameter );
+
+                if(!String.IsNullOrWhiteSpace( sceneName )) {
+                    mScene = new PresetScene( sceneName );
+
+                    RaisePropertyChanged( () => SceneName );
+                }
+            }
+        }
+
+        public UiSource SelectedSource {
+            get => mCurrentSource;
+            set {
+                mCurrentSource = value;
+
+                OnSceneSourceChanged();
+                RaisePropertyChanged( () => SelectedSource );
+                RaisePropertyChanged( () => IsListSource );
+                RaisePropertyChanged( () => IsPresetSource );
+            }
+        }
+
+        public PresetList SelectedList {
+            get => mCurrentList;
+            set {
+                mCurrentList = value;
+
+                OnSceneSourceChanged();
+                RaisePropertyChanged( () => SelectedList );
+            }
+        }
+
+        private void OnSceneSourceChanged() { }
+
+        private void OnSelectPreset() {
+            mDialogService.ShowDialog( nameof( SelectPresetDialog ), new DialogParameters(), OnPresetSelected );
+        }
+
+        private void OnPresetSelected( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                mCurrentPreset = result.Parameters.GetValue<Preset>( SelectPresetDialogModel.cPresetParameter );
+
+                if( mCurrentPreset != null ) {
+                    var newScene = mScene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
+
+                    UpdateScene( newScene );
+
+                    RaisePropertyChanged( () => CurrentPresetName );
+                }
+            }
+        }
+
+        public UiCycling CurrentCycling {
+            get => mCurrentCycling;
+            set {
+                mCurrentCycling = value;
+
+                OnPresetCyclingChanged();
+                RaisePropertyChanged( () => PresetCycling );
+            }
+        }
+
+        public int CurrentCycleDuration {
+            get => mCurrentCycleDuration;
+            set {
+                mCurrentCycleDuration = value;
+
+                OnPresetCyclingChanged();
+                RaisePropertyChanged( () => CurrentCycleDuration );
+            }
+        }
+
+        private void OnPresetCyclingChanged() {
+            UpdateCycling();
+
+            var newScene = mScene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
+            
+            UpdateScene( newScene );
+        }
+
+        private void UpdateCycling() {
+            MinimumCycleDuration = mCurrentCycling.Cycling == Entities.PresetCycling.CountPerScene ? 1 : PresetDuration.MinimumValue;
+            MaximumCycleDuration = mCurrentCycling.Cycling == Entities.PresetCycling.CountPerScene ? 10 : PresetDuration.MaximumValue;
+
+            if( mCurrentCycling.Cycling.Equals( Entities.PresetCycling.CountPerScene  )) {
+                mCurrentCycleDuration = Math.Min( mCurrentCycleDuration, 10 );
+                mCurrentCycleDuration = Math.Max( mCurrentCycleDuration, 1 );
+            }
+            else {
+                mCurrentCycleDuration = Math.Min( mCurrentCycleDuration, PresetDuration.MaximumValue );
+                mCurrentCycleDuration = Math.Max( mCurrentCycleDuration, PresetDuration.MinimumValue );
+            }
+
+            RaisePropertyChanged( () => CycleDurationLegend );
+            RaisePropertyChanged( () => CurrentCycleDuration );
+            RaisePropertyChanged( () => MinimumCycleDuration );
+            RaisePropertyChanged( () => MaximumCycleDuration );
+        }
+
+        public int CurrentPresetOverlap {
+            get => mCurrentPresetOverlap;
+            set {
+                mCurrentPresetOverlap = value;
+
+                OnPresetOverlapChanged();
+                RaisePropertyChanged( () => CurrentPresetOverlap );
+                RaisePropertyChanged( () => PresetOverlapLegend );
+            }
+        }
+
+        private void OnPresetOverlapChanged() { }
+
+        private void UpdateScene( PresetScene scene ) { }
 
         public string ArtistNames {
             get => mArtistNames;
@@ -241,13 +404,19 @@ namespace MilkBottle.ViewModels {
         public void OnOk() {
             RaiseRequestClose(
                 !String.IsNullOrWhiteSpace( Name )
-                    ? new DialogResult( ButtonResult.OK, new DialogParameters {{ cSceneParameter, mActiveScene }} )
+                    ? new DialogResult( ButtonResult.OK, new DialogParameters {{ cSceneParameter, mScene }} )
                     : new DialogResult( ButtonResult.Cancel ) );
         }
 
         public void OnCancel() {
             RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
         }
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
 
         private void RaiseRequestClose( IDialogResult dialogResult ) {
             RequestClose?.Invoke( dialogResult );
