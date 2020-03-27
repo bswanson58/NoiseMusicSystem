@@ -12,16 +12,29 @@
              d:DataContext="{d:DesignInstance viewModels:SyncStatusViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="1100">
 
+    <UserControl.Resources>
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </UserControl.Resources>
+
     <Grid Margin="10,0" Tag="dimmed">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding TrackName}"/>
-        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
-        <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
+        <Button Margin="0,0,10,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
+                ToolTip="Scene Wizard"/>
+        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
+        <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
+        <TextBlock Grid.Column="3" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding TrackName}"/>
     </Grid>
 
     <i:Interaction.Behaviors>

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Caliburn.Micro;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
+using MilkBottle.Views;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
 
@@ -16,22 +18,29 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetListProvider    mListProvider;
         private readonly ISyncManager           mSyncManager;
         private readonly IStateManager          mStateManager;
+        private readonly IDialogService         mDialogService;
         private IDisposable                     mPresetSubscription;
         private PlaybackEvent                   mCurrentPlayback;
+        private PresetScene                     mCurrentScene;
+
+        public  DelegateCommand                 SceneWizard { get; }
 
         public  string                          SceneName { get; private set; }
         public  string                          TrackName {  get; private set; }
         public  string                          PresetName { get; private set; }
 
         public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider,
-                                    IStateManager stateManger, IEventAggregator eventAggregator ) {
+                                    IStateManager stateManger, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
             mPresetController = presetController;
             mStateManager = stateManger;
+            mDialogService = dialogService;
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
+
+            SceneWizard = new DelegateCommand( OnSceneWizard, CanExecuteSceneWizard );
 
             if( mPresetController.IsInitialized ) {
                 Initialize();
@@ -58,6 +67,8 @@ namespace MilkBottle.ViewModels {
             }
 
             mStateManager.EnterState( eStateTriggers.Run );
+
+            SceneWizard.RaiseCanExecuteChanged();
         }
 
         public void Handle( Events.ModeChanged args ) {
@@ -82,6 +93,8 @@ namespace MilkBottle.ViewModels {
                 TrackName = $"{playbackEvent.ArtistName}/{playbackEvent.TrackName}";
                 RaisePropertyChanged( () => TrackName );
             }
+
+            SceneWizard.RaiseCanExecuteChanged();
         }
 
         public void StartScene( PresetScene scene ) {
@@ -112,9 +125,28 @@ namespace MilkBottle.ViewModels {
                     OnPresetChanged( mPresetController.GetPlayingPreset());
                 }
 
+                mCurrentScene = scene;
                 SceneName = scene.Name;
+
                 RaisePropertyChanged( () => SceneName );
+                SceneWizard.RaiseCanExecuteChanged();
             }
+        }
+
+        private void OnSceneWizard() {
+            if(( mCurrentScene != null ) &&
+               ( mCurrentPlayback != null )) {
+                var dialogParameters = new DialogParameters{{ SceneWizardDialogModel.cPlaybackParameter, mCurrentPlayback }, 
+                                                            { SceneWizardDialogModel.cSceneParameter, mCurrentScene }};
+
+                mDialogService.ShowDialog( nameof( SceneWizardDialog ), dialogParameters, OnSceneWizardResult );
+            }
+        }
+
+        private void OnSceneWizardResult( IDialogResult result ) { }
+
+        private bool CanExecuteSceneWizard() {
+            return ( mCurrentScene != null ) && ( mCurrentPlayback != null );
         }
 
         private void OnPresetChanged( Preset preset ) {
