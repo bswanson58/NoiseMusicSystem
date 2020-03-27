@@ -47,7 +47,7 @@ namespace MilkBottle.Entities {
         public PresetScene( ObjectId id, string name, SceneSource sceneSource, PresetListType listType, ObjectId sourceId, PresetCycling presetCycle, int presetDuration,
                             bool overlapPresets, int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags ) :
             base( id ) {
-            Name = name;
+            Name = name ?? String.Empty;
             SceneSource = sceneSource;
             SourceListType = listType;
             SourceId = sourceId;
@@ -55,18 +55,18 @@ namespace MilkBottle.Entities {
             PresetDuration = presetDuration;
             OverlapPresets = overlapPresets;
             OverlapDuration = overlapDuration;
-            ArtistNames = artistNames;
-            AlbumNames = albumNames;
-            TrackNames = trackNames;
-            Genres = genres;
-            Tags = tags;
+            ArtistNames = artistNames ?? String.Empty;
+            AlbumNames = albumNames ?? String.Empty;
+            TrackNames = trackNames ?? String.Empty;
+            Genres = genres ?? String.Empty;
+            Tags = tags ?? String.Empty;
         }
 
         [BsonCtor]
         public PresetScene( ObjectId id, string name, int sceneSource, int sourceListType, ObjectId sourceId, int presetCycle, int presetDuration,
                             bool overlapPresets, int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags ) :
                 base( id ) {
-            Name = name;
+            Name = name ?? String.Empty;
             SceneSource = (SceneSource)sceneSource;
             SourceListType = (PresetListType)sourceListType;
             SourceId = sourceId;
@@ -74,11 +74,11 @@ namespace MilkBottle.Entities {
             PresetDuration = presetDuration;
             OverlapPresets = overlapPresets;
             OverlapDuration = overlapDuration;
-            ArtistNames = artistNames;
-            AlbumNames = albumNames;
-            TrackNames = trackNames;
-            Genres = genres;
-            Tags = tags;
+            ArtistNames = artistNames ?? String.Empty;
+            AlbumNames = albumNames ?? String.Empty;
+            TrackNames = trackNames ?? String.Empty;
+            Genres = genres ?? String.Empty;
+            Tags = tags ?? String.Empty;
         }
 
         public PresetScene WithName( string name ) {
