@@ -14,26 +14,6 @@ using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class UiSource {
-        public  SceneSource Source { get; }
-        public  string      Title { get; }
-
-        public UiSource( string title, SceneSource source ) {
-            Source = source;
-            Title = title;
-        }
-    }
-
-    class UiCycling {
-        public  PresetCycling   Cycling { get; }
-        public  string          Title { get; }
-
-        public UiCycling( string title, PresetCycling cycling ) {
-            Cycling = cycling;
-            Title = title;
-        }
-    }
-
     class SceneEditViewModel : PropertyChangeBase, IActiveAware {
         private readonly ISceneProvider             mSceneProvider;
         private readonly IPresetProvider            mPresetProvider;

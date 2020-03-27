@@ -240,9 +240,11 @@
     <Compile Include="Dto\MilkPreferences.cs" />
     <Compile Include="Dto\PresetList.cs" />
     <Compile Include="Dto\UiCompanionApp.cs" />
+    <Compile Include="Dto\UiCycling.cs" />
     <Compile Include="Dto\UiPreset.cs" />
     <Compile Include="Dto\UiScene.cs" />
     <Compile Include="Dto\UiSet.cs" />
+    <Compile Include="Dto\UiSource.cs" />
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="Entities\Preset.cs" />
