@@ -16,9 +16,11 @@ namespace MilkBottle.ViewModels {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IPresetController      mPresetController;
         private readonly IPresetListProvider    mListProvider;
+        private readonly ISceneProvider         mSceneProvider;
         private readonly ISyncManager           mSyncManager;
         private readonly IStateManager          mStateManager;
         private readonly IDialogService         mDialogService;
+        private readonly IPlatformLog           mLog;
         private IDisposable                     mPresetSubscription;
         private PlaybackEvent                   mCurrentPlayback;
         private PresetScene                     mCurrentScene;
@@ -29,14 +31,16 @@ namespace MilkBottle.ViewModels {
         public  string                          TrackName {  get; private set; }
         public  string                          PresetName { get; private set; }
 
-        public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider,
-                                    IStateManager stateManger, IDialogService dialogService, IEventAggregator eventAggregator ) {
+        public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, ISceneProvider sceneProvider,
+                                    IStateManager stateManger, IDialogService dialogService, IEventAggregator eventAggregator, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
+            mSceneProvider = sceneProvider;
             mPresetController = presetController;
             mStateManager = stateManger;
             mDialogService = dialogService;
+            mLog = log;
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
 
@@ -143,7 +147,19 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnSceneWizardResult( IDialogResult result ) { }
+        private void OnSceneWizardResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var newScene = result.Parameters.GetValue<bool>( SceneWizardDialogModel.cNewSceneCreatedParameter );
+                var scene = result.Parameters.GetValue<PresetScene>( SceneWizardDialogModel.cSceneParameter );
+
+                if( newScene ) {
+                    mSceneProvider.Insert( scene ).IfLeft( ex => mLog.LogException( "OnSceneWizardResult.Insert", ex ));
+                }
+                else {
+                    mSceneProvider.Update( scene ).IfLeft( ex => mLog.LogException( "OnSceneWizardResult.Update", ex ));
+                }
+            }
+        }
 
         private bool CanExecuteSceneWizard() {
             return ( mCurrentScene != null ) && ( mCurrentPlayback != null );
