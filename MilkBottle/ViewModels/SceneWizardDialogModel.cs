@@ -14,10 +14,12 @@ using ReusableBits.Platform;
 namespace MilkBottle.ViewModels {
     class SceneWizardDialogModel : PropertyChangeBase, IDialogAware {
         public  const string                        cSceneParameter = "scene";
+        public  const string                        cNewSceneCreatedParameter = "newScene";
         public  const string                        cPlaybackParameter = "playback";
 
-        private readonly ISceneProvider             mSceneProvider;
         private readonly IDialogService             mDialogService;
+        private readonly IPresetProvider            mPresetProvider;
+        private readonly IPresetListProvider        mListProvider;
         private PresetScene                         mScene;
         private PlaybackEvent                       mPlaybackEvent;
         private string                              mArtistNames;
@@ -36,6 +38,7 @@ namespace MilkBottle.ViewModels {
         private Preset                              mCurrentPreset;
         private int                                 mCurrentCycleDuration;
         private int                                 mCurrentPresetOverlap;
+        private bool                                mNewSceneCreated;
 
         public  String                              Name { get; set; }
         public  string                              Title { get; }
@@ -72,10 +75,11 @@ namespace MilkBottle.ViewModels {
         public  string                              PresetOverlapLegend => mCurrentPresetOverlap > 0 ? $"{mCurrentPresetOverlap} seconds" : "No Overlap";
         public  bool                                CanOverlap => IsListSource;
 
-        public  event Action<IDialogResult> RequestClose;
+        public  event Action<IDialogResult>         RequestClose;
 
-        public SceneWizardDialogModel( ISceneProvider sceneProvider, IDialogService dialogService ) {
-            mSceneProvider = sceneProvider;
+        public SceneWizardDialogModel( IPresetProvider presetProvider, IPresetListProvider listProvider, IDialogService dialogService ) {
+            mListProvider = listProvider;
+            mPresetProvider = presetProvider;
             mDialogService = dialogService;
 
             Title = "Scene Wizard";
@@ -94,6 +98,8 @@ namespace MilkBottle.ViewModels {
                 new UiCycling( "Count", Entities.PresetCycling.CountPerScene ),
                 new UiCycling( "Duration", Entities.PresetCycling.Duration )
             };
+
+            mNewSceneCreated = false;
         }
 
         public void OnDialogOpened( IDialogParameters parameters ) {
@@ -101,37 +107,9 @@ namespace MilkBottle.ViewModels {
                 mScene = parameters.GetValue<PresetScene>( cSceneParameter );
                 mPlaybackEvent = parameters.GetValue<PlaybackEvent>( cPlaybackParameter );
 
-                mArtistNames = mScene.ArtistNames;
-                mAlbumNames = mScene.AlbumNames;
-                mTrackNames = mScene.TrackNames;
-                mGenres = mScene.Genres;
-                mTags = mScene.Tags;
-
-                mUtilizeArtist = ContainsText( PlayingArtist, ArtistNames );
-                mUtilizeAlbum = ContainsText( PlayingAlbum, AlbumNames );
-                mUtilizeTrack = ContainsText( PlayingTrack, TrackNames );
-                mUtilizeGenre = ContainsText( PlayingGenre, Genres );
-                mUtilizeTags = ContainsText( PlayingTags, Tags );
-
-                RaisePropertyChanged( () => PlayingArtist );
-                RaisePropertyChanged( () => PlayingAlbum );
-                RaisePropertyChanged( () => PlayingTrack );
-                RaisePropertyChanged( () => PlayingGenre );
-                RaisePropertyChanged( () => PlayingTags );
-
-                RaisePropertyChanged( () => ArtistNames );
-                RaisePropertyChanged( () => AlbumNames );
-                RaisePropertyChanged( () => TrackNames );
-                RaisePropertyChanged( () => Genres );
-                RaisePropertyChanged( () => Tags );
-
-                RaisePropertyChanged( () => UtilizeArtist );
-                RaisePropertyChanged( () => UtilizeAlbum );
-                RaisePropertyChanged( () => UtilizeTrack );
-                RaisePropertyChanged( () => UtilizeGenre );
-                RaisePropertyChanged( () => UtilizeTags );
-
-                RaisePropertyChanged( () => SceneName );
+                LoadPresetLists();
+                LoadPlaybackEvent();
+                LoadScene();
             }
         }
 
@@ -145,7 +123,9 @@ namespace MilkBottle.ViewModels {
 
                 if(!String.IsNullOrWhiteSpace( sceneName )) {
                     mScene = new PresetScene( sceneName );
+                    mNewSceneCreated = true;
 
+                    UpdateScene();
                     RaisePropertyChanged( () => SceneName );
                 }
             }
@@ -173,7 +153,20 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnSceneSourceChanged() { }
+        private void OnSceneSourceChanged() {
+            if(( mCurrentSource?.Source == SceneSource.PresetList ) &&
+               ( mCurrentList != null )) {
+                mScene = mScene.WithSource( SceneSource.PresetList, mCurrentList.ListType, mCurrentList.ListIdentifier );
+            }
+
+            if(( mCurrentSource?.Source == SceneSource.SinglePreset ) &&
+               ( mCurrentPreset != null )) {
+                mScene = mScene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
+            }
+
+            RaisePropertyChanged( () => CanCycle );
+            RaisePropertyChanged( () => CanOverlap );
+        }
 
         private void OnSelectPreset() {
             mDialogService.ShowDialog( nameof( SelectPresetDialog ), new DialogParameters(), OnPresetSelected );
@@ -184,9 +177,7 @@ namespace MilkBottle.ViewModels {
                 mCurrentPreset = result.Parameters.GetValue<Preset>( SelectPresetDialogModel.cPresetParameter );
 
                 if( mCurrentPreset != null ) {
-                    var newScene = mScene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
-
-                    UpdateScene( newScene );
+                    mScene = mScene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
 
                     RaisePropertyChanged( () => CurrentPresetName );
                 }
@@ -216,9 +207,232 @@ namespace MilkBottle.ViewModels {
         private void OnPresetCyclingChanged() {
             UpdateCycling();
 
-            var newScene = mScene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
-            
-            UpdateScene( newScene );
+            mScene = mScene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
+        }
+
+        public int CurrentPresetOverlap {
+            get => mCurrentPresetOverlap;
+            set {
+                mCurrentPresetOverlap = value;
+
+                OnPresetOverlapChanged();
+                RaisePropertyChanged( () => CurrentPresetOverlap );
+                RaisePropertyChanged( () => PresetOverlapLegend );
+            }
+        }
+
+        private void OnPresetOverlapChanged() { }
+
+        public string ArtistNames {
+            get => mArtistNames;
+            set {
+                mArtistNames = value;
+                mScene = mScene.WithArtists( mArtistNames );
+
+                RaisePropertyChanged( () => ArtistNames );
+            }
+        }
+
+        public string AlbumNames {
+            get => mAlbumNames;
+            set {
+                mAlbumNames = value;
+                mScene = mScene.WithAlbums( mAlbumNames );
+
+                RaisePropertyChanged( () => AlbumNames );
+            }
+        }
+
+        public string TrackNames {
+            get => mTrackNames;
+            set {
+                mTrackNames = value;
+                mScene = mScene.WithTracks( mTrackNames );
+
+                RaisePropertyChanged( () => TrackNames );
+            }
+        }
+
+        public string Genres {
+            get => mGenres;
+            set {
+                mGenres = value;
+                mScene = mScene.WithGenres( mGenres );
+
+                RaisePropertyChanged( () => Genres );
+            }
+        }
+
+        public string Tags {
+            get => mTags;
+            set {
+                mTags = value;
+                mScene = mScene.WithTags( mTags );
+
+                RaisePropertyChanged( () => Tags );
+            }
+        }
+
+        public bool UtilizeArtist {
+            get => mUtilizeArtist;
+            set {
+                mUtilizeArtist = value;
+                ArtistNames = mUtilizeArtist ? AddText( PlayingArtist, ArtistNames ) : RemoveText( PlayingArtist, ArtistNames );
+
+                RaisePropertyChanged( () => UtilizeArtist );
+            }
+        }
+
+        public bool UtilizeAlbum {
+            get => mUtilizeAlbum;
+            set {
+                mUtilizeAlbum = value;
+                AlbumNames = mUtilizeAlbum ? AddText( PlayingAlbum, AlbumNames ) : RemoveText( PlayingAlbum, AlbumNames );
+
+                RaisePropertyChanged( () => UtilizeAlbum );
+            }
+        }
+
+        public bool UtilizeTrack {
+            get => mUtilizeTrack;
+            set {
+                mUtilizeTrack = value;
+                TrackNames = mUtilizeTrack ? AddText( PlayingTrack, TrackNames ) : RemoveText( PlayingTrack, TrackNames );
+
+                RaisePropertyChanged( () => UtilizeTrack );
+            }
+        }
+
+        public bool UtilizeGenre {
+            get => mUtilizeGenre;
+            set {
+                mUtilizeGenre = value;
+                Genres = mUtilizeGenre ? AddText( PlayingGenre, Genres ) : RemoveText( PlayingGenre, Genres );
+
+                RaisePropertyChanged( () => UtilizeGenre );
+            }
+        }
+
+        public bool UtilizeTags {
+            get => mUtilizeTags;
+            set {
+                mUtilizeTags = value;
+                Tags = mUtilizeTags ? AddText( PlayingTags, Tags ) : RemoveText( PlayingTags, Tags );
+
+                RaisePropertyChanged( () => UtilizeTags );
+            }
+        }
+
+        private string AddText( string text, string toText ) {
+            return $"{toText}{(String.IsNullOrWhiteSpace( toText ) ? String.Empty : PresetScene.cValueSeparator + " " )}{text}";
+        }
+
+        private string RemoveText( string text, string fromText ) {
+            var newParts = from s in fromText.Split( PresetScene.cValueSeparator ) let trimmed = s.Trim() where !trimmed.Equals( text ) select trimmed;
+
+            return String.Join( PresetScene.cValueSeparator + " ", newParts );
+        }
+
+        private bool ContainsText( string text, string inText ) {
+            var retValue = false;
+
+            if((!String.IsNullOrWhiteSpace( text )) &&
+               (!String.IsNullOrWhiteSpace( inText ))) {
+                var parts = from s in inText.Split( PresetScene.cValueSeparator ) let trimmed = s.Trim() where trimmed.Equals( text ) select trimmed;
+
+                retValue = parts.Any();
+            }
+
+            return retValue;
+        }
+
+        private void LoadPresetLists() {
+            PresetLists.Clear();
+            PresetLists.AddRange( mListProvider.GetLists());
+        }
+
+        private void LoadPlaybackEvent() {
+            RaisePropertyChanged( () => PlayingArtist );
+            RaisePropertyChanged( () => PlayingAlbum );
+            RaisePropertyChanged( () => PlayingTrack );
+            RaisePropertyChanged( () => PlayingGenre );
+            RaisePropertyChanged( () => PlayingTags );
+        }
+
+        private void LoadScene() {
+            mArtistNames = mScene.ArtistNames;
+            mAlbumNames = mScene.AlbumNames;
+            mTrackNames = mScene.TrackNames;
+            mGenres = mScene.Genres;
+            mTags = mScene.Tags;
+
+            mUtilizeArtist = ContainsText( PlayingArtist, ArtistNames );
+            mUtilizeAlbum = ContainsText( PlayingAlbum, AlbumNames );
+            mUtilizeTrack = ContainsText( PlayingTrack, TrackNames );
+            mUtilizeGenre = ContainsText( PlayingGenre, Genres );
+            mUtilizeTags = ContainsText( PlayingTags, Tags );
+
+            mCurrentSource = SceneSources.FirstOrDefault( s => s.Source.Equals( mScene.SceneSource ));
+            if( mCurrentSource?.Source == SceneSource.PresetList ) {
+                mCurrentList = PresetLists.FirstOrDefault( l => l.ListIdentifier.Equals( mScene.SourceId ));
+            }
+            else {
+                mPresetProvider.GetPresetById( mScene.SourceId ).IfRight( po => po.Do( p => mCurrentPreset = p ));
+            }
+
+            mCurrentCycling = PresetCycling.FirstOrDefault( c => c.Cycling.Equals( mScene.PresetCycle ));
+            mCurrentCycleDuration = mScene.PresetDuration;
+
+            mCurrentPresetOverlap = mScene.OverlapDuration;
+
+            UpdateCycling();
+
+            RaisePropertyChanged( () => ArtistNames );
+            RaisePropertyChanged( () => AlbumNames );
+            RaisePropertyChanged( () => TrackNames );
+            RaisePropertyChanged( () => Genres );
+            RaisePropertyChanged( () => Tags );
+
+            RaisePropertyChanged( () => UtilizeArtist );
+            RaisePropertyChanged( () => UtilizeAlbum );
+            RaisePropertyChanged( () => UtilizeTrack );
+            RaisePropertyChanged( () => UtilizeGenre );
+            RaisePropertyChanged( () => UtilizeTags );
+
+            RaisePropertyChanged( () => SelectedSource );
+            RaisePropertyChanged( () => SelectedList );
+            RaisePropertyChanged( () => CurrentPresetName );
+            RaisePropertyChanged( () => IsListSource );
+            RaisePropertyChanged( () => IsPresetSource );
+
+            RaisePropertyChanged( () => CurrentCycling );
+            RaisePropertyChanged( () => CanCycle );
+            RaisePropertyChanged( () => CanOverlap );
+
+            RaisePropertyChanged( () => CurrentPresetOverlap );
+            RaisePropertyChanged( () => PresetOverlapLegend );
+
+            RaisePropertyChanged( () => SceneName );
+        }
+
+        private void UpdateScene() {
+            mScene = mScene.WithArtists( mArtistNames );
+            mScene = mScene.WithAlbums( mAlbumNames );
+            mScene = mScene.WithTracks( mTrackNames );
+            mScene = mScene.WithGenres( mGenres );
+            mScene = mScene.WithTags( mTags );
+
+            if(( mCurrentSource?.Source == SceneSource.PresetList ) &&
+               ( mCurrentList != null )) {
+                mScene = mScene.WithSource( SceneSource.PresetList, mCurrentList.ListType, mCurrentList.ListIdentifier );
+            }
+
+            if(( mCurrentSource?.Source == SceneSource.SinglePreset ) &&
+               ( mCurrentPreset != null )) {
+                mScene = mScene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
+            }
+
+            mScene = mScene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
         }
 
         private void UpdateCycling() {
@@ -240,171 +454,10 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => MaximumCycleDuration );
         }
 
-        public int CurrentPresetOverlap {
-            get => mCurrentPresetOverlap;
-            set {
-                mCurrentPresetOverlap = value;
-
-                OnPresetOverlapChanged();
-                RaisePropertyChanged( () => CurrentPresetOverlap );
-                RaisePropertyChanged( () => PresetOverlapLegend );
-            }
-        }
-
-        private void OnPresetOverlapChanged() { }
-
-        private void UpdateScene( PresetScene scene ) { }
-
-        public string ArtistNames {
-            get => mArtistNames;
-            set {
-                mArtistNames = value;
-
-                OnArtistNamesChanged();
-                RaisePropertyChanged( () => ArtistNames );
-            }
-        }
-
-        private void OnArtistNamesChanged() { }
-
-        public string AlbumNames {
-            get => mAlbumNames;
-            set {
-                mAlbumNames = value;
-
-                OnAlbumNamesChanged();
-                RaisePropertyChanged( () => AlbumNames );
-            }
-        }
-
-        private void OnAlbumNamesChanged() { }
-
-        public string TrackNames {
-            get => mTrackNames;
-            set {
-                mTrackNames = value;
-
-                OnTrackNamesChanged();
-                RaisePropertyChanged( () => TrackNames );
-            }
-        }
-
-        private void OnTrackNamesChanged() { }
-
-        public string Genres {
-            get => mGenres;
-            set {
-                mGenres = value;
-
-                OnGenresChanged();
-                RaisePropertyChanged( () => Genres );
-            }
-        }
-
-        private void OnGenresChanged() { }
-
-        public string Tags {
-            get => mTags;
-            set {
-                mTags = value;
-
-                OnTagsChanged();
-                RaisePropertyChanged( () => Tags );
-            }
-        }
-
-        private void OnTagsChanged() { }
-
-        public bool UtilizeArtist {
-            get => mUtilizeArtist;
-            set {
-                mUtilizeArtist = value;
-
-                OnUtilizeArtist();
-                RaisePropertyChanged( () => UtilizeArtist );
-            }
-        }
-
-        private void OnUtilizeArtist() {
-            ArtistNames = mUtilizeArtist ? AddText( PlayingArtist, ArtistNames ) : RemoveText( PlayingArtist, ArtistNames );
-        }
-
-        public bool UtilizeAlbum {
-            get => mUtilizeAlbum;
-            set {
-                mUtilizeAlbum = value;
-
-                OnUtilizeAlbum();
-                RaisePropertyChanged( () => UtilizeAlbum );
-            }
-        }
-
-        private void OnUtilizeAlbum() {
-            AlbumNames = mUtilizeAlbum ? AddText( PlayingAlbum, AlbumNames ) : RemoveText( PlayingAlbum, AlbumNames );
-        }
-
-        public bool UtilizeTrack {
-            get => mUtilizeTrack;
-            set {
-                mUtilizeTrack = value;
-
-                OnUtilizeTrack();
-                RaisePropertyChanged( () => UtilizeTrack );
-            }
-        }
-
-        private void OnUtilizeTrack() {
-            TrackNames = mUtilizeTrack ? AddText( PlayingTrack, TrackNames ) : RemoveText( PlayingTrack, TrackNames );
-        }
-
-        public bool UtilizeGenre {
-            get => mUtilizeGenre;
-            set {
-                mUtilizeGenre = value;
-
-                OnUtilizeGenre();
-                RaisePropertyChanged( () => UtilizeGenre );
-            }
-        }
-
-        private void OnUtilizeGenre() {
-            Genres = mUtilizeGenre ? AddText( PlayingGenre, Genres ) : RemoveText( PlayingGenre, Genres );
-        }
-
-        public bool UtilizeTags {
-            get => mUtilizeTags;
-            set {
-                mUtilizeTags = value;
-
-                OnUtilizeTags();
-                RaisePropertyChanged( () => UtilizeTags );
-            }
-        }
-
-        private void OnUtilizeTags() {
-            Tags = mUtilizeTags ? AddText( PlayingTags, Tags ) : RemoveText( PlayingTags, Tags );
-        }
-
-        private string AddText( string text, string toText ) {
-            return $"{toText}{(String.IsNullOrWhiteSpace( toText ) ? String.Empty : ", ")}{text}";
-        }
-
-        private string RemoveText( string text, string fromText ) {
-            var newParts = from s in fromText.Split( ',' ) let trimmed = s.Trim() where !trimmed.Equals( text ) select trimmed;
-
-            return String.Join( ", ", newParts );
-        }
-
-        private bool ContainsText( string text, string inText ) {
-            var parts = from s in inText.Split( ',' ) let trimmed = s.Trim() where trimmed.Equals( text ) select trimmed;
-
-            return parts.Any();
-        }
-
         public void OnOk() {
             RaiseRequestClose(
                 !String.IsNullOrWhiteSpace( Name )
-                    ? new DialogResult( ButtonResult.OK, new DialogParameters {{ cSceneParameter, mScene }} )
+                    ? new DialogResult( ButtonResult.OK, new DialogParameters {{ cSceneParameter, mScene }, { cNewSceneCreatedParameter, mNewSceneCreated } } )
                     : new DialogResult( ButtonResult.Cancel ) );
         }
 
