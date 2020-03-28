@@ -89,6 +89,7 @@
     <Style x:Key="GeneralTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}"/>
     </Style>
 
 	<Style x:Key="ControlTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource GeneralTitleStyle}">
