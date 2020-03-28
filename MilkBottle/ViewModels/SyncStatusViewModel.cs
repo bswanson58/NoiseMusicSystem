@@ -157,6 +157,8 @@ namespace MilkBottle.ViewModels {
                 }
                 else {
                     mSceneProvider.Update( scene ).IfLeft( ex => mLog.LogException( "OnSceneWizardResult.Update", ex ));
+
+                    mCurrentScene = scene;
                 }
             }
         }
