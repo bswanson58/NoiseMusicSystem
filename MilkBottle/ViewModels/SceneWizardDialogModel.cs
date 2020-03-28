@@ -40,7 +40,6 @@ namespace MilkBottle.ViewModels {
         private int                                 mCurrentPresetOverlap;
         private bool                                mNewSceneCreated;
 
-        public  String                              Name { get; set; }
         public  string                              Title { get; }
 
         public  ObservableCollection<UiSource>      SceneSources { get; }
@@ -324,13 +323,13 @@ namespace MilkBottle.ViewModels {
         }
 
         private string AddText( string text, string toText ) {
-            return $"{toText}{(String.IsNullOrWhiteSpace( toText ) ? String.Empty : PresetScene.cValueSeparator + " " )}{text}";
+            return $"{toText}{(String.IsNullOrWhiteSpace( toText ) ? String.Empty : PresetScene.cValueSeparator.ToString())}{text}";
         }
 
         private string RemoveText( string text, string fromText ) {
             var newParts = from s in fromText.Split( PresetScene.cValueSeparator ) let trimmed = s.Trim() where !trimmed.Equals( text ) select trimmed;
 
-            return String.Join( PresetScene.cValueSeparator + " ", newParts );
+            return String.Join( PresetScene.cValueSeparator.ToString(), newParts );
         }
 
         private bool ContainsText( string text, string inText ) {
@@ -433,6 +432,7 @@ namespace MilkBottle.ViewModels {
             }
 
             mScene = mScene.WithCycle( mCurrentCycling.Cycling, mCurrentCycleDuration );
+            mScene = mScene.WithOverlap( mCurrentPresetOverlap != 0, mCurrentPresetOverlap );
         }
 
         private void UpdateCycling() {
@@ -455,10 +455,9 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnOk() {
-            RaiseRequestClose(
-                !String.IsNullOrWhiteSpace( Name )
-                    ? new DialogResult( ButtonResult.OK, new DialogParameters {{ cSceneParameter, mScene }, { cNewSceneCreatedParameter, mNewSceneCreated } } )
-                    : new DialogResult( ButtonResult.Cancel ) );
+            RaiseRequestClose( new DialogResult( ButtonResult.OK, 
+                                        new DialogParameters {{ cSceneParameter, mScene },
+                                                              { cNewSceneCreatedParameter, mNewSceneCreated } } ));
         }
 
         public void OnCancel() {
