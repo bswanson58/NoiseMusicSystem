@@ -16,6 +16,8 @@ namespace MilkBottle.Entities {
 
     [DebuggerDisplay("{" + nameof( DebugDisplay ) + "}")]
     class PresetScene : EntityBase {
+        public  const char          cValueSeparator = '|';
+
         public  string              Name { get; }
         public  SceneSource         SceneSource { get; }
         public  PresetListType      SourceListType { get; }

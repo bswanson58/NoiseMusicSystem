@@ -148,7 +148,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,10,0,5" Style="{StaticResource ControlTitleStyle}"
-                               Text="Scene Selection: (separate multiple values with commas)"/>
+                               Text="Scene Selection: (separate multiple values with pipe (|))"/>
 
                     <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Artist Names:"/>
                     <TextBox Grid.Row="1" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding ArtistNames, UpdateSourceTrigger=PropertyChanged}"/>
