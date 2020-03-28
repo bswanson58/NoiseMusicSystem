@@ -66,7 +66,7 @@ namespace MilkBottle.Models {
             yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, PresetScene.cValueSeparator ), 9 );
             yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), 8 );
             yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, PresetScene.cValueSeparator ), 7 );
-            yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, ',' ), 6 );
+            yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, PresetScene.cValueSeparator ), 6 );
         }
 
         private string[] SplitString( string input ) {
