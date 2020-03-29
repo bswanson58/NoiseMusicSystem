@@ -24,17 +24,20 @@
 
     <Grid Margin="10,0" Tag="dimmed">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <Button Margin="0,0,10,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
-                ToolTip="Scene Wizard"/>
-        <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
-        <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
-        <TextBlock Grid.Column="3" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding TrackName}"/>
+        <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <Button Margin="0,0,10,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
+                    ToolTip="Scene Wizard"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
+        </StackPanel>
+
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
+
+        <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding TrackName}"/>
     </Grid>
 
     <i:Interaction.Behaviors>
