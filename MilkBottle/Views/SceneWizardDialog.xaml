@@ -11,7 +11,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SceneWizardDialogModel, IsDesignTimeCreatable=False}"
-             Height="500" Width="1000">
+             Height="510" Width="1000">
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
@@ -55,6 +55,7 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -152,7 +153,18 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="6" Width="1" Fill="Gray"/>
+            <Grid Grid.Column="0" Grid.Row="6" Margin="5,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox Grid.Column="0" Visibility="Hidden"/>
+                <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Width="45" Margin="0,0,3,0" TextAlignment="Right" Text="Year:"/>
+                <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingYear}"/>
+            </Grid>
+
+            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="7" Width="1" Fill="Gray"/>
 
         </Grid>
 

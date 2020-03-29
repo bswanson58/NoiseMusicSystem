@@ -33,6 +33,7 @@ namespace ReusableBits.Platform {
         public  int         TrackRating { get; set; }
         public  uint        TrackLength { get; set; }
         public  bool        IsFavorite { get; set; }
+        public  int         PublishedYear { get; set; }
 
         public PlaybackEvent() {
             ArtistName = String.Empty;
@@ -43,6 +44,7 @@ namespace ReusableBits.Platform {
             TrackRating = 0;
             TrackLength = 0;
             IsFavorite = false;
+            PublishedYear = 0;
         }
     }
 }

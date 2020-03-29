@@ -45,7 +45,7 @@ namespace Noise.Desktop.Models {
 
                     var playbackEvent = new PlaybackEvent{ ArtistName = artist.Name, AlbumName = album.Name, TrackName = track.Name,
                                                            ArtistGenre = genre?.Name, TrackTags = tags.ToArray(), TrackRating = track.Rating, 
-                                                           TrackLength = (uint)track.Duration.TotalSeconds, IsFavorite = track.IsFavorite };
+                                                           TrackLength = (uint)track.Duration.TotalSeconds, IsFavorite = track.IsFavorite, PublishedYear = track.PublishedYear };
 
                     mPlaybackEventSubject.OnNext( playbackEvent );
                 }

@@ -57,6 +57,7 @@ namespace MilkBottle.ViewModels {
         public  string                              PlayingTrack => mPlaybackEvent?.TrackName;
         public  string                              PlayingGenre => mPlaybackEvent?.ArtistGenre;
         public  string                              PlayingTags => mPlaybackEvent != null ? String.Join( ", ", mPlaybackEvent.TrackTags ) : String.Empty;
+        public  string                              PlayingYear => mPlaybackEvent != null ? mPlaybackEvent.PublishedYear > 0 ? $"{mPlaybackEvent.PublishedYear:D4}" : String.Empty : String.Empty;
 
         public  string                              SceneName => mScene?.Name;
         public  string                              CurrentPresetName => mCurrentPreset?.Name;
@@ -376,6 +377,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => PlayingTrack );
             RaisePropertyChanged( () => PlayingGenre );
             RaisePropertyChanged( () => PlayingTags );
+            RaisePropertyChanged( () => PlayingYear );
         }
 
         private void LoadScene() {
