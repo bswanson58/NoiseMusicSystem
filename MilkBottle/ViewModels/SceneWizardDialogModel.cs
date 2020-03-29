@@ -48,6 +48,7 @@ namespace MilkBottle.ViewModels {
 
         public  DelegateCommand                     CreateScene { get; }
         public  DelegateCommand                     SelectPreset { get; }
+        public  DelegateCommand                     SelectScene { get; }
         public  DelegateCommand                     Ok { get; }
         public  DelegateCommand                     Cancel { get; }
 
@@ -87,6 +88,7 @@ namespace MilkBottle.ViewModels {
             Cancel = new DelegateCommand( OnCancel );
             CreateScene = new DelegateCommand( OnCreateScene );
             SelectPreset = new DelegateCommand( OnSelectPreset );
+            SelectScene = new DelegateCommand( OnSelectScene );
 
             PresetLists = new ObservableCollection<PresetList>();
             SceneSources = new ObservableCollection<UiSource> {
@@ -179,6 +181,22 @@ namespace MilkBottle.ViewModels {
                     mScene = mScene.WithSource( SceneSource.SinglePreset, PresetListType.Preset, mCurrentPreset.Id );
 
                     RaisePropertyChanged( () => CurrentPresetName );
+                }
+            }
+        }
+
+        private void OnSelectScene() {
+            mDialogService.ShowDialog( nameof( SelectSceneDialog ), new DialogParameters(), OnSelectSceneResult );
+        }
+
+        private void OnSelectSceneResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var newScene = result.Parameters.GetValue<PresetScene>( SelectSceneDialogModel.cSceneParameter );
+
+                if(newScene != null ) {
+                    mScene = newScene;
+
+                    LoadScene();
                 }
             }
         }

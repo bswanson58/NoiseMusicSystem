@@ -52,6 +52,7 @@ namespace MilkBottle {
             containerRegistry.RegisterDialog<NewSceneDialog, NewSceneDialogModel>();
             containerRegistry.RegisterDialog<NewSetDialog, NewSetDialogModel>();
             containerRegistry.RegisterDialog<SceneWizardDialog, SceneWizardDialogModel>();
+            containerRegistry.RegisterDialog<SelectSceneDialog, SelectSceneDialogModel>();
 
             containerRegistry.RegisterSingleton<IIpcHandler, IpcHandler>();
         }

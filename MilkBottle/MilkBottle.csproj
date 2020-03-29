@@ -321,6 +321,7 @@
     <Compile Include="ViewModels\SceneEditViewModel.cs" />
     <Compile Include="ViewModels\SceneWizardDialogModel.cs" />
     <Compile Include="ViewModels\SelectPresetDialogModel.cs" />
+    <Compile Include="ViewModels\SelectSceneDialogModel.cs" />
     <Compile Include="ViewModels\SetEditViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
@@ -369,6 +370,9 @@
     </Compile>
     <Compile Include="Views\SelectPresetDialog.xaml.cs">
       <DependentUpon>SelectPresetDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectSceneDialog.xaml.cs">
+      <DependentUpon>SelectSceneDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SetEditView.xaml.cs">
       <DependentUpon>SetEditView.xaml</DependentUpon>
@@ -429,6 +433,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SceneWizardDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectSceneDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
