@@ -22,7 +22,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="10,0" Tag="dimmed">
+    <Grid Margin="10,0" Tag="dimmed" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
