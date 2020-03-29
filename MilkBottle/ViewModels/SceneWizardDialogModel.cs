@@ -220,7 +220,9 @@ namespace MilkBottle.ViewModels {
             }
         }
 
-        private void OnPresetOverlapChanged() { }
+        private void OnPresetOverlapChanged() {
+            mScene = mScene.WithOverlap( mCurrentPresetOverlap != 0, mCurrentPresetOverlap );
+        }
 
         public string ArtistNames {
             get => mArtistNames;
