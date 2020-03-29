@@ -58,7 +58,7 @@ namespace MilkBottle.Models {
         }
 
         private int RateValue( string eventValue, string sceneValue, int rating ) {
-            return eventValue.Trim().Contains( sceneValue.Trim()) ? rating : 0;
+            return eventValue.Trim().ToLowerInvariant().Contains( sceneValue.Trim().ToLowerInvariant()) ? rating : 0;
         }
 
         private IEnumerable<SceneRating> ValuesForScene( PresetScene scene, PlaybackEvent forEvent ) {
