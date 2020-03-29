@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Caliburn.Micro;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
@@ -20,6 +21,7 @@ namespace MilkBottle.ViewModels {
         private readonly ISyncManager           mSyncManager;
         private readonly IStateManager          mStateManager;
         private readonly IDialogService         mDialogService;
+        private readonly IPreferences           mPreferences;
         private readonly IPlatformLog           mLog;
         private IDisposable                     mPresetSubscription;
         private PlaybackEvent                   mCurrentPlayback;
@@ -32,7 +34,7 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetName { get; private set; }
 
         public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, ISceneProvider sceneProvider,
-                                    IStateManager stateManger, IDialogService dialogService, IEventAggregator eventAggregator, IPlatformLog log ) {
+                                    IStateManager stateManger, IDialogService dialogService, IEventAggregator eventAggregator, IPreferences preferences, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
@@ -40,6 +42,7 @@ namespace MilkBottle.ViewModels {
             mPresetController = presetController;
             mStateManager = stateManger;
             mDialogService = dialogService;
+            mPreferences = preferences;
             mLog = log;
 
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
@@ -131,6 +134,12 @@ namespace MilkBottle.ViewModels {
 
                 mCurrentScene = scene;
                 SceneName = scene.Name;
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                if( mCurrentScene.Id.ToString().Equals( preferences.DefaultScene )) {
+                    SceneName += " (default)";
+                }
 
                 RaisePropertyChanged( () => SceneName );
                 SceneWizard.RaiseCanExecuteChanged();

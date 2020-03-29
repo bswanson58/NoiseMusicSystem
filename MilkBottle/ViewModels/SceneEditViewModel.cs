@@ -8,6 +8,7 @@ using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
 using MilkBottle.Views;
+using MoreLinq.Extensions;
 using Prism;
 using Prism.Commands;
 using Prism.Services.Dialogs;
@@ -19,6 +20,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetProvider            mPresetProvider;
         private readonly IPresetListProvider        mListProvider;
         private readonly IDialogService             mDialogService;
+        private readonly IPreferences               mPreferences;
         private readonly IPlatformLog               mLog;
         private UiScene                             mCurrentScene;
         private UiSource                            mCurrentSource;
@@ -65,11 +67,12 @@ namespace MilkBottle.ViewModels {
         public  event EventHandler                  IsActiveChanged = delegate { };
 
         public SceneEditViewModel( ISceneProvider sceneProvider, IPresetListProvider listProvider, IPresetProvider presetProvider,
-                                   IStateManager stateManager, IDialogService dialogService, IPlatformLog log ) {
+                                   IStateManager stateManager, IDialogService dialogService, IPreferences preferences, IPlatformLog log ) {
             mSceneProvider = sceneProvider;
             mPresetProvider = presetProvider;
             mListProvider = listProvider;
             mDialogService = dialogService;
+            mPreferences = preferences;
             mLog = log;
 
             Scenes = new BindableCollection<UiScene>();
@@ -108,6 +111,22 @@ namespace MilkBottle.ViewModels {
 
                 OnSceneSelected();
                 RaisePropertyChanged( () => CurrentScene );
+                RaisePropertyChanged( () => IsDefaultScene );
+            }
+        }
+
+        public bool IsDefaultScene {
+            get => mCurrentScene?.IsDefault == true;
+            set {
+                if(( mCurrentScene != null ) &&
+                   ( value )) {
+                    var preferences = mPreferences.Load<MilkPreferences>();
+
+                    preferences.DefaultScene = mCurrentScene.Scene.Id.ToString();
+                    mPreferences.Save( preferences );
+
+                    LoadScenes();
+                }
             }
         }
 
@@ -169,10 +188,13 @@ namespace MilkBottle.ViewModels {
 
         private void LoadScenes() {
             var previousScene = mCurrentScene;
+            var preferences = mPreferences.Load<MilkPreferences>();
 
             Scenes.Clear();
             mSceneProvider.SelectScenes( list => Scenes.AddRange( from s in list orderby s.Name select new UiScene( s, OnEditScene, OnDeleteScene )))
                 .IfLeft( ex => LogException( nameof( LoadScenes ), ex ));
+
+            Scenes.ForEach( s => s.SetDefault( s.Scene.Id.ToString().Equals( preferences.DefaultScene )));
 
             if( previousScene != null ) {
                 CurrentScene = Scenes.FirstOrDefault( s => s.Scene.Id.Equals( previousScene.Scene.Id ));

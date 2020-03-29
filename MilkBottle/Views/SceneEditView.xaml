@@ -35,7 +35,11 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="(default)"
+                               Visibility="{Binding IsDefault, Converter={StaticResource CollapseIfFalse}}"/>
+                </StackPanel>
 
                 <Button x:Name="Edit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
                         Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
@@ -68,6 +72,8 @@
                 </Grid.RowDefinitions>
 
                 <ListBox Grid.Row="0" ItemsSource="{Binding Scenes}" ItemTemplate="{StaticResource SceneTemplate}" SelectedItem="{Binding CurrentScene}"/>
+
+                <CheckBox Grid.Row="1" Margin="10,0,0,0" VerticalAlignment="Bottom" Content="Is Default Scene" IsChecked="{Binding IsDefaultScene}"/>
 
                 <StackPanel Grid.Row="1" Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="New Scene..." Command="{Binding NewScene}"/>

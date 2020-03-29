@@ -9,6 +9,7 @@ namespace MilkBottle.Dto {
         public  bool    ShouldMinimizeToTray { get; set; }
         public  bool    DisplayControllerWhenMaximized { get; set; }
         public  bool    DisplayFps { get; set; }
+        public  string  DefaultScene { get; set; }
 
         public MilkPreferences() {
             CurrentPresetLibrary = String.Empty;
@@ -20,6 +21,8 @@ namespace MilkBottle.Dto {
             ShouldMinimizeToTray = false;
             DisplayControllerWhenMaximized = true;
             DisplayFps = false;
+
+            DefaultScene = String.Empty;
         }
     }
 }

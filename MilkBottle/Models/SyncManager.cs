@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MoreLinq;
@@ -21,17 +22,25 @@ namespace MilkBottle.Models {
 
     class SyncManager : ISyncManager {
         private readonly ISceneProvider     mSceneProvider;
+        private readonly IPreferences       mPreferences;
 
-        public SyncManager( ISceneProvider sceneProvider ) {
+        public SyncManager( ISceneProvider sceneProvider, IPreferences preferences ) {
             mSceneProvider = sceneProvider;
+            mPreferences = preferences;
         }
 
         public PresetScene GetDefaultScene() {
+            var retValue = default( PresetScene );
             var sceneList = new List<PresetScene>();
+            var preferences = mPreferences.Load<MilkPreferences>();
 
             mSceneProvider.SelectScenes( list => sceneList.AddRange( list ));
 
-            return sceneList.FirstOrDefault();
+            if(!String.IsNullOrWhiteSpace( preferences.DefaultScene )) {
+                retValue = sceneList.FirstOrDefault( s => s.Id.ToString().Equals( preferences.DefaultScene ));
+            }
+
+            return retValue ?? sceneList.FirstOrDefault();
         }
 
         public PresetScene SelectScene( PlaybackEvent forEvent ) {
@@ -42,7 +51,7 @@ namespace MilkBottle.Models {
             var ranking = from scene in sceneList select ( scene, GradeScene( forEvent, scene ));
             var bestRanked = ranking.MaxBy( r => r.Item2 ).Select( r => r.scene ).FirstOrDefault();
 
-            return bestRanked ?? sceneList.FirstOrDefault();
+            return bestRanked ?? GetDefaultScene();
         }
 
         private int GradeScene( PlaybackEvent forEvent, PresetScene scene ) {
