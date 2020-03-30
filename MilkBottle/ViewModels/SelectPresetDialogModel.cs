@@ -6,6 +6,7 @@ using System.Windows.Data;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MoreLinq;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -118,7 +119,7 @@ namespace MilkBottle.ViewModels {
         private void LoadAllPresets() {
             mPresets.Clear();
 
-            mPresetProvider.SelectPresets( list => mPresets.AddRange(( from p in list orderby p.Name select p ).Distinct()));
+            mPresetProvider.SelectPresets( list => mPresets.AddRange(( from p in list orderby p.Name select p ).DistinctBy( p => p.Name )));
         }
 
         private void LoadLibrary( PresetList library ) {
