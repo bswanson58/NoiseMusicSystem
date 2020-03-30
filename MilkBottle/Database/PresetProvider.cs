@@ -36,10 +36,6 @@ namespace MilkBottle.Database {
             return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( Preset.Name ), validName )));
         }
 
-        public Either<Exception, Unit> QueryPresets( Action<ILiteQueryable<Preset>> action ) {
-            return QueryEntities( action );
-        }
-
         public Either<Exception, Unit> SelectPresets( Action<IEnumerable<Preset>> action ) {
             return SelectEntities( action );
         }
