@@ -123,6 +123,9 @@ namespace MilkBottle.ViewModels {
 
                 mPresetSubscription?.Dispose();
                 mPresetSubscription = null;
+
+                mPlaybackSubscription?.Dispose();
+                mPlaybackSubscription = null;
             }
         }
 
