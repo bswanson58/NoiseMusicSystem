@@ -86,13 +86,13 @@ namespace MilkBottle.ViewModels {
         public void Handle( Events.ModeChanged args ) {
             if( args.ToView != ShellView.Sync ) {
                 mEventAggregator.Unsubscribe( this );
+
+                mPresetSubscription?.Dispose();
+                mPresetSubscription = null;
+
+                mPlaybackSubscription?.Dispose();
+                mPlaybackSubscription = null;
             }
-
-            mPresetSubscription?.Dispose();
-            mPresetSubscription = null;
-
-            mPlaybackSubscription?.Dispose();
-            mPlaybackSubscription = null;
         }
 
         private void OnPlaybackEvent( PlaybackEvent args ) {
