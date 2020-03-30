@@ -42,14 +42,6 @@ namespace MilkBottle.Events {
         }
     }
 
-    public class PlaybackNotification {
-        public PlaybackEvent    PlaybackEvent {  get; }
-
-        public PlaybackNotification( PlaybackEvent args ) {
-            PlaybackEvent = args;
-        }
-    }
-
     public class WindowStateChanged {
         public  WindowState     CurrentState { get; }
 

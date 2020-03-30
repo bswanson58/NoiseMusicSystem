@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using MilkBottle.Entities;
 using Prism.Commands;
 
 namespace MilkBottle.Dto {
@@ -12,9 +13,9 @@ namespace MilkBottle.Dto {
         public DelegateCommand  Command { get; }
         public DateTime         LastHeartbeat { get; private set; }
 
-        public UiCompanionApp( string applicationName, FrameworkElement content, string hint, Action<UiCompanionApp> onCommand ) {
-            Icon = content;
-            ApplicationName = applicationName;
+        public UiCompanionApp( ActiveCompanionApp app, string hint, Action<UiCompanionApp> onCommand ) {
+            Icon = app.Icon;
+            ApplicationName = app.ApplicationName;
             Hint = hint;
 
             mCommandAction = onCommand;

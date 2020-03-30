@@ -14,9 +14,10 @@ using MilkBottle.Views;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Platform;
 
 namespace MilkBottle.ViewModels {
-    class PresetControlViewModel : PropertyChangeBase, IDisposable, IHandle<Events.PlaybackNotification>,
+    class PresetControlViewModel : PropertyChangeBase, IDisposable,
                                    IHandle<Events.InitializationComplete>, IHandle<Events.PresetLibraryUpdated>, IHandle<Events.PresetLibrarySwitched>, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IDialogService         mDialogService;
@@ -24,12 +25,14 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetController      mPresetController;
         private readonly IPresetProvider        mPresetProvider;
         private readonly IPresetListProvider    mListProvider;
+        private readonly IIpcManager            mIpcManager;
         private readonly List<PresetList>       mLibraries;
         private readonly IPreferences           mPreferences;
         private readonly IPlatformLog           mLog;
         private readonly LimitedStack<string>   mHistory;
         private ICollectionView                 mLibrariesView;
         private IDisposable                     mPresetSubscription;
+        private IDisposable                     mPlaybackSubscription;
         private PresetList                      mCurrentLibrary;
         private Preset                          mCurrentPreset;
 
@@ -51,11 +54,12 @@ namespace MilkBottle.ViewModels {
         public  string                          PlaybackTitle { get; private set; }
 
         public PresetControlViewModel( IStateManager stateManager, IPresetController presetController, IPresetListProvider listProvider, IPresetProvider presetProvider,
-                                       IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator, IPlatformLog log ) {
+                                       IIpcManager ipcManager, IPreferences preferences, IDialogService dialogService, IEventAggregator eventAggregator, IPlatformLog log ) {
             mStateManager = stateManager;
             mPresetController = presetController;
             mPresetProvider = presetProvider;
             mListProvider = listProvider;
+            mIpcManager = ipcManager;
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
             mPreferences = preferences;
@@ -71,8 +75,6 @@ namespace MilkBottle.ViewModels {
             SelectPreset = new DelegateCommand( OnSelectPreset );
             EditTags = new DelegateCommand( OnTagEdit );
 
-            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
-
             UpdateLibraries();
 
             if( mPresetController.IsInitialized ) {
@@ -86,12 +88,6 @@ namespace MilkBottle.ViewModels {
             Initialize();
         }
 
-        public void Handle( Events.PlaybackNotification args ) {
-            PlaybackTitle = $"{args.PlaybackEvent.ArtistName}/{args.PlaybackEvent.TrackName}";
-
-            RaisePropertyChanged( () => PlaybackTitle );
-        }
-
         private void Initialize() {
             var preferences = mPreferences.Load<MilkPreferences>();
 
@@ -100,6 +96,9 @@ namespace MilkBottle.ViewModels {
             mPresetController.ConfigurePresetSequencer( PresetSequence.Random );
 
             CurrentLibrary = mLibraries.FirstOrDefault( l => l.Name.Equals( preferences.CurrentPresetLibrary ));
+
+            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
+            mPlaybackSubscription = mIpcManager.OnPlaybackEvent.Subscribe( OnPlaybackEvent );
 
             RaisePropertyChanged( () => IsBlended );
             RaisePropertyChanged( () => IsLocked );
@@ -110,6 +109,12 @@ namespace MilkBottle.ViewModels {
             Start.RaiseCanExecuteChanged();
 
             mStateManager.EnterState( eStateTriggers.Run );
+        }
+
+        private void OnPlaybackEvent( PlaybackEvent args ) {
+            PlaybackTitle = args.IsValidEvent ? $"{args.ArtistName}/{args.TrackName}" : String.Empty;
+
+            RaisePropertyChanged( () => PlaybackTitle );
         }
 
         public void Handle( Events.ModeChanged args ) {
@@ -333,6 +338,9 @@ namespace MilkBottle.ViewModels {
 
             mPresetSubscription?.Dispose();
             mPresetSubscription = null;
+
+            mPlaybackSubscription?.Dispose();
+            mPlaybackSubscription = null;
         }
     }
 }

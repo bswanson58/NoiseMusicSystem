@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Markup;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
+using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Properties;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
-using ReusableBits.Platform;
 using Application = System.Windows.Application;
 
 namespace MilkBottle.ViewModels {
@@ -27,20 +22,16 @@ namespace MilkBottle.ViewModels {
     }
 
     class ShellViewModel : PropertyChangeBase {
-        private const int                       cHeartbeatSeconds = 30;
-
         private readonly IStateManager          mStateManager;
+        private readonly IIpcManager            mIpcManager;
         private readonly IEventAggregator       mEventAggregator;
         private readonly IDialogService         mDialogService;
         private readonly IPreferences           mPreferences;
-        private readonly IPlatformLog           mLog;
-        private readonly IIpcHandler            mIpcHandler;
-        private readonly DispatcherTimer        mIpcTimer;
-        private readonly JavaScriptSerializer   mSerializer;
-        private readonly string                 mIpcIcon;
         private NotifyIcon			            mNotifyIcon;
         private Window                          mShell;
         private WindowState					    mStoredWindowState;
+        private IDisposable                     mCompanionAppsSubscription;
+        private IDisposable                     mActivationSubscription;
 
         public  ShellView                       ShellViewDisplayed { get; private set; }
         public  DelegateCommand                 Configuration { get; }
@@ -54,14 +45,12 @@ namespace MilkBottle.ViewModels {
         public  bool                            DisplayStatus { get; private set; }
         public  bool                            DisplayController { get; private set; }
 
-        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcHandler ipcHandler,
-                               IEventAggregator eventAggregator, IPlatformLog log ) {
+        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager, IEventAggregator eventAggregator ) {
             mStateManager = stateManager;
+            mIpcManager = ipcManager;
             mPreferences = preferences;
             mDialogService = dialogService;
             mEventAggregator = eventAggregator;
-            mLog = log;
-            mIpcHandler = ipcHandler;
 
             Configuration = new DelegateCommand( OnConfiguration );
             DisplayManualController = new DelegateCommand( OnDisplayManualController );
@@ -77,23 +66,31 @@ namespace MilkBottle.ViewModels {
                 mNotifyIcon.Icon = new System.Drawing.Icon( iconStream.Stream );
             }
 
-            mIpcHandler.Initialize( ApplicationConstants.ApplicationName, ApplicationConstants.EcosystemName, OnIpcMessage );
-            mSerializer = new JavaScriptSerializer();
-
-            mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( cHeartbeatSeconds )};
-            mIpcTimer.Tick += OnIpcTimer;
-            mIpcTimer.Start();
-
-            iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/MilkBottle;component/Resources/ApplicationIcon.xaml" ));
-            if( iconStream != null ) {
-                var reader = new StreamReader( iconStream.Stream );
-
-                mIpcIcon = reader.ReadToEnd();
-            }
-
             DisplayStatus = true;
             DisplayController = true;
             ShellViewDisplayed = ShellView.Manual;
+
+            mCompanionAppsSubscription = mIpcManager.CompanionAppsUpdate.Subscribe( OnCompanionAppsUpdate );
+            mActivationSubscription = mIpcManager.OnActivationRequest.Subscribe( OnActivationRequest );
+        }
+
+        private void OnCompanionAppsUpdate( IEnumerable<ActiveCompanionApp> apps ) {
+            CompanionApplications.Clear();
+            CompanionApplications.AddRange( from app in apps select new UiCompanionApp( app, $"Switch to {app.ApplicationName}", OnCompanionAppRequest ));
+    
+            RaisePropertyChanged( () => HaveCompanionApplications );
+        }
+
+        private void OnActivationRequest( bool state ) {
+            if( state ) {
+                ActivateShell();
+            }
+        }
+
+        private void OnCompanionAppRequest( UiCompanionApp app ) {
+            mIpcManager.ActivateApplication( app.ApplicationName );
+
+            mShell.WindowState = WindowState.Minimized;
         }
 
         public void ShellLoaded( Window shell ) {
@@ -142,7 +139,13 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            mIpcTimer.Stop();
+            mCompanionAppsSubscription?.Dispose();
+            mCompanionAppsSubscription = null;
+
+            mActivationSubscription?.Dispose();
+            mActivationSubscription = null;
+
+            mIpcManager.Dispose();
 
             mNotifyIcon.Dispose();
             mNotifyIcon = null;
@@ -195,101 +198,6 @@ namespace MilkBottle.ViewModels {
         private void OnConfigurationCompleted( IDialogResult result ) {
             if( result.Result == ButtonResult.OK ) {
                 mEventAggregator.PublishOnUIThread( new Events.MilkConfigurationUpdated());
-            }
-        }
-
-        private void OnIpcMessage( BaseIpcMessage message ) {
-            Execute.OnUIThread( () => {
-                switch( message.Subject ) {
-                    case NoiseIpcSubject.cCompanionApplication:
-                        AddCompanionApp( message );
-                        break;
-
-                    case NoiseIpcSubject.cActivateApplication:
-                        ActivateShell();
-                        break;
-
-                    case NoiseIpcSubject.cPlaybackEvent:
-                        PublishPlaybackEvent( message );
-                        break;
-                }
-            });
-        }
-
-        private void AddCompanionApp( BaseIpcMessage message ) {
-            try {
-                var companionApp = mSerializer.Deserialize<CompanionApplication>( message.Body );
-
-                if( companionApp != null ) {
-                    var existingApp = CompanionApplications.FirstOrDefault( a => a.ApplicationName.Equals( companionApp.Name ));
-
-                    if( existingApp == null ) {
-                        using( var stream = new MemoryStream( Encoding.UTF8.GetBytes( companionApp.Icon ))) {
-                            var icon = XamlReader.Load( stream ) as FrameworkElement;
-
-                            CompanionApplications.Add( new UiCompanionApp( companionApp.Name, icon, $"Switch to {companionApp.Name}", OnCompanionAppRequest ));
-
-                            RaisePropertyChanged( () => HaveCompanionApplications );
-                        }
-                    }
-                    else {
-                        existingApp.UpdateHeartbeat();
-                    }
-                }
-            }
-            catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.AddCompanionApp", ex );
-            }
-        }
-
-        private void OnCompanionAppRequest( UiCompanionApp app ) {
-            try {
-                var message = new ActivateApplication();
-                var json = mSerializer.Serialize( message );
-
-                mIpcHandler.SendMessage( app.ApplicationName, NoiseIpcSubject.cActivateApplication, json );
-
-                mShell.WindowState = WindowState.Minimized;
-            }
-            catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.OnCompanionAppRequest", ex );
-            }
-        }
-
-        private void PublishPlaybackEvent( BaseIpcMessage message ) {
-            try {
-                var playbackEvent = mSerializer.Deserialize<PlaybackEvent>( message.Body );
-
-                if( playbackEvent != null ) {
-                    mEventAggregator.PublishOnUIThread( new Events.PlaybackNotification( playbackEvent ) );
-                }
-            }
-            catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.PublishPlaybackEvent", ex );
-            }
-        }
-
-        private void OnIpcTimer( object sender, EventArgs args ) {
-            try {
-                var message = new CompanionApplication( ApplicationConstants.ApplicationName, mIpcIcon );
-                var json = mSerializer.Serialize( message );
-
-                mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );
-
-                var appList = new List<UiCompanionApp>( CompanionApplications );
-
-                appList.ForEach( a => {
-                    var expiration = DateTime.Now - TimeSpan.FromSeconds( cHeartbeatSeconds * 3 );
-
-                    if( a.LastHeartbeat < expiration ) {
-                        CompanionApplications.Remove( a );
-                    }
-                });
-
-                RaisePropertyChanged( () => HaveCompanionApplications );
-            }
-            catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.OnIpcTimer", ex );
             }
         }
 

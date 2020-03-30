@@ -13,17 +13,19 @@ using ReusableBits.Platform;
 
 namespace MilkBottle.ViewModels {
     class SyncStatusViewModel : PropertyChangeBase, IDisposable, 
-                                IHandle<Events.InitializationComplete>, IHandle<Events.ModeChanged>, IHandle<Events.PlaybackNotification> {
+                                IHandle<Events.InitializationComplete>, IHandle<Events.ModeChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IPresetController      mPresetController;
         private readonly IPresetListProvider    mListProvider;
         private readonly ISceneProvider         mSceneProvider;
+        private readonly IIpcManager            mIpcManager;
         private readonly ISyncManager           mSyncManager;
         private readonly IStateManager          mStateManager;
         private readonly IDialogService         mDialogService;
         private readonly IPreferences           mPreferences;
         private readonly IPlatformLog           mLog;
         private IDisposable                     mPresetSubscription;
+        private IDisposable                     mPlaybackSubscription;
         private PlaybackEvent                   mCurrentPlayback;
         private PresetScene                     mCurrentScene;
 
@@ -34,18 +36,18 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetName { get; private set; }
 
         public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, ISceneProvider sceneProvider,
-                                    IStateManager stateManger, IDialogService dialogService, IEventAggregator eventAggregator, IPreferences preferences, IPlatformLog log ) {
+                                    IStateManager stateManger, IDialogService dialogService, IIpcManager ipcManager,
+                                    IEventAggregator eventAggregator, IPreferences preferences, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
             mSceneProvider = sceneProvider;
             mPresetController = presetController;
             mStateManager = stateManger;
+            mIpcManager = ipcManager;
             mDialogService = dialogService;
             mPreferences = preferences;
             mLog = log;
-
-            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
 
             SceneWizard = new DelegateCommand( OnSceneWizard, CanExecuteSceneWizard );
 
@@ -63,7 +65,10 @@ namespace MilkBottle.ViewModels {
         private void Initialize() {
             mEventAggregator.Subscribe( this );
 
-            if( mCurrentPlayback != null ) {
+            mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
+            mPlaybackSubscription = mIpcManager.OnPlaybackEvent.Subscribe( OnPlaybackEvent );
+
+            if( mCurrentPlayback?.IsValidEvent == true ) {
                 StartPlayback( mCurrentPlayback );
             }
             else {
@@ -85,10 +90,13 @@ namespace MilkBottle.ViewModels {
 
             mPresetSubscription?.Dispose();
             mPresetSubscription = null;
+
+            mPlaybackSubscription?.Dispose();
+            mPlaybackSubscription = null;
         }
 
-        public void Handle( Events.PlaybackNotification args ) {
-            mCurrentPlayback = args.PlaybackEvent;
+        private void OnPlaybackEvent( PlaybackEvent args ) {
+            mCurrentPlayback = args;
 
             StartPlayback( mCurrentPlayback );
         }

@@ -35,6 +35,8 @@ namespace ReusableBits.Platform {
         public  bool        IsFavorite { get; set; }
         public  int         PublishedYear { get; set; }
 
+        public  bool        IsValidEvent => !String.IsNullOrWhiteSpace( TrackName );
+
         public PlaybackEvent() {
             ArtistName = String.Empty;
             AlbumName = String.Empty;
