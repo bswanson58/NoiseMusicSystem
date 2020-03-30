@@ -7,6 +7,7 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:entities="clr-namespace:MilkBottle.Entities"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SelectPresetDialogModel, IsDesignTimeCreatable=False}"
@@ -45,7 +46,10 @@
 
         <StackPanel Grid.Row="1" Margin="0,0,0,10" Orientation="Horizontal">
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
-            <ComboBox Width="300" Margin="3,0" ItemsSource="{Binding Libraries}" ItemTemplate="{StaticResource LibraryTemplate}" SelectedItem="{Binding CurrentLibrary}"/>
+            <ComboBox Width="300" Margin="3,0" ItemsSource="{Binding Libraries}" ItemTemplate="{StaticResource LibraryTemplate}" SelectedItem="{Binding CurrentLibrary}"
+                      IsEnabled="{Binding IsListingSingleLibrary}"/>
+
+            <CheckBox Margin="15,0,0,0" VerticalAlignment="Center" Content="Display All Libraries" IsChecked="{Binding ListAllLibraries}"/>
         </StackPanel>
 
         <TextBlock Grid.Row="2" Style="{StaticResource ControlTitleStyle}" Text="Presets:"/>
