@@ -100,7 +100,7 @@ namespace MilkBottle.Models {
                 }
             }
             catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.AddCompanionApp", ex );
+                mLog.LogException( "IpcManager.AddCompanionApp", ex );
             }
         }
 
@@ -112,7 +112,7 @@ namespace MilkBottle.Models {
                 mIpcHandler.SendMessage( applicationName, NoiseIpcSubject.cActivateApplication, json );
             }
             catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.OnCompanionAppRequest", ex );
+                mLog.LogException( "IpcManager.OnCompanionAppRequest", ex );
             }
         }
 
@@ -125,7 +125,7 @@ namespace MilkBottle.Models {
                 }
             }
             catch( Exception ex ) {
-                mLog.LogException( "ShellViewModel.PublishPlaybackEvent", ex );
+                mLog.LogException( "IpcManager.PublishPlaybackEvent", ex );
             }
         }
 
