@@ -49,7 +49,7 @@ namespace MilkBottle.Models {
             mSceneProvider.SelectScenes( list => sceneList.AddRange( list ));
 
             var ranking = from scene in sceneList select ( scene, GradeScene( forEvent, scene ));
-            var bestRanked = ranking.MaxBy( r => r.Item2 ).Select( r => r.scene ).FirstOrDefault();
+            var bestRanked = ranking.MaxBy( r => r.Item2 ).Where( r => r.Item2 > 0 ).Select( r => r.scene ).FirstOrDefault();
 
             return bestRanked ?? GetDefaultScene();
         }
