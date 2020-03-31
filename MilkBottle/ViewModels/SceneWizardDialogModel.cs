@@ -435,12 +435,14 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => TrackNames );
             RaisePropertyChanged( () => Genres );
             RaisePropertyChanged( () => Tags );
+            RaisePropertyChanged( () => Years );
 
             RaisePropertyChanged( () => UtilizeArtist );
             RaisePropertyChanged( () => UtilizeAlbum );
             RaisePropertyChanged( () => UtilizeTrack );
             RaisePropertyChanged( () => UtilizeGenre );
             RaisePropertyChanged( () => UtilizeTags );
+            RaisePropertyChanged( () => UtilizeYears );
 
             RaisePropertyChanged( () => SelectedSource );
             RaisePropertyChanged( () => SelectedList );
