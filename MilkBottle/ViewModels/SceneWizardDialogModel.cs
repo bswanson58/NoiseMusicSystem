@@ -27,11 +27,13 @@ namespace MilkBottle.ViewModels {
         private string                              mTrackNames;
         private string                              mGenres;
         private string                              mTags;
+        private string                              mYears;
         private bool                                mUtilizeArtist;
         private bool                                mUtilizeAlbum;
         private bool                                mUtilizeTrack;
         private bool                                mUtilizeGenre;
         private bool                                mUtilizeTags;
+        private bool                                mUtilizeYears;
         private UiSource                            mCurrentSource;
         private UiCycling                           mCurrentCycling;
         private PresetList                          mCurrentList;
@@ -293,6 +295,16 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public string Years {
+            get => mYears;
+            set {
+                mYears = value;
+                mScene = mScene.WithYears( mYears );
+
+                RaisePropertyChanged( () => Years );
+            }
+        }
+
         public bool UtilizeArtist {
             get => mUtilizeArtist;
             set {
@@ -340,6 +352,16 @@ namespace MilkBottle.ViewModels {
                 Tags = mUtilizeTags ? AddText( PlayingTags, Tags ) : RemoveText( PlayingTags, Tags );
 
                 RaisePropertyChanged( () => UtilizeTags );
+            }
+        }
+
+        public bool UtilizeYears {
+            get => mUtilizeYears;
+            set {
+                mUtilizeYears = value;
+                Years = mUtilizeYears ? AddText( PlayingYear, Years ) : RemoveText( PlayingYear, Years );
+
+                RaisePropertyChanged( () => UtilizeYears );
             }
         }
 

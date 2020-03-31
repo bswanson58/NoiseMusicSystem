@@ -37,7 +37,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Edit the current scene based upon the playing track, or create a new scene:"/>
@@ -45,14 +44,17 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Bottom" Margin="0,0,5,0" Text="Current Scene:"/>
             <TextBlock Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Bottom" Text="{Binding SceneName}"/>
-            <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Padding="5,2" Command="{Binding SelectScene}" Content="..." ToolTip="Select Scene"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Margin="20,0,0,0" Padding="8,0" Command="{Binding SelectScene}" Content="..." ToolTip="Select Scene"/>
+            <Button Margin="10,0,0,0" HorizontalAlignment="Right" Padding="8,0" Style="{StaticResource GeneralButtonStyle}"
+                    Content="Create New Scene..." Command="{Binding CreateScene}"/>
         </StackPanel>
 
         <Grid Grid.Row="2" Margin="10,5,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="387*"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="495*"/>
+                <ColumnDefinition Width="86*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -65,15 +67,15 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="0,0,0.429,0.286">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Utilize:"/>
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="15,0,0,0" Text="Currently Playing Track:"/>
             </StackPanel>
-            <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal">
+            <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0.429,0,-0.286,0.286">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="5,5,5,5.286" Text="Scene Parameters: (separate multiple values with pipe (|))"/>
             </StackPanel>
 
-            <Grid Grid.Column="0" Grid.Row="1" Margin="5">
+            <Grid Grid.Column="0" Grid.Row="1" Margin="5,4.714,5.429,4.571">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -84,12 +86,12 @@
                 <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingArtist}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
             </Grid>
-            <DockPanel Grid.Column="2" Grid.Row="1">
+            <DockPanel Grid.Column="2" Grid.ColumnSpan="2" Margin="0.429,26,-0.286,31.571" Grid.RowSpan="3">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Artists:"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ArtistNames, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Grid Grid.Column="0" Grid.Row="2" Margin="5,8">
+            <Grid Grid.Column="0" Grid.Row="2" Margin="5,8.429,5.429,7.571">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -100,12 +102,12 @@
                 <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingAlbum}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
             </Grid>
-            <DockPanel Grid.Column="2" Grid.Row="2">
+            <DockPanel Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2" Margin="0.429,0.429,-0.286,31.571" Grid.RowSpan="2">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Albums:"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding AlbumNames, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Grid Grid.Column="0" Grid.Row="3" Margin="5,8">
+            <Grid Grid.Column="0" Grid.Row="3" Margin="5,8.429,5.429,7.571">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -116,12 +118,12 @@
                 <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingTrack}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
             </Grid>
-            <DockPanel Grid.Column="2" Grid.Row="3">
+            <DockPanel Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Margin="0.429,0.429,-0.286,31.571" Grid.RowSpan="2">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Tracks:"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding TrackNames, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Grid Grid.Column="0" Grid.Row="4" Margin="5,8">
+            <Grid Grid.Column="0" Grid.Row="4" Margin="5,8.429,5.429,7.571">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -132,12 +134,12 @@
                 <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingGenre}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
             </Grid>
-            <DockPanel Grid.Column="2" Grid.Row="4">
+            <DockPanel Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" Margin="0.429,0.429,-0.286,31.571" Grid.RowSpan="2">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Genres:"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding Genres, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Grid Grid.Column="0" Grid.Row="5" Margin="5,8">
+            <Grid Grid.Column="0" Grid.Row="5" Margin="5,8.429,5.429,7.571">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -148,23 +150,27 @@
                 <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingTags}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
             </Grid>
-            <DockPanel Grid.Column="2" Grid.Row="5">
+            <DockPanel Grid.Column="2" Grid.Row="5" Grid.ColumnSpan="2" Margin="0.429,0.429,-0.286,31.571" Grid.RowSpan="2">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Tags:"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Grid Grid.Column="0" Grid.Row="6" Margin="5,8">
+            <Grid Grid.Column="0" Grid.Row="6" Margin="5,8.429,5.429,7.571">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" Visibility="Hidden"/>
+                <CheckBox Grid.Column="0" IsChecked="{Binding UtilizeYears}"/>
                 <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Width="45" Margin="0,0,3,0" TextAlignment="Right" Text="Year:"/>
                 <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingYear}"/>
             </Grid>
+            <DockPanel Grid.Column="2" Grid.Row="6" Grid.ColumnSpan="2" Margin="0.429,0.429,-0.286,-0.429" Grid.RowSpan="2">
+                <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Years:"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding Years, UpdateSourceTrigger=PropertyChanged}"/>
+            </DockPanel>
 
-            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="7" Width="1" Fill="Gray"/>
+            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="1" Fill="Gray" Margin="0.571,0,0.571,-0.429"/>
 
         </Grid>
 
@@ -238,10 +244,7 @@
             </StackPanel>
         </Grid>
 
-        <Button Grid.Row="5" Margin="0,0,0,10" HorizontalAlignment="Right" Padding="5,0" Style="{StaticResource GeneralButtonStyle}"
-                Content="Create New Scene..." Command="{Binding CreateScene}"/>
-
-        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
         </StackPanel>

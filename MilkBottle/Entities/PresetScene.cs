@@ -31,6 +31,7 @@ namespace MilkBottle.Entities {
         public  string              TrackNames { get; }
         public  string              Genres { get; }
         public  string              Tags { get; }
+        public  string              Years { get; }
 
         public  string              DebugDisplay => $"Scene: {Name}";
 
@@ -47,7 +48,7 @@ namespace MilkBottle.Entities {
         }
 
         public PresetScene( ObjectId id, string name, SceneSource sceneSource, PresetListType listType, ObjectId sourceId, PresetCycling presetCycle, int presetDuration,
-                            bool overlapPresets, int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags ) :
+                            bool overlapPresets, int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags, string years ) :
             base( id ) {
             Name = name ?? String.Empty;
             SceneSource = sceneSource;
@@ -62,11 +63,12 @@ namespace MilkBottle.Entities {
             TrackNames = trackNames ?? String.Empty;
             Genres = genres ?? String.Empty;
             Tags = tags ?? String.Empty;
+            Years = years ?? String.Empty;
         }
 
         [BsonCtor]
         public PresetScene( ObjectId id, string name, int sceneSource, int sourceListType, ObjectId sourceId, int presetCycle, int presetDuration,
-                            bool overlapPresets, int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags ) :
+                            bool overlapPresets, int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags, string years ) :
                 base( id ) {
             Name = name ?? String.Empty;
             SceneSource = (SceneSource)sceneSource;
@@ -81,51 +83,57 @@ namespace MilkBottle.Entities {
             TrackNames = trackNames ?? String.Empty;
             Genres = genres ?? String.Empty;
             Tags = tags ?? String.Empty;
+            Years = years ?? String.Empty;
         }
 
         public PresetScene WithName( string name ) {
             return new PresetScene( Id, name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags );
+                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags, Years );
         }
 
         public PresetScene WithSource( SceneSource source, PresetListType sourceListType, ObjectId sourceId ) {
             return new PresetScene( Id, Name, source, sourceListType, sourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags );
+                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags, Years );
         }
 
         public PresetScene WithCycle( PresetCycling cycling, int duration ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, cycling, duration, OverlapPresets, OverlapDuration,
-                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags );
+                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags, Years );
         }
 
         public PresetScene WithOverlap( bool overlap, int overlapDuration ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, overlap, overlapDuration,
-                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags );
+                                    ArtistNames, AlbumNames, TrackNames, Genres, Tags, Years );
         }
 
         public PresetScene WithArtists( string artistNames ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                                    artistNames, AlbumNames, TrackNames, Genres, Tags );
+                                    artistNames, AlbumNames, TrackNames, Genres, Tags,Years );
         }
 
         public PresetScene WithAlbums( string albumNames ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                ArtistNames, albumNames, TrackNames, Genres, Tags );
+                ArtistNames, albumNames, TrackNames, Genres, Tags, Years );
         }
 
         public PresetScene WithTracks( string trackNames ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                ArtistNames, AlbumNames, trackNames, Genres, Tags );
+                ArtistNames, AlbumNames, trackNames, Genres, Tags, Years );
         }
 
         public PresetScene WithGenres( string genreNames ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                ArtistNames, AlbumNames, TrackNames, genreNames, Tags );
+                ArtistNames, AlbumNames, TrackNames, genreNames, Tags, Years );
         }
 
         public PresetScene WithTags( string tags ) {
             return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
-                ArtistNames, AlbumNames, TrackNames, Genres, tags );
+                ArtistNames, AlbumNames, TrackNames, Genres, tags, Years );
+        }
+
+        public PresetScene WithYears( string years ) {
+            return new PresetScene( Id, Name, SceneSource, SourceListType, SourceId, PresetCycle, PresetDuration, OverlapPresets, OverlapDuration,
+                ArtistNames, AlbumNames, TrackNames, Genres, Tags, years );
         }
     }
 }
