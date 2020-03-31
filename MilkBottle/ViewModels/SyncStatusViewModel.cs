@@ -181,7 +181,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private bool CanExecuteSceneWizard() {
-            return ( mCurrentScene != null ) && ( mCurrentPlayback != null );
+            return ( mCurrentScene != null ) && ( mCurrentPlayback?.IsValidEvent == true );
         }
 
         private void OnPresetChanged( Preset preset ) {
