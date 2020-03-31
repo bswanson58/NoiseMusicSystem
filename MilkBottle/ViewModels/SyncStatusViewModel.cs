@@ -68,10 +68,8 @@ namespace MilkBottle.ViewModels {
             mPresetSubscription = mPresetController.CurrentPreset.Subscribe( OnPresetChanged );
             mPlaybackSubscription = mIpcManager.OnPlaybackEvent.Subscribe( OnPlaybackEvent );
 
-            if( mCurrentPlayback?.IsValidEvent == true ) {
-                StartPlayback( mCurrentPlayback );
-            }
-            else {
+            if(( mCurrentPlayback == null ) ||
+               ( mCurrentPlayback.IsValidEvent == false )) {
                 StartScene( mSyncManager.GetDefaultScene());
 
                 TrackName = String.Empty;
@@ -102,7 +100,7 @@ namespace MilkBottle.ViewModels {
         }
 
         public void StartPlayback( PlaybackEvent playbackEvent ) {
-            if( playbackEvent != null ) {
+            if( playbackEvent?.IsValidEvent == true ) {
                 StartScene( mSyncManager.SelectScene( playbackEvent ));
 
                 TrackName = $"{playbackEvent.ArtistName}/{playbackEvent.TrackName}";
