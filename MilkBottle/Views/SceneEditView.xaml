@@ -151,6 +151,7 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,10,0,5" Style="{StaticResource ControlTitleStyle}"
@@ -170,6 +171,9 @@
 
                     <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Tags:"/>
                     <TextBox Grid.Row="5" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Years:"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" Margin="0,5" TextWrapping="WrapWithOverflow" Text="{Binding Years, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </Grid>
         </GroupBox>

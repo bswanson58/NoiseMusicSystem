@@ -35,6 +35,7 @@ namespace MilkBottle.ViewModels {
         private string                              mTrackNames;
         private string                              mGenres;
         private string                              mTags;
+        private string                              mYears;
 
         public  BindableCollection<UiScene>         Scenes { get; }
         public  ObservableCollection<UiSource>      SceneSources { get; }
@@ -158,6 +159,7 @@ namespace MilkBottle.ViewModels {
                 mTrackNames = mCurrentScene.Scene.TrackNames;
                 mGenres = mCurrentScene.Scene.Genres;
                 mTags = mCurrentScene.Scene.Tags;
+                mYears = mCurrentScene.Scene.Years;
             }
 
             RaisePropertyChanged( () => ArePropertiesValid );
@@ -177,6 +179,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => TrackNames );
             RaisePropertyChanged( () => Genres );
             RaisePropertyChanged( () => Tags );
+            RaisePropertyChanged( () => Years );
         }
 
         private void LoadLists() {
@@ -486,6 +489,25 @@ namespace MilkBottle.ViewModels {
         private void OnTagsChanged() {
             if( mCurrentScene != null ) {
                 var newScene = mCurrentScene.Scene.WithTags( mTags );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnTagsChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
+        public string Years {
+            get => mYears;
+            set {
+                mYears = value;
+
+                OnYearsChanged();
+                RaisePropertyChanged( () => Years );
+            }
+        }
+
+        private void OnYearsChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithYears( mYears );
 
                 mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnTagsChanged ), ex ));
                 UpdateScene( newScene );
