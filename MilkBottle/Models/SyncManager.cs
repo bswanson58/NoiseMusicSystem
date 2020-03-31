@@ -9,14 +9,16 @@ using ReusableBits.Platform;
 
 namespace MilkBottle.Models {
     class SceneRating {
-        public  string[]    EventValue { get; }
-        public  string[]    SceneValues { get; }
-        public  int         Score { get; }
+        public  string[]                    EventValue { get; }
+        public  string[]                    SceneValues { get; }
+        public  int                         Score { get; }
+        public  Func<string,string,int,int> RatingMethod { get; }
 
-        public SceneRating( string[] eventValue, string[] sceneValues, int score ) {
+        public SceneRating( string[] eventValue, string[] sceneValues, int score, Func<string,string,int,int> ratingMethod ) {
             EventValue = eventValue;
             SceneValues = sceneValues;
             Score = score;
+            RatingMethod = ratingMethod;
         }
     }
 
@@ -44,14 +46,19 @@ namespace MilkBottle.Models {
         }
 
         public PresetScene SelectScene( PlaybackEvent forEvent ) {
-            var sceneList = new List<PresetScene>();
+            if(( forEvent != null ) &&
+               ( forEvent.IsValidEvent )) {
+                var sceneList = new List<PresetScene>();
 
-            mSceneProvider.SelectScenes( list => sceneList.AddRange( list ));
+                mSceneProvider.SelectScenes( list => sceneList.AddRange( list ));
 
-            var ranking = from scene in sceneList select ( scene, GradeScene( forEvent, scene ));
-            var bestRanked = ranking.MaxBy( r => r.Item2 ).Where( r => r.Item2 > 0 ).Select( r => r.scene ).FirstOrDefault();
+                var ranking = from scene in sceneList select ( scene, GradeScene( forEvent, scene ));
+                var bestRanked = ranking.MaxBy( r => r.Item2 ).Where( r => r.Item2 > 0 ).Select( r => r.scene ).FirstOrDefault();
 
-            return bestRanked ?? GetDefaultScene();
+                return bestRanked ?? GetDefaultScene();
+            }
+            
+            return GetDefaultScene();
         }
 
         private int GradeScene( PlaybackEvent forEvent, PresetScene scene ) {
@@ -61,7 +68,7 @@ namespace MilkBottle.Models {
         }
 
         private int SumSceneRatings( SceneRating rating ) {
-            var list = from eventValue in rating.EventValue from sceneValue in rating.SceneValues select RateValue( eventValue, sceneValue, rating.Score );
+            var list = from eventValue in rating.EventValue from sceneValue in rating.SceneValues select rating.RatingMethod( eventValue, sceneValue, rating.Score );
 
             return list.Sum();
         }
@@ -70,12 +77,49 @@ namespace MilkBottle.Models {
             return eventValue.Trim().ToLowerInvariant().Contains( sceneValue.Trim().ToLowerInvariant()) ? rating : 0;
         }
 
+        private int RateRange( string eventValue, string sceneValue, int rating ) {
+            var retValue = 0;
+
+            if((!String.IsNullOrWhiteSpace( eventValue )) &&
+               (!String.IsNullOrWhiteSpace( sceneValue )) &&
+               (!eventValue.Equals( "0" ))) {
+                var yearRange = sceneValue.Split( '-' );
+                var startYear = ExtractYear( yearRange[0], true );
+                var eventYear = ExtractYear( eventValue );
+
+                if( yearRange.Length == 1 ) {
+                    retValue = startYear.Equals( eventYear ) ? rating : 0;
+                }
+                else {
+                    var endYear = ExtractYear( yearRange[1]);
+
+                    if(( String.Compare( startYear, eventYear, StringComparison.Ordinal ) <= 0 ) &&
+                       ( String.Compare( endYear, eventYear, StringComparison.Ordinal ) >= 0 )) {
+                        retValue = rating;
+                    }
+                }
+            }
+
+            return retValue;
+        }
+
+        private string ExtractYear( string input, bool startRange = false ) {
+            var retValue = startRange ? "1900" : DateTime.Now.Year.ToString();
+
+            if(!string.IsNullOrWhiteSpace( input )) {
+                retValue = input.Trim();
+            }
+
+            return retValue;
+        }
+
         private IEnumerable<SceneRating> ValuesForScene( PresetScene scene, PlaybackEvent forEvent ) {
-            yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, PresetScene.cValueSeparator ), 10 );
-            yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, PresetScene.cValueSeparator ), 9 );
-            yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), 8 );
-            yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, PresetScene.cValueSeparator ), 7 );
-            yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, PresetScene.cValueSeparator ), 6 );
+            yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, PresetScene.cValueSeparator ), 10, RateValue );
+            yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, PresetScene.cValueSeparator ), 9, RateValue );
+            yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), 8, RateValue );
+            yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, PresetScene.cValueSeparator ), 7, RateValue );
+            yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, PresetScene.cValueSeparator ), 6, RateValue );
+            yield return new SceneRating( SplitString( forEvent.PublishedYear.ToString()), SplitString( scene.Years, PresetScene.cValueSeparator ), 6, RateRange );
         }
 
         private string[] SplitString( string input ) {
