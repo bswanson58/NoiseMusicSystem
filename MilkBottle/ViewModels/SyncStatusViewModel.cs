@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
@@ -17,6 +18,7 @@ namespace MilkBottle.ViewModels {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IPresetController      mPresetController;
         private readonly IPresetListProvider    mListProvider;
+        private readonly IPresetProvider        mPresetProvider;
         private readonly ISceneProvider         mSceneProvider;
         private readonly IIpcManager            mIpcManager;
         private readonly ISyncManager           mSyncManager;
@@ -28,21 +30,27 @@ namespace MilkBottle.ViewModels {
         private IDisposable                     mPlaybackSubscription;
         private PlaybackEvent                   mCurrentPlayback;
         private PresetScene                     mCurrentScene;
+        private Preset                          mCurrentPreset;
 
         public  DelegateCommand                 SceneWizard { get; }
+        public  DelegateCommand                 EditTags { get; }
 
         public  string                          SceneName { get; private set; }
         public  string                          TrackName {  get; private set; }
         public  string                          PresetName { get; private set; }
 
-        public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, ISceneProvider sceneProvider,
-                                    IStateManager stateManger, IDialogService dialogService, IIpcManager ipcManager,
+        public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
+
+
+        public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, IPresetProvider presetProvider,
+                                    ISceneProvider sceneProvider, IStateManager stateManger, IDialogService dialogService, IIpcManager ipcManager,
                                     IEventAggregator eventAggregator, IPreferences preferences, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
             mSceneProvider = sceneProvider;
             mPresetController = presetController;
+            mPresetProvider = presetProvider;
             mStateManager = stateManger;
             mIpcManager = ipcManager;
             mDialogService = dialogService;
@@ -50,6 +58,7 @@ namespace MilkBottle.ViewModels {
             mLog = log;
 
             SceneWizard = new DelegateCommand( OnSceneWizard, CanExecuteSceneWizard );
+            EditTags = new DelegateCommand( OnTagEdit );
 
             if( mPresetController.IsInitialized ) {
                 Initialize();
@@ -182,11 +191,65 @@ namespace MilkBottle.ViewModels {
             return ( mCurrentScene != null ) && ( mCurrentPlayback?.IsValidEvent == true );
         }
 
+        private void OnTagEdit() {
+            var parameters = new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset } };
+
+            mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, OnTagsEdited );
+        }
+
+        private void OnTagsEdited( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
+
+                if( preset != null ) {
+                    mPresetProvider.Update( preset ).IfLeft( ex => mLog.LogException( "OnTagsEdited", ex ));
+
+
+                    if( preset.Id.Equals( mCurrentPreset?.Id )) {
+                        mCurrentPreset = preset;
+
+                        RaisePropertyChanged( () => IsFavorite );
+                        RaisePropertyChanged( () => HasTags );
+                        RaisePropertyChanged( () => TagsTooltip );
+                    }
+                }
+            }
+        }
+
+        public bool IsFavorite {
+            get => mCurrentPreset?.IsFavorite ?? false;
+            set => OnIsFavoriteChanged( value );
+        }
+
+        private void OnIsFavoriteChanged( bool toValue ) {
+            var preset = mCurrentPreset?.WithFavorite( toValue );
+
+            if( preset != null ) {
+                mPresetProvider.Update( preset );
+
+                if( preset.Id.Equals( mCurrentPreset?.Id )) {
+                    mCurrentPreset = preset;
+
+                    RaisePropertyChanged( () => IsFavorite );
+                }
+            }
+        }
+
+        public string TagsTooltip => 
+            mCurrentPreset != null ? 
+                mCurrentPreset.Tags.Any() ? 
+                    String.Join( Environment.NewLine, from t in mCurrentPreset.Tags orderby t.Name select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
+
         private void OnPresetChanged( Preset preset ) {
             if( preset != null ) {
+                mCurrentPreset = preset;
+
                 PresetName = Path.GetFileNameWithoutExtension( preset.Name );
 
                 RaisePropertyChanged( () => PresetName );
+                RaisePropertyChanged( () => IsFavorite );
+                RaisePropertyChanged( () => HasTags );
+                RaisePropertyChanged( () => TagsTooltip );
             }
         }
 

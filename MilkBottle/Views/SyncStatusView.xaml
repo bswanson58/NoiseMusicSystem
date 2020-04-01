@@ -7,12 +7,15 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SyncStatusViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="1100">
 
     <UserControl.Resources>
+        <valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+
         <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="25"/>
@@ -20,6 +23,42 @@
             <Setter Property="FontFamily" Value="Webdings"/>
             <Setter Property="FontSize" Value="16"/>
         </Style>
+
+        <DataTemplate x:Key="FavoriteTemplate">
+            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center" Margin="0,0,3,3"
+                      Opacity="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource FavoriteCheckBoxStyle}" ToolTip="Set Favorite Status"/>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Tags Template -->
+        <DataTemplate x:Key="TagsTemplate">
+            <ContentControl x:Name="TagContainer" Margin="3,0,0,0">
+                <Button x:Name="TagButton" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.15" BorderThickness="0" Padding="0,1,0,0" Background="Transparent"
+                        Command="{Binding Path=EditTags}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="TagContainer" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="0.8"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasTags}" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HorizontalSeparator">
+            <Grid Margin="5,2">
+                <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid Margin="10,0" Tag="dimmed" Background="Transparent">
@@ -30,8 +69,13 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Orientation="Horizontal">
-            <Button Margin="0,0,10,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
+            <Button Margin="0,0,5,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
                     ToolTip="Scene Wizard"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
             <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}"/>
         </StackPanel>
 
