@@ -25,6 +25,7 @@ namespace MilkBottle.ViewModels {
         private readonly IStateManager          mStateManager;
         private readonly IDialogService         mDialogService;
         private readonly IPreferences           mPreferences;
+        private readonly ICelestialCalculator   mCelestialCalculator;
         private readonly IPlatformLog           mLog;
         private IDisposable                     mPresetSubscription;
         private IDisposable                     mPlaybackSubscription;
@@ -41,10 +42,13 @@ namespace MilkBottle.ViewModels {
 
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
+        public  bool                            IsDay {get; private set; }
+        public  string                          CelestialInfo { get; private set; }
+
 
         public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, IPresetProvider presetProvider,
                                     ISceneProvider sceneProvider, IStateManager stateManger, IDialogService dialogService, IIpcManager ipcManager,
-                                    IEventAggregator eventAggregator, IPreferences preferences, IPlatformLog log ) {
+                                    IEventAggregator eventAggregator, IPreferences preferences, ICelestialCalculator celestialCalculator, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
@@ -54,6 +58,7 @@ namespace MilkBottle.ViewModels {
             mStateManager = stateManger;
             mIpcManager = ipcManager;
             mDialogService = dialogService;
+            mCelestialCalculator = celestialCalculator;
             mPreferences = preferences;
             mLog = log;
 
@@ -86,6 +91,8 @@ namespace MilkBottle.ViewModels {
             }
 
             mStateManager.EnterState( eStateTriggers.Run );
+
+            UpdateCelestialData();
 
             SceneWizard.RaiseCanExecuteChanged();
         }
@@ -250,7 +257,22 @@ namespace MilkBottle.ViewModels {
                 RaisePropertyChanged( () => IsFavorite );
                 RaisePropertyChanged( () => HasTags );
                 RaisePropertyChanged( () => TagsTooltip );
+
+                UpdateCelestialData();
             }
+        }
+
+        private void UpdateCelestialData() {
+            var preferences = mPreferences.Load<MilkPreferences>();
+
+            var celestialData = mCelestialCalculator.CalculateData( preferences.Latitude, preferences.Longitude );
+            var daylight = celestialData.SunSet - celestialData.SunRise;
+
+            IsDay = DateTime.Now > celestialData.SunRise && DateTime.Now < celestialData.SunSet;
+            CelestialInfo = $"  Sunrise: {celestialData.SunRise:h:mm tt}\n   Sunset: {celestialData.SunSet:h:mm tt}\nDaylight: {daylight:h\\:mm} hours";
+
+            RaisePropertyChanged( () => IsDay );
+            RaisePropertyChanged( () => CelestialInfo );
         }
 
         public void Dispose() {

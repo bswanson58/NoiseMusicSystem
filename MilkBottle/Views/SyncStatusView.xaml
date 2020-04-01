@@ -59,9 +59,24 @@
                 <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
             </Grid>
         </DataTemplate>
+
+        <DataTemplate x:Key="CelestialTemplate">
+            <Grid ToolTip="{Binding CelestialInfo}">
+                <ContentControl x:Name="Day" Margin="6" Content="{StaticResource Path_Sun}"/>
+                <ContentControl x:Name="Night" Margin="6" Content="{StaticResource Path_Moon}"/>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsDay}" Value="True">
+                    <Setter TargetName="Night" Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsDay}" Value="False">
+                    <Setter TargetName="Day" Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="10,0" Tag="dimmed" Background="Transparent">
+    <Grid Tag="dimmed" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
@@ -69,7 +84,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Orientation="Horizontal">
-            <Button Margin="0,0,5,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
+            <Button Margin="10,0,5,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
                     ToolTip="Scene Wizard"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
@@ -81,7 +96,10 @@
 
         <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
 
-        <TextBlock Grid.Column="2" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding TrackName}"/>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding TrackName}"/>
+            <ContentControl Content="{Binding}" Margin="5,0,0,0" ContentTemplate="{StaticResource CelestialTemplate}"/>
+        </StackPanel>
     </Grid>
 
     <i:Interaction.Behaviors>
