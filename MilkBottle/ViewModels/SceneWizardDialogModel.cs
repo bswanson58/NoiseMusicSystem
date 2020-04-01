@@ -28,6 +28,7 @@ namespace MilkBottle.ViewModels {
         private string                              mGenres;
         private string                              mTags;
         private string                              mYears;
+        private string                              mHours;
         private bool                                mUtilizeArtist;
         private bool                                mUtilizeAlbum;
         private bool                                mUtilizeTrack;
@@ -305,6 +306,16 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public string Hours {
+            get => mHours;
+            set {
+                mHours = value;
+                mScene = mScene.WithHours( mHours );
+
+                RaisePropertyChanged( () => Hours );
+            }
+        }
+
         public bool UtilizeArtist {
             get => mUtilizeArtist;
             set {
@@ -408,6 +419,8 @@ namespace MilkBottle.ViewModels {
             mTrackNames = mScene.TrackNames;
             mGenres = mScene.Genres;
             mTags = mScene.Tags;
+            mYears = mScene.Years;
+            mHours = mScene.Hours;
 
             mUtilizeArtist = ContainsText( PlayingArtist, ArtistNames );
             mUtilizeAlbum = ContainsText( PlayingAlbum, AlbumNames );
@@ -436,6 +449,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => Genres );
             RaisePropertyChanged( () => Tags );
             RaisePropertyChanged( () => Years );
+            RaisePropertyChanged( () => Hours );
 
             RaisePropertyChanged( () => UtilizeArtist );
             RaisePropertyChanged( () => UtilizeAlbum );
@@ -466,6 +480,8 @@ namespace MilkBottle.ViewModels {
             mScene = mScene.WithTracks( mTrackNames );
             mScene = mScene.WithGenres( mGenres );
             mScene = mScene.WithTags( mTags );
+            mScene = mScene.WithYears( mYears );
+            mScene = mScene.WithHours( mHours );
 
             if(( mCurrentSource?.Source == SceneSource.PresetList ) &&
                ( mCurrentList != null )) {

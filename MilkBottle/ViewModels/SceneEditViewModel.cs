@@ -36,6 +36,7 @@ namespace MilkBottle.ViewModels {
         private string                              mGenres;
         private string                              mTags;
         private string                              mYears;
+        private string                              mHours;
 
         public  BindableCollection<UiScene>         Scenes { get; }
         public  ObservableCollection<UiSource>      SceneSources { get; }
@@ -160,6 +161,7 @@ namespace MilkBottle.ViewModels {
                 mGenres = mCurrentScene.Scene.Genres;
                 mTags = mCurrentScene.Scene.Tags;
                 mYears = mCurrentScene.Scene.Years;
+                mHours = mCurrentScene.Scene.Hours;
             }
 
             RaisePropertyChanged( () => ArePropertiesValid );
@@ -180,6 +182,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => Genres );
             RaisePropertyChanged( () => Tags );
             RaisePropertyChanged( () => Years );
+            RaisePropertyChanged( () => Hours );
         }
 
         private void LoadLists() {
@@ -509,7 +512,26 @@ namespace MilkBottle.ViewModels {
             if( mCurrentScene != null ) {
                 var newScene = mCurrentScene.Scene.WithYears( mYears );
 
-                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnTagsChanged ), ex ));
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnYearsChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
+
+        public string Hours {
+            get => mHours;
+            set {
+                mHours = value;
+
+                OnHoursChanged();
+                RaisePropertyChanged( () => Hours );
+            }
+        }
+
+        private void OnHoursChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithHours( mHours );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnHoursChanged ), ex ));
                 UpdateScene( newScene );
             }
         }
