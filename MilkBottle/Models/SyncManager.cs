@@ -5,6 +5,8 @@ using System.Linq;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Models.Sunset;
+using MilkBottle.Platform;
 using MoreLinq;
 using ReusableBits.Platform;
 
@@ -24,11 +26,14 @@ namespace MilkBottle.Models {
     }
 
     class SyncManager : ISyncManager {
-        private readonly ISceneProvider     mSceneProvider;
-        private readonly IPreferences       mPreferences;
+        private readonly ISceneProvider         mSceneProvider;
+        private readonly IPreferences           mPreferences;
+        private readonly ICelestialCalculator   mCelestialCalculator;
+        private CelestialData                   mCelestialData;
 
-        public SyncManager( ISceneProvider sceneProvider, IPreferences preferences ) {
+        public SyncManager( ISceneProvider sceneProvider, ICelestialCalculator celestialCalculator, IPreferences preferences ) {
             mSceneProvider = sceneProvider;
+            mCelestialCalculator = celestialCalculator;
             mPreferences = preferences;
         }
 
@@ -142,6 +147,8 @@ namespace MilkBottle.Models {
             var retValue = startRange ? new TimeSpan( 0 ) : new TimeSpan( 1, 0, 0, 0);
 
             if(!String.IsNullOrWhiteSpace( input )) {
+                input = ReplaceCelestialValues( input );
+
                 try {
                     if( input.Contains( ":" )) {
                         retValue = DateTime.ParseExact( input, "H:m", CultureInfo.InvariantCulture ).TimeOfDay;
@@ -161,6 +168,8 @@ namespace MilkBottle.Models {
         }
 
         private IEnumerable<SceneRating> ValuesForScene( PresetScene scene, PlaybackEvent forEvent ) {
+            CelestialData = null;
+
             yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, PresetScene.cValueSeparator ), 10, RateValue );
             yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, PresetScene.cValueSeparator ), 9, RateValue );
             yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), 8, RateValue );
@@ -176,6 +185,28 @@ namespace MilkBottle.Models {
 
         private string[] SplitString( string input, char separator ) {
             return !String.IsNullOrWhiteSpace( input ) ? input.Split( separator ) : new string[]{};
+        }
+
+        private string ReplaceCelestialValues( string input ) {
+            input = input.ReplaceWord( "dawn", CelestialData.CivilTwilightStart.ToString( "HH:mm" ));
+            input = input.ReplaceWord( "dusk", CelestialData.CivilTwilightEnd.ToString( "HH:mm" ));
+            input = input.ReplaceWord( "sunrise", CelestialData.SunRise.ToString( "HH:mm" ));
+            input = input.ReplaceWord( "sunset", CelestialData.SunSet.ToString( "HH:mm" ));
+
+            return input;
+        }
+
+        private CelestialData CelestialData {
+            get {
+                if( mCelestialData == null ) {
+                    var preferences = mPreferences.Load<MilkPreferences>();
+
+                    mCelestialData = mCelestialCalculator.CalculateData( preferences.Latitude, preferences.Longitude );
+                }
+
+                return mCelestialData;
+            }
+            set => mCelestialData = value;
         }
     }
 }

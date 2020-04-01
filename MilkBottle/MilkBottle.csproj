@@ -255,6 +255,7 @@
     <Compile Include="Entities\PresetTag.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IAudioManager.cs" />
+    <Compile Include="Interfaces\ICelestialCalculator.cs" />
     <Compile Include="Interfaces\IDatabaseBuilder.cs" />
     <Compile Include="Interfaces\IDatabaseProvider.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
@@ -291,8 +292,10 @@
     <Compile Include="Models\PresetTimers\PresetTimerFactory.cs" />
     <Compile Include="Models\PresetTimers\RandomDurationTimer.cs" />
     <Compile Include="Models\StateManager.cs" />
+    <Compile Include="Models\Sunset\CelestialCalculator.cs" />
     <Compile Include="Models\SyncManager.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
+    <Compile Include="Platform\StringEx.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\LimitedRepeatingRandom.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />

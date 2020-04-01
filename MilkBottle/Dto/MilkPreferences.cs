@@ -10,6 +10,8 @@ namespace MilkBottle.Dto {
         public  bool    DisplayControllerWhenMaximized { get; set; }
         public  bool    DisplayFps { get; set; }
         public  string  DefaultScene { get; set; }
+        public  double  Latitude { get; set; }
+        public  double  Longitude { get; set; }
 
         public MilkPreferences() {
             CurrentPresetLibrary = String.Empty;
@@ -23,6 +25,9 @@ namespace MilkBottle.Dto {
             DisplayFps = false;
 
             DefaultScene = String.Empty;
+
+            Latitude = 41.997;
+            Longitude = -88.458;
         }
     }
 }

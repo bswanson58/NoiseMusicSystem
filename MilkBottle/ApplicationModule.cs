@@ -5,6 +5,7 @@ using MilkBottle.Logging;
 using MilkBottle.Models;
 using MilkBottle.Models.PresetSequencers;
 using MilkBottle.Models.PresetTimers;
+using MilkBottle.Models.Sunset;
 using MilkBottle.Platform;
 using MilkBottle.ViewModels;
 using MilkBottle.Views;
@@ -38,6 +39,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<ISceneProvider, SceneProvider>();
             containerRegistry.RegisterSingleton<ITagProvider, TagProvider>();
 
+            containerRegistry.Register<ICelestialCalculator, CelestialCalculator>();
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
             containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
