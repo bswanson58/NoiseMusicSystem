@@ -61,7 +61,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CelestialTemplate">
-            <Grid ToolTip="{Binding CelestialInfo}">
+            <Grid ToolTip="{Binding CelestialInfo}" Opacity="0.6">
                 <ContentControl x:Name="Day" Margin="6" Content="{StaticResource Path_Sun}"/>
                 <ContentControl x:Name="Night" Margin="6" Content="{StaticResource Path_Moon}"/>
             </Grid>
