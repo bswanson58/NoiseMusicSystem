@@ -14,6 +14,8 @@ namespace MilkBottle.ViewModels {
         private int                         mSmoothPresetDuration;
         private int                         mFrameRate;
         private float                       mBeatSensitivity;
+        private double                      mLatitude;
+        private double                      mLongitude;
 
         public  string                      Title { get; }
         public  DelegateCommand             Ok { get; }
@@ -48,6 +50,8 @@ namespace MilkBottle.ViewModels {
 
             MinimizeToTray = uiPreferences.ShouldMinimizeToTray;
             DisplayControllerWhenMaximized = uiPreferences.DisplayControllerWhenMaximized;
+            Latitude = uiPreferences.Latitude;
+            Longitude = uiPreferences.Longitude;
         }
 
         public int MeshWidth {
@@ -99,6 +103,24 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public double Latitude {
+            get => mLatitude;
+            set {
+                mLatitude = value;
+
+                RaisePropertyChanged( () => Latitude );
+            }
+        }
+
+        public double Longitude {
+            get => mLongitude;
+            set {
+                mLongitude = value;
+
+                RaisePropertyChanged( () => Longitude );
+            }
+        }
+
         public bool CanCloseDialog() {
             return true;
         }
@@ -121,6 +143,8 @@ namespace MilkBottle.ViewModels {
 
             uiPreferences.ShouldMinimizeToTray = MinimizeToTray;
             uiPreferences.DisplayControllerWhenMaximized = DisplayControllerWhenMaximized;
+            uiPreferences.Latitude = mLatitude;
+            uiPreferences.Longitude = mLongitude;
 
             mPreferences.Save( uiPreferences );
 
