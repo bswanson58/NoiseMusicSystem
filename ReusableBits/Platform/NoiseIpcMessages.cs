@@ -32,7 +32,9 @@ namespace ReusableBits.Platform {
         public  string[]    TrackTags { get; set; }
         public  int         TrackRating { get; set; }
         public  uint        TrackLength { get; set; }
-        public  bool        IsFavorite { get; set; }
+        public  bool        IsFavoriteTrack { get; set; }
+        public  bool        IsFavoriteAlbum { get; set; }
+        public  bool        IsFavoriteArtist { get; set; }
         public  int         PublishedYear { get; set; }
 
         public  bool        IsValidEvent => !String.IsNullOrWhiteSpace( TrackName );
@@ -45,7 +47,9 @@ namespace ReusableBits.Platform {
             TrackTags = new string[] {};
             TrackRating = 0;
             TrackLength = 0;
-            IsFavorite = false;
+            IsFavoriteTrack = false;
+            IsFavoriteAlbum = false;
+            IsFavoriteArtist = false;
             PublishedYear = 0;
         }
     }
