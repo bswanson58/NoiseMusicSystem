@@ -210,14 +210,18 @@ namespace MilkBottle.Models {
         public PresetDuration PresetDuration {
             get => mPresetDuration;
             set {
-                mPresetDuration = value;
-                mPresetTimer.SetDuration( mPresetDuration );
+                SetPresetDuration( value );
 
                 var preferences = mPreferences.Load<MilkPreferences>();
 
                 preferences.PresetPlayDurationInSeconds = mPresetDuration;
                 mPreferences.Save( preferences );
             }
+        }
+
+        public void SetPresetDuration( PresetDuration duration ) {
+            mPresetDuration = duration;
+            mPresetTimer.SetDuration( mPresetDuration );
         }
 
         public void PlayPreset( Preset preset ) {

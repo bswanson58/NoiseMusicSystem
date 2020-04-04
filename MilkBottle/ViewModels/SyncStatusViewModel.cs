@@ -137,11 +137,11 @@ namespace MilkBottle.ViewModels {
 
                     switch( scene.PresetCycle ) {
                         case PresetCycling.Duration:
-                            mPresetController.PresetDuration = PresetDuration.Create( scene.PresetDuration );
+                            mPresetController.SetPresetDuration(PresetDuration.Create( scene.PresetDuration ));
                             break;
 
                         case PresetCycling.CountPerScene:
-                            mPresetController.PresetDuration = PresetDuration.Create((int)((double)trackDuration / scene.PresetDuration ));
+                            mPresetController.SetPresetDuration( PresetDuration.Create((int)((double)trackDuration / scene.PresetDuration )));
                             break;
                     }
 
