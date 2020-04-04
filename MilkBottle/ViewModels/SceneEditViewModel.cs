@@ -37,6 +37,9 @@ namespace MilkBottle.ViewModels {
         private string                              mTags;
         private string                              mYears;
         private string                              mHours;
+        private bool                                mIsFavoriteArtist;
+        private bool                                mIsFavoriteAlbum;
+        private bool                                mIsFavoriteTrack;
 
         public  BindableCollection<UiScene>         Scenes { get; }
         public  ObservableCollection<UiSource>      SceneSources { get; }
@@ -162,6 +165,9 @@ namespace MilkBottle.ViewModels {
                 mTags = mCurrentScene.Scene.Tags;
                 mYears = mCurrentScene.Scene.Years;
                 mHours = mCurrentScene.Scene.Hours;
+                mIsFavoriteArtist = mCurrentScene.Scene.IsFavoriteArtist;
+                mIsFavoriteAlbum = mCurrentScene.Scene.IsFavoriteAlbum;
+                mIsFavoriteTrack = mCurrentScene.Scene.IsFavoriteTrack;
             }
 
             RaisePropertyChanged( () => ArePropertiesValid );
@@ -183,6 +189,9 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => Tags );
             RaisePropertyChanged( () => Years );
             RaisePropertyChanged( () => Hours );
+            RaisePropertyChanged( () => IsFavoriteArtist );
+            RaisePropertyChanged( () => IsFavoriteAlbum );
+            RaisePropertyChanged( () => IsFavoriteTrack );
         }
 
         private void LoadLists() {
@@ -536,6 +545,44 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public bool IsFavoriteArtist {
+            get => mIsFavoriteArtist;
+            set {
+                mIsFavoriteArtist = value;
+
+                OnFavoritesChanged();
+                RaisePropertyChanged( () => IsFavoriteArtist );
+            }
+        }
+
+        public bool IsFavoriteAlbum {
+            get => mIsFavoriteAlbum;
+            set {
+                mIsFavoriteAlbum = value;
+
+                OnFavoritesChanged();
+                RaisePropertyChanged( () => IsFavoriteAlbum );
+            }
+        }
+
+        public bool IsFavoriteTrack {
+            get => mIsFavoriteTrack;
+            set {
+                mIsFavoriteTrack = value;
+
+                OnFavoritesChanged();
+                RaisePropertyChanged( () => IsFavoriteTrack );
+            }
+        }
+
+        private void OnFavoritesChanged() {
+            if( mCurrentScene != null ) {
+                var newScene = mCurrentScene.Scene.WithFavorites( mIsFavoriteTrack, mIsFavoriteAlbum, mIsFavoriteArtist );
+
+                mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnFavoritesChanged ), ex ));
+                UpdateScene( newScene );
+            }
+        }
         private void OnPresetOverlapChanged() {
             if( mCurrentScene != null ) {
                 var newScene = mCurrentScene.Scene.WithOverlap( mCurrentPresetOverlap != 0, mCurrentPresetOverlap );

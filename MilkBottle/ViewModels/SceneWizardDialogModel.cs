@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using MilkBottle.Dto;
@@ -29,12 +30,16 @@ namespace MilkBottle.ViewModels {
         private string                              mTags;
         private string                              mYears;
         private string                              mHours;
+        private bool                                mIsFavoriteTrack;
+        private bool                                mIsFavoriteAlbum;
+        private bool                                mIsFavoriteArtist;
         private bool                                mUtilizeArtist;
         private bool                                mUtilizeAlbum;
         private bool                                mUtilizeTrack;
         private bool                                mUtilizeGenre;
         private bool                                mUtilizeTags;
         private bool                                mUtilizeYears;
+        private bool                                mUtilizeFavorites;
         private UiSource                            mCurrentSource;
         private UiCycling                           mCurrentCycling;
         private PresetList                          mCurrentList;
@@ -205,6 +210,24 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public string PlayingFavorites {
+            get {
+                var retValue = "(none)";
+
+                if( mPlaybackEvent != null ) {
+                    var favorites = new List<string> {
+                        mPlaybackEvent.IsFavoriteArtist ? "Artist" : String.Empty,
+                        mPlaybackEvent.IsFavoriteAlbum ? "Album " : String.Empty,
+                        mPlaybackEvent.IsFavoriteTrack ? "Track" : String.Empty
+                    };
+
+                    retValue = String.Join( ", ", from f in favorites where !String.IsNullOrWhiteSpace( f ) select f );
+                }
+
+                return retValue;
+            }
+        }
+
         public UiCycling CurrentCycling {
             get => mCurrentCycling;
             set {
@@ -306,6 +329,36 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public bool IsFavoriteArtist {
+            get => mIsFavoriteArtist;
+            set {
+                mIsFavoriteArtist = value;
+                mScene = mScene.WithFavorites( mIsFavoriteTrack, mIsFavoriteAlbum, mIsFavoriteArtist );
+
+                RaisePropertyChanged( () => IsFavoriteArtist );
+            }
+        }
+
+        public bool IsFavoriteAlbum {
+            get => mIsFavoriteAlbum;
+            set {
+                mIsFavoriteAlbum = value;
+                mScene = mScene.WithFavorites( mIsFavoriteTrack, mIsFavoriteAlbum, mIsFavoriteArtist );
+
+                RaisePropertyChanged( () => IsFavoriteAlbum );
+            }
+        }
+
+        public bool IsFavoriteTrack {
+            get => mIsFavoriteTrack;
+            set {
+                mIsFavoriteTrack = value;
+                mScene = mScene.WithFavorites( mIsFavoriteTrack, mIsFavoriteAlbum, mIsFavoriteArtist );
+
+                RaisePropertyChanged( () => IsFavoriteTrack );
+            }
+        } 
+        
         public string Hours {
             get => mHours;
             set {
@@ -366,6 +419,29 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public bool UtilizeFavorites {
+            get => mUtilizeFavorites;
+            set {
+                mUtilizeFavorites = value;
+
+                if( mUtilizeFavorites ) {
+                    mIsFavoriteTrack |= mPlaybackEvent.IsFavoriteTrack;
+                    mIsFavoriteAlbum |= mPlaybackEvent.IsFavoriteAlbum;
+                    mIsFavoriteArtist |= mPlaybackEvent.IsFavoriteArtist;
+                }
+                else {
+                    mIsFavoriteTrack &= !mPlaybackEvent.IsFavoriteTrack;
+                    mIsFavoriteAlbum &= !mPlaybackEvent.IsFavoriteAlbum;
+                    mIsFavoriteArtist &= !mPlaybackEvent.IsFavoriteArtist;
+                }
+
+                RaisePropertyChanged( () => UtilizeFavorites );
+                RaisePropertyChanged( () => IsFavoriteArtist );
+                RaisePropertyChanged( () => IsFavoriteAlbum );
+                RaisePropertyChanged( () => IsFavoriteTrack );
+            }
+        }
+
         public bool UtilizeYears {
             get => mUtilizeYears;
             set {
@@ -411,6 +487,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => PlayingGenre );
             RaisePropertyChanged( () => PlayingTags );
             RaisePropertyChanged( () => PlayingYear );
+            RaisePropertyChanged( () => PlayingFavorites );
         }
 
         private void LoadScene() {
@@ -427,6 +504,10 @@ namespace MilkBottle.ViewModels {
             mUtilizeTrack = ContainsText( PlayingTrack, TrackNames );
             mUtilizeGenre = ContainsText( PlayingGenre, Genres );
             mUtilizeTags = ContainsText( PlayingTags, Tags );
+
+            mIsFavoriteArtist = mScene.IsFavoriteArtist;
+            mIsFavoriteAlbum = mScene.IsFavoriteAlbum;
+            mIsFavoriteTrack = mScene.IsFavoriteTrack;
 
             mCurrentSource = SceneSources.FirstOrDefault( s => s.Source.Equals( mScene.SceneSource ));
             if( mCurrentSource?.Source == SceneSource.PresetList ) {
@@ -450,6 +531,9 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => Tags );
             RaisePropertyChanged( () => Years );
             RaisePropertyChanged( () => Hours );
+            RaisePropertyChanged( () => IsFavoriteArtist );
+            RaisePropertyChanged( () => IsFavoriteAlbum );
+            RaisePropertyChanged( () => IsFavoriteTrack );
 
             RaisePropertyChanged( () => UtilizeArtist );
             RaisePropertyChanged( () => UtilizeAlbum );
@@ -457,6 +541,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => UtilizeGenre );
             RaisePropertyChanged( () => UtilizeTags );
             RaisePropertyChanged( () => UtilizeYears );
+            RaisePropertyChanged( () => UtilizeFavorites );
 
             RaisePropertyChanged( () => SelectedSource );
             RaisePropertyChanged( () => SelectedList );
@@ -482,6 +567,7 @@ namespace MilkBottle.ViewModels {
             mScene = mScene.WithTags( mTags );
             mScene = mScene.WithYears( mYears );
             mScene = mScene.WithHours( mHours );
+            mScene = mScene.WithFavorites( mIsFavoriteTrack, mIsFavoriteAlbum, mIsFavoriteArtist );
 
             if(( mCurrentSource?.Source == SceneSource.PresetList ) &&
                ( mCurrentList != null )) {

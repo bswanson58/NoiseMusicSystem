@@ -11,7 +11,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SceneWizardDialogModel, IsDesignTimeCreatable=False}"
-             Height="525" Width="1000">
+             Height="575" Width="1000">
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
@@ -64,6 +64,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -71,10 +72,10 @@
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Utilize:"/>
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="15,0,0,0" Text="Currently Playing Track:"/>
             </StackPanel>
-            <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
-                <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="5" Text="Scene Parameters: (separate multiple values with pipe (|))"/>
-            </StackPanel>
 
+            <TextBlock Grid.Column="2" Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Margin="5" Text="Scene Parameters: (separate multiple values with pipe (|))"/>
+
+            <!-- Artist -->
             <Grid Grid.Column="0" Grid.Row="1" Margin="5,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -91,6 +92,7 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding ArtistNames, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
+            <!-- Album -->
             <Grid Grid.Column="0" Grid.Row="2" Margin="5,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -107,6 +109,7 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding AlbumNames, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
+            <!-- Track -->
             <Grid Grid.Column="0" Grid.Row="3" Margin="5,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -123,6 +126,7 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding TrackNames, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
+            <!-- Genre -->
             <Grid Grid.Column="0" Grid.Row="4" Margin="5,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -139,6 +143,7 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding Genres, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
+            <!-- Tags -->
             <Grid Grid.Column="0" Grid.Row="5" Margin="5,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -155,6 +160,7 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
+            <!-- Published Year -->
             <Grid Grid.Column="0" Grid.Row="6" Margin="5,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -170,12 +176,31 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding Years, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <DockPanel Grid.Column="2" Grid.Row="7" Margin="0,6">
+            <!-- Favorites -->
+            <Grid Grid.Column="0" Grid.Row="7" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox Grid.Column="0" IsChecked="{Binding UtilizeFavorites}"/>
+                <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Width="45" Margin="0,0,3,0" TextAlignment="Right" Text="Favorite:"/>
+                <TextBlock Grid.Column="2" Style="{StaticResource GeneralTitleStyle}" Text="{Binding PlayingFavorites}"/>
+            </Grid>
+            <StackPanel Grid.Column="2" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,2,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Favorite:"/>
+                <CheckBox Margin="1,0,0,0" VerticalAlignment="Center" Content="Artist" IsChecked="{Binding IsFavoriteArtist}"/>
+                <CheckBox Margin="15,0,0,0" VerticalAlignment="Center" Content="Album" IsChecked="{Binding IsFavoriteAlbum}"/>
+                <CheckBox Margin="15,0,0,0" VerticalAlignment="Center" Content="Track" IsChecked="{Binding IsFavoriteTrack}"/>
+            </StackPanel>
+
+            <!-- Hours -->
+            <DockPanel Grid.Column="2" Grid.Row="8" Margin="0,6">
                 <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Hours:"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding Hours, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="9" Width="1" Fill="Gray"/>
+            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="10" Width="1" Fill="Gray"/>
         </Grid>
 
         <Grid Grid.Row="3">

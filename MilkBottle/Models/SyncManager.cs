@@ -175,8 +175,10 @@ namespace MilkBottle.Models {
             yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), 8, RateValue );
             yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, PresetScene.cValueSeparator ), 7, RateValue );
             yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, PresetScene.cValueSeparator ), 6, RateValue );
-            yield return new SceneRating( SplitString( forEvent.PublishedYear.ToString()), SplitString( scene.Years, PresetScene.cValueSeparator ), 6, RateYearRange );
-            yield return new SceneRating( SplitString( DateTime.Now.ToString( "HH:mm" )), SplitString( scene.Hours, PresetScene.cValueSeparator ), 5, RateHourRange );
+            yield return new SceneRating( SplitString( forEvent.PublishedYear.ToString()), SplitString( scene.Years, PresetScene.cValueSeparator ), 5, RateYearRange );
+            yield return new SceneRating( SplitString( DateTime.Now.ToString( "HH:mm" )), SplitString( scene.Hours, PresetScene.cValueSeparator ), 4, RateHourRange );
+            yield return new SceneRating( SplitString( CreateFavorites( forEvent.IsFavoriteArtist, forEvent.IsFavoriteAlbum, forEvent.IsFavoriteTrack ), PresetScene.cValueSeparator ),
+                                          SplitString( CreateFavorites( scene.IsFavoriteArtist, scene.IsFavoriteAlbum, scene.IsFavoriteTrack ), PresetScene.cValueSeparator ), 3, RateValue );
         }
 
         private string[] SplitString( string input ) {
@@ -194,6 +196,16 @@ namespace MilkBottle.Models {
             input = input.ReplaceWord( "sunset", CelestialData.SunSet.ToString( "HH:mm" ));
 
             return input;
+        }
+
+        private string CreateFavorites( bool isFavoriteArtist, bool isFavoriteAlbum, bool isFavoriteTrack ) {
+            var retValue = new List<string> {
+                isFavoriteArtist ? "artist" : String.Empty,
+                isFavoriteAlbum ? "album" : String.Empty,
+                isFavoriteTrack ? "track" : String.Empty
+            };
+
+            return String.Join( PresetScene.cValueSeparator.ToString(), from s in retValue where !String.IsNullOrWhiteSpace( s ) select s );
         }
 
         private CelestialData CelestialData {
