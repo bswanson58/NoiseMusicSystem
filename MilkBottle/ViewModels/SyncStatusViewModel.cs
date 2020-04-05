@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Models.Sunset;
 using MilkBottle.Types;
 using MilkBottle.Views;
 using Prism.Commands;
@@ -27,6 +28,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPreferences           mPreferences;
         private readonly ICelestialCalculator   mCelestialCalculator;
         private readonly IPlatformLog           mLog;
+        private CelestialData                   mCelestialData;
         private IDisposable                     mPresetSubscription;
         private IDisposable                     mPlaybackSubscription;
         private PlaybackEvent                   mCurrentPlayback;
@@ -263,16 +265,19 @@ namespace MilkBottle.ViewModels {
         }
 
         private void UpdateCelestialData() {
-            var preferences = mPreferences.Load<MilkPreferences>();
+            if(( mCelestialData == null ) ||
+               ( mCelestialData.SunRise.Date != DateTime.Now.Date )) {
+                var preferences = mPreferences.Load<MilkPreferences>();
 
-            var celestialData = mCelestialCalculator.CalculateData( preferences.Latitude, preferences.Longitude );
-            var daylight = celestialData.SunSet - celestialData.SunRise;
+                mCelestialData = mCelestialCalculator.CalculateData( preferences.Latitude, preferences.Longitude );
+                var daylight = mCelestialData.SunSet - mCelestialData.SunRise;
 
-            IsDay = DateTime.Now > celestialData.SunRise && DateTime.Now < celestialData.SunSet;
-            CelestialInfo = $"  Sunrise: {celestialData.SunRise:h:mm tt}\n   Sunset: {celestialData.SunSet:h:mm tt}\nDaylight: {daylight:h\\:mm} hours";
+                CelestialInfo = $"  Sunrise: {mCelestialData.SunRise:h:mm tt}\n   Sunset: {mCelestialData.SunSet:h:mm tt}\nDaylight: {daylight:h\\:mm} hours";
+                RaisePropertyChanged( () => CelestialInfo );
+            }
 
+            IsDay = DateTime.Now > mCelestialData?.SunRise && DateTime.Now < mCelestialData?.SunSet;
             RaisePropertyChanged( () => IsDay );
-            RaisePropertyChanged( () => CelestialInfo );
         }
 
         public void Dispose() {
