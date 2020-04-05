@@ -228,7 +228,7 @@ namespace MilkBottle.ViewModels {
             mPresets.Clear();
 
             if( mCurrentLibrary != null ) {
-                mPresets.AddRange( from p in mCurrentLibrary.GetPresets() select new UiPreset( p, null, null ));
+                mPresets.AddRange( from p in mCurrentLibrary.GetPresets() orderby p.Name select new UiPreset( p, null, null ));
             }
 
             if( restoreToPreset != null ) {
