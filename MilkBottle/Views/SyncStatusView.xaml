@@ -63,7 +63,7 @@
         <DataTemplate x:Key="CelestialTemplate">
             <Grid ToolTip="{Binding CelestialInfo}" Opacity="0.6">
                 <ContentControl x:Name="Day" Margin="6" Content="{StaticResource Path_Sun}"/>
-                <ContentControl x:Name="Night" Margin="6" Content="{StaticResource Path_Moon}"/>
+                <ContentControl x:Name="Night" Margin="7" Content="{StaticResource Path_Moon}"/>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsDay}" Value="True">
