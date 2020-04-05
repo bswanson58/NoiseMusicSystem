@@ -9,7 +9,9 @@ namespace MilkBottle.Dto {
         Library = 1,
         Set = 2,
         Tag = 3,
-        Preset = 4
+        Preset = 4,
+        Unrated = 5,
+        DoNotPlay = 6
     }
 
     abstract class PresetList {
@@ -78,6 +80,23 @@ namespace MilkBottle.Dto {
 
         public override IEnumerable<Preset> GetPresets() {
             return mRetrievalAction?.Invoke( mTag );
+        }
+    }
+
+    class GlobalPresetList : PresetList {
+        private readonly Func<IEnumerable<Preset>>   mRetrievalAction;
+
+        public override PresetListType  ListType { get; }
+        public override ObjectId        ListIdentifier => ObjectId.Empty;
+
+        public GlobalPresetList( string name, PresetListType ofType, Func<IEnumerable<Preset>> retrieval ) :
+            base( name ) {
+            ListType = ofType;
+            mRetrievalAction = retrieval;
+        }
+
+        public override IEnumerable<Preset> GetPresets() {
+            return mRetrievalAction?.Invoke();
         }
     }
 }

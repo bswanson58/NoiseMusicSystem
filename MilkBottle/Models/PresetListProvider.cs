@@ -5,6 +5,7 @@ using LiteDB;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Types;
 using MoreLinq;
 
 namespace MilkBottle.Models {
@@ -30,6 +31,9 @@ namespace MilkBottle.Models {
             mLibraryProvider.SelectLibraries( list => retValue.AddRange( from l in list select new LibraryPresetList( l, GetPresets ))).IfLeft( ex => LogException( "SelectLibraries", ex ));
             mSetProvider.SelectSets( list => retValue.AddRange( from s in list select new SetPresetList( s, GetPresets ))).IfLeft( ex => LogException( "SelectSets", ex ));
             mTagProvider.SelectTags( list => retValue.AddRange( from t in list select new TagPresetList( t, GetPresets ))).IfLeft( ex => LogException( "SelectTags", ex ));
+
+            retValue.Add( new GlobalPresetList( "Unrated Presets", PresetListType.Unrated, GetUnratedPresets ));
+            retValue.Add( new GlobalPresetList( "Don't Play", PresetListType.DoNotPlay, GetDoNotPlayPresets ));
 
             return from p in retValue orderby p.Name select p;
         }
@@ -112,6 +116,24 @@ namespace MilkBottle.Models {
             var retValue = new List<Preset>();
 
             mPresetProvider.SelectPresets( forTag, list => retValue.AddRange( list )).IfLeft( ex => LogException( "SelectPresets (forTag)", ex ));
+
+            return retValue.DistinctBy( p => p.Name );
+        }
+
+        public IEnumerable<Preset> GetUnratedPresets() {
+            var retValue = new List<Preset>();
+
+            mPresetProvider.SelectPresets( list => retValue.AddRange( from p in list where !p.IsFavorite && p.Rating == PresetRating.UnRatedValue && !p.Tags.Any() select p ))
+                .IfLeft( ex => LogException( "SelectPresets (unrated)", ex ));
+
+            return retValue.DistinctBy( p => p.Name );
+        }
+
+        public IEnumerable<Preset> GetDoNotPlayPresets() {
+            var retValue = new List<Preset>();
+
+            mPresetProvider.SelectPresets( list => retValue.AddRange( from p in list where p.Rating == PresetRating.DoNotPlayValue select p ))
+                .IfLeft( ex => LogException( "SelectPresets (do not play)", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }
