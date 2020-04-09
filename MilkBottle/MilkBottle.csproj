@@ -242,6 +242,7 @@
     <Compile Include="Dto\PresetList.cs" />
     <Compile Include="Dto\UiCompanionApp.cs" />
     <Compile Include="Dto\UiCycling.cs" />
+    <Compile Include="Dto\UiMood.cs" />
     <Compile Include="Dto\UiPreset.cs" />
     <Compile Include="Dto\UiScene.cs" />
     <Compile Include="Dto\UiSet.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
+    <Compile Include="ViewModels\MoodManagementDialogModel.cs" />
     <Compile Include="ViewModels\NewSceneDialogModel.cs" />
     <Compile Include="ViewModels\NewSetDialogModel.cs" />
     <Compile Include="ViewModels\NewTagDialogModel.cs" />
@@ -348,6 +350,9 @@
     </Compile>
     <Compile Include="Views\MilkView.xaml.cs">
       <DependentUpon>MilkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MoodManagementDialog.xaml.cs">
+      <DependentUpon>MoodManagementDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewSceneDialog.xaml.cs">
       <DependentUpon>NewSceneDialog.xaml</DependentUpon>
@@ -418,6 +423,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ConfirmDeleteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MoodManagementDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

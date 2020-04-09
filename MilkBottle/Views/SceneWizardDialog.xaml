@@ -11,7 +11,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SceneWizardDialogModel, IsDesignTimeCreatable=False}"
-             Height="575" Width="1000">
+             Height="585" Width="1000">
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
@@ -56,6 +56,7 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -200,7 +201,21 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding Hours, UpdateSourceTrigger=PropertyChanged}"/>
             </DockPanel>
 
-            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="10" Width="1" Fill="Gray"/>
+            <!-- Moods -->
+            <Grid Grid.Column="2" Grid.Row="9" Margin="0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Moods:"/>
+                <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding SceneMoods}"/>
+                <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="20,0,0,0" Padding="8,0" Command="{Binding SelectMoods}" Content="..." ToolTip="Select Moods"/>
+
+            </Grid>
+
+            <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="11" Width="1" Fill="Gray"/>
         </Grid>
 
         <Grid Grid.Row="3">

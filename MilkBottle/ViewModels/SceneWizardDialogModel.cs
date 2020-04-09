@@ -30,6 +30,7 @@ namespace MilkBottle.ViewModels {
         private string                              mTags;
         private string                              mYears;
         private string                              mHours;
+        private readonly List<Mood>                 mSceneMoods;
         private bool                                mIsFavoriteTrack;
         private bool                                mIsFavoriteAlbum;
         private bool                                mIsFavoriteArtist;
@@ -57,6 +58,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                     CreateScene { get; }
         public  DelegateCommand                     SelectPreset { get; }
         public  DelegateCommand                     SelectScene { get; }
+        public  DelegateCommand                     SelectMoods { get; }
         public  DelegateCommand                     Ok { get; }
         public  DelegateCommand                     Cancel { get; }
 
@@ -66,6 +68,7 @@ namespace MilkBottle.ViewModels {
         public  string                              PlayingGenre => mPlaybackEvent?.ArtistGenre;
         public  string                              PlayingTags => mPlaybackEvent != null ? String.Join( ", ", mPlaybackEvent.TrackTags ) : String.Empty;
         public  string                              PlayingYear => mPlaybackEvent != null ? mPlaybackEvent.PublishedYear > 0 ? $"{mPlaybackEvent.PublishedYear:D4}" : String.Empty : String.Empty;
+        public  string                              SceneMoods => String.Join( ", ", from s in mSceneMoods orderby s.Name select s.Name );
 
         public  string                              SceneName => mScene?.Name;
         public  string                              CurrentPresetName => mCurrentPreset?.Name;
@@ -98,6 +101,7 @@ namespace MilkBottle.ViewModels {
             CreateScene = new DelegateCommand( OnCreateScene );
             SelectPreset = new DelegateCommand( OnSelectPreset );
             SelectScene = new DelegateCommand( OnSelectScene );
+            SelectMoods = new DelegateCommand( OnSelectMoods );
 
             PresetLists = new ObservableCollection<PresetList>();
             SceneSources = new ObservableCollection<UiSource> {
@@ -109,6 +113,7 @@ namespace MilkBottle.ViewModels {
                 new UiCycling( "Duration", Entities.PresetCycling.Duration )
             };
 
+            mSceneMoods = new List<Mood>();
             mNewSceneCreated = false;
         }
 
@@ -202,7 +207,7 @@ namespace MilkBottle.ViewModels {
             if( result.Result == ButtonResult.OK ) {
                 var newScene = result.Parameters.GetValue<PresetScene>( SelectSceneDialogModel.cSceneParameter );
 
-                if(newScene != null ) {
+                if( newScene != null ) {
                     mScene = newScene;
 
                     LoadScene();
@@ -226,6 +231,14 @@ namespace MilkBottle.ViewModels {
 
                 return retValue;
             }
+        }
+
+        private void OnSelectMoods() {
+            mDialogService.ShowDialog( nameof( MoodManagementDialog ), new DialogParameters(), OnSelectMoodsResult );
+        }
+
+        private void OnSelectMoodsResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) { }
         }
 
         public UiCycling CurrentCycling {
@@ -499,6 +512,9 @@ namespace MilkBottle.ViewModels {
             mYears = mScene.Years;
             mHours = mScene.Hours;
 
+            mSceneMoods.Clear();
+            mSceneMoods.AddRange( mScene.Moods );
+
             mUtilizeArtist = ContainsText( PlayingArtist, ArtistNames );
             mUtilizeAlbum = ContainsText( PlayingAlbum, AlbumNames );
             mUtilizeTrack = ContainsText( PlayingTrack, TrackNames );
@@ -534,6 +550,7 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => IsFavoriteArtist );
             RaisePropertyChanged( () => IsFavoriteAlbum );
             RaisePropertyChanged( () => IsFavoriteTrack );
+            RaisePropertyChanged( () => SceneMoods );
 
             RaisePropertyChanged( () => UtilizeArtist );
             RaisePropertyChanged( () => UtilizeAlbum );
@@ -568,6 +585,7 @@ namespace MilkBottle.ViewModels {
             mScene = mScene.WithYears( mYears );
             mScene = mScene.WithHours( mHours );
             mScene = mScene.WithFavorites( mIsFavoriteTrack, mIsFavoriteAlbum, mIsFavoriteArtist );
+            mScene = mScene.WithMoods( mSceneMoods );
 
             if(( mCurrentSource?.Source == SceneSource.PresetList ) &&
                ( mCurrentList != null )) {

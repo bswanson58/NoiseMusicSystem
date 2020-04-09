@@ -32,6 +32,11 @@ namespace MilkBottle.Database {
             });
 */        }
 
+        protected override ILiteCollection<PresetScene> Include( ILiteCollection<PresetScene> list ) {
+            return list
+                .Include( p => p.Moods );
+        }
+
         public Either<Exception, Unit> SelectScenes( Action<IEnumerable<PresetScene>> action ) {
             return SelectEntities( action );
         }
