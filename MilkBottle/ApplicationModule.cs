@@ -53,6 +53,7 @@ namespace MilkBottle {
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
             containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
             containerRegistry.RegisterDialog<MoodManagementDialog, MoodManagementDialogModel>();
+            containerRegistry.RegisterDialog<NewMoodDialog, NewMoodDialogModel>();
             containerRegistry.RegisterDialog<NewTagDialog, NewTagDialogModel>();
             containerRegistry.RegisterDialog<NewSceneDialog, NewSceneDialogModel>();
             containerRegistry.RegisterDialog<NewSetDialog, NewSetDialogModel>();

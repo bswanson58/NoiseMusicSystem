@@ -238,7 +238,9 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnSelectMoodsResult( IDialogResult result ) {
-            if( result.Result == ButtonResult.OK ) { }
+            if( result.Result == ButtonResult.OK ) {
+
+            }
         }
 
         public UiCycling CurrentCycling {
