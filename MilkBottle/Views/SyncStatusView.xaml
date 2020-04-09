@@ -86,6 +86,8 @@
         <StackPanel Grid.Column="0" Orientation="Horizontal">
             <Button Margin="10,0,5,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
                     ToolTip="Scene Wizard"/>
+            <Button Margin="5,0" Style="{StaticResource ControllerButtonStyle}" Padding="3" Content="{StaticResource Path_Mood}"
+                    ToolTip="Mood Selection"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>

@@ -4,7 +4,6 @@ using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
-using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
     class MoodProvider : EntityProvider<Mood>, IMoodProvider {
