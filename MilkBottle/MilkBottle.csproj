@@ -230,6 +230,7 @@
     <Compile Include="Database\DatabaseProvider.cs" />
     <Compile Include="Database\EntityCollection.cs" />
     <Compile Include="Database\EntityProvider.cs" />
+    <Compile Include="Database\MoodProvider.cs" />
     <Compile Include="Database\PresetLibraryProvider.cs" />
     <Compile Include="Database\PresetProvider.cs" />
     <Compile Include="Database\PresetSetProvider.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Entities\ActiveCompanionApp.cs" />
     <Compile Include="Entities\EntityBase.cs" />
+    <Compile Include="Entities\Mood.cs" />
     <Compile Include="Entities\Preset.cs" />
     <Compile Include="Entities\PresetLibrary.cs" />
     <Compile Include="Entities\PresetScene.cs" />
@@ -262,6 +264,7 @@
     <Compile Include="Interfaces\IInitializationController.cs" />
     <Compile Include="Interfaces\IIpcManager.cs" />
     <Compile Include="Interfaces\IMilkController.cs" />
+    <Compile Include="Interfaces\IMoodProvider.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IPresetController.cs" />
     <Compile Include="Interfaces\IPresetLibraryProvider.cs" />

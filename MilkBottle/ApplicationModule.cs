@@ -32,6 +32,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IPresetTimerFactory, PresetTimerFactory>();
             containerRegistry.RegisterSingleton<IPresetSequencerFactory, PresetSequencerFactory>();
 
+            containerRegistry.RegisterSingleton<IMoodProvider, MoodProvider>();
             containerRegistry.RegisterSingleton<IPresetProvider, PresetProvider>();
             containerRegistry.RegisterSingleton<IPresetLibraryProvider, PresetLibraryProvider>();
             containerRegistry.RegisterSingleton<IPresetListProvider, PresetListProvider>();
