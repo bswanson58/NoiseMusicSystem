@@ -9,7 +9,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:MoodManagementDialogModel, IsDesignTimeCreatable=False}"
-             Height="350" Width="400">
+             Height="300" Width="450">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -58,11 +58,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Available Moods:"/>
+        <TextBlock Grid.Row="0" Margin="10,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Available Moods:"/>
 
         <ListBox Grid.Row="1" ItemsSource="{Binding MoodList}" ItemTemplate="{StaticResource MoodTemplate}"/>
 
-        <Button Grid.Row="2" Margin="0,10" Content="Add Mood..." HorizontalAlignment="Right" Command="{Binding AddMood}"/>
+        <Button Grid.Row="2" Margin="10,10,0,3" Content="New Mood..." HorizontalAlignment="Left" Command="{Binding AddMood}"/>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
