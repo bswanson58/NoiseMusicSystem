@@ -43,9 +43,13 @@ namespace MilkBottle.ViewModels {
 
             if(!String.IsNullOrWhiteSpace( preferences.CurrentMood )) {
                 mCurrentMood = MoodList.FirstOrDefault( m => m.Identity.ToString().Equals( preferences.CurrentMood ));
-
-                RaisePropertyChanged( () => SelectedMood );
             }
+
+            if( mCurrentMood == null ) {
+                mCurrentMood = MoodList.FirstOrDefault();
+            }
+
+            RaisePropertyChanged( () => SelectedMood );
         }
 
         public Mood SelectedMood {
