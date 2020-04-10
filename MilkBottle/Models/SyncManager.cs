@@ -179,6 +179,12 @@ namespace MilkBottle.Models {
             yield return new SceneRating( SplitString( DateTime.Now.ToString( "HH:mm" )), SplitString( scene.Hours, PresetScene.cValueSeparator ), 4, RateHourRange );
             yield return new SceneRating( SplitString( CreateFavorites( forEvent.IsFavoriteArtist, forEvent.IsFavoriteAlbum, forEvent.IsFavoriteTrack ), PresetScene.cValueSeparator ),
                                           SplitString( CreateFavorites( scene.IsFavoriteArtist, scene.IsFavoriteAlbum, scene.IsFavoriteTrack ), PresetScene.cValueSeparator ), 3, RateValue );
+
+            var preferences = mPreferences.Load<MilkPreferences>();
+
+            if(!String.IsNullOrWhiteSpace( preferences.CurrentMood )) {
+                yield return new SceneRating( SplitString( preferences.CurrentMood ), ( from m in scene.Moods select m.Identity.ToString()).ToArray(), 11, RateValue );
+            }
         }
 
         private string[] SplitString( string input ) {
