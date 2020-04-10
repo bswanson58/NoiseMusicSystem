@@ -212,7 +212,6 @@
                 <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" Margin="10,0,3,0" Width="50" TextAlignment="Right" VerticalAlignment="Center" Text="Moods:"/>
                 <TextBlock Grid.Column="1" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding SceneMoods}"/>
                 <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="20,0,0,0" Padding="8,0" Command="{Binding SelectMoods}" Content="..." ToolTip="Select Moods"/>
-
             </Grid>
 
             <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="11" Width="1" Fill="Gray"/>

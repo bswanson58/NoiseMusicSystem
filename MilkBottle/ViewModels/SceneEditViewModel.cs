@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Caliburn.Micro;
@@ -48,6 +49,7 @@ namespace MilkBottle.ViewModels {
 
         public  DelegateCommand                     NewScene { get; }
         public  DelegateCommand                     SelectPreset { get; }
+        public  DelegateCommand                     SelectMoods { get; }
 
         public  string                              Title => "Scenes";
 
@@ -63,6 +65,8 @@ namespace MilkBottle.ViewModels {
                                                                                     $"{mCurrentCycleDuration} seconds per preset" : 
                                                                                     $"{mCurrentCycleDuration} presets per track";
         public  bool                                CanCycle => IsListSource;
+
+        public  string                              SceneMoods => mCurrentScene != null ? String.Join( ", ", from s in mCurrentScene.Scene.Moods orderby s.Name select s.Name ) : String.Empty;
 
         public  int                                 MinimumPresetOverlap => 0;
         public  int                                 MaximumPresetOverlap => 5;
@@ -93,6 +97,7 @@ namespace MilkBottle.ViewModels {
 
             NewScene = new DelegateCommand( OnNewScene );
             SelectPreset = new DelegateCommand( OnSelectPreset );
+            SelectMoods = new DelegateCommand( OnSelectMoods );
 
             stateManager.EnterState( eStateTriggers.Stop );
         }
@@ -192,13 +197,16 @@ namespace MilkBottle.ViewModels {
             RaisePropertyChanged( () => IsFavoriteArtist );
             RaisePropertyChanged( () => IsFavoriteAlbum );
             RaisePropertyChanged( () => IsFavoriteTrack );
+            RaisePropertyChanged( () => SceneMoods );
         }
 
         private void LoadLists() {
             PresetLists.Clear();
 
             PresetLists.AddRange( mListProvider.GetLists());
-            SelectedList = PresetLists.FirstOrDefault();
+            mCurrentList = PresetLists.FirstOrDefault();
+
+            RaisePropertyChanged( () => SelectedList );
         }
 
         private void LoadScenes() {
@@ -583,6 +591,31 @@ namespace MilkBottle.ViewModels {
                 UpdateScene( newScene );
             }
         }
+
+        private void OnSelectMoods() {
+            if( mCurrentScene != null ) {
+                var parameters = new DialogParameters{{ MoodManagementDialogModel.cMoodListParameter, mCurrentScene.Scene.Moods } };
+
+                mDialogService.ShowDialog( nameof( MoodManagementDialog ), parameters, OnSelectMoodsResult );
+            }
+        }
+
+        private void OnSelectMoodsResult( IDialogResult result ) {
+            if(( result.Result == ButtonResult.OK ) &&
+               ( mCurrentScene != null )) {
+                var moods = result.Parameters.GetValue<IEnumerable<Mood>>( MoodManagementDialogModel.cMoodListParameter );
+
+                if( moods != null ) {
+                    var newScene = mCurrentScene.Scene.WithMoods( moods.ToList());
+
+                    mSceneProvider.Update( newScene ).IfLeft( ex => LogException( nameof( OnSelectMoodsResult ), ex ));
+
+                    UpdateScene( newScene );
+                    RaisePropertyChanged( () => SceneMoods );
+                }
+            }
+        }
+
         private void OnPresetOverlapChanged() {
             if( mCurrentScene != null ) {
                 var newScene = mCurrentScene.Scene.WithOverlap( mCurrentPresetOverlap != 0, mCurrentPresetOverlap );
