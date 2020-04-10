@@ -272,6 +272,7 @@ namespace MilkBottle.ViewModels {
             var currentMood = moodList.FirstOrDefault( m => m.Identity.ToString().Equals( preferences.CurrentMood ));
 
             CurrentMood = currentMood != null ? $"The mood is currently: {currentMood.Name}" : "Mood Selection";
+            RaisePropertyChanged( () => CurrentMood );
         }
 
         public string TagsTooltip => 
