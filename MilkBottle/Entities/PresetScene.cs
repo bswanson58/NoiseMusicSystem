@@ -37,7 +37,7 @@ namespace MilkBottle.Entities {
         public  bool                IsFavoriteTrack { get; }
         public  bool                IsFavoriteAlbum { get; }
         public  bool                IsFavoriteArtist { get; }
-        public  List<Mood>          Moods { get; }
+        public  List<Mood>          Moods { get; set; }
 
         public  string              DebugDisplay => $"Scene: {Name}";
 
@@ -92,7 +92,7 @@ namespace MilkBottle.Entities {
         [BsonCtor]
         public PresetScene( ObjectId id, string name, int sceneSource, int sourceListType, ObjectId sourceId, int presetCycle, int presetDuration, bool overlapPresets,
                             int overlapDuration, string artistNames, string albumNames, string trackNames, string genres, string tags, string years, string hours,
-                            bool isFavoriteTrack, bool isFavoriteAlbum, bool isFavoriteArtist, List<Mood> moods ) :
+                            bool isFavoriteTrack, bool isFavoriteAlbum, bool isFavoriteArtist ) :
                 base( id ) {
             Name = name ?? String.Empty;
             SceneSource = (SceneSource)sceneSource;
@@ -112,7 +112,7 @@ namespace MilkBottle.Entities {
             IsFavoriteTrack = isFavoriteTrack;
             IsFavoriteAlbum = isFavoriteAlbum;
             IsFavoriteArtist = isFavoriteArtist;
-            Moods = moods ?? new List<Mood>();
+            Moods = new List<Mood>();
         }
 
         public PresetScene WithName( string name ) {
