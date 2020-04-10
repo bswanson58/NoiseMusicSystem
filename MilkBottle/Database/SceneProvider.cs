@@ -4,7 +4,6 @@ using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
-using MoreLinq;
 
 namespace MilkBottle.Database {
     class SceneProvider :EntityProvider<PresetScene>, ISceneProvider {

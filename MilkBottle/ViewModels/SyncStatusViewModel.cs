@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
@@ -21,6 +22,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetListProvider    mListProvider;
         private readonly IPresetProvider        mPresetProvider;
         private readonly ISceneProvider         mSceneProvider;
+        private readonly IMoodProvider          mMoodProvider;
         private readonly IIpcManager            mIpcManager;
         private readonly ISyncManager           mSyncManager;
         private readonly IStateManager          mStateManager;
@@ -37,10 +39,12 @@ namespace MilkBottle.ViewModels {
 
         public  DelegateCommand                 SceneWizard { get; }
         public  DelegateCommand                 EditTags { get; }
+        public  DelegateCommand                 MoodSelection { get; }
 
         public  string                          SceneName { get; private set; }
         public  string                          TrackName {  get; private set; }
         public  string                          PresetName { get; private set; }
+        public  string                          CurrentMood { get; private set; }
 
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
@@ -49,12 +53,13 @@ namespace MilkBottle.ViewModels {
 
 
         public SyncStatusViewModel( IPresetController presetController, ISyncManager syncManager, IPresetListProvider listProvider, IPresetProvider presetProvider,
-                                    ISceneProvider sceneProvider, IStateManager stateManger, IDialogService dialogService, IIpcManager ipcManager,
+                                    ISceneProvider sceneProvider, IMoodProvider moodProvider, IStateManager stateManger, IDialogService dialogService, IIpcManager ipcManager,
                                     IEventAggregator eventAggregator, IPreferences preferences, ICelestialCalculator celestialCalculator, IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mSyncManager = syncManager;
             mListProvider = listProvider;
             mSceneProvider = sceneProvider;
+            mMoodProvider = moodProvider;
             mPresetController = presetController;
             mPresetProvider = presetProvider;
             mStateManager = stateManger;
@@ -66,6 +71,7 @@ namespace MilkBottle.ViewModels {
 
             SceneWizard = new DelegateCommand( OnSceneWizard, CanExecuteSceneWizard );
             EditTags = new DelegateCommand( OnTagEdit );
+            MoodSelection = new DelegateCommand( OnMoodSelection );
 
             if( mPresetController.IsInitialized ) {
                 Initialize();
@@ -94,6 +100,7 @@ namespace MilkBottle.ViewModels {
 
             mStateManager.EnterState( eStateTriggers.Run );
 
+            SetMoodTooltip();
             UpdateCelestialData();
 
             SceneWizard.RaiseCanExecuteChanged();
@@ -242,6 +249,29 @@ namespace MilkBottle.ViewModels {
                     RaisePropertyChanged( () => IsFavorite );
                 }
             }
+        }
+
+        private void OnMoodSelection() {
+            mDialogService.ShowDialog( nameof( MoodSelectionDialog ), new DialogParameters(), OnMoodSelectionResult );
+        }
+
+        private void OnMoodSelectionResult( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                StartPlayback( mCurrentPlayback );
+
+                SetMoodTooltip();
+            }
+        }
+
+        private void SetMoodTooltip() {
+            var preferences = mPreferences.Load<MilkPreferences>();
+            var moodList = new List<Mood>();
+
+            mMoodProvider.SelectMoods( list => moodList.AddRange( list )).IfLeft( ex => mLog.LogException( "SyncStatusView.SelectMoods", ex ));
+
+            var currentMood = moodList.FirstOrDefault( m => m.Identity.ToString().Equals( preferences.CurrentMood ));
+
+            CurrentMood = currentMood != null ? $"The mood is currently: {currentMood.Name}" : "Mood Selection";
         }
 
         public string TagsTooltip => 

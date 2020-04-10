@@ -323,6 +323,7 @@
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\MoodManagementDialogModel.cs" />
+    <Compile Include="ViewModels\MoodSelectionDialogModel.cs" />
     <Compile Include="ViewModels\NewMoodDialogModel.cs" />
     <Compile Include="ViewModels\NewSceneDialogModel.cs" />
     <Compile Include="ViewModels\NewSetDialogModel.cs" />
@@ -354,6 +355,9 @@
     </Compile>
     <Compile Include="Views\MoodManagementDialog.xaml.cs">
       <DependentUpon>MoodManagementDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MoodSelectionDialog.xaml.cs">
+      <DependentUpon>MoodSelectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewMoodDialog.xaml.cs">
       <DependentUpon>NewMoodDialog.xaml</DependentUpon>
@@ -431,6 +435,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MoodManagementDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MoodSelectionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -12,9 +12,11 @@ namespace MilkBottle.Dto {
         public  string  DefaultScene { get; set; }
         public  double  Latitude { get; set; }
         public  double  Longitude { get; set; }
+        public  string  CurrentMood { get; set; }
 
         public MilkPreferences() {
             CurrentPresetLibrary = String.Empty;
+            CurrentMood = String.Empty;
 
             PresetPlayDurationInSeconds = 7;
             PlayPresetsRandomly = true;
