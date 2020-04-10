@@ -234,12 +234,22 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnSelectMoods() {
-            mDialogService.ShowDialog( nameof( MoodManagementDialog ), new DialogParameters(), OnSelectMoodsResult );
+            var parameters = new DialogParameters{{ MoodManagementDialogModel.cMoodListParameter, mSceneMoods } };
+
+            mDialogService.ShowDialog( nameof( MoodManagementDialog ), parameters, OnSelectMoodsResult );
         }
 
         private void OnSelectMoodsResult( IDialogResult result ) {
             if( result.Result == ButtonResult.OK ) {
+                var moods = result.Parameters.GetValue<IEnumerable<Mood>>( MoodManagementDialogModel.cMoodListParameter );
 
+                if( moods != null ) {
+                    mSceneMoods.Clear();
+                    mSceneMoods.AddRange( moods );
+
+                    mScene = mScene.WithMoods( mSceneMoods );
+                    RaisePropertyChanged( () => SceneMoods );
+                }
             }
         }
 
