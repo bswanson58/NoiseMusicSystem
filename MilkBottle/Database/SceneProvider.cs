@@ -4,7 +4,7 @@ using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
-//using MoreLinq;
+using MoreLinq;
 
 namespace MilkBottle.Database {
     class SceneProvider :EntityProvider<PresetScene>, ISceneProvider {
@@ -13,6 +13,7 @@ namespace MilkBottle.Database {
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<PresetScene>().Id( e => e.Id );
+            BsonMapper.Global.Entity<PresetScene>().DbRef( p => p.Moods, EntityCollection.MoodCollection );
 /*
             var collection = db.GetCollection( EntityCollection.SceneCollection );
             var entities = collection.FindAll();
@@ -26,6 +27,9 @@ namespace MilkBottle.Database {
                 }
                 if(!entity.ContainsKey( nameof( PresetScene.IsFavoriteTrack ))) {
                     entity[nameof( PresetScene.IsFavoriteTrack )] = false;
+                }
+                if(!entity.ContainsKey( nameof( PresetScene.Moods ))) {
+                    entity[nameof( PresetScene.Moods )] = new BsonArray();
                 }
 
                 collection.Update( entity );
