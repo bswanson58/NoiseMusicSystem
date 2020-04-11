@@ -1,4 +1,5 @@
 ﻿using System;
+using MilkBottle.Models;
 
 namespace MilkBottle.Dto {
     class MilkPreferences {
@@ -13,6 +14,7 @@ namespace MilkBottle.Dto {
         public  double  Latitude { get; set; }
         public  double  Longitude { get; set; }
         public  string  CurrentMood { get; set; }
+        public  int     SceneRatingsBoostMode { get; set; }
 
         public MilkPreferences() {
             CurrentPresetLibrary = String.Empty;
@@ -30,6 +32,8 @@ namespace MilkBottle.Dto {
 
             Latitude = 41.997;
             Longitude = -88.458;
+
+            SceneRatingsBoostMode = RatingsBoostMode.PreferMusicOverMood;
         }
     }
 }

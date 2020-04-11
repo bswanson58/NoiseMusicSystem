@@ -240,6 +240,7 @@
     <Compile Include="Dto\MilkConfiguration.cs" />
     <Compile Include="Dto\MilkPreferences.cs" />
     <Compile Include="Dto\PresetList.cs" />
+    <Compile Include="Dto\RatingPreferences.cs" />
     <Compile Include="Dto\UiCompanionApp.cs" />
     <Compile Include="Dto\UiCycling.cs" />
     <Compile Include="Dto\UiMood.cs" />

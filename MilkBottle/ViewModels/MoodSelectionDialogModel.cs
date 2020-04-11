@@ -4,24 +4,37 @@ using System.Linq;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Models;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
+    class BoostMode {
+        public  string  Name { get; }
+        public  int     Mode { get; }
+
+        public BoostMode( string name, int mode ) {
+            Name = name;
+            Mode = mode;
+        }
+    }
+
     class MoodSelectionDialogModel : PropertyChangeBase, IDialogAware {
-        private readonly IMoodProvider      mMoodProvider;
-        private readonly IPreferences       mPreferences;
-        private readonly IPlatformLog       mLog;
-        private Mood                        mCurrentMood;
+        private readonly IMoodProvider          mMoodProvider;
+        private readonly IPreferences           mPreferences;
+        private readonly IPlatformLog           mLog;
+        private Mood                            mCurrentMood;
 
-        public  string                      Title { get; }
-        public  event Action<IDialogResult> RequestClose;
+        public  string                          Title { get; }
+        public  event Action<IDialogResult>     RequestClose;
 
-        public  ObservableCollection<Mood>  MoodList { get; }
+        public  ObservableCollection<Mood>      MoodList { get; }
+        public  ObservableCollection<BoostMode> BoostModeList { get; }
+        public  BoostMode                       SelectedMode { get; set; }
 
-        public  DelegateCommand             Ok {  get; }
-        public  DelegateCommand             Cancel { get; }
+        public  DelegateCommand                 Ok {  get; }
+        public  DelegateCommand                 Cancel { get; }
 
         public MoodSelectionDialogModel( IMoodProvider moodProvider, IPreferences preferences, IPlatformLog log ) {
             mMoodProvider = moodProvider;
@@ -29,6 +42,9 @@ namespace MilkBottle.ViewModels {
             mLog = log;
 
             MoodList = new ObservableCollection<Mood>();
+            BoostModeList = new ObservableCollection<BoostMode> {
+                                    new BoostMode( "Prefer Music Over Mood", RatingsBoostMode.PreferMusicOverMood ),
+                                    new BoostMode( "Prefer Mood Over Music", RatingsBoostMode.PreferMoodOverMusic ) };
 
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
@@ -49,7 +65,11 @@ namespace MilkBottle.ViewModels {
                 mCurrentMood = MoodList.FirstOrDefault();
             }
 
+            SelectedMode = BoostModeList.FirstOrDefault( m => m.Mode == preferences.SceneRatingsBoostMode ) ??
+                           BoostModeList.FirstOrDefault();
+
             RaisePropertyChanged( () => SelectedMood );
+            RaisePropertyChanged( () => SelectedMode );
         }
 
         public Mood SelectedMood {
@@ -70,6 +90,10 @@ namespace MilkBottle.ViewModels {
                 var preferences = mPreferences.Load<MilkPreferences>();
 
                 preferences.CurrentMood = mCurrentMood.Identity;
+                if( SelectedMode != null ) {
+                    preferences.SceneRatingsBoostMode = SelectedMode.Mode;
+                }
+
                 mPreferences.Save( preferences );
 
                 RaiseRequestClose( new DialogResult( ButtonResult.OK ));

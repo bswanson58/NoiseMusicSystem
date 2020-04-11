@@ -11,6 +11,11 @@ using MoreLinq;
 using ReusableBits.Platform;
 
 namespace MilkBottle.Models {
+    static class RatingsBoostMode {
+        public  static int     PreferMoodOverMusic = 1;
+        public  static int     PreferMusicOverMood = 2;
+    }
+
     class SceneRating {
         public  string[]                    EventValue { get; }
         public  string[]                    SceneValues { get; }
@@ -168,22 +173,24 @@ namespace MilkBottle.Models {
         }
 
         private IEnumerable<SceneRating> ValuesForScene( PresetScene scene, PlaybackEvent forEvent ) {
-            CelestialData = null;
-
-            yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, PresetScene.cValueSeparator ), 10, RateValue );
-            yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, PresetScene.cValueSeparator ), 9, RateValue );
-            yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), 8, RateValue );
-            yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, PresetScene.cValueSeparator ), 7, RateValue );
-            yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, PresetScene.cValueSeparator ), 6, RateValue );
-            yield return new SceneRating( SplitString( forEvent.PublishedYear.ToString()), SplitString( scene.Years, PresetScene.cValueSeparator ), 5, RateYearRange );
-            yield return new SceneRating( SplitString( DateTime.Now.ToString( "HH:mm" )), SplitString( scene.Hours, PresetScene.cValueSeparator ), 4, RateHourRange );
-            yield return new SceneRating( SplitString( CreateFavorites( forEvent.IsFavoriteArtist, forEvent.IsFavoriteAlbum, forEvent.IsFavoriteTrack ), PresetScene.cValueSeparator ),
-                                          SplitString( CreateFavorites( scene.IsFavoriteArtist, scene.IsFavoriteAlbum, scene.IsFavoriteTrack ), PresetScene.cValueSeparator ), 3, RateValue );
-
             var preferences = mPreferences.Load<MilkPreferences>();
+            var ratings = mPreferences.Load<RatingPreferences>();
+
+            CelestialData = null;
+            BoostRatings( ratings, preferences.SceneRatingsBoostMode );
+
+            yield return new SceneRating( SplitString( forEvent.TrackName ), SplitString( scene.TrackNames, PresetScene.cValueSeparator ), ratings.TrackRating, RateValue );
+            yield return new SceneRating( SplitString( forEvent.AlbumName ), SplitString( scene.AlbumNames, PresetScene.cValueSeparator ), ratings.AlbumRating, RateValue );
+            yield return new SceneRating( SplitString( forEvent.ArtistName ), SplitString( scene.ArtistNames, PresetScene.cValueSeparator ), ratings.ArtistRating, RateValue );
+            yield return new SceneRating( SplitString( forEvent.ArtistGenre ), SplitString( scene.Genres, PresetScene.cValueSeparator ), ratings.ArtistGenreRating, RateValue );
+            yield return new SceneRating( forEvent.TrackTags, SplitString( scene.Tags, PresetScene.cValueSeparator ), ratings.TagsRating, RateValue );
+            yield return new SceneRating( SplitString( forEvent.PublishedYear.ToString()), SplitString( scene.Years, PresetScene.cValueSeparator ), ratings.PublishedYearRating, RateYearRange );
+            yield return new SceneRating( SplitString( DateTime.Now.ToString( "HH:mm" )), SplitString( scene.Hours, PresetScene.cValueSeparator ), ratings.TimeOfDayRating, RateHourRange );
+            yield return new SceneRating( SplitString( CreateFavorites( forEvent.IsFavoriteArtist, forEvent.IsFavoriteAlbum, forEvent.IsFavoriteTrack ), PresetScene.cValueSeparator ),
+                                          SplitString( CreateFavorites( scene.IsFavoriteArtist, scene.IsFavoriteAlbum, scene.IsFavoriteTrack ), PresetScene.cValueSeparator ), ratings.FavoritesRating, RateValue );
 
             if(!String.IsNullOrWhiteSpace( preferences.CurrentMood )) {
-                yield return new SceneRating( SplitString( preferences.CurrentMood ), ( from m in scene.Moods select m.Identity.ToString()).ToArray(), 11, RateValue );
+                yield return new SceneRating( SplitString( preferences.CurrentMood ), ( from m in scene.Moods select m.Identity.ToString()).ToArray(), ratings.MoodRating, RateValue );
             }
         }
 
@@ -212,6 +219,22 @@ namespace MilkBottle.Models {
             };
 
             return String.Join( PresetScene.cValueSeparator.ToString(), from s in retValue where !String.IsNullOrWhiteSpace( s ) select s );
+        }
+
+        private void BoostRatings( RatingPreferences ratings, int mode ) {
+            if( mode == RatingsBoostMode.PreferMusicOverMood ) {
+                ratings.ArtistRating += ratings.PreferenceBoost;
+                ratings.AlbumRating += ratings.PreferenceBoost;
+                ratings.TrackRating += ratings.PreferenceBoost;
+                ratings.TagsRating += ratings.PreferenceBoost;
+                ratings.ArtistGenreRating += ratings.PreferenceBoost;
+                ratings.PublishedYearRating += ratings.PreferenceBoost;
+                ratings.FavoritesRating += ratings.PreferenceBoost;
+            }
+
+            if( mode == RatingsBoostMode.PreferMoodOverMusic ) {
+                ratings.MoodRating += ratings.PreferenceBoost;
+            }
         }
 
         private CelestialData CelestialData {
