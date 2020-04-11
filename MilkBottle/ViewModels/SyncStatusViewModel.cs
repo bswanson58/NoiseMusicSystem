@@ -42,9 +42,11 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 MoodSelection { get; }
 
         public  string                          SceneName { get; private set; }
+        public  string                          SceneTooltip { get; private set; }
         public  string                          TrackName {  get; private set; }
         public  string                          PresetName { get; private set; }
         public  string                          CurrentMood { get; private set; }
+        public  PlaybackEvent                   CurrentTrack => mCurrentPlayback;
 
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
@@ -96,6 +98,7 @@ namespace MilkBottle.ViewModels {
 
                 TrackName = String.Empty;
                 RaisePropertyChanged( () => TrackName );
+                RaisePropertyChanged( () => CurrentTrack );
             }
 
             mStateManager.EnterState( eStateTriggers.Run );
@@ -171,10 +174,31 @@ namespace MilkBottle.ViewModels {
                 if( mCurrentScene.Id.ToString().Equals( preferences.DefaultScene )) {
                     SceneName += " (default)";
                 }
-
-                RaisePropertyChanged( () => SceneName );
-                SceneWizard.RaiseCanExecuteChanged();
             }
+
+            SetSceneTooltip();
+            RaisePropertyChanged( () => SceneName );
+            SceneWizard.RaiseCanExecuteChanged();
+        }
+
+        private void SetSceneTooltip() {
+            if( mCurrentScene != null ) {
+                if( mCurrentScene.SceneSource == SceneSource.PresetList ) {
+                    var lists = mListProvider.GetLists();
+                    var list = lists.FirstOrDefault( l => l.ListIdentifier.Equals( mCurrentScene.SourceId ));
+
+                    if( list != null ) {
+                        SceneTooltip = mCurrentScene.PresetCycle == PresetCycling.CountPerScene ? 
+                            $"Playing {mCurrentScene.PresetDuration} presets from list '{list.Name}'." : 
+                            $"Playing a preset from '{list.Name}' every {mCurrentScene.PresetDuration} seconds.";
+                    }
+                }
+                else {
+                    SceneTooltip = "Playing a single preset.";
+                }
+            }
+
+            RaisePropertyChanged( () => SceneTooltip );
         }
 
         private void OnSceneWizard() {
