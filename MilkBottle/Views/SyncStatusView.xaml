@@ -103,7 +103,7 @@
                 <TextBlock.ToolTip>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="40"/>
                             <ColumnDefinition Width="5"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
