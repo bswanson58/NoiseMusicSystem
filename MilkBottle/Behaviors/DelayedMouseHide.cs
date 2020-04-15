@@ -16,7 +16,7 @@ namespace MilkBottle.Behaviors {
         public static readonly DependencyProperty DelayPeriodProperty = DependencyProperty.Register(
             "DelayPeriod",
             typeof( int ),
-            typeof( MetroWindowTitleColor ),
+            typeof( DelayedMouseHide ),
             new PropertyMetadata( 3 ));
 
         public int DelayPeriod {
