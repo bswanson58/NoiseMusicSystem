@@ -85,9 +85,12 @@ namespace ReusableBits.Ui.Behaviours {
                 
                 if(( dialog != null ) &&
                    ( associatedControl != null )) {
+                    var mainWindowPosition = Application.Current.MainWindow.WindowState == WindowState.Maximized ? 
+                                                    Application.Current.MainWindow.PointToScreen( new Point( 0, 0 )) :
+                                                    new Point( Application.Current.MainWindow.Left, Application.Current.MainWindow.Top );
                     var associatedLocation = associatedControl.TransformToVisual( Application.Current.MainWindow )
-                                                .TransformBounds( new Rect( new Point( Application.Current.MainWindow.Left, Application.Current.MainWindow.Top ), 
-                                                                  new Size( associatedControl.ActualWidth, associatedControl.ActualHeight )));
+                                                    .TransformBounds( new Rect( mainWindowPosition,
+                                                                      new Size( associatedControl.ActualWidth, associatedControl.ActualHeight )));
 
                     switch( VerticalPlacement ) {
                         case DialogPlacementVertical.Above:
