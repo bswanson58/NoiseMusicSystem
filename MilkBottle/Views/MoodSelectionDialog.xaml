@@ -7,6 +7,7 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
+             xmlns:reusablebehaviors="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:MoodSelectionDialogModel, IsDesignTimeCreatable=False}"
@@ -14,7 +15,7 @@
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
-            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="Manual" />
             <Setter Property="ResizeMode" Value="NoResize"/>
             <Setter Property="ShowInTaskbar" Value="False"/>
             <Setter Property="SizeToContent" Value="WidthAndHeight"/>
@@ -45,5 +46,7 @@
 
     <i:Interaction.Behaviors>
         <behaviors:FocusOnLoad FocusElementTag="InitialFocus"/>
+        <reusablebehaviors:DialogPlacement AssociatedControlTag="SelectMoodPlacement" HorizontalPlacement="AlignLeft" HorizontalOffset="-30"
+                                           VerticalPlacement="Above" VerticalOffset="-15"/>
     </i:Interaction.Behaviors>
 </UserControl>
