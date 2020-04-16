@@ -5,6 +5,12 @@ using System.Windows.Interactivity;
 using ReusableBits.Ui.Utility;
 
 namespace ReusableBits.Ui.Behaviours {
+    // Usage:
+    //    <i:Interaction.Behaviors>
+    //      <behaviors:DialogPlacement AssociatedControlTag="control_relative_to" HorizontalPlacement="AlignLeft" VerticalPlacement="Above" VerticalOffset="-25"/>
+    //    </i:Interaction.Behaviors>
+    //
+
     public enum DialogPlacementVertical {
         Above,
         AlignTop,
@@ -130,7 +136,6 @@ namespace ReusableBits.Ui.Behaviours {
                     }
 
                     dialog.Left += HorizontalOffset;
-                    dialog.Left += 7; // an unsolved mystery...
                 }
             }
 
