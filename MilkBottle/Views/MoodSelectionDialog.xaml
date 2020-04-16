@@ -46,7 +46,7 @@
 
     <i:Interaction.Behaviors>
         <behaviors:FocusOnLoad FocusElementTag="InitialFocus"/>
-        <reusablebehaviors:DialogPlacement AssociatedControlTag="SelectMoodPlacement" HorizontalPlacement="AlignLeft" HorizontalOffset="-30"
-                                           VerticalPlacement="Above" VerticalOffset="-15"/>
+        <reusablebehaviors:DialogPlacement AssociatedControlTag="SelectMoodPlacement" HorizontalPlacement="AlignLeft" HorizontalOffset="-20"
+                                           VerticalPlacement="Above" VerticalOffset="-35"/>
     </i:Interaction.Behaviors>
 </UserControl>
