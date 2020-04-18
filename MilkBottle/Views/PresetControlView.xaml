@@ -78,7 +78,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Background="Transparent" Margin="3,0">
+    <Grid Background="Black" Margin="3,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
