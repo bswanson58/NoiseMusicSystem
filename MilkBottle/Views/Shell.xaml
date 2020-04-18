@@ -106,7 +106,7 @@
     </Grid>
 
     <i:Interaction.Behaviors>
-        <behaviors:MetroWindowTitleColor NormalBrush="{DynamicResource AccentColorBrush}" MaximizedBrush="{DynamicResource WindowBackgroundBrush}"/>
+        <behaviors:MetroWindowTitleColor NormalBrush="{DynamicResource AccentColorBrush}" MaximizedBrush="Black"/>
     </i:Interaction.Behaviors>
 
 </mah:MetroWindow>
