@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Interactivity;
 using ReusableBits.Ui.Utility;
 
-namespace MilkBottle.Behaviors {
+namespace ReusableBits.Ui.Behaviours {
     //<i:Interaction.Behaviors>
     //    <behaviors:FocusOnLoad FocusElementTag="SomeTagName"/>
     //</i:Interaction.Behaviors>

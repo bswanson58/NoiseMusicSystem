@@ -223,7 +223,6 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Behaviors\DelayedMouseHide.cs" />
-    <Compile Include="Behaviors\FocusOnLoad.cs" />
     <Compile Include="Behaviors\MetroWindowTitleColor.cs" />
     <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />

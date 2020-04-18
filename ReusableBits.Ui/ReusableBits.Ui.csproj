@@ -116,6 +116,7 @@
     <Compile Include="Behaviours\EmptyListBehavior.cs" />
     <Compile Include="Behaviours\FadedPropertyChange.cs" />
     <Compile Include="Behaviours\FadeTrimming.cs" />
+    <Compile Include="Behaviours\FocusOnLoad.cs" />
     <Compile Include="Behaviours\FullScreenBehavior.cs" />
     <Compile Include="Behaviours\GridLengthAnimation.cs" />
     <Compile Include="Behaviours\ListBoxItemVisible.cs" />

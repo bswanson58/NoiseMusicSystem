@@ -6,7 +6,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:NewSceneDialogModel, IsDesignTimeCreatable=False}"
@@ -38,7 +38,7 @@
         </StackPanel>
 
         <i:Interaction.Behaviors>
-            <behaviors:FocusOnLoad FocusElementTag="InitialFocus"/>
+            <behaviours:FocusOnLoad FocusElementTag="InitialFocus"/>
         </i:Interaction.Behaviors>
     </Grid>
 </UserControl>

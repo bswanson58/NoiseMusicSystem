@@ -6,8 +6,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
-             xmlns:reusablebehaviors="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:reusableBehaviors="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:MoodSelectionDialogModel, IsDesignTimeCreatable=False}"
@@ -45,8 +44,8 @@
     </Grid>
 
     <i:Interaction.Behaviors>
-        <behaviors:FocusOnLoad FocusElementTag="InitialFocus"/>
-        <reusablebehaviors:DialogPlacement AssociatedControlTag="SelectMoodPlacement" HorizontalPlacement="AlignLeft" HorizontalOffset="-20"
+        <reusableBehaviors:FocusOnLoad FocusElementTag="InitialFocus"/>
+        <reusableBehaviors:DialogPlacement AssociatedControlTag="SelectMoodPlacement" HorizontalPlacement="AlignLeft" HorizontalOffset="-20"
                                            VerticalPlacement="Above" VerticalOffset="-35"/>
     </i:Interaction.Behaviors>
 </UserControl>
