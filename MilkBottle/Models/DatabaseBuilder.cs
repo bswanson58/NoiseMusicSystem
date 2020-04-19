@@ -38,16 +38,25 @@ namespace MilkBottle.Models {
 
                     // add any new directories as libraries
                     var missingLibraries = directories.Where( d => !libraries.Any( l => l.Name.Equals( Path.GetFileName( d )))).ToList();
-                    missingLibraries.ForEach( l => mLibraryProvider.Insert( new PresetLibrary( Path.GetFileName( l ), l )).IfLeft( LogException ));
+                    missingLibraries.ForEach( l => mLibraryProvider.Insert( new PresetLibrary( Path.GetFileName( l ), l ))
+                                                .IfLeft( ex => LogException( "LibraryProvider.Insert", ex )));
 
-                    // remove any deleted directories
+                    // find any deleted directories
                     var missingDirectories = libraries.Where( l => !directories.Any( d => d.Equals( l.Location ))).ToList();
-                    missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( LogException ));
 
                     // reconcile the presets in each library
                     libraries.Clear();
                     mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
                     libraries.ForEach( ReconcilePresets );
+
+                    // remove any missing directories
+                    missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( ex => LogException( "LibraryProvider.Delete", ex )));
+
+                    // remove any presets without parent directories.
+                    var orphanedPresets = new List<Preset>();
+
+                    mPresetProvider.SelectPresets( list => orphanedPresets.AddRange( from p in list where p.Library == null select p ));
+                    orphanedPresets.ForEach( p => mPresetProvider.Delete( p ).IfLeft( ex => LogException( "PresetProvider.Delete (orphaned preset)", ex )));
 
                     retValue = true;
                 }
@@ -60,20 +69,27 @@ namespace MilkBottle.Models {
         }
 
         private void ReconcilePresets( PresetLibrary forLibrary ) {
-            var files = Directory.EnumerateFiles( forLibrary.Location ).ToList();
+            var files = new List<String>();
             var presets = new List<Preset>();
 
             mPresetProvider.SelectPresets( forLibrary, list => presets.AddRange( list ));
 
+            if( Directory.Exists( forLibrary.Location )) {
+                files.AddRange( Directory.EnumerateFiles( forLibrary.Location ));
+            }
+
             // add any new presets found
             var missingPresets = files.Where( f => !presets.Any( p => p.Library.Id.Equals( forLibrary.Id ) && p.Name.Equals( Path.GetFileName( f )))).ToList();
-            missingPresets.ForEach( file => mPresetProvider.Insert( new Preset( Path.GetFileName( file ), file, forLibrary )).IfLeft( LogException ));
+            missingPresets.ForEach( file => mPresetProvider.Insert( new Preset( Path.GetFileName( file ), file, forLibrary ))
+                                        .IfLeft( ex => LogException( "PresetProvider.Insert", ex )));
 
-            // remove and presets not found
+            // remove any presets not found
             var missingFiles = presets.Where( p => !files.Any( f => f.Equals( p.Location ))).ToList();
-            missingFiles.ForEach( p => mPresetProvider.Delete( p ).IfLeft( LogException ));
+            missingFiles.ForEach( p => mPresetProvider.Delete( p ).IfLeft( ex => LogException( "PresetProvider.Delete", ex )));
         }
 
-        private void LogException( Exception ex ) { }
+        private void LogException( string message, Exception ex ) {
+            mLog.LogException( message, ex  );
+        }
     }
 }
