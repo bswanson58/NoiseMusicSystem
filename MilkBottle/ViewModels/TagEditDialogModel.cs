@@ -56,13 +56,15 @@ namespace MilkBottle.ViewModels {
         private void UpdatePresetState() {
             Tags.Clear();
             mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagChanged, null, null )))
-                .IfLeft( ex => LogException( "OnDialogOpened", ex ) );
+                .IfLeft( ex => LogException( "UpdatePresetState.SelectTags", ex ));
 
-            foreach( var tag in Tags ) {
-                tag.SetSelectedState( mPreset.Tags.FirstOrDefault( t => t.Id.Equals( tag.Tag.Id )) != null );
+            if( mPreset != null ) {
+                foreach( var tag in Tags ) {
+                    tag.SetSelectedState( mPreset.Tags.FirstOrDefault( t => t.Id.Equals( tag.Tag.Id )) != null );
+                }
+
+                IsFavorite = mPreset.IsFavorite;
             }
-
-            IsFavorite = mPreset.IsFavorite;
 
             RaisePropertyChanged( () => IsFavorite );
             RaisePropertyChanged( () => PresetName );
