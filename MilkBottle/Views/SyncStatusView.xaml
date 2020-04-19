@@ -108,7 +108,7 @@
                 <Storyboard x:Key="HighlightTrackName" TargetName="TrackName" TargetProperty="Opacity">
                     <DoubleAnimationUsingKeyFrames>
                         <LinearDoubleKeyFrame KeyTime="0:0:0.3" Value="1.0"/>
-                        <LinearDoubleKeyFrame KeyTime="0:0:5" Value="0.3"/>
+                        <LinearDoubleKeyFrame KeyTime="0:0:9" Value="0.3"/>
                     </DoubleAnimationUsingKeyFrames>
                 </Storyboard>
             </DataTemplate.Resources>
@@ -116,6 +116,26 @@
             <DataTemplate.Triggers>
                 <EventTrigger RoutedEvent="Binding.TargetUpdated">
                     <BeginStoryboard Storyboard="{StaticResource HighlightTrackName}" />
+                </EventTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PresetNameTemplate" DataType="viewModels:SyncStatusViewModel">
+            <TextBlock x:Name="PresetName" Tag="dimmed" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Text="{Binding PresetName, NotifyOnTargetUpdated=True}"/>
+
+            <DataTemplate.Resources>
+                <Storyboard x:Key="HighlightPresetName" TargetName="PresetName" TargetProperty="Opacity">
+                    <DoubleAnimationUsingKeyFrames>
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.3" Value="1.0"/>
+                        <LinearDoubleKeyFrame KeyTime="0:0:5" Value="0.3"/>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </DataTemplate.Resources>
+
+            <DataTemplate.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard Storyboard="{StaticResource HighlightPresetName}" />
                 </EventTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -141,7 +161,7 @@
             <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}" ToolTip="{Binding SceneTooltip}"/>
         </StackPanel>
 
-        <TextBlock Tag="dimmed" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding PresetName}"/>
+        <ContentControl Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding}" ContentTemplate="{StaticResource PresetNameTemplate}"/>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <ContentControl Content="{Binding}" Margin="5,0,0,0" ContentTemplate="{StaticResource TrackNameTemplate}"/>
