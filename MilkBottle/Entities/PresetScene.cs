@@ -39,6 +39,7 @@ namespace MilkBottle.Entities {
         public  bool                IsFavoriteArtist { get; }
         public  List<Mood>          Moods { get; set; }
 
+        [BsonIgnore]
         public  string              DebugDisplay => $"Scene: {Name}";
 
         public PresetScene( string name ) :

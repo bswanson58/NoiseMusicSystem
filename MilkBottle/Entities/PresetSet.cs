@@ -28,6 +28,7 @@ namespace MilkBottle.Entities {
         public  QualifierOperation  Operation { get; }
         public  string              Value { get; }
 
+        [BsonIgnore]
         public  string              DebugDisplay => $"Qualifier: {Field}-{Operation}-{Value}";
 
         [BsonCtorAttribute]
