@@ -7,6 +7,7 @@ using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
 using MilkBottle.Models.Sunset;
+using MilkBottle.Support;
 using MilkBottle.Types;
 using MilkBottle.Views;
 using Prism.Commands;
@@ -30,6 +31,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPreferences           mPreferences;
         private readonly ICelestialCalculator   mCelestialCalculator;
         private readonly IPlatformLog           mLog;
+        private readonly LimitedStack<string>   mHistory;
         private CelestialData                   mCelestialData;
         private IDisposable                     mPresetSubscription;
         private IDisposable                     mPlaybackSubscription;
@@ -47,6 +49,7 @@ namespace MilkBottle.ViewModels {
         public  string                          PresetName { get; private set; }
         public  string                          CurrentMood { get; private set; }
         public  PlaybackEvent                   CurrentTrack => mCurrentPlayback;
+        public  string                          PresetHistory => "History:" + Environment.NewLine + " " + String.Join( Environment.NewLine + " ", mHistory.ToList().Skip( 1 ));
 
         public  bool                            HasTags => mCurrentPreset?.Tags.Any() ?? false;
 
@@ -70,6 +73,8 @@ namespace MilkBottle.ViewModels {
             mCelestialCalculator = celestialCalculator;
             mPreferences = preferences;
             mLog = log;
+
+            mHistory = new LimitedStack<string>( 4 );
 
             SceneWizard = new DelegateCommand( OnSceneWizard, CanExecuteSceneWizard );
             EditTags = new DelegateCommand( OnTagEdit );
@@ -310,7 +315,10 @@ namespace MilkBottle.ViewModels {
 
                 PresetName = Path.GetFileNameWithoutExtension( preset.Name );
 
+                mHistory.Push( PresetName );
+
                 RaisePropertyChanged( () => PresetName );
+                RaisePropertyChanged( () => PresetHistory );
                 RaisePropertyChanged( () => IsFavorite );
                 RaisePropertyChanged( () => HasTags );
                 RaisePropertyChanged( () => TagsTooltip );

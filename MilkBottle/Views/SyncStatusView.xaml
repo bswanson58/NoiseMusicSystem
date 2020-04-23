@@ -122,7 +122,7 @@
 
         <DataTemplate x:Key="PresetNameTemplate" DataType="viewModels:SyncStatusViewModel">
             <TextBlock x:Name="PresetName" Tag="dimmed" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"
-                       Text="{Binding PresetName, NotifyOnTargetUpdated=True}"/>
+                       Text="{Binding PresetName, NotifyOnTargetUpdated=True}" ToolTip="{Binding PresetHistory}"/>
 
             <DataTemplate.Resources>
                 <Storyboard x:Key="HighlightPresetName" TargetName="PresetName" TargetProperty="Opacity">
