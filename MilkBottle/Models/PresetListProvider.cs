@@ -35,6 +35,7 @@ namespace MilkBottle.Models {
             retValue.Add( new GlobalPresetList( "Unrated Presets", PresetListType.Unrated, GetUnratedPresets ));
             retValue.Add( new GlobalPresetList( "Don't Play", PresetListType.DoNotPlay, GetDoNotPlayPresets ));
             retValue.Add( new GlobalPresetList( "All Presets", PresetListType.AllPresets, GetAllPresets ));
+            retValue.Add( new GlobalPresetList( "Duplicated Presets", PresetListType.Duplicated, GetDuplicatedPresets ));
 
             return from p in retValue orderby p.Name select p;
         }
@@ -147,6 +148,15 @@ namespace MilkBottle.Models {
 
             mPresetProvider.SelectPresets( list => retValue.AddRange( from p in list where p.Rating == PresetRating.DoNotPlayValue select p ))
                 .IfLeft( ex => LogException( "SelectPresets (do not play)", ex ));
+
+            return retValue.DistinctBy( p => p.Name );
+        }
+
+        public IEnumerable<Preset> GetDuplicatedPresets() {
+            var retValue = new List<Preset>();
+
+            mPresetProvider.SelectPresets( list => retValue.AddRange( from p in list where p.IsDuplicate select p ))
+                .IfLeft( ex => LogException( "SelectPresets (duplicates)", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }

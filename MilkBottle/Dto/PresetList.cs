@@ -12,7 +12,8 @@ namespace MilkBottle.Dto {
         Preset = 4,
         Unrated = 5,
         DoNotPlay = 6,
-        AllPresets = 7
+        Duplicated = 7,
+        AllPresets = 8
     }
 
     abstract class PresetList {
