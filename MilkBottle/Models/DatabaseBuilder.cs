@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Types;
+using MoreLinq;
 
 namespace MilkBottle.Models {
     class DatabaseBuilder : IDatabaseBuilder {
@@ -53,10 +55,10 @@ namespace MilkBottle.Models {
                     missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( ex => LogException( "LibraryProvider.Delete", ex )));
 
                     // remove any presets without parent directories.
-                    var orphanedPresets = new List<Preset>();
+                    RemoveOrphans();
 
-                    mPresetProvider.SelectPresets( list => orphanedPresets.AddRange( from p in list where p.Library == null select p ));
-                    orphanedPresets.ForEach( p => mPresetProvider.Delete( p ).IfLeft( ex => LogException( "PresetProvider.Delete (orphaned preset)", ex )));
+                    // handle any duplicates
+                    HandleDuplicates();
 
                     retValue = true;
                 }
@@ -86,6 +88,51 @@ namespace MilkBottle.Models {
             // remove any presets not found
             var missingFiles = presets.Where( p => !files.Any( f => f.Equals( p.Location ))).ToList();
             missingFiles.ForEach( p => mPresetProvider.Delete( p ).IfLeft( ex => LogException( "PresetProvider.Delete", ex )));
+        }
+
+        private void RemoveOrphans() {
+            var orphanedPresets = new List<Preset>();
+
+            mPresetProvider.SelectPresets( list => orphanedPresets.AddRange( from p in list where p.Library == null select p ))
+                .IfLeft( ex => LogException( "RemoveOrphans.SelectPresets", ex ));
+
+            orphanedPresets.ForEach( p => mPresetProvider.Delete( p ).IfLeft( ex => LogException( "PresetProvider.Delete (orphaned preset)", ex )));
+        }
+
+        private void HandleDuplicates() {
+            var presets = new List<Preset>();
+
+            mPresetProvider.SelectPresets( list => presets.AddRange( list )).IfLeft( ex => LogException( "HandleDuplicates.SelectPresets", ex ) );
+
+            var duplicates = from preset in presets 
+                group preset by preset.Name into presetGroup 
+                where ( presetGroup.Count() > 1 ) && presetGroup.Any( p => !p.IsDuplicate )
+                select presetGroup;
+
+            duplicates.ForEach( list => HandleDuplicates( list.ToList()));
+        }
+
+        private void HandleDuplicates( List<Preset> duplicateGroup ) {
+            var isRated = duplicateGroup.FirstOrDefault( p => p.IsFavorite || p.Rating != PresetRating.UnRatedValue );
+
+            if( isRated != null ) {
+                var isFavorite = isRated.IsFavorite;
+                var rating = isRated.Rating;
+                var tags = isRated.Tags;
+
+                duplicateGroup.ForEach( p => {
+                    var updatedPreset = p.WithFavorite( isFavorite ).WithRating( rating ).WithTags( tags ).WithDuplicate( true );
+
+                    mPresetProvider.Update( updatedPreset ).IfLeft( ex => LogException( "HandleDuplicates.Update", ex ));
+                });
+            }
+            else {
+                duplicateGroup.ForEach( p => {
+                    var updatedPreset = p.WithDuplicate( true );
+
+                    mPresetProvider.Update( updatedPreset ).IfLeft( ex => LogException( "HandleDuplicates.Update", ex ));
+                });
+            }
         }
 
         private void LogException( string message, Exception ex ) {

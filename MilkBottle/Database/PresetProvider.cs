@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LanguageExt;
 using LiteDB;
 using MilkBottle.Entities;
 using MilkBottle.Interfaces;
-using Query = LiteDB.Query;
 
 namespace MilkBottle.Database {
     class PresetProvider : EntityProvider<Preset>, IPresetProvider {
@@ -16,10 +16,17 @@ namespace MilkBottle.Database {
             BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
             BsonMapper.Global.Entity<Preset>().DbRef( p => p.Library, EntityCollection.LibraryCollection );
             BsonMapper.Global.Entity<Preset>().DbRef( t => t.Tags, EntityCollection.TagCollection );
+/*
+            var presets = db.GetCollection( EntityCollection.PresetCollection );
+            var entities = presets.FindAll();
 
-            WithCollection( collection => {
-                collection.EnsureIndex( p => p.Name );
-            });
+            entities.ForEach( entity => {
+                if(!entity.ContainsKey( nameof( Preset.IsDuplicate ))) {
+                    entity[nameof( Preset.IsDuplicate )] = false;
+                }
+
+                presets.Update( entity );
+            }); */
         }
 
         protected override ILiteCollection<Preset> Include( ILiteCollection<Preset> list ) {
@@ -30,10 +37,6 @@ namespace MilkBottle.Database {
 
         public Either<Exception, Option<Preset>> GetPresetById( ObjectId id ) {
             return GetEntityById( id );
-        }
-
-        public Either<Exception, Option<Preset>> GetPresetByName( string name ) {
-            return ValidateString( name ).Bind( validName => FindEntity( Query.EQ( nameof( Preset.Name ), validName )));
         }
 
         public Either<Exception, Unit> SelectPresets( Action<IEnumerable<Preset>> action ) {
@@ -58,6 +61,29 @@ namespace MilkBottle.Database {
 
         public Either<Exception, Unit> Update( Preset preset ) {
             return UpdateEntity( preset );
+        }
+
+        public Task<Either<Exception, Unit>> UpdateAll( Preset preset ) {
+            return Task.Run( () => UpdateDuplicates( preset ));
+        }
+
+        private Either<Exception, Unit> UpdateDuplicates( Preset preset ) {
+            var retValue = Update( preset );
+
+            if(( retValue.IsRight ) &&
+               ( preset.IsDuplicate )) {
+                var duplicateList = new List<Preset>();
+
+                retValue.Bind( unit => SelectPresets( list => duplicateList.AddRange( from p in list where p.Name.Equals( preset.Name ) select p )));
+
+                duplicateList.ForEach( p => {
+                    var updatedPreset = p.WithFavorite( preset.IsFavorite ).WithRating( preset.Rating ).WithTags( preset.Tags ).WithDuplicate( true );
+
+                    retValue.Bind( unit => Update( updatedPreset ));
+                });
+            }
+
+            return retValue;
         }
 
         public Either<Exception, Unit> Delete( Preset preset ) {

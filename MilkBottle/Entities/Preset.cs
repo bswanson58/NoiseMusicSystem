@@ -11,29 +11,32 @@ namespace MilkBottle.Entities {
         public  string          Name { get; }
         public  string          Location { get; }
         public  bool            IsFavorite { get; }
+        public  bool            IsDuplicate { get; }
         public  int             Rating { get; }
         public  List<PresetTag> Tags { get; set; }
         public  PresetLibrary   Library { get; set; }
 
         public Preset( string name, string location, PresetLibrary library ) :
-            this( ObjectId.NewObjectId(), name, location, false, PresetRating.UnRatedValue, library ) { }
+            this( ObjectId.NewObjectId(), name, location, false, false, PresetRating.UnRatedValue, library ) { }
 
-        public Preset( ObjectId id, string name, string location, bool isFavorite, int rating, PresetLibrary library ) :
+        public Preset( ObjectId id, string name, string location, bool isDuplicate, bool isFavorite, int rating, PresetLibrary library ) :
             base( id ) {
             Name = ( name ?? String.Empty ).Trim();
             Location = ( location ?? String.Empty ).Trim();
             IsFavorite = isFavorite;
+            IsDuplicate = isDuplicate;
             Rating = rating;
             Library = library;
             Tags = new List<PresetTag>();
         }
 
         [BsonCtorAttribute]
-        public Preset( ObjectId id, string name, string location, bool isFavorite, int rating ) :
+        public Preset( ObjectId id, string name, string location, bool isDuplicate, bool isFavorite, int rating ) :
             base( id ) {
             Name = ( name ?? String.Empty ).Trim();
             Location = ( location ?? String.Empty ).Trim();
             IsFavorite = isFavorite;
+            IsDuplicate = isDuplicate;
             Rating = rating;
             Library = new PresetLibrary( String.Empty, String.Empty );
             Tags = new List<PresetTag>();
@@ -44,6 +47,7 @@ namespace MilkBottle.Entities {
             Name = clone.Name;
             Location = clone.Location;
             IsFavorite = isFavorite;
+            IsDuplicate = clone.IsDuplicate;
             Rating = clone.Rating;
             Library = clone.Library;
             Tags = new List<PresetTag>( clone.Tags );
@@ -54,6 +58,7 @@ namespace MilkBottle.Entities {
             Name = clone.Name;
             Location = clone.Location;
             IsFavorite = clone.IsFavorite;
+            IsDuplicate = clone.IsDuplicate;
             Rating = rating;
             Library = clone.Library;
             Tags = new List<PresetTag>( clone.Tags );
@@ -65,6 +70,13 @@ namespace MilkBottle.Entities {
 
         public Preset WithRating( PresetRating rating ) {
             return new Preset( this, rating );
+        }
+
+        public Preset WithTags( IEnumerable<PresetTag> tagList ) {
+            Tags.Clear();
+            Tags.AddRange( tagList );
+
+            return this;
         }
 
         public Preset WithTagState( PresetTag tag, bool added ) {
@@ -92,6 +104,10 @@ namespace MilkBottle.Entities {
             }
 
             return this;
+        }
+
+        public Preset WithDuplicate( bool isDuplicate ) {
+            return new Preset( Id, Name, Location, isDuplicate, IsFavorite, Rating, Library ) { Tags = Tags };
         }
     }
 }
