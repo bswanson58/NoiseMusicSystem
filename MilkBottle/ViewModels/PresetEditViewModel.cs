@@ -64,9 +64,6 @@ namespace MilkBottle.ViewModels {
             mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
             mStateManager.EnterState( eStateTriggers.Stop );
 
-            LoadLibraries();
-            LoadTags();
-
             if( mPresetController.IsInitialized ) {
                 Initialize();
             }
@@ -80,13 +77,16 @@ namespace MilkBottle.ViewModels {
                 mIsActive = value;
 
                 if( mIsActive ) {
-                    LoadLibraries();
                     LoadTags();
+                    LoadLibraries();
                 }
             }
         }
 
         private void Initialize() {
+            LoadTags();
+            LoadLibraries();
+
             var milkPreferences = mPreferences.Load<MilkPreferences>();
 
             CurrentLibrary = Libraries.FirstOrDefault( l => l.Name.Equals( milkPreferences.CurrentPresetLibrary ));
