@@ -198,17 +198,17 @@ namespace MilkBottle.ViewModels {
             set => OnIsFavoriteChanged( value );
         }
 
-        private void OnIsFavoriteChanged( bool toValue ) {
+        private async void OnIsFavoriteChanged( bool toValue ) {
             var preset = mCurrentPreset?.WithFavorite( toValue );
 
             if( preset != null ) {
-                mPresetProvider.Update( preset );
-
                 if( preset.Id.Equals( mCurrentPreset?.Id )) {
                     mCurrentPreset = preset;
 
                     RaisePropertyChanged( () => IsFavorite );
                 }
+
+                ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnIsFavoriteChanged.Update", ex ));
             }
         }
 
@@ -217,17 +217,17 @@ namespace MilkBottle.ViewModels {
             set => OnDoNotPlayChanged( value );
         }
          
-        private void OnDoNotPlayChanged( bool toValue ) {
+        private async void OnDoNotPlayChanged( bool toValue ) {
             var preset = mCurrentPreset?.WithRating( toValue ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
 
             if( preset != null ) {
-                mPresetProvider.Update( preset );
-
                 if( preset.Id.Equals( mCurrentPreset?.Id )) {
                     mCurrentPreset = preset;
 
                     RaisePropertyChanged( () => DoNotPlay );
                 }
+
+                ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnDoNotPlayChanged.Update", ex ));
             }
         }
 
@@ -260,14 +260,11 @@ namespace MilkBottle.ViewModels {
             mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, OnTagsEdited );
         }
 
-        private void OnTagsEdited( IDialogResult result ) {
+        private async void OnTagsEdited( IDialogResult result ) {
             if( result.Result == ButtonResult.OK ) {
                 var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
 
                 if( preset != null ) {
-                    mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnTagsEdited", ex ));
-
-
                     if( preset.Id.Equals( mCurrentPreset?.Id )) {
                         mCurrentPreset = preset;
 
@@ -275,6 +272,8 @@ namespace MilkBottle.ViewModels {
                         RaisePropertyChanged( () => HasTags );
                         RaisePropertyChanged( () => TagsTooltip );
                     }
+
+                    ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnTagsEdited", ex ));
                 }
             }
         }

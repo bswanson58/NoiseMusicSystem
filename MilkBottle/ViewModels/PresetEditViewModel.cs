@@ -22,6 +22,7 @@ namespace MilkBottle.ViewModels {
         private readonly ITagProvider                   mTagProvider;
         private readonly IDialogService                 mDialogService;
         private readonly IPreferences                   mPreferences;
+        private readonly IPlatformLog                   mLog;
         private readonly BindableCollection<UiPreset>   mPresets;
         private ICollectionView                         mPresetView;
         private PresetList                              mCurrentLibrary;
@@ -40,7 +41,8 @@ namespace MilkBottle.ViewModels {
         public  event EventHandler                      IsActiveChanged = delegate { };
 
         public PresetEditViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, ITagProvider tagProvider, IPreferences preferences,
-                                    IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
+                                    IPresetController presetController,  IStateManager stateManager, IDialogService dialogService, IEventAggregator eventAggregator,
+                                    IPlatformLog log ) {
             mEventAggregator = eventAggregator;
             mPresetProvider = presetProvider;
             mListProvider = listProvider;
@@ -49,6 +51,7 @@ namespace MilkBottle.ViewModels {
             mTagProvider = tagProvider;
             mDialogService = dialogService;
             mPreferences = preferences;
+            mLog = log;
 
             Libraries = new BindableCollection<PresetList>();
             mPresets = new BindableCollection<UiPreset>();
@@ -245,16 +248,13 @@ namespace MilkBottle.ViewModels {
         private void LoadTags() {
             Tags.Clear();
 
-            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected, null, null )));
+            mTagProvider.SelectTags( list => Tags.AddRange( from t in list orderby t.Name select new UiTag( t, OnTagSelected, null, null )))
+                .IfLeft( ex => LogException( "LoadTags", ex ));
         }
 
         private void OnTagSelected( UiTag tag ) {
             if( CurrentPreset != null ) {
-                var preset = CurrentPreset.Preset.WithTagState( tag.Tag, tag.IsSelected );
-
-                mPresetProvider.Update( preset );
-
-                LoadPresets();
+                UpdateAndReload( CurrentPreset.Preset.WithTagState( tag.Tag, tag.IsSelected ));
             }
         }
 
@@ -262,11 +262,7 @@ namespace MilkBottle.ViewModels {
             get => CurrentPreset?.Preset.IsFavorite ?? false;
             set {
                 if( CurrentPreset != null ) {
-                    var preset = CurrentPreset.Preset.WithFavorite( value );
-
-                    mPresetProvider.Update( preset );
-
-                    LoadPresets();
+                    UpdateAndReload( CurrentPreset.Preset.WithFavorite( value ));
                 }
             }
         }
@@ -275,13 +271,15 @@ namespace MilkBottle.ViewModels {
             get => CurrentPreset != null && CurrentPreset.Preset.Rating == PresetRating.DoNotPlayValue;
             set {
                 if( CurrentPreset != null ) {
-                    var preset = CurrentPreset.Preset.WithRating( value ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
-
-                    mPresetProvider.Update( preset );
-
-                    LoadPresets();
+                    UpdateAndReload( CurrentPreset.Preset.WithRating( value ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue ));
                 }
             }
+        }
+
+        private async void UpdateAndReload( Preset preset ) {
+            ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "UpdateAndReload", ex ));
+
+            LoadPresets();
         }
 
         private void SetPresetState() {
@@ -309,11 +307,15 @@ namespace MilkBottle.ViewModels {
             if( result.Result == ButtonResult.OK ) {
                 var newTag = new PresetTag( result.Parameters.GetValue<string>( NewTagDialogModel.cTagNameParameter ));
 
-                mTagProvider.Insert( newTag );
+                mTagProvider.Insert( newTag ).IfLeft( ex => LogException( "OnNewTagResult", ex ));
 
                 LoadTags();
                 SetPresetState();
             }
+        }
+
+        private void LogException( string message, Exception ex ) {
+            mLog.LogException( message, ex );
         }
     }
 }

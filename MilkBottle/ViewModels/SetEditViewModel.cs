@@ -150,12 +150,12 @@ namespace MilkBottle.ViewModels {
             mDialogService.ShowDialog( nameof( TagEditDialog ), new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset.Preset } }, OnPresetEditResult );
         }
 
-        private void OnPresetEditResult( IDialogResult result ) {
+        private async void OnPresetEditResult( IDialogResult result ) {
             if( result.Result == ButtonResult.OK ) {
                 var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
 
                 if( preset != null ) {
-                    mPresetProvider.Update( preset ).IfLeft( ex => LogException( "OnTagsEdited", ex ));
+                    ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnTagsEdited", ex ));
 
                     LoadPresets();
                 }
