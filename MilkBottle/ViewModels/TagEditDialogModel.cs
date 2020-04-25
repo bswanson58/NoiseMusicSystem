@@ -71,7 +71,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnTagChanged( UiTag tag ) {
-            mPreset = mPreset.WithTagState( tag.Tag, tag.IsSelected );
+            mPreset = mPreset?.WithTagState( tag.Tag, tag.IsSelected );
         }
 
         private void OnNewTag() {
@@ -90,9 +90,14 @@ namespace MilkBottle.ViewModels {
 
 
         public void OnOk() {
-            mPreset = mPreset.WithFavorite( IsFavorite );
+            if( mPreset != null ) {
+                mPreset = mPreset.WithFavorite( IsFavorite );
 
-            RaiseRequestClose( new DialogResult( ButtonResult.OK, new DialogParameters { { TagEditDialogModel.cPresetParameter, mPreset } }));
+                RaiseRequestClose( new DialogResult( ButtonResult.OK, new DialogParameters { { TagEditDialogModel.cPresetParameter, mPreset } }));
+            }
+            else {
+                RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+            }
         }
 
         public void OnCancel() {

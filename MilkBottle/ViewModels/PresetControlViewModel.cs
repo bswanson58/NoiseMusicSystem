@@ -255,9 +255,11 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnTagEdit() {
-            var parameters = new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset } };
+            if( mCurrentPreset != null ) {
+                var parameters = new DialogParameters { { TagEditDialogModel.cPresetParameter, mCurrentPreset } };
 
-            mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, OnTagsEdited );
+                mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, OnTagsEdited );
+            }
         }
 
         private async void OnTagsEdited( IDialogResult result ) {
