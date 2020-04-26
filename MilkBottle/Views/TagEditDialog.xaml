@@ -7,6 +7,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:TagEditDialogModel, IsDesignTimeCreatable=False}"
@@ -14,7 +15,7 @@
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
-            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="Manual" />
             <Setter Property="ResizeMode" Value="NoResize"/>
             <Setter Property="ShowInTaskbar" Value="False"/>
             <Setter Property="SizeToContent" Value="WidthAndHeight"/>
@@ -54,4 +55,8 @@
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
         </StackPanel>
     </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviours:DialogPlacement AssociatedControlTag="MainWindow" HorizontalPlacement="Center" VerticalPlacement="AlignBottom" VerticalOffset="-75"/>
+    </i:Interaction.Behaviors>
 </UserControl>
