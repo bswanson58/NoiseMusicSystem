@@ -80,8 +80,16 @@ namespace ReusableBits.Ui.Behaviours {
 
         private void OnLoaded( object sender, RoutedEventArgs args ) {
             if( Application.Current.MainWindow != null ) {
-                var dialog = GetParentWindow();
-                var associatedControl = Application.Current.MainWindow.FindChildren<FrameworkElement>( c => AssociatedControlTag.Equals( c?.Tag )).FirstOrDefault();
+                FrameworkElement    associatedControl;
+                var                 dialog = GetParentWindow();
+
+                if(( String.IsNullOrWhiteSpace( AssociatedControlTag )) ||
+                   ( AssociatedControlTag.ToLower().Equals( "mainwindow" ))) {
+                    associatedControl = Application.Current.MainWindow;
+                }
+                else {
+                    associatedControl = Application.Current.MainWindow.FindChildren<FrameworkElement>( c => AssociatedControlTag.Equals( c?.Tag )).FirstOrDefault();
+                }
                 
                 if(( dialog != null ) &&
                    ( associatedControl != null )) {
