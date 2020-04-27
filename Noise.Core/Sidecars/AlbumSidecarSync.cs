@@ -15,7 +15,6 @@ namespace Noise.Core.Sidecars {
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string				cSidecarSyncId		= "ComponentId_AlbumSidecar_Sync";
 
-		private readonly IEventAggregator				mEventAggregator;
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISidecarProvider				mSidecarProvider;
@@ -24,13 +23,12 @@ namespace Noise.Core.Sidecars {
 		private readonly List<long>						mAlbumList; 
 		private IEnumerator<long>						mAlbumEnum; 
 
-		public string TaskId { get; private set; }
+		public string TaskId { get; }
 
 		public AlbumSidecarSync( IEventAggregator eventAggregator, ILogLibraryBuildingSidecars log, IAlbumProvider albumProvider,
 								 ISidecarProvider sidecarProvider, ISidecarCreator sidecarCreator, ISidecarWriter sidecarWriter ) {
 			TaskId = cSidecarSyncId;
 
-			mEventAggregator = eventAggregator;
 			mLog = log;
 			mAlbumProvider = albumProvider;
 			mSidecarProvider = sidecarProvider;
@@ -39,7 +37,7 @@ namespace Noise.Core.Sidecars {
 
 			mAlbumList = new List<long>();
 
-			mEventAggregator.Subscribe( this );
+			eventAggregator.Subscribe( this );
 		}
 
         public void ExecuteTask() {
@@ -62,8 +60,11 @@ namespace Noise.Core.Sidecars {
 						   ( albumSidecar != null ) &&
                            ( albumSidecar.Version != dbSideCar.Version )) {
 							if( albumSidecar.Version > dbSideCar.Version ) {
-								mSidecarWriter.WriteSidecar( album, albumSidecar );
-								mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
+								var existingSidecar = mSidecarWriter.ReadSidecar( album );
+
+								mSidecarCreator.UpdateSidecar( existingSidecar, album );
+                                mSidecarWriter.WriteSidecar( album, existingSidecar );
+                                mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
 							}
 							else {
 								var storageSidecar = mSidecarWriter.ReadSidecar( album );
@@ -86,7 +87,7 @@ namespace Noise.Core.Sidecars {
 					}
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Syncing sidecar for {0}", album ), exception );
+					mLog.LogException( $"Syncing sidecar for {album}", exception );
 				}
 			}
 		}
