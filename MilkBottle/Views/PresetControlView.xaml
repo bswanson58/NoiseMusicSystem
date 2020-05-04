@@ -78,7 +78,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Background="Black" Margin="3,0">
+    <Grid Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -86,7 +86,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Tag="dimmed" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Tag="dimmed" Grid.Column="0" Margin="3,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
             <ComboBox Margin="0,0,5,0" Width="180" VerticalAlignment="Center" ItemTemplate="{StaticResource LibrarySet}" ItemsSource="{Binding Libraries}" 
                       SelectedItem="{Binding CurrentLibrary}" ToolTip="{Binding CurrentLibraryTooltip}"/>
@@ -109,7 +109,7 @@
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
         </StackPanel>
 
-        <StackPanel Tag="dimmed" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <StackPanel Tag="dimmed" Grid.Column="3" Margin="0,0,3,0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>
