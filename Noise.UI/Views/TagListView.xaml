@@ -7,8 +7,10 @@
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              DataContext="{Binding TagListViewModel, Source={StaticResource ViewModelLocator}}"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:TagListViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -26,7 +28,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" ToolTip="Play random tracks from this tag"/>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                <TextBlock x:Name="TagName" Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
                            reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                 <Button x:Name="TrackEdit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
                         Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
@@ -36,6 +38,9 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="TrackEdit" Property="Opacity" Value="1"/>
                 </Trigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="TagName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
+using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits;
@@ -18,7 +20,7 @@ namespace Noise.UI.ViewModels {
         public TagEditRequest( TagEditDialogModel viewModel ) : base( viewModel ) { }
     }
 
-    class TagListViewModel : AutomaticCommandBase, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+    class TagListViewModel : AutomaticCommandBase, IDisposable, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
         private readonly IEventAggregator                   mEventAggregator;
         private readonly ITagProvider                       mTagProvider;
         private readonly IPlayCommand                       mPlayCommand;
@@ -30,12 +32,13 @@ namespace Noise.UI.ViewModels {
         private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
         private TaskHandler<IEnumerable<UiTag>>             mTaskHandler;
         private UiTag                                       mCurrentTag;
+        private IDisposable                                 mSelectionStateSubscription;
 
         public BindableCollection<UiTag>    TagList { get; }
         public IInteractionRequest          TagAddRequest => mTagAddRequest;
         public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
-        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, IPlayCommand playCommand,
+        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, IPlayCommand playCommand, ISelectionState selectionState,
                                  IDataExchangeManager exchangeManager, IDialogService dialogService, IEventAggregator eventAggregator, IUiLog log ) {
             mTagManager = tagManager;
             mTagProvider = tagProvider;
@@ -53,6 +56,7 @@ namespace Noise.UI.ViewModels {
                 LoadTags();
             }
 
+            mSelectionStateSubscription = selectionState.PlayingTrackChanged.Subscribe( OnPlayingTrackChanged );
             mEventAggregator.Subscribe( this );
         }
 
@@ -75,13 +79,24 @@ namespace Noise.UI.ViewModels {
             }
         }
 
+        private void OnPlayingTrackChanged( PlayingItem item ) {
+            if( item?.Track != null ) {
+                var playingTags = mTagManager.GetAssociatedTags( item.Track ).ToList();
+
+                TagList.ForEach( tag => tag.SetIsPlaying( playingTags.Any( t => t.DbId.Equals( tag.Tag.DbId ))));
+            }
+            else {
+                TagList.ForEach( tag => tag.SetIsPlaying( false ));
+            }
+        }
+
         internal TaskHandler<IEnumerable<UiTag>> TaskHandler {
             get {
-                if (mTaskHandler == null) {
+                if( mTaskHandler == null ) {
                     Execute.OnUIThread(() => mTaskHandler = new TaskHandler<IEnumerable<UiTag>>());
                 }
 
-                return (mTaskHandler);
+                return mTaskHandler;
             }
 
             set => mTaskHandler = value;
@@ -169,6 +184,13 @@ namespace Noise.UI.ViewModels {
             GlobalCommands.ImportUserTags.Execute( null );
 
             LoadTags();
+        }
+
+        public void Dispose() {
+            mSelectionStateSubscription?.Dispose();
+            mSelectionStateSubscription = null;
+
+            mEventAggregator.Unsubscribe( this );
         }
     }
 }

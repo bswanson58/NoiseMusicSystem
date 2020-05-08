@@ -4,7 +4,7 @@ using Noise.Infrastructure.Dto;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-    [DebuggerDisplay("Artist = {" + nameof( Name ) + "}")]
+    [DebuggerDisplay("Tag = {" + nameof( Name ) + "}")]
     public class UiTag : AutomaticCommandBase {
         private readonly Action<UiTag>  mEditAction;
         private readonly Action<UiTag>  mPlayAction;
@@ -12,6 +12,7 @@ namespace Noise.UI.Dto {
         public  DbTag       Tag { get; }
         public  string      Name => Tag.Name;
         public  bool        IsChecked { get; set; }
+        public  bool        IsPlaying { get; private set; }
 
         public UiTag( DbTag tag ) : this( tag, null, null ) { }
 
@@ -21,6 +22,12 @@ namespace Noise.UI.Dto {
 
             mEditAction = onEdit;
             mPlayAction = onPlay;
+        }
+
+        public void SetIsPlaying( bool isPlaying ) {
+            IsPlaying = isPlaying;
+
+            RaisePropertyChanged( () => IsPlaying );
         }
 
         public void Execute_Edit() {
