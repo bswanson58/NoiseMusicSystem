@@ -1,6 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Style x:Key="HiddenTabControlStyle" TargetType="{x:Type TabItem}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+    </Style>
+    
     <Style x:Key="TabControlStyle" TargetType="{x:Type TabItem}">
         <Setter Property="Header" Value="{Binding Content.Tag, RelativeSource={RelativeSource Self}}" />
         <Setter Property="BorderThickness" Value="0"/>

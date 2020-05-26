@@ -7,6 +7,6 @@ namespace Noise.Infrastructure.Interfaces {
         void    DeactivateShell();
         void	Shutdown();
 
-        void    ChangeWindowLayout( string toLayout );
+        void    ToggleSmallPlayer();
     }
 }

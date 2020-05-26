@@ -9,14 +9,14 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
-			 d:DataContext="{d:DesignInstance viewModels:ArtistTracksViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="200"
 			 d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance viewModels:ArtistTracksViewModel, IsDesignTimeCreatable=False}"
 			 mc:Ignorable="d">
 
-	<UserControl.DataContext>
+    <!-- UserControl.DataContext>
 		<Binding Path="ArtistTracksViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
+	</-->
 
 	<UserControl.Resources>
         <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">

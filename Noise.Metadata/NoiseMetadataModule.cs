@@ -18,7 +18,7 @@ namespace Noise.Metadata {
 		}
 
 		public void Initialize() {
-			mContainer.RegisterType<IMetadataManager, MetadataManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IMetadataManager, MetadataManager>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IArtistMetadataManager, ArtistMetadataManager>();
 
             mContainer.RegisterType<IArtistArtworkSelector, ArtistArtworkSelector>();
@@ -33,7 +33,7 @@ namespace Noise.Metadata {
 			mContainer.RegisterType<IDiscogsClient, DiscogsClient>();
 			mContainer.RegisterType<ILastFmClient, LastFmClient>();
 
-			mContainer.RegisterType<ILogMetadata, MetadataLogging>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogMetadata, MetadataLogging>();
 		}
 	}
 }

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using Caliburn.Micro;
-using Composite.Layout;
-using Composite.Layout.Configuration;
 using Microsoft.Practices.Prism.Regions;
-using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -18,25 +14,19 @@ using Application = System.Windows.Application;
 
 namespace Noise.Desktop.Models {
 	internal class WindowManager : INoiseWindowManager,
-                                   IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
-								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
-		private readonly IUnityContainer		mContainer;
+                                   IHandle<Events.ExternalPlayerSwitch> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IPreferences			mPreferences;
-		private readonly ILayoutManager			mLayoutManager;
 		private readonly IRegionManager			mRegionManager;
 		private SmallPlayerView					mPlayerView;
 		private Window							mShell;
 		private NotifyIcon						mNotifyIcon;
 		private WindowState						mStoredWindowState;
 
-		public WindowManager( IUnityContainer container, IEventAggregator eventAggregator, IPreferences preferences ) {
-			mContainer = container;
+		public WindowManager( IEventAggregator eventAggregator, IPreferences preferences, IRegionManager regionManager ) {
 			mEventAggregator = eventAggregator;
 			mPreferences = preferences;
-
-			mLayoutManager = LayoutConfigurationManager.LayoutManager;
-			mRegionManager = mContainer.Resolve<IRegionManager>();
+            mRegionManager = regionManager;
 
 			mStoredWindowState = WindowState.Normal;
 			mNotifyIcon = new NotifyIcon { BalloonTipTitle = Constants.ApplicationName, Text = Constants.ApplicationName }; 
@@ -46,8 +36,6 @@ namespace Noise.Desktop.Models {
 		}
 
 		public void Initialize( Window shell ) {
-			mLayoutManager.Initialize( mContainer );
-
 			mShell = shell;
 			mShell.StateChanged += OnShellStateChanged;
 			mShell.IsVisibleChanged += OnShellVisibleChanged;
@@ -64,35 +52,7 @@ namespace Noise.Desktop.Models {
 		public void Shutdown() {
 			CloseSmallPlayer();
 		}
-
-		public void Handle( Events.WindowLayoutRequest eventArgs ) {
-			ChangeWindowLayout( eventArgs.LayoutName );
-		}
-
-		public void ChangeWindowLayout( string toLayout ) {
-            switch( toLayout ) {
-                case Constants.SmallPlayerViewToggle:
-                    if( mPlayerView == null ) {
-                        ShowSmallPlayer();
-                    }
-                    else {
-                        CloseSmallPlayer();
-                    }
-                    break;
-
-                default:
-                    var currentLayoutName = mLayoutManager.CurrentLayout != null ? mLayoutManager.CurrentLayout.Name : string.Empty;
-
-                    if((!string.Equals( currentLayoutName, toLayout )) &&
-                       ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, toLayout )))) {
-                        mLayoutManager.LoadLayout( toLayout );
-
-                        GC.Collect();
-                    }
-                    break;
-            }
-        }
-
+/*
 		public void Handle( Events.ViewDisplayRequest eventArgs ) {
 			IRegion region;
 
@@ -101,7 +61,7 @@ namespace Noise.Desktop.Models {
 				case ViewNames.ArtistInfoView:
 				case ViewNames.ArtistTracksView:
                 case ViewNames.RatedTracksView:
-                    region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "AlbumInfo" );
+                    region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryAlbumPanel );
 
 					if( region != null ) {
                         Execute.OnUIThread( () => region.RequestNavigate( eventArgs.ViewName ));
@@ -109,7 +69,7 @@ namespace Noise.Desktop.Models {
 					break;
 
 				case ViewNames.RelatedTracksView:
-                    region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "LeftPanel" );
+                    region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryLeftPanel );
 
                     if( region != null ) {
                         Execute.OnUIThread( () => region.RequestNavigate( eventArgs.ViewName ));
@@ -117,6 +77,15 @@ namespace Noise.Desktop.Models {
 					break;
 			}
 		}
+*/
+		public void ToggleSmallPlayer() {
+            if( mPlayerView == null ) {
+                ShowSmallPlayer();
+            }
+            else {
+                CloseSmallPlayer();
+            }
+        }
 
 		private void ShowSmallPlayer() {
 			if( mPlayerView == null ) {
@@ -210,17 +179,17 @@ namespace Noise.Desktop.Models {
 		public void DeactivateShell() {
             mShell.WindowState = WindowState.Minimized;
         }
-
+/*
 		public void Handle( Events.StandardPlayerRequest eventArgs ) {
-			var	region = mRegionManager.Regions["Player"];
+			var	region = mRegionManager.Regions[RegionNames.PlayerPanel];
 
 			if( region != null ) {
-				System.Windows.Controls.UserControl playerView = region.Views.OfType<PlayerView>().Select( view => view as System.Windows.Controls.UserControl ).FirstOrDefault();
+				var playerView = region.Views.OfType<PlayerView>().Select( view => view as System.Windows.Controls.UserControl ).FirstOrDefault();
 
 				if( playerView == null ) {
 					playerView = new PlayerView();
 
-					mRegionManager.AddToRegion( "Player", playerView );
+					mRegionManager.AddToRegion( RegionNames.PlayerPanel, playerView );
 				}
 
 				region.Activate( playerView );
@@ -228,19 +197,19 @@ namespace Noise.Desktop.Models {
 		}
 
 		public void Handle( Events.ExtendedPlayerRequest eventArgs ) {
-			var	region = mRegionManager.Regions["Player"];
+            var	region = mRegionManager.Regions[RegionNames.PlayerPanel];
 
 			if( region != null ) {
-				System.Windows.Controls.UserControl extendedView = region.Views.OfType<PlayerExtendedView>().Select( view => view as System.Windows.Controls.UserControl ).FirstOrDefault();
+				var extendedView = region.Views.OfType<PlayerExtendedView>().Select( view => view as System.Windows.Controls.UserControl ).FirstOrDefault();
 
 				if( extendedView == null ) {
 					extendedView = new PlayerExtendedView();
 
-					mRegionManager.AddToRegion( "Player", extendedView );
+					mRegionManager.AddToRegion( RegionNames.PlayerPanel, extendedView );
 				}
 
 				region.Activate( extendedView );
 			}
 		}
-	}
+*/	}
 }

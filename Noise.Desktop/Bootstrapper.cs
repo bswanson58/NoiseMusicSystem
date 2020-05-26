@@ -2,35 +2,41 @@
 using System.Windows;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
+using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
-using Noise.AudioSupport;
-using Noise.Desktop.Models;
 using Noise.Desktop.Properties;
+using Noise.Desktop.ViewModels;
+using Noise.Desktop.Views;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using Noise.Metadata;
+using Noise.UI.Models;
 using Noise.UI.Support;
-using Noise.UI.ViewModels;
+using Noise.UI.Views;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
 		private INoiseManager		mNoiseManager;
-		private StartupManager		mStartupManager;
 		private INoiseWindowManager	mWindowManager;
 		private Window				mShell;
 		private	ApplicationSupport	mAppSupport;
 		private IApplicationLog		mLog;
 
 		protected override DependencyObject CreateShell() {
-			mShell = Container.Resolve<Shell>();
-			mShell.DataContext = Container.Resolve<DisabledWindowCommandsViewModel>();
-			mShell.Show();
+            mShell = Container.Resolve<ShellView>();
 			mShell.Closing += OnShellClosing;
 
 #if( DEBUG )
 			BindingErrorListener.Listen( message => MessageBox.Show( message ));
 #endif
+			var preferences = Container.Resolve<IPreferences>();
+            var interfacePreferences = preferences.Load<UserInterfacePreferences>();
+
+            ThemeManager.SetApplicationTheme( interfacePreferences.ThemeName, interfacePreferences.ThemeAccent, interfacePreferences.ThemeSignature );
+
+            mShell.Show();
 
 			return ( mShell );
 		}
@@ -50,9 +56,9 @@ namespace Noise.Desktop {
                 .AddModule( typeof( DesktopModule ))
                 .AddModule( typeof( Core.NoiseCoreModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
-				.AddModule( typeof( AudioSupportModule ))
+				.AddModule( typeof( AudioSupport.AudioSupportModule ))
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
-				.AddModule( typeof( NoiseMetadataModule ))
+				.AddModule( typeof( Metadata.NoiseMetadataModule ))
 				.AddModule( typeof( RemoteHost.RemoteHostModule ))
 				.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
 
@@ -63,8 +69,6 @@ namespace Noise.Desktop {
 		    // Caliburn Micro dispatcher initialize.
 		    PlatformProvider.Current = new XamlPlatformProvider();
 
-			Container.RegisterType<Shell, Shell>();
-
 			base.ConfigureContainer();
 
 			var iocConfig = new IocConfiguration( Container );
@@ -74,32 +78,54 @@ namespace Noise.Desktop {
 		}
 
 		protected override void InitializeModules() {
-			base.InitializeModules();
+            base.InitializeModules();
 
-			mWindowManager = Container.Resolve<INoiseWindowManager>();
+            ViewModelResolver.TypeResolver = ( type => Container.Resolve( type ));
+            DialogServiceResolver.Current = Container.Resolve<IDialogService>();
+
+            mWindowManager = Container.Resolve<INoiseWindowManager>();
 			mWindowManager.Initialize( mShell );
-
-			var instanceContainer = Container.CreateChildContainer();
-
-			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type ));
-			DialogServiceResolver.Current = instanceContainer.Resolve<IDialogService>();
-
-			mStartupManager = Container.Resolve<StartupManager>();
-			mStartupManager.Initialize();
 
 			mLog.ApplicationStarting();
 
-			StartNoise( instanceContainer );
+            mShell.DataContext = Container.Resolve<ShellViewModel>();
+			StartNoise();
+            RegisterRegions();
 		}
 
-		private async void StartNoise( IUnityContainer container ) {
-			mNoiseManager = container.Resolve<INoiseManager>();
-			mAppSupport = container.Resolve<ApplicationSupport>();
+		private void RegisterRegions() {
+			var regionManager = Container.Resolve<IRegionManager>();
+
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupLibraryCreationView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupLibrarySelectionView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( LibraryView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( ListeningView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( TimelineView ));
+
+			regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( LibraryArtistView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( LibraryRecentView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( FavoritesView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( TagsView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( SearchView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( PlaybackRelatedView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( LibraryAdditionsView ));
+
+//            regionManager.RegisterViewWithRegion( RegionNames.LibraryAlbumPanel, typeof( ArtistInfoView ));
+//            regionManager.RegisterViewWithRegion( RegionNames.LibraryAlbumPanel, typeof( AlbumInfoView ));
+//            regionManager.RegisterViewWithRegion( RegionNames.LibraryAlbumPanel, typeof( ArtistTracksView ));
+//            regionManager.RegisterViewWithRegion( RegionNames.LibraryAlbumPanel, typeof( RatedTracksView ));
+
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryRightPanel, typeof( PlayQueueView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryRightPanel, typeof( PlayHistoryView ));
+        }
+
+		private async void StartNoise() {
+			mNoiseManager = Container.Resolve<INoiseManager>();
+			mAppSupport = Container.Resolve<ApplicationSupport>();
 
 			await mNoiseManager.AsyncInitialize();
 			mAppSupport.Initialize();
-
-			mShell.DataContext = container.Resolve<WindowCommandsViewModel>();
 		}
 
 		public void StopNoise() {

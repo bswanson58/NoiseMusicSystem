@@ -14,12 +14,12 @@ namespace Noise.AudioSupport {
 		}
 
 		public void Initialize() {
-			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IEqManager, EqManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IEqManager, EqManager>( new ContainerControlledLifetimeManager());
 
 			mContainer.RegisterType<IReplayGainScanner, ReplayGainScanner>();
 
-			mContainer.RegisterType<ILogAudioPlay, LogAudioPlay>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogAudioPlay, LogAudioPlay>();
 		}
 	}
 }

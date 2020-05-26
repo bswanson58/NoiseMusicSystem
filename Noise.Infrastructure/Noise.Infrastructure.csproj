@@ -331,6 +331,7 @@
     <Compile Include="Interfaces\IViewModelResolver.cs" />
     <Compile Include="Logging\BaseLogger.cs" />
     <Compile Include="Logging\LoggingPreferences.cs" />
+    <Compile Include="RegionNames.cs" />
     <Compile Include="RemoteDto\AlbumInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistTracksResult.cs" />

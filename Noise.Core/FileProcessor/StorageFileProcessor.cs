@@ -121,10 +121,8 @@ namespace Noise.Core.FileProcessor {
 		}
 
 		private void OnStopped( PipelineContext context ) {
-			if( context != null ) {
-				context.ClearPipeline();
-			}
-		}
+            context?.ClearPipeline();
+        }
 
 		public void Process( DatabaseChangeSummary summary ) {
 			Condition.Requires( summary ).IsNotNull();

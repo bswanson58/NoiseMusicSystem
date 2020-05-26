@@ -27,7 +27,6 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using ReusableBits.Platform;
 using ReusableBits.Threading;
 
 namespace Noise.Core {
@@ -43,38 +42,39 @@ namespace Noise.Core {
 		public void Initialize() {
 			mContainer.RegisterInstance<IEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
 
-			mContainer.RegisterType<ILicenseManager, NoiseLicenseManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILicenseManager, NoiseLicenseManager>();
 
 			mContainer.RegisterType<IArtistArtworkProvider, ArtistArtworkProvider>();
 			mContainer.RegisterType<IAlbumArtworkProvider, AlbumArtworkProvider>();
-            mContainer.RegisterType<ITagArtworkProvider, TagArtworkProvider>( new HierarchicalLifetimeManager());
+            mContainer.RegisterType<ITagArtworkProvider, TagArtworkProvider>();
 
-			mContainer.RegisterType<IAudioController, AudioController>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILifecycleManager, LifecycleManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IStorageFileProcessor, StorageFileProcessor>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<INoiseManager, NoiseManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILibraryConfiguration, LibraryConfigurationManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILibraryBackupManager, LibraryBackupManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlayCommand, PlayCommand>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlayController, PlayController>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlaybackContextManager, PlaybackContextManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlaybackContextWriter, PlaybackContextWriter>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IScrobbler, PlayScrobbler>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ISidecarBuilder, SidecarBuilder>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ISidecarCreator, SidecarCreator>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ISidecarUpdater, SidecarWriter>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ISidecarWriter, SidecarWriter>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());
-            mContainer.RegisterType<IUserTagManager, UserTagManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRatings, RatingsUpdater>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
-            mContainer.RegisterType<ILibrarian, LibrarianModel>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IAudioController, AudioController>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>();
+			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
+			mContainer.RegisterType<ILifecycleManager, LifecycleManager>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IStorageFileProcessor, StorageFileProcessor>();
+			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>();
+			mContainer.RegisterType<INoiseManager, NoiseManager>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<ILibraryConfiguration, LibraryConfigurationManager>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<ILibraryBackupManager, LibraryBackupManager>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IPlayCommand, PlayCommand>();
+			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IPlayController, PlayController>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IPlaybackContextManager, PlaybackContextManager>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IPlaybackContextWriter, PlaybackContextWriter>();
+			mContainer.RegisterType<IScrobbler, PlayScrobbler>();
+			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<ISidecarBuilder, SidecarBuilder>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<ISidecarCreator, SidecarCreator>();
+			mContainer.RegisterType<ISidecarUpdater, SidecarWriter>();
+			mContainer.RegisterType<ISidecarWriter, SidecarWriter>();
+            mContainer.RegisterType<IStorageFolderSupport, StorageFolderSupport>();
+			mContainer.RegisterType<ITagManager, TagManager>( new ContainerControlledLifetimeManager());
+            mContainer.RegisterType<IUserTagManager, UserTagManager>();
+			mContainer.RegisterType<IRatings, RatingsUpdater>();
+			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new ContainerControlledLifetimeManager());
+            mContainer.RegisterType<ILibrarian, LibrarianModel>();
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
             mContainer.RegisterType<IDirectoryArchiver, DirectoryArchiver>();
@@ -97,11 +97,9 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPipelineStep, UpdateUndeterminedPipelineStep>( "UpdateUndeterminedPipelineStep" );
 			mContainer.RegisterType<IEnumerable<IPipelineStep>, IPipelineStep[]>();
 
-			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new ContainerControlledLifetimeManager());
 //			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
-
-			mContainer.RegisterType<IStorageFolderSupport, StorageFolderSupport>();
 
 			// Configure the default constructor for the RecurringTaskScheduler class.
 			mContainer.RegisterType<RecurringTaskScheduler>( new InjectionConstructor());
@@ -128,9 +126,9 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPlayStrategy>, IPlayStrategy[]>();
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 
-            mContainer.RegisterType<IExhaustedStrategyPlayManager, ExhaustedStrategyPlayManager>( new HierarchicalLifetimeManager());
-            mContainer.RegisterType<IExhaustedContextFactory, ExhaustedContextFactory>( new HierarchicalLifetimeManager());
-            mContainer.RegisterType<IExhaustedStrategyFactory, ExhaustedStrategyFactory>( new HierarchicalLifetimeManager());
+            mContainer.RegisterType<IExhaustedStrategyPlayManager, ExhaustedStrategyPlayManager>( new ContainerControlledLifetimeManager());
+            mContainer.RegisterType<IExhaustedContextFactory, ExhaustedContextFactory>();
+            mContainer.RegisterType<IExhaustedStrategyFactory, ExhaustedStrategyFactory>( new ContainerControlledLifetimeManager());
 
             mContainer.RegisterType<IExhaustedPlayHandler, StopPlay>( eTrackPlayHandlers.Stop.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, FavoriteTracks>( eTrackPlayHandlers.PlayFavorites.ToString());
@@ -154,20 +152,19 @@ namespace Noise.Core {
 			mContainer.RegisterType<IRandomTrackSelector, RandomTrackSelector>();
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();
 
-			mContainer.RegisterType<ILogBackgroundTasks, LogBackgroundTasks>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogBackup, LogBackup>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryBuilding, LogLibraryBuilding>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryClassification, LogLibraryClassification>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryBuildingSidecars, LogLibraryBuildingSidecars>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryBuildingSummary, LogLibraryBuildingSummary>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogPlayQueue, LogPlayQueue>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogPlayState, LogPlayState>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogPlayStrategy, LogPlayStrategy>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<ILogLibraryConfiguration, LogLibraryConfiguration>( new HierarchicalLifetimeManager());
-
-			mContainer.RegisterType<ILogUserStatus, LogUserStatus>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogBackgroundTasks, LogBackgroundTasks>();
+			mContainer.RegisterType<ILogBackup, LogBackup>();
+			mContainer.RegisterType<ILogLibraryBuilding, LogLibraryBuilding>();
+			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>();
+			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>();
+			mContainer.RegisterType<ILogLibraryClassification, LogLibraryClassification>();
+			mContainer.RegisterType<ILogLibraryBuildingSidecars, LogLibraryBuildingSidecars>();
+			mContainer.RegisterType<ILogLibraryBuildingSummary, LogLibraryBuildingSummary>();
+			mContainer.RegisterType<ILogPlayQueue, LogPlayQueue>();
+			mContainer.RegisterType<ILogPlayState, LogPlayState>();
+			mContainer.RegisterType<ILogPlayStrategy, LogPlayStrategy>();
+			mContainer.RegisterType<ILogLibraryConfiguration, LogLibraryConfiguration>();
+			mContainer.RegisterType<ILogUserStatus, LogUserStatus>();
 		}
 	}
 }

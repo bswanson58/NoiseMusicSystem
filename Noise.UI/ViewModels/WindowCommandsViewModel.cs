@@ -92,19 +92,19 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LibraryLayout() {
-			mWindowManager.ChangeWindowLayout( Constants.ExploreLayout );
+//			mWindowManager.ChangeWindowLayout( Constants.ExploreLayout );
 		}
 
 		public void Execute_ListenLayout() {
-			mWindowManager.ChangeWindowLayout( Constants.ListenLayout );
+//			mWindowManager.ChangeWindowLayout( Constants.ListenLayout );
 		}
 
 		public void Execute_TimelineLayout() {
-			mWindowManager.ChangeWindowLayout( Constants.TimeExplorerLayout );
+//			mWindowManager.ChangeWindowLayout( Constants.TimeExplorerLayout );
 		}
 
 		public void Execute_PlaybackLayout() {
-			mWindowManager.ChangeWindowLayout( Constants.ListenLayout );
+//			mWindowManager.ChangeWindowLayout( Constants.ListenLayout );
 		}
 
 		private void OnImport() {

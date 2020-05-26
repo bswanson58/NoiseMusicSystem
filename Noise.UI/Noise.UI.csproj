@@ -381,6 +381,7 @@
     <Compile Include="ViewModels\LibraryBackupDialogModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
+    <Compile Include="ViewModels\LibraryViewModel.cs" />
     <Compile Include="ViewModels\PlaybackContextDialogManager.cs" />
     <Compile Include="ViewModels\PlaybackRelatedViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
@@ -485,6 +486,12 @@
     <Compile Include="Views\LibrarySelectorView.xaml.cs">
       <DependentUpon>LibrarySelectorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LibraryView.xaml.cs">
+      <DependentUpon>LibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ListeningView.xaml.cs">
+      <DependentUpon>ListeningView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ListenStageView.xaml.cs">
       <DependentUpon>ListenStageView.xaml</DependentUpon>
     </Compile>
@@ -503,9 +510,11 @@
     <Compile Include="Views\PlayerExtendedView.xaml.cs">
       <DependentUpon>PlayerExtendedView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PlayerTemplateSelector.cs" />
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PlayerViewSelector.cs" />
     <Compile Include="Views\PlayHistoryView.xaml.cs">
       <DependentUpon>PlayHistoryView.xaml</DependentUpon>
     </Compile>
@@ -538,6 +547,9 @@
     </Compile>
     <Compile Include="Views\TagsView.xaml.cs">
       <DependentUpon>TagsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimelineView.xaml.cs">
+      <DependentUpon>TimelineView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TrackPlayPointsDialog.xaml.cs">
       <DependentUpon>TrackPlayPointsDialog.xaml</DependentUpon>
@@ -824,6 +836,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\LibraryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ListeningView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ListenStageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -893,6 +913,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TagsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TimelineView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

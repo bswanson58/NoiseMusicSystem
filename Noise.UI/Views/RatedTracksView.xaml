@@ -11,9 +11,9 @@
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
-             DataContext="{Binding RatedTracksViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:RatedTracksViewModel, IsDesignTimeCreatable=False}">
+<!--    DataContext="{Binding RatedTracksViewModel, Source={StaticResource ViewModelLocator}}" -->
 
     <UserControl.Resources>
         <valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
