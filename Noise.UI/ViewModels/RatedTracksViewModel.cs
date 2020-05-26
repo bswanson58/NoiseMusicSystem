@@ -9,14 +9,14 @@ using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using ReusableBits;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    class RatedTracksViewModel : ViewModelBase, IActiveAware, IDisposable,
+    class RatedTracksViewModel : AutomaticPropertyBase, IActiveAware, IDisposable,
                                                 IHandle<Events.DatabaseClosing> {
         private readonly IEventAggregator	    mEventAggregator;
         private readonly IUiLog				    mLog;

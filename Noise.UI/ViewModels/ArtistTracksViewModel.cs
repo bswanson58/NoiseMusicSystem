@@ -11,16 +11,15 @@ using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.ExtensionClasses;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class ArtistTracksViewModel : ViewModelBase, IActiveAware, IDisposable,
-											IHandle<Events.DatabaseClosing> {
+	internal class ArtistTracksViewModel : AutomaticPropertyBase, IActiveAware, IDisposable, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IUiLog				mLog;
 		private readonly ISelectionState	mSelectionState;
@@ -36,7 +35,7 @@ namespace Noise.UI.ViewModels {
 		public	bool									IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
 		public	event EventHandler						IsActiveChanged = delegate { };
 
-		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
+        public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
 									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
