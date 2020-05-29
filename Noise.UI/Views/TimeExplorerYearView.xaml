@@ -4,17 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:TimeExplorerYearViewModel, IsDesignTimeCreatable=False}"
              Height="100"
              d:DesignHeight="100" d:DesignWidth="400">
     
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="HideIfTrue" TriggerValue="True" IsHidden="True"/>
     </UserControl.Resources>
-
-    <UserControl.DataContext>
-        <Binding Path="TimeExplorerYearViewModel" Source="{StaticResource ViewModelLocator}" />
-    </UserControl.DataContext>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" In The Year ">
         <Grid>

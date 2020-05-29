@@ -8,10 +8,11 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
+using ReusableBits.Interfaces;
 using ReusableBits.Threading;
 
 namespace Noise.Metadata.ArtistMetadata {
-	internal class ArtistMetadataUpdater : IMetadataUpdater {
+	public class ArtistMetadataUpdater : IMetadataUpdater {
 		private const string									cBackgroundTaskName = "Artist Metadata Updateer";
 
 		private readonly IEventAggregator						mEventAggregator;

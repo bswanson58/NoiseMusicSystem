@@ -1,14 +1,13 @@
-﻿using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
-using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Disqualifiers {
-    class BadRatingTracks : ExhaustedHandlerBase {
+    public class BadRatingTracks : ExhaustedHandlerBase {
         public BadRatingTracks() : base( eTrackPlayHandlers.BadRatingTracks, eTrackPlayStrategy.Disqualifier, "Bad Rating", "Eliminate tracks with a bad rating." ) { }
 
         public override void SelectTrack( IExhaustedSelectionContext context ) {
-            var tracks = context.SelectedTracks.ToArray();
+            var tracks = context.SelectedTracks;
 
             tracks.ForEach( 
                 track => {

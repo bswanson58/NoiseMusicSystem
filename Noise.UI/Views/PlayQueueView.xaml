@@ -1,9 +1,10 @@
 ﻿<UserControl x:Class="Noise.UI.Views.PlayQueueView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Views="clr-namespace:Noise.UI.Views"
+             xmlns:views="clr-namespace:Noise.UI.Views"
              Tag="Now Playing"
              >
+
     <GroupBox Margin="2,0,4,0" Style="{StaticResource SectionBorderStyle}" Header=" Play Queue ">
         <Grid>
             <Grid.RowDefinitions>
@@ -14,19 +15,19 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Views:PlayQueueListView Grid.Row="0"/>
+            <views:PlayQueueListView Grid.Row="0"/>
             
             <StackPanel Grid.Row="1" Margin="5,5,3,3" Orientation="Vertical">
                 <Rectangle Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
             </StackPanel>
             
-            <Views:PlayQueueStrategyView Grid.Row="2"/>
+            <views:PlayQueueStrategyView Grid.Row="2"/>
             
             <StackPanel Grid.Row="3" Margin="5,5,3,3" Orientation="Vertical">
                 <Rectangle Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
             </StackPanel>
 
-            <Views:PlayQueueControlView Grid.Row="4"/>
+            <views:PlayQueueControlView Grid.Row="4"/>
         </Grid>
     </GroupBox>
 </UserControl>

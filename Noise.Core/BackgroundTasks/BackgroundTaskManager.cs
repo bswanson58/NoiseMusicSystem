@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.Interfaces;
 using ReusableBits.Threading;
 
 namespace Noise.Core.BackgroundTasks {
@@ -22,8 +23,8 @@ namespace Noise.Core.BackgroundTasks {
 
 		private readonly IEnumerable<IBackgroundTask>	mBackgroundTasks;
 
-		public BackgroundTaskManager( IEventAggregator eventAggregator,
-									  IRecurringTaskScheduler recurringTaskScheduler, IEnumerable<IBackgroundTask> backgroundTasks, ILogBackgroundTasks log ) {
+		public BackgroundTaskManager( IEventAggregator eventAggregator, IRecurringTaskScheduler recurringTaskScheduler, ILogBackgroundTasks log,
+                                      IBackgroundTask[] backgroundTasks ) {
 			mBackgroundTasks = backgroundTasks;
 			mEventAggregator = eventAggregator;
 			mJobScheduler = recurringTaskScheduler;
@@ -77,10 +78,8 @@ namespace Noise.Core.BackgroundTasks {
 
 					task = NextTask();
 
-					if( task != null ) {
-						task.ExecuteTask();
-					}
-				}
+                    task?.ExecuteTask();
+                }
 				catch( Exception ex ) {
 					var taskId = "null";
 
@@ -88,7 +87,7 @@ namespace Noise.Core.BackgroundTasks {
 						taskId = task.TaskId;
 					}
 
-					mLog.LogException( string.Format( "Executing background task '{0}'", taskId ), ex );
+					mLog.LogException( $"Executing background task '{taskId}'", ex );
 				}
 				finally {
 					mRunningTaskFlag = false;

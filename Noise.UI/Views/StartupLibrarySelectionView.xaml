@@ -3,9 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1100"
-             DataContext="{Binding StartupLibrarySelectionViewModel, Source={StaticResource ViewModelLocator}}" >
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:StartupLibrarySelectionViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="600" d:DesignWidth="1100">
 
     <UserControl.Resources>
         <DataTemplate x:Key="LibraryListItem">

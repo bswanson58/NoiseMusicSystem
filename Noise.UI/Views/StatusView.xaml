@@ -6,10 +6,11 @@
 			 xmlns:controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
 			 xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
-			 mc:Ignorable="d" 
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 d:DesignWidth="500"
              d:DataContext="{d:DesignInstance viewModels:StatusViewModel, IsDesignTimeCreatable=False}"
-             DataContext="{Binding StatusViewModel, Source={StaticResource ViewModelLocator}}"
 			 Height="25">
 	
 	<UserControl.Resources>

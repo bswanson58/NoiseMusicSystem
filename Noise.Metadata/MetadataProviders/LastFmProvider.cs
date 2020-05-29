@@ -24,7 +24,7 @@ namespace Noise.Metadata.MetadataProviders {
 		private readonly bool				mHasNetworkAccess;
 		private IDocumentStore				mDocumentStore;
 
-		public	string		ProviderKey { get; private set; }
+		public	string		ProviderKey { get; }
 
 		public LastFmProvider( ILastFmClient client, ILicenseManager licenseManager, NoiseCorePreferences preferences, ILogMetadata log ) {
 			mLastFmClient = client;
@@ -61,9 +61,8 @@ namespace Noise.Metadata.MetadataProviders {
 				try {
 					var artistSearch = await mLastFmClient.ArtistSearch( artistName );
 
-					if(( artistSearch != null ) &&
-					   (artistSearch.ArtistList != null ) &&
-					   ( artistSearch.ArtistList.Count > 0 )) {
+					if(( artistSearch?.ArtistList != null ) &&
+                       ( artistSearch.ArtistList.Count > 0 )) {
 						var firstArtist = artistSearch.ArtistList.FirstOrDefault();
 
 						if( firstArtist != null ) {
@@ -99,7 +98,7 @@ namespace Noise.Metadata.MetadataProviders {
 				catch( Exception ex ) {
 					retValue = false;
 
-					mLog.LogException( string.Format( "LastFm search failed for artist \"{0}\"", artistName ), ex );
+					mLog.LogException( $"LastFm search failed for artist \"{artistName}\"", ex );
 				}
 			}
 
@@ -115,9 +114,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 					artistBio.SetMetadata( eMetadataType.Biography, artistInfo.Bio.Content );
 
-					if(( artistInfo.Bio.FormationList != null ) &&
-					   ( artistInfo.Bio.FormationList.Formation != null ) &&
-					   ( artistInfo.Bio.FormationList.Formation.Any())) {
+					if(( artistInfo.Bio.FormationList?.Formation != null ) && 
+                       ( artistInfo.Bio.FormationList.Formation.Any())) {
 						UpdateArtistFormation( artistBio, artistInfo.Bio.FormationList.Formation );
 					}
 
@@ -162,7 +160,7 @@ namespace Noise.Metadata.MetadataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "LastFm update failed for artist: {0}", artistName ), ex );
+				mLog.LogException( $"LastFm update failed for artist: {artistName}", ex );
 			}
 		}
 
@@ -200,7 +198,7 @@ namespace Noise.Metadata.MetadataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "ImageDownload failed for artist: {0} ", artistName ), ex );
+				mLog.LogException( $"ImageDownload failed for artist: {artistName} ", ex );
 			}
 		}
 	}

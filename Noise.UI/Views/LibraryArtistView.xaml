@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Views="clr-namespace:Noise.UI.Views"
+             xmlns:views="clr-namespace:Noise.UI.Views"
              Tag="Library"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -15,11 +15,11 @@
             <RowDefinition Height="2*" MinHeight="100"/>
         </Grid.RowDefinitions>
         
-        <Views:ArtistListView Grid.Row="0"/>
+        <views:ArtistListView Grid.Row="0"/>
 
         <GridSplitter Grid.Row="1" Margin="0,2,0,-4" Background="Transparent" Style="{StaticResource GridSplitterHorizontalStyle}"
                       ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 
-        <Views:AlbumListView Grid.Row="2"/>
+        <views:AlbumListView Grid.Row="2"/>
     </Grid>
 </UserControl>

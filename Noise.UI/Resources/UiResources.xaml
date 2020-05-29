@@ -1,33 +1,26 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:Vml="clr-namespace:Noise.UI.Support"
-					xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-					xmlns:NoiseControls="clr-namespace:Noise.UI.Controls">
-
-	<Vml:ViewModelLocator x:Key="ViewModelLocator" />
-
-	<ObjectDataProvider x:Key="DialogService"
-						MethodName="DialogService"
-						ObjectType="{x:Type Vml:DialogServiceResolver}" />
+					xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+					xmlns:noiseControls="clr-namespace:Noise.UI.Controls">
 
 	<ContextMenu x:Key="ArtistMenu">
 		<MenuItem Command="{Binding Rename}" Header="Rename Artist" />
 	</ContextMenu>
 
-    <Behaviours:NoiseGenerator x:Key="BackgroundNoise" Size="128">
-        <Behaviours:NoiseGenerator.Colors>
-            <Behaviours:ColorFrequency Frequency="90" Color="#197A9CE6" />
-            <Behaviours:ColorFrequency Frequency="30" Color="#26C9D8F4" />
-            <Behaviours:ColorFrequency Frequency="50" Color="#19DEE6F6" />
-        </Behaviours:NoiseGenerator.Colors>
-    </Behaviours:NoiseGenerator>
+    <behaviours:NoiseGenerator x:Key="BackgroundNoise" Size="128">
+        <behaviours:NoiseGenerator.Colors>
+            <behaviours:ColorFrequency Frequency="90" Color="#197A9CE6" />
+            <behaviours:ColorFrequency Frequency="30" Color="#26C9D8F4" />
+            <behaviours:ColorFrequency Frequency="50" Color="#19DEE6F6" />
+        </behaviours:NoiseGenerator.Colors>
+    </behaviours:NoiseGenerator>
 
     <ImageBrush x:Key="NoiseBrush"
                 ImageSource="{Binding Source={StaticResource BackgroundNoise}, Path=NoiseImage}"
                 TileMode="Tile" Viewport="0,0 128,128" ViewportUnits="Absolute" />
 
     <!-- Rating control -->
-    <Style x:Key="NoiseRatingStyle" TargetType="{x:Type NoiseControls:RatingControl}">
+    <Style x:Key="NoiseRatingStyle" TargetType="{x:Type noiseControls:RatingControl}">
         <Setter Property="Height" Value="13"/>
         <Setter Property="RatingCount" Value="5"/>
         <Setter Property="HoverColor" Value="{DynamicResource SignatureHoverBrush}"/>

@@ -1,7 +1,7 @@
 ﻿using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataProviders {
-	public interface IMetaDataProvider {
+	public interface IMetadataInfoProvider {
 		string	Artist { get; }
 		string	Album {get; }
 		string	TrackName { get; }

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -125,10 +125,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 				var moveList = new List<string>();
 
 				for( int index = 0; index < fileList.Count(); index++ ) {
-					moveList.Add( string.Format( "MOVE '{0}' TO '{1}'", fileList.ElementAt( index ), locationList.ElementAt( index )));
+					moveList.Add( $"MOVE '{fileList.ElementAt( index )}' TO '{locationList.ElementAt( index )}'" );
 				}
 
-				var		moveText = moveList.JoinStrings( ", " );
+				var		moveText = String.Join( ", ", moveList );
 				string	commandText = $"RESTORE DATABASE [{databaseName}] FROM DISK='{restoreLocation}' WITH REPLACE, RECOVERY, {moveText}";
 
 				connection.Open();

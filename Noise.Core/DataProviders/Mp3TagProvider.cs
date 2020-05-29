@@ -10,7 +10,7 @@ using TagLib.Id3v2;
 using File = TagLib.File;
 
 namespace Noise.Core.DataProviders {
-	public class Mp3TagProvider : IMetaDataProvider {
+	public class Mp3TagProvider : IMetadataInfoProvider {
 		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITagManager			mGenreManager;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;

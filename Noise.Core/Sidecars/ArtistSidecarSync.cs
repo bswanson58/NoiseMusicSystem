@@ -24,7 +24,7 @@ namespace Noise.Core.Sidecars {
 		private readonly List<long>						mArtistList; 
 		private IEnumerator<long>						mArtistEnum; 
 
-		public string TaskId { get; private set; }
+		public string TaskId { get; }
 
 		public ArtistSidecarSync( IEventAggregator eventAggregator, ILogLibraryBuildingSidecars log, IArtistProvider artistProvider,
 								  ISidecarProvider sidecarProvider, ISidecarCreator sidecarCreator, ISidecarWriter sidecarWriter ) {
@@ -78,7 +78,7 @@ namespace Noise.Core.Sidecars {
 					}
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Syncing sidecar for {0}", artist ), exception );
+					mLog.LogException( $"Syncing sidecar for {artist}", exception );
 				}
 			}
 		}

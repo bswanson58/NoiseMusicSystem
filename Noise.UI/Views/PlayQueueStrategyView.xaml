@@ -5,9 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             DataContext="{Binding PlayQueueStrategyViewModel, Source={StaticResource ViewModelLocator}}"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:PlayQueueStrategyViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="100" d:DesignWidth="300">
+
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

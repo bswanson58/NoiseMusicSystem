@@ -2,22 +2,35 @@
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class TransportViewModel : AutomaticCommandBase, 
-										IHandle<Events.PlaybackStatusChanged>,
-										IHandle<Events.PlaybackTrackUpdated>,
-										IHandle<Events.PlaybackTrackChanged>,
-										IHandle<Events.PlaybackInfoChanged> {
+	public class TransportViewModel : AutomaticPropertyBase, 
+ 									  IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackUpdated>,
+									  IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged> {
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
+
+		public	DelegateCommand				Play { get; }
+		public	DelegateCommand				Pause { get; }
+		public	DelegateCommand				Stop {  get; }
+		public	DelegateCommand				NextTrack { get; }
+		public	DelegateCommand				PreviousTrack {  get; }
+		public	DelegateCommand				ReplayTrack { get; }
 
 		public TransportViewModel( IEventAggregator eventAggregator, IPlayController playController, IPlayQueue playQueue ) {
 			mPlayController = playController;
 			mPlayQueue = playQueue;
 
 			eventAggregator.Subscribe( this );
+
+			Play = new DelegateCommand( OnPlay, CanPlay );
+			Pause = new DelegateCommand( OnPause, CanPause );
+			Stop = new DelegateCommand( OnStop, CanStop );
+			NextTrack = new DelegateCommand( OnNextTrack, CanPlayNextTrack );
+			PreviousTrack = new DelegateCommand( OnPreviousTrack, CanPlayPreviousTrack );
+			ReplayTrack = new DelegateCommand( OnReplayTrack, CanReplayTrack );
 		}
 
 		public ePlaybackStatus CurrentStatus {
@@ -32,16 +45,28 @@ namespace Noise.UI.ViewModels {
 
 		public int InfoUpdateFlag {
 			get{ return( Get( () => InfoUpdateFlag, 0 ));  }
-			set{ Execute.OnUIThread( () => Set( () => InfoUpdateFlag, value )); }
+			set {
+                Execute.OnUIThread( () => {
+                    Set( () => InfoUpdateFlag, value );
+
+					PreviousTrack.RaiseCanExecuteChanged();
+                });
+            }
 		}
 
 		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
 			if( CurrentStatus != eventArgs.Status ) {
 				CurrentStatus = eventArgs.Status;
 			}
-			else {
-				RaisePropertyChanged( () => CurrentStatus );
-			}
+
+            RaisePropertyChanged( () => CurrentStatus );
+
+			Play.RaiseCanExecuteChanged();
+			Pause.RaiseCanExecuteChanged();
+			Stop.RaiseCanExecuteChanged();
+			NextTrack.RaiseCanExecuteChanged();
+			PreviousTrack.RaiseCanExecuteChanged();
+			ReplayTrack.RaiseCanExecuteChanged();
 		}
 
 		public void Handle( Events.PlaybackTrackUpdated eventArgs ) {
@@ -54,61 +79,61 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.PlaybackTrackChanged eventArgs ) {
 			StartTrackFlag++;
+
+			ReplayTrack.RaiseCanExecuteChanged();
 		}
 
 		public void Handle( Events.PlaybackInfoChanged eventArgs ) {
 			InfoUpdateFlag++;
 		}
 
-		public void Execute_Play( object sender ) {
+		private void OnPlay() {
 			mPlayController.Play();
 		}
-		[DependsUpon( "CurrentStatus" )]
-		public bool CanExecute_Play( object sender ) {
+
+        private bool CanPlay() {
 			return( mPlayController != null && mPlayController.CanPlay );
 		}
 
-		public void Execute_Pause( object sender ) {
+		private void OnPause() {
 			mPlayController.Pause();
 		}
-		[DependsUpon( "CurrentStatus" )]
-		public bool CanExecute_Pause( object sender ) {
+
+        private bool CanPause() {
 			return ( mPlayController != null && mPlayController.CanPause );
 		}
 
-		public void Execute_Stop( object sender ) {
+		private void OnStop() {
 			mPlayController.Stop();
 		}
-		[DependsUpon( "CurrentStatus" )]
-		public bool CanExecute_Stop( object sender ) {
+
+        private bool CanStop() {
 			return ( mPlayController != null && mPlayController.CanStop );
 		}
 
-		public void Execute_NextTrack( object sender ) {
+		private void OnNextTrack() {
 			mPlayController.PlayNextTrack();
 		}
-		[DependsUpon( "CurrentStatus" )]
-		public bool CanExecute_NextTrack( object sender ) {
+
+        private bool CanPlayNextTrack() {
 			return ( mPlayController != null && mPlayController.CanPlayNextTrack );
 		}
 
-		public void Execute_PreviousTrack( object sender ) {
+		private void OnPreviousTrack() {
 			mPlayController.PlayPreviousTrack();
 		}
-		[DependsUpon( "CurrentStatus" )]
-		[DependsUpon( "InfoUpdateFlag" )]
-		public bool CanExecute_PreviousTrack( object sender ) {
-			return ( mPlayController != null && mPlayController.CanPlayPreviousTrack );
+
+		private bool CanPlayPreviousTrack() {
+			return mPlayController != null && mPlayController.CanPlayPreviousTrack;
 		}
 
-		public void Execute_ReplayTrack() {
+		private void OnReplayTrack() {
 			mPlayQueue.PlayingTrackReplayCount++;
 
-			RaiseCanExecuteChangedEvent( "CanExecute_ReplayTrack" );
+			ReplayTrack.RaiseCanExecuteChanged();
 		}
-		[DependsUpon( "CurrentStatus" )]
-		[DependsUpon( "StartTrackFlag" )]
-		public bool CanExecute_ReplayTrack() {
+
+		private bool CanReplayTrack() {
 			return(( mPlayController.CurrentTrack != null ) &&
 			       ( mPlayQueue.PlayingTrackReplayCount == 0 ));
 		}

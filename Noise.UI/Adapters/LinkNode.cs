@@ -1,17 +1,21 @@
 ﻿using System;
-using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Adapters {
-	public class LinkNode : ViewModelBase {
-		public	string					DisplayText { get; private set; }
-		public	long					LinkId { get; private set; }
-		public	bool					IsLinked { get; private set; }
-		private readonly Action<long>	mLinkAction;
+	public class LinkNode : PropertyChangeBase {
+        private readonly Action<long>	mLinkAction;
+
+        public	string					DisplayText { get; }
+		public	long					LinkId { get; }
+		public	bool					IsLinked { get; }
+		public	DelegateCommand			LinkClicked { get; }
 
 		public LinkNode( string displayText ) {
 			DisplayText = displayText;
 
 			IsLinked = false;
+			LinkClicked = new DelegateCommand( OnLinkClicked );
 		}
 
 		public LinkNode( string displayText, long linkId, Action<long> linkAction ) {
@@ -22,10 +26,8 @@ namespace Noise.UI.Adapters {
 			IsLinked = true;
 		}
 
-		public void Execute_LinkClicked() {
-			if( mLinkAction != null ) {
-				mLinkAction( LinkId );
-			}
-		}
+		private void OnLinkClicked() {
+            mLinkAction?.Invoke( LinkId );
+        }
 	}
 }

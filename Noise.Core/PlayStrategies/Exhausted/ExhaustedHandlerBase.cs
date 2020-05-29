@@ -5,7 +5,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted {
-    abstract class ExhaustedHandlerBase : IExhaustedPlayHandler {
+    public abstract class ExhaustedHandlerBase : IExhaustedPlayHandler {
         private readonly Random     mRandom;
 
         public  eTrackPlayHandlers  Identifier { get; }

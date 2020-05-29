@@ -2,22 +2,31 @@
 using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Adapters {
-	public class PlayListNode : ViewModelBase {
-		public	DbPlayList						PlayList { get; private set; }
-		public	UserSettingsNotifier			UiEdit { get; private set; }
-		public	DbArtist						Artist { get; private set; }
-		public	DbAlbum							Album { get; private set; }
-		public	DbTrack							Track { get; private set; }
-		public	TimeSpan						PlayTime { get; private set; }
-		public	IEnumerable<PlayListNode>		TrackList { get; private set; }
-		public	bool							IsExpanded { get; set; }
-		private bool							mIsSelected;
-		private readonly Action<PlayListNode>	mOnSelected;
-		private readonly Action<PlayListNode>	mOnPlay;
+	public class PlayListNode : PropertyChangeBase {
+        private readonly Action<PlayListNode>	mOnSelected;
+        private readonly Action<PlayListNode>	mOnPlay;
+        private bool							mIsSelected;
 
-		public PlayListNode( DbPlayList playList, IEnumerable<PlayListNode> trackList, Action<PlayListNode> onSelected, Action<PlayListNode> onPlay ) {
+        public	DbPlayList						PlayList { get; }
+		public	UserSettingsNotifier			UiEdit { get; }
+		public	DbArtist						Artist { get; }
+		public	DbAlbum							Album { get; }
+		public	DbTrack							Track { get; }
+		public	TimeSpan						PlayTime { get; private set; }
+		public	IEnumerable<PlayListNode>		TrackList { get; }
+		public	bool							IsExpanded { get; set; }
+		public	DelegateCommand					Play { get; }
+
+		private PlayListNode() {
+			Play = new DelegateCommand( OnPlay );
+        }
+
+		public PlayListNode( DbPlayList playList, IEnumerable<PlayListNode> trackList, Action<PlayListNode> onSelected, Action<PlayListNode> onPlay ) :
+            this () {
 			PlayList = playList;
 			TrackList = trackList;
 
@@ -30,8 +39,8 @@ namespace Noise.UI.Adapters {
 			mOnPlay = onPlay;
 		}
 
-		public PlayListNode( DbArtist artist, DbAlbum album, DbTrack track, 
-							 Action<PlayListNode> onSelected, Action<PlayListNode> onPlay ) {
+		public PlayListNode( DbArtist artist, DbAlbum album, DbTrack track, Action<PlayListNode> onSelected, Action<PlayListNode> onPlay ) :
+            this () {
 			Artist = artist;
 			Album = album;
 			Track = track;
@@ -41,20 +50,16 @@ namespace Noise.UI.Adapters {
 		}
 
 		public bool IsSelected {
-			get{ return( mIsSelected ); }
-			set {
+			get => ( mIsSelected );
+            set {
 				mIsSelected = value;
 
-				if( mOnSelected != null ) {
-					mOnSelected( this );
-				}
-			}
+                mOnSelected?.Invoke( this );
+            }
 		}
 
-		public void Execute_Play() {
-			if( mOnPlay != null ) {
-				mOnPlay( this );
-			}
-		}
+		private void OnPlay() {
+            mOnPlay?.Invoke( this );
+        }
 	}
 }

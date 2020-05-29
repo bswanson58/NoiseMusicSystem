@@ -29,7 +29,7 @@ namespace Noise.Core.FileProcessor {
 
 			var folderStrategy = mStorageFolderSupport.GetFolderStrategy( context.StorageFile );
 
-			context.MetaDataProviders = new List<IMetaDataProvider>();
+			context.MetaDataProviders = new List<IMetadataInfoProvider>();
 			if( folderStrategy.PreferFolderStrategy ) {
 				context.MetaDataProviders.Add( mStrategyProvider.GetProvider( context.StorageFile ));
 				context.MetaDataProviders.Add( mFileNameProvider.GetProvider( context.StorageFile ) );

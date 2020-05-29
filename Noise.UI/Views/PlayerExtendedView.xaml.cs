@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Practices.Prism;
+using Prism;
 
 namespace Noise.UI.Views {
 	/// <summary>
@@ -15,13 +15,11 @@ namespace Noise.UI.Views {
 		}
 
 		public bool IsActive {
-			get {
-				return mIsActive;
-			}
-			set {
+			get => mIsActive;
+            set {
 				mIsActive = value;
-				var vmAware = DataContext as IActiveAware;
-				if( vmAware != null ) {
+
+                if( DataContext is IActiveAware vmAware ) {
 					vmAware.IsActive = value;
 				}
 			}

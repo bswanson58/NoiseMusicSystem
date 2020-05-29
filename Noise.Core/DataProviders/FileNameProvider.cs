@@ -36,7 +36,7 @@ namespace Noise.Core.DataProviders {
 			};
 		}
 
-		public IMetaDataProvider GetProvider( StorageFile forFile ) {
+		public IMetadataInfoProvider GetProvider( StorageFile forFile ) {
 			if( forFile.ParentFolder != mFolderId ) {
 				BuildFolderFiles( forFile.ParentFolder );
 			}
@@ -61,7 +61,7 @@ namespace Noise.Core.DataProviders {
 		}
 	}
 
-	internal class NameProvider : IMetaDataProvider {
+	internal class NameProvider : IMetadataInfoProvider {
 		private readonly StorageFile		mFile;
 		private readonly IList<StorageFile>	mFolderFiles;
 		private readonly IEnumerable<Regex>	mDatePatterns;

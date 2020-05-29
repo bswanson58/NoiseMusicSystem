@@ -10,7 +10,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
 
         public IEnumerable<IStrategyDescription>        ExhaustedStrategies => mStrategies;
 
-        public ExhaustedStrategyFactory( IEnumerable<IExhaustedPlayHandler> strategyList  ) {
+        public ExhaustedStrategyFactory( IExhaustedPlayHandler[] strategyList  ) {
             mStrategies = new List<IExhaustedPlayHandler>( strategyList );
         }
 

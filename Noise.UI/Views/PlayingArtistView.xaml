@@ -3,17 +3,17 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 xmlns:Reusable="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 mc:Ignorable="d" 
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:reusable="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:PlayingArtistViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
-	<UserControl.DataContext>
-		<Binding Path="PlayingArtistViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
-
 	<UserControl.Resources>
-		<ValueConverters:ByteImageConverter x:Key="imageConverter" />
+		<valueConverters:ByteImageConverter x:Key="imageConverter" />
 	</UserControl.Resources>
 
 	<Grid>
@@ -23,13 +23,13 @@
 		</Grid.ColumnDefinitions>
 		
 		<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
-			   Reusable:FadedPropertyChange.Property="Source" Reusable:FadedPropertyChange.Binding="{Binding ArtistImage, Converter={StaticResource imageConverter}}" 
-			   Reusable:FadedPropertyChange.Duration="0:0:0.2" />
+			   reusable:FadedPropertyChange.Property="Source" reusable:FadedPropertyChange.Binding="{Binding ArtistImage, Converter={StaticResource imageConverter}}" 
+			   reusable:FadedPropertyChange.Duration="0:0:0.2" />
 		
 		<Viewbox Grid.Column="1" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
 			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right"
-					   Reusable:FadedPropertyChange.Property="Text" Reusable:FadedPropertyChange.Binding="{Binding ArtistName}"
-					   Reusable:FadedPropertyChange.Duration="0:0:0.3" />
+					   reusable:FadedPropertyChange.Property="Text" reusable:FadedPropertyChange.Binding="{Binding ArtistName}"
+					   reusable:FadedPropertyChange.Duration="0:0:0.3" />
 		</Viewbox>
 	</Grid>
 </UserControl>

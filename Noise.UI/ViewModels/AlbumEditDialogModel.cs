@@ -7,14 +7,13 @@ using System.Linq;
 using System.Windows;
 using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {

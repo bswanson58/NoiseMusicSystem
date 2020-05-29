@@ -1,15 +1,18 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Adapters {
-	public class PlayHistoryNode : AutomaticCommandBase {
+	public class PlayHistoryNode : PropertyChangeBase {
 		private readonly Action<PlayHistoryNode>	mPlayTrackAction;
 
-		public DbArtist		Artist { get; private set; }
-		public DbAlbum		Album { get; private set; }
-		public DbTrack		Track { get; private set; }
-		public DateTime		PlayedOn { get; private set; }
+		public	DbArtist		Artist { get; }
+		public	DbAlbum			Album { get; }
+		public	DbTrack			Track { get; }
+		public	DateTime		PlayedOn { get; }
+
+		public	DelegateCommand	PlayTrack { get; }
 
 		public PlayHistoryNode( DbArtist artist, DbAlbum album, DbTrack track, DateTime playedOn, Action<PlayHistoryNode> playTrackAction ) {
 			Artist = artist;
@@ -18,6 +21,8 @@ namespace Noise.UI.Adapters {
 			PlayedOn = playedOn;
 
 			mPlayTrackAction = playTrackAction;
+
+			PlayTrack = new DelegateCommand( OnPlayTrack );
 		}
 
 		public string AlbumName {
@@ -39,10 +44,9 @@ namespace Noise.UI.Adapters {
 			}
 		}
 
-		public void Execute_PlayTrack() {
-			if(( Track != null ) &&
-			   ( mPlayTrackAction != null )) {
-				mPlayTrackAction( this );
+		private void OnPlayTrack() {
+			if(( Track != null )) {
+				mPlayTrackAction?.Invoke( this );
 			}
 		}
 	}

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Prism;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 

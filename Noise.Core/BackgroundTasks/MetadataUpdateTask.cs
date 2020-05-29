@@ -15,7 +15,7 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly ILogBackgroundTasks	mLog;
 		private bool							mDatabaseOpen;
 
-		public string TaskId { get; private set; }
+		public string TaskId { get; }
 
 		public MetadataUpdateTask( IEventAggregator eventAggregator, IArtistProvider artistProvider,
 								   ITagManager tagManager, IMetadataManager metadataManager, ILogBackgroundTasks log ) {

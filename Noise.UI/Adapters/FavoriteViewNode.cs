@@ -1,10 +1,11 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Adapters {
-	public class FavoriteViewNode : ViewModelBase, IPlayingItem {
+	public class FavoriteViewNode : AutomaticPropertyBase, IPlayingItem {
 		public	DbArtist		Artist {get; }
 		public	DbAlbum			Album { get; }
 		public	DbTrack			Track { get; }
@@ -12,7 +13,13 @@ namespace Noise.UI.Adapters {
         public  string          DisplayName { get; set; }
         public  string          SortingName { get; set; }
 
+		public	DelegateCommand	PlayFavorite { get; }
+
 		private readonly Action<FavoriteViewNode>	mPlayAction;
+
+		private FavoriteViewNode() {
+			PlayFavorite = new DelegateCommand( OnPlayFavorite );
+        }
 
 		public FavoriteViewNode( DbArtist artist, Action<FavoriteViewNode> playAction ) :
 			this( artist, null, null, playAction ) {
@@ -22,7 +29,8 @@ namespace Noise.UI.Adapters {
 			this( artist, album, null, playAction ) {
 		}
 
-		public FavoriteViewNode( DbArtist artist, DbAlbum album, DbTrack track, Action<FavoriteViewNode> playAction ) {
+		public FavoriteViewNode( DbArtist artist, DbAlbum album, DbTrack track, Action<FavoriteViewNode> playAction ) :
+            this () {
 			Artist = artist;
 			Album = album;
 			Track = track;
@@ -52,7 +60,7 @@ namespace Noise.UI.Adapters {
             set {  Set( () => IsPlaying, value ); }
         }
 
-		public void Execute_PlayFavorite( object sender ) {
+		private void OnPlayFavorite() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 

@@ -1,23 +1,20 @@
-﻿using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Unity;
-using Noise.Infrastructure.RemoteHost;
+﻿using Noise.Infrastructure.RemoteHost;
+using Prism.Ioc;
+using Prism.Modularity;
 
 namespace Noise.RemoteHost {
 	public class RemoteHostModule : IModule {
-		private readonly IUnityContainer    mContainer;
-
-		public RemoteHostModule( IUnityContainer container ) {
-			mContainer = container;
+        public void RegisterTypes( IContainerRegistry containerRegistry ) {
+			containerRegistry.RegisterSingleton<IRemoteServer, RemoteServerMgr>();
+			containerRegistry.Register<INoiseRemote, RemoteServer>();
+			containerRegistry.Register<INoiseRemoteData, RemoteDataServer>();
+			containerRegistry.Register<INoiseRemoteQueue, RemoteQueueServer>();
+			containerRegistry.Register<INoiseRemoteSearch, RemoteSearchServer>();
+			containerRegistry.Register<INoiseRemoteTransport, RemoteTransportServer>();
+			containerRegistry.Register<INoiseRemoteLibrary, RemoteLibraryManager>();
 		}
 
-		public void Initialize() {
-			mContainer.RegisterType<IRemoteServer, RemoteServerMgr>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<INoiseRemote, RemoteServer>();
-			mContainer.RegisterType<INoiseRemoteData, RemoteDataServer>();
-			mContainer.RegisterType<INoiseRemoteQueue, RemoteQueueServer>();
-			mContainer.RegisterType<INoiseRemoteSearch, RemoteSearchServer>();
-			mContainer.RegisterType<INoiseRemoteTransport, RemoteTransportServer>();
-			mContainer.RegisterType<INoiseRemoteLibrary, RemoteLibraryManager>();
-		}
-	}
+        public void OnInitialized( IContainerProvider containerProvider ) {
+        }
+    }
 }

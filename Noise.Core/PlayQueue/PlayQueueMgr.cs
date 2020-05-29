@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using DynamicData;
-using Microsoft.Practices.ObjectBuilder2;
 using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.Core.PlayQueue {
 	internal class QueueItemState {

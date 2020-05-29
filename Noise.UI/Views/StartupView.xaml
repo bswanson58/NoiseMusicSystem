@@ -23,7 +23,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="_textBlock" Grid.Column="1" Grid.Row="1" Style="{StaticResource StartupTextStyle}" Text="The Noise Music System is warming up...">
+        <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource StartupTextStyle}" Text="The Noise Music System is warming up...">
             <TextBlock.Triggers>
                 <EventTrigger RoutedEvent="TextBlock.Loaded">
                     <BeginStoryboard>

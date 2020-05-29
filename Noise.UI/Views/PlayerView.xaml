@@ -10,11 +10,13 @@
 			 xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:system="clr-namespace:System;assembly=mscorlib"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 Height="85"
 			 d:DesignHeight="100"
 			 d:DesignWidth="1200"
-             d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}"
-			 mc:Ignorable="d">
+             d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
 		<reusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
@@ -26,10 +28,6 @@
         <system:Double x:Key="HorizontalThumbHeight">13</system:Double>
         <system:Double x:Key="HorizontalThumbWidth">25</system:Double>
 	</UserControl.Resources>
-
-	<UserControl.DataContext>
-		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid Background="Transparent">

@@ -1,25 +1,28 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-	public class UiTimeExplorerAlbum : AutomaticCommandBase {
+	public class UiTimeExplorerAlbum : PropertyChangeBase {
 		private readonly Action<UiTimeExplorerAlbum>	mOnPlay;
 
-		public	DbArtist	Artist { get; private set; }
-		public	DbAlbum		Album { get; private set; }
+		public	DbArtist	Artist { get; }
+		public	DbAlbum		Album { get; }
+
+		public	DelegateCommand	Play {  get; }
 
 		public UiTimeExplorerAlbum( DbArtist artist, DbAlbum album, Action<UiTimeExplorerAlbum> onPlay ) {
 			Artist = artist;
 			Album = album;
 
 			mOnPlay = onPlay;
+
+			Play = new DelegateCommand( OnPlay );
 		}
 
-		public void Execute_Play() {
-			if( mOnPlay != null ) {
-				mOnPlay( this );
-			}
-		}
+		private void OnPlay() {
+            mOnPlay?.Invoke( this );
+        }
 	}
 }

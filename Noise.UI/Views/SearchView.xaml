@@ -8,11 +8,14 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
-			 mc:Ignorable="d" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:SearchViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300"
-			 Tag="Search"
-			 DataContext="{Binding SearchViewModel, Source={StaticResource ViewModelLocator}}"
-			 >
+			 Tag="Search">
+
     <UserControl.Resources>
         <!-- Header Styles -->
         <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">

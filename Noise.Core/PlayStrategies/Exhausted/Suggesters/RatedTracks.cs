@@ -2,7 +2,7 @@
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
-    class RatedTracks : ExhaustedHandlerBase {
+    public class RatedTracks : ExhaustedHandlerBase {
         private readonly ITrackProvider     mTrackProvider;
 
         public RatedTracks( ITrackProvider trackProvider ) :

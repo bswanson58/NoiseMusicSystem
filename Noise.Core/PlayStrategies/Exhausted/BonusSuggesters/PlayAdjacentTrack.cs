@@ -3,7 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
-    class PlayAdjacentTrack : ExhaustedHandlerBase {
+    public class PlayAdjacentTrack : ExhaustedHandlerBase {
         private readonly ITrackProvider     mTrackProvider;
 
         public PlayAdjacentTrack( ITrackProvider trackProvider )

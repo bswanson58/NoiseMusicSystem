@@ -2,12 +2,12 @@
 using System.Reflection;
 using System.Windows;
 using Caliburn.Micro;
-using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.AudioSupport;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
+using Unity;
 using UnityConfiguration;
 
 namespace Noise.TenFooter {

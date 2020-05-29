@@ -17,7 +17,7 @@ namespace Noise.Core.FileProcessor {
 			Condition.Requires( context ).IsNotNull();
 			Condition.Requires( context.StorageFile ).IsNotNull();
 
-			context.MetaDataProviders = new List<IMetaDataProvider>{ mStrategyProvider.GetProvider( context.StorageFile ),
+			context.MetaDataProviders = new List<IMetadataInfoProvider>{ mStrategyProvider.GetProvider( context.StorageFile ),
 			                                                       	 mDefaultProvider.GetProvider( context.StorageFile ) };
 		}
 	}

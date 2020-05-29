@@ -132,6 +132,7 @@
     <Compile Include="Configuration\BaseConfigurationUpgrader.cs" />
     <Compile Include="Configuration\ConfigurationUpdater.cs" />
     <Compile Include="ExtensionClasses\MoreLinq\DistinctBy.cs" />
+    <Compile Include="ExtensionClasses\MoreLinq\ForEachExtension.cs" />
     <Compile Include="ExtensionClasses\RegexExtensions.cs" />
     <Compile Include="ExtensionClasses\StringExtensions.cs" />
     <Compile Include="FeatureToggle\AlwaysOffFeatureToggle.cs" />

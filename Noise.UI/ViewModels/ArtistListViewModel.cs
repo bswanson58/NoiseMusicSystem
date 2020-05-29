@@ -15,11 +15,13 @@ using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Resources;
 using Observal.Extensions;
+using Prism.Commands;
 using ReusableBits;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class ArtistListViewModel : AutomaticCommandBase,
+	internal class ArtistListViewModel : AutomaticPropertyBase, IDisposable,
 										 IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistListFocusRequested>, IHandle<Events.GenreFocusRequested>,
                                          IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
@@ -29,7 +31,6 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IUiLog							mLog;
 		private readonly IPreferences					mPreferences;
-		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
         private readonly IPlayingItemHandler            mPlayingItemHandler;
@@ -39,18 +40,19 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<UiArtist>	mArtistList;
 		private readonly ICollectionView				mArtistView;
 		private readonly List<ViewSortStrategy>			mArtistSorts;
-		private TaskHandler								mArtistRetrievalTaskHandler;
+		private TaskHandler<IEnumerable<DbArtist>> 		mArtistRetrievalTaskHandler;
+		private IDisposable								mSelectionStateSubscription;
 
         public	ICollectionView							ArtistList => mArtistView;
 		public	bool									IsListFiltered => ArtistFilter.IsFilterSet;
         public	IEnumerable<ViewSortStrategy>			SortDescriptions => mArtistSorts;
+		public	DelegateCommand							ToggleSortDisplay { get; }
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings, IPrefixedNameHandler nameHandler,
 									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
-			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
             mPlayingItemHandler = playingItemHandler;
@@ -61,6 +63,8 @@ namespace Noise.UI.ViewModels {
             mArtistView = CollectionViewSource.GetDefaultView( mArtistList );
             mArtistView.Filter += OnArtistFilter;
 			mArtistView.CollectionChanged += OnArtistListChange;
+
+			ToggleSortDisplay = new DelegateCommand( OnToggleSortDisplay );
 
 			VisualStateName = cHideSortDescriptions;
 
@@ -91,9 +95,8 @@ namespace Noise.UI.ViewModels {
 				SelectedSortDescription = mPrefixedNameHandler.ArePrefixesEnabled ? mArtistSorts[1] : mArtistSorts[0];
 			}
 
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mSelectionStateSubscription = selectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
             mPlayingItemHandler.StartHandler( mArtistList );
-			mEventAggregator.Subscribe( this );
 
             UpdateSorts();
             SetArtistFilter( ArtistFilterType.FilterText );
@@ -101,6 +104,8 @@ namespace Noise.UI.ViewModels {
             if( databaseInfo.IsOpen ) {
 				BuildArtistList();
 			}
+
+            mEventAggregator.Subscribe( this );
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
@@ -293,14 +298,14 @@ namespace Noise.UI.ViewModels {
             RaisePropertyChanged( () => ArtistCount );
         }
 
-        public void Execute_ToggleSortDisplay() {
+        private void OnToggleSortDisplay() {
 			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptions : cHideSortDescriptions;
 		}
 
-		internal TaskHandler ArtistsRetrievalTaskHandler {
+		internal TaskHandler<IEnumerable<DbArtist>> ArtistsRetrievalTaskHandler {
 			get {
 				if( mArtistRetrievalTaskHandler == null ) {
-					Execute.OnUIThread( () => mArtistRetrievalTaskHandler = new TaskHandler());
+					Execute.OnUIThread( () => mArtistRetrievalTaskHandler = new TaskHandler<IEnumerable<DbArtist>>());
 				}
 
 				return ( mArtistRetrievalTaskHandler );
@@ -310,12 +315,16 @@ namespace Noise.UI.ViewModels {
 
 		private void RetrieveArtists() {
 			ArtistsRetrievalTaskHandler.StartTask( () => {
-				using( var artists = mArtistProvider.GetArtistList()) {
-					SetArtistList( artists.List );
-				}
-            },
-            () => { },
-            ex => mLog.LogException( "Retrieving Artists", ex ));
+					var retValue = new List<DbArtist>();
+
+				    using( var artists = mArtistProvider.GetArtistList()) {
+						retValue.AddRange( artists.List );
+				    }
+
+					return retValue;
+                },
+                SetArtistList,
+                ex => mLog.LogException( "Retrieving Artists", ex ));
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
@@ -344,11 +353,9 @@ namespace Noise.UI.ViewModels {
 
 		private void SetArtistList( IEnumerable<DbArtist> artistList ) {
 			mArtistList.IsNotifying = false;
-			mArtistList.Clear();
+			ClearArtistList();
 
-			foreach( var artist in artistList ) {
-				AddArtist( artist );
-			}
+			artistList.ForEach( AddArtist );
 
 			mArtistList.IsNotifying = true;
 			mArtistList.Refresh();
@@ -395,5 +402,12 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 		}
-	}
+
+        public void Dispose() {
+			mEventAggregator.Unsubscribe( this );
+
+            mSelectionStateSubscription?.Dispose();
+			mSelectionStateSubscription = null;
+        }
+    }
 }

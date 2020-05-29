@@ -6,6 +6,9 @@
 		public const string		RatedTracksView		= "RatedTracksView";
 		public const string		RelatedTracksView	= "PlaybackRelatedView";
 
+		public const string		PlayerView			= "PlayerView";
+		public const string		ExtendedPlayerView	= "PlayerExtendedView";
+
 		public const string		SongLyricsView		= "SongLyricsView";
 	}
 }

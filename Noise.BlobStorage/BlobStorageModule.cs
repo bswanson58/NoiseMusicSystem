@@ -1,22 +1,19 @@
-﻿using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Unity;
-using Noise.BlobStorage.BlobStore;
+﻿using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure.Interfaces;
+using Prism.Ioc;
+using Prism.Modularity;
 
 namespace Noise.BlobStorage {
 	public class BlobStorageModule : IModule {
-		private readonly IUnityContainer    mContainer;
+        public void RegisterTypes( IContainerRegistry containerRegistry ) {
+            containerRegistry.RegisterSingleton<IBlobStorageProvider, BlobStorageProvider>();
+            containerRegistry.Register<IBlobStorageResolver, BlobStorageResolver>();
+            containerRegistry.Register<IBlobStorageManager, BlobStorageManager>();
+            containerRegistry.Register<IInPlaceStorage, InPlaceStorageProvider>();
+            containerRegistry.RegisterSingleton<IInPlaceStorageManager, InPlaceStorageManager>();
+        }
 
-		public BlobStorageModule( IUnityContainer container ) {
-			mContainer = container;
-		}
-
-		public void Initialize() {
-            mContainer.RegisterType<IBlobStorageProvider, BlobStorageProvider>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<IBlobStorageResolver, BlobStorageResolver>();
-			mContainer.RegisterType<IBlobStorageManager, BlobStorageManager>();
-            mContainer.RegisterType<IInPlaceStorage, InPlaceStorageProvider>();
-            mContainer.RegisterType<IInPlaceStorageManager, InPlaceStorageManager>( new ContainerControlledLifetimeManager());
-		}
-	}
+        public void OnInitialized( IContainerProvider containerProvider ) {
+        }
+    }
 }

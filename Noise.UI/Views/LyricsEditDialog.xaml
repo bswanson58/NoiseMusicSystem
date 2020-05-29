@@ -3,15 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
              Height="450" Width="550"
              Tag="Edit Lyrics"
              FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     
-    <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,*"
-          Behaviours:GridUtils.RowDefinitions="Auto,Auto,*,Auto" Margin="5">
+    <Grid behaviours:GridUtils.ColumnDefinitions="Auto,*"
+          behaviours:GridUtils.RowDefinitions="Auto,Auto,*,Auto" Margin="5">
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Song:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,3,5,3"/>
         <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
             <TextBlock Text="{Binding SongName}" VerticalAlignment="Center" Margin="3,0"/>

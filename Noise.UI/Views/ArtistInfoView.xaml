@@ -11,11 +11,12 @@
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             DataContext="{Binding ArtistInfoViewModel, Source={StaticResource ViewModelLocator}}"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 d:DesignHeight="400"
 			 d:DesignWidth="700"
-             d:DataContext="{d:DesignInstance viewModels:ArtistInfoViewModel, IsDesignTimeCreatable=False}"
-			 mc:Ignorable="d">
+             d:DataContext="{d:DesignInstance viewModels:ArtistInfoViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
 		<local:HtmlTextConverter x:Key="htmlConverter" />

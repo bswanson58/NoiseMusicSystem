@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using Lpfm.LastFmScrobbler;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal class PlayStrategyTwoFers : PlayStrategyBase {
+	public class PlayStrategyTwoFers : PlayStrategyBase {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 

@@ -1,11 +1,6 @@
 ﻿using System;
 using AutoMapper;
-using Microsoft.Practices.Prism;
-using Microsoft.Practices.Prism.Logging;
-using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Prism.UnityExtensions;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using CommonServiceLocator;
 using Noise.AppSupport.Logging;
 using Noise.AppSupport.Preferences;
 using Noise.AppSupport.Support;
@@ -16,6 +11,10 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Logging;
 using Noise.Infrastructure.RemoteHost;
 using Noise.Metadata;
+using Prism.Logging;
+using Prism.Modularity;
+using Prism.Unity;
+using Unity;
 
 namespace Noise.AppSupport {
 	public enum ApplicationUsage {
@@ -36,21 +35,19 @@ namespace Noise.AppSupport {
 			mContainer = container;
 		}
 
-		public IUnityContainer Container {
-			get{ return( mContainer ); }
-		}
+		public IUnityContainer Container => mContainer;
 
-		public bool InitializeIoc( ApplicationUsage appUsage ) {
-			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<IFileWriter, JsonObjectWriter>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<IApplicationLog, ApplicationLogger>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<INoiseLog, NoiseLogger>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
+        public bool InitializeIoc( ApplicationUsage appUsage ) {
+			mContainer.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
+			mContainer.RegisterSingleton<IFileWriter, JsonObjectWriter>();
+			mContainer.RegisterSingleton<IApplicationLog, ApplicationLogger>();
+			mContainer.RegisterSingleton<INoiseLog, NoiseLogger>();
+			mContainer.RegisterSingleton<IIoc, IocProvider>();
 
-			mContainer.RegisterType<AudioPreferences>( new InjectionFactory( PreferencesFactory<AudioPreferences>.CreatePreferences ));
-			mContainer.RegisterType<LoggingPreferences>( new InjectionFactory( PreferencesFactory<LoggingPreferences>.CreatePreferences ));
-			mContainer.RegisterType<NoiseCorePreferences>( new InjectionFactory( PreferencesFactory<NoiseCorePreferences>.CreatePreferences ));
-			mContainer.RegisterType<UserInterfacePreferences>( new InjectionFactory( PreferencesFactory<UserInterfacePreferences>.CreatePreferences ));
+			mContainer.RegisterFactory<AudioPreferences>( PreferencesFactory<AudioPreferences>.CreatePreferences );
+			mContainer.RegisterFactory<LoggingPreferences>( PreferencesFactory<LoggingPreferences>.CreatePreferences );
+			mContainer.RegisterFactory<NoiseCorePreferences>( PreferencesFactory<NoiseCorePreferences>.CreatePreferences );
+			mContainer.RegisterFactory<UserInterfacePreferences>( PreferencesFactory<UserInterfacePreferences>.CreatePreferences );
 
 #if DEBUG
 			const int portOffset = 10;
@@ -63,14 +60,14 @@ namespace Noise.AppSupport {
 				case ApplicationUsage.Librarian:
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 71 + portOffset, "Noise Desktop System" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.DesktopPreferencesDirectory ));
-					mContainer.RegisterType<IPreferences, PreferencesManager>( new HierarchicalLifetimeManager());
+					mContainer.RegisterSingleton<IPreferences, PreferencesManager>();
 
 					break;
 
 				case ApplicationUsage.Server:
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 73 + portOffset, "Noise Headless Service" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.HeadlessPreferencesDirectory ));
-					mContainer.RegisterType<IPreferences, HeadlessPreferences>( new HierarchicalLifetimeManager());
+					mContainer.RegisterSingleton<IPreferences, HeadlessPreferences>();
 
 					InitializeUnity();
 
@@ -79,7 +76,7 @@ namespace Noise.AppSupport {
 				case ApplicationUsage.TenFootUi:
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 72 + portOffset, "Noise TenFoot System" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.TenFootPreferencesDirectory ));
-					mContainer.RegisterType<IPreferences, PreferencesManager>( new HierarchicalLifetimeManager());
+					mContainer.RegisterSingleton<IPreferences, PreferencesManager>();
 
 					break;
 			}
@@ -105,13 +102,12 @@ namespace Noise.AppSupport {
 						.AddModule( typeof( RemoteHost.RemoteHostModule ));
 				mContainer.RegisterInstance<IModuleCatalog>( catalog );
 
-				mContainer.RegisterType<IServiceLocator, UnityServiceLocatorAdapter>( new ContainerControlledLifetimeManager());
-				mContainer.RegisterType<IModuleInitializer, ModuleInitializer>( new ContainerControlledLifetimeManager());
-				mContainer.RegisterType<IModuleManager, ModuleManager>( new ContainerControlledLifetimeManager());
+				mContainer.RegisterSingleton<IServiceLocator, UnityServiceLocatorAdapter>();
+				mContainer.RegisterSingleton<IModuleInitializer, ModuleInitializer>();
+				mContainer.RegisterSingleton<IModuleManager, ModuleManager>();
 
 				ExceptionExtensions.RegisterFrameworkExceptionType( typeof( ActivationException));
 				ExceptionExtensions.RegisterFrameworkExceptionType( typeof( ResolutionFailedException));
-				ExceptionExtensions.RegisterFrameworkExceptionType( typeof(Microsoft.Practices.ObjectBuilder2.ILifetimeContainer));
 
 				ServiceLocator.SetLocatorProvider( () => mContainer.Resolve<IServiceLocator>());
 
@@ -121,7 +117,7 @@ namespace Noise.AppSupport {
 				if( mContainer != null ) {
 					var logger = mContainer.Resolve<ILoggerFacade>();
 
-					logger.Log( String.Format( "Failed to initialize Unity: {0}", ex.Message ), Category.Exception, Priority.High );
+					logger.Log( $"Failed to initialize Unity: {ex.Message}", Category.Exception, Priority.High );
 				}
 			}
 		}

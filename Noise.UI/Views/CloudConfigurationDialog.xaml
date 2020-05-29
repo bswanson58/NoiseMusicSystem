@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
              Height="190" Width="350"
              Tag="Cloud Configuration"
              mc:Ignorable="d" 
@@ -28,8 +28,8 @@
             <Label Grid.Column="0" Grid.Row="2" Content="Login Name:" HorizontalAlignment="Right"/>
             <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Path=EditObject.LoginName}" Margin="3"/>
             <Label Grid.Column="0" Grid.Row="3" Content="Password:" HorizontalAlignment="Right"/>
-            <PasswordBox Grid.Column="1" Grid.Row="3" Margin="3" Behaviours:PasswordBoxAssistant.BindPassword="true" 
-                         Behaviours:PasswordBoxAssistant.BoundPassword="{Binding Path=EditObject.LoginPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <PasswordBox Grid.Column="1" Grid.Row="3" Margin="3" behaviours:PasswordBoxAssistant.BindPassword="true" 
+                         behaviours:PasswordBoxAssistant.BoundPassword="{Binding Path=EditObject.LoginPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="1" Grid.Row="4" Margin="3" Width="100" HorizontalAlignment="Right" Command="{Binding Path=Synchronize}">Synchronize</Button>
         </Grid>
     </Grid>

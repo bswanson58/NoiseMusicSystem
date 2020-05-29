@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Track = {" + nameof( Name ) + "}")]
@@ -35,6 +36,11 @@ namespace Noise.UI.Dto {
         public string                   TagsTooltip => mTags.Any() ? string.Join( Environment.NewLine, mTags ) : "Associate File Tags";
         public CombinedPlayStrategy     CombinedPlayStrategy => new CombinedPlayStrategy( PlayAdjacentStrategy, DoNotStrategyPlay );
 
+        public  DelegateCommand         Play { get; }
+        public  DelegateCommand         Edit { get; }
+        public  DelegateCommand         StrategyOptions { get; }
+        public  DelegateCommand         FocusRequest { get; }
+
         private readonly List<string>   mTags;
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mEditAction;
@@ -50,6 +56,11 @@ namespace Noise.UI.Dto {
             mFocusRequest = focusRequest;
 
             mTags = new List<string>();
+
+            Play = new DelegateCommand( OnPlay, CanPlay );
+            Edit = new DelegateCommand( OnEdit, CanEdit );
+            StrategyOptions = new DelegateCommand( OnStrategyOptions, CanEditStrategyOptions );
+            FocusRequest = new DelegateCommand( OnFocusRequest, CanFocusRequest );
 		}
 
         public bool IsHighlighted {
@@ -67,38 +78,38 @@ namespace Noise.UI.Dto {
             set{ Set( () => IsPlaying, value ); }
         }
 
-        public void Execute_Play() {
+        private void OnPlay() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 
             mPlayAction?.Invoke( DbId );
         }
 
-		public bool CanExecute_Play() {
+		private bool CanPlay() {
 			return( mPlayAction != null );
 		}
 
-		public void Execute_Edit() {
+		private void OnEdit() {
             mEditAction?.Invoke( DbId );
         }
 
-		public bool CanExecute_Edit() {
+		private bool CanEdit() {
 			return( mEditAction != null );
 		}
 
-        public void Execute_StrategyOptions() {
+        private void OnStrategyOptions() {
             mStrategyAction?.Invoke( DbId );
         }
 
-        public bool CanExecute_StrategyOptions() {
+        private bool CanEditStrategyOptions() {
             return mStrategyAction != null;
         }
 
-        public void Execute_FocusRequest() {
+        private void OnFocusRequest() {
             mFocusRequest?.Invoke( DbId );
         }
 
-        public bool CanExecute_FocusRequest() {
+        private bool CanFocusRequest() {
             return mFocusRequest != null;
         }
 

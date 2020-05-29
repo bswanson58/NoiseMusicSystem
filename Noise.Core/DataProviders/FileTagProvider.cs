@@ -15,8 +15,8 @@ namespace Noise.Core.DataProviders {
 			mLog = log;
 		}
 
-		public IMetaDataProvider GetProvider( StorageFile storageFile, eAudioEncoding encoding ) {
-			IMetaDataProvider	retValue = null;
+		public IMetadataInfoProvider GetProvider( StorageFile storageFile, eAudioEncoding encoding ) {
+			IMetadataInfoProvider	retValue = null;
 
 			switch( encoding ) {
                 case eAudioEncoding.AAC:

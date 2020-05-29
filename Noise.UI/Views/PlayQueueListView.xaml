@@ -13,10 +13,11 @@
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
-			 mc:Ignorable="d" 
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="150" d:DesignWidth="600"
-             d:DataContext="{d:DesignInstance viewModels:PlayQueueListViewModel, IsDesignTimeCreatable=False}"
-			 DataContext="{Binding PlayQueueListViewModel, Source={StaticResource ViewModelLocator}}">
+             d:DataContext="{d:DesignInstance viewModels:PlayQueueListViewModel, IsDesignTimeCreatable=False}">
 	
 	<Control.Resources>
 		<behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />

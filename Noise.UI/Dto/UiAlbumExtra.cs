@@ -1,56 +1,60 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.UI.Dto {
-	public class UiAlbumExtra : ViewModelBase {
-		public	Artwork		Artwork { get; private set; }
-		public	TextInfo	TextInfo { get; private set; }
-		public	BitmapImage	Image { get; private set; }
-		public	bool		IsDirty { get; private set; }
+	public class UiAlbumExtra : AutomaticPropertyBase {
+		public	Artwork			Artwork { get; }
+		public	TextInfo		TextInfo { get; }
+		public	BitmapImage		Image { get; }
+		public	bool			IsDirty { get; private set; }
+        public	bool			IsImage => Artwork != null;
+        public	bool			IsText => TextInfo != null;
+        public	string			Name => IsImage ? Artwork.Name : IsText ? TextInfo.Name : String.Empty;
 
-		public UiAlbumExtra( Artwork artwork ) {
+		public	DelegateCommand	RotateRight { get; }
+		public	DelegateCommand	RotateLeft { get ; }
+
+		private UiAlbumExtra() {
+            RotateLeft = new DelegateCommand( OnRotateLeft, CanRotateLeft );
+            RotateRight = new DelegateCommand( OnRotateRight, CanRotateRight );
+        }
+
+		public UiAlbumExtra( Artwork artwork ) : 
+            this () {
 			Artwork = artwork;
 
-			if(( Artwork != null ) &&
-			   ( Artwork.Image != null )) {
+			if(Artwork?.Image != null) {
 				Image = ByteImageConverter.CreateBitmap( Artwork.Image );
 			}
+
 		}
 
-		public UiAlbumExtra( TextInfo textInfo, BitmapImage image ) {
+		public UiAlbumExtra( TextInfo textInfo, BitmapImage image ) :
+            this () {
 			TextInfo = textInfo;
 
 			Image = image;
 		}
 
-		public bool IsImage {
-			get{ return( Artwork != null ); }
-		}
 
-		public bool IsText {
-			get{ return( TextInfo != null ); }
-		}
-
-		public string Text {
+        public string Text {
 			get {
-				var retValue = "";
+				var retValue = String.Empty;
 
 				if( IsText ) {
 					retValue = TextInfo.Text;
 				}
 
-				return( retValue );
+				return retValue;
 			}
 		}
 
-		public string Name {
-			get{ return( IsImage ? Artwork.Name : IsText ? TextInfo.Name : "" ); }
-		}
 
-		public void SetPreferredImage() {
+        public void SetPreferredImage() {
 			if(( Artwork != null ) &&
 			   (!Artwork.IsUserSelection )) {
 				Artwork.IsUserSelection = true;
@@ -60,8 +64,8 @@ namespace Noise.UI.Dto {
 		}
 
 		public int ImageRotation {
-			get{ return( Artwork != null ? Artwork.Rotation : 0 ); }
-			set {
+			get => Artwork?.Rotation ?? 0;
+            set {
 				if( Artwork != null ) {
 					Artwork.Rotation = (Int16)value;
 
@@ -71,23 +75,23 @@ namespace Noise.UI.Dto {
 			}
 		}
 
-		public void Execute_RotateRight() {
+		private void OnRotateRight() {
 			var rotation = ImageRotation + 90;
 
 			ImageRotation = rotation < 360 ? rotation : rotation - 360;
 		}
 
-		public bool CanExecute_RotateRight() {
+		private bool CanRotateRight() {
 			return( IsImage );
 		}
 
-		public void Execute_RotateLeft() {
+		private void OnRotateLeft() {
 			var rotation = ImageRotation - 90;
 
 			ImageRotation = rotation > 0 ? rotation : rotation + 360;
 		}
 
-		public bool CanExecute_RotateLeft() {
+		private bool CanRotateLeft() {
 			return( IsImage );
 		}
 	}

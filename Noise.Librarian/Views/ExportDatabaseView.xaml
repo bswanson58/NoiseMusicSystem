@@ -3,14 +3,14 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:Mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 Mvvm:ViewModelLocator.AutoWireViewModel="True"
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:mvvm="http://prismlibrary.com/"
+			 mvvm:ViewModelLocator.AutoWireViewModel="True"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="150" d:DesignWidth="800">
 
 	<UserControl.Resources>
-		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="False"/>
+		<valueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="False"/>
 	</UserControl.Resources>
 
 	<GroupBox Margin="7,5" Header=" Library Export ">

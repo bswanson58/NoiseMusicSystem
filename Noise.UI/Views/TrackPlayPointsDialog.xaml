@@ -8,6 +8,7 @@
              d:DataContext="{d:DesignInstance viewModels:TrackPlayPointsDialogModel, IsDesignTimeCreatable=False}"
              Tag="Track Play Points"
              Height="195" Width="400">
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:Views="clr-namespace:Noise.UI.Views"
+             xmlns:views="clr-namespace:Noise.UI.Views"
              d:DesignHeight="300"
              d:DesignWidth="300"
              mc:Ignorable="d">
@@ -13,8 +13,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Views:AlbumView Grid.Row="0" />
-        <Views:AlbumTracksView Margin="0,3,0,0" Grid.Row="1" />
+        <views:AlbumView Grid.Row="0" />
+        <views:AlbumTracksView Margin="0,3,0,0" Grid.Row="1" />
 
     </Grid>
 </UserControl>

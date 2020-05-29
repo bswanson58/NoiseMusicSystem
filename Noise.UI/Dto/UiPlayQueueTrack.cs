@@ -1,5 +1,6 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Prism.Commands;
 
 namespace Noise.UI.Dto {
 	public class UiPlayQueueTrack : UiBase {
@@ -11,6 +12,18 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiPlayQueueTrack>	mPlayFromHere;
 		private readonly Action<UiPlayQueueTrack>	mDisplayInfo;
         private readonly Action<UiPlayQueueTrack>   mPromoteSuggestion;
+
+        public	bool								WillPlay => !QueuedTrack.HasPlayed && !QueuedTrack.IsPlaying;
+
+		public	DelegateCommand						DisplayInfo { get; }
+		public	DelegateCommand						MoveUp { get; }
+		public	DelegateCommand						MoveDown { get; }
+		public	DelegateCommand						Dequeue { get; }
+		public	DelegateCommand						Play {  get; }
+		public	DelegateCommand						Replay { get; }
+		public	DelegateCommand						SkipPlaying { get; }
+		public	DelegateCommand						PlayFromHere { get; }
+		public	DelegateCommand						PromoteSuggestion { get; }
 
 		public UiPlayQueueTrack( PlayQueueTrack track,
 								 Action<UiPlayQueueTrack> onMoveUp, Action<UiPlayQueueTrack> onMoveDown, Action<UiPlayQueueTrack> onDisplayInfo,
@@ -34,6 +47,16 @@ namespace Noise.UI.Dto {
                     }
                 };
             }
+
+			DisplayInfo = new DelegateCommand( OnDisplayInfo );
+			MoveUp = new DelegateCommand( OnMoveUp );
+			MoveDown = new DelegateCommand( OnMoveDown );
+			Dequeue = new DelegateCommand( OnDequeue );
+			Play = new DelegateCommand( OnPlay );
+			Replay = new DelegateCommand( OnReplay );
+			SkipPlaying = new DelegateCommand( OnSkipPlaying );
+			PlayFromHere = new DelegateCommand( OnPlayFromHere );
+			PromoteSuggestion = new DelegateCommand( OnPromoteSuggestion );
 		}
 
 		public PlayQueueTrack   QueuedTrack => ( mTrack );
@@ -47,45 +70,44 @@ namespace Noise.UI.Dto {
 			set{ Set( () => IsDeleting, value ); }
 		}
 
-        public bool WillPlay => (!QueuedTrack.HasPlayed && !QueuedTrack.IsPlaying);
 
-	    public void Execute_DisplayInfo() {
+	    private void OnDisplayInfo() {
 	        mDisplayInfo?.Invoke( this );
 	    }
 
-	    public void Execute_MoveUp() {
+	    private void OnMoveUp() {
 	        mMoveUp?.Invoke( this );
 	    }
 
-	    public void Execute_MoveDown() {
+	    private void OnMoveDown() {
 	        mMoveDown?.Invoke( this );
 	    }
 
-	    public void Execute_Dequeue() {
+	    private void OnDequeue() {
 	        mDequeue?.Invoke( this );
 	    }
 
-	    public void Execute_Play() {
+	    private void OnPlay() {
 	        mPlayNow?.Invoke( this );
 	    }
 
-	    public void Execute_Replay() {
+	    private void OnReplay() {
 			if( mTrack != null ) {
 				mTrack.HasPlayed = false;
 			}
 		}
 
-        public void Execute_SkipPlaying() {
+        private void OnSkipPlaying() {
             if( mTrack != null ) {
                 mTrack.HasPlayed = true;
             }
         }
 
-		public void Execute_PlayFromHere() {
+		private void OnPlayFromHere() {
 		    mPlayFromHere?.Invoke( this );
 		}
 
-        public void Execute_PromoteSuggestion() {
+        private void OnPromoteSuggestion() {
             mPromoteSuggestion?.Invoke( this );
         }
 	}

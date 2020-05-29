@@ -8,11 +8,10 @@
 					  xmlns:dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
 					  xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 					  xmlns:viewModels="clr-namespace:Noise.Desktop.ViewModels"
-					  xmlns:uiViews="clr-namespace:Noise.UI.Views;assembly=Noise.UI"
-					  xmlns:views="clr-namespace:Noise.Desktop.Views"
-					  xmlns:regions="http://www.codeplex.com/CompositeWPF"
 					  xmlns:infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
+					  xmlns:prism="http://prismlibrary.com/"
 					  mc:Ignorable="d" 
+                      prism:ViewModelLocator.AutoWireViewModel="True"
                       d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}"
 					  Title="Noise"
 					  ResizeMode="CanResizeWithGrip"
@@ -22,10 +21,6 @@
 					  Left ="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationLeft, Mode=TwoWay}"
 					  WindowState="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationWindowState, Mode=TwoWay}">
 
-    <metro:MetroWindow.DataContext>
-        <Binding Path="ShellViewModel" Source="{StaticResource ViewModelLocator}" />
-    </metro:MetroWindow.DataContext>
-
     <Window.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="HideOnFalse" IsHidden="True" TriggerValue="False" />
 
@@ -33,32 +28,6 @@
             <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="StartupView">
-            <uiViews:StartupView/>
-        </DataTemplate>
-        <DataTemplate x:Key="LibraryCreationView">
-            <uiViews:StartupLibraryCreationView/>
-        </DataTemplate>
-        <DataTemplate x:Key="LibrarySelectionView">
-            <uiViews:StartupLibrarySelectionView/>
-        </DataTemplate>
-        <DataTemplate x:Key="LibraryView">
-            <uiViews:LibraryView/>
-        </DataTemplate>
-        <DataTemplate x:Key="TimelineView">
-            <uiViews:TimelineView/>
-        </DataTemplate>
-        <DataTemplate x:Key="ListeningView">
-            <uiViews:ListeningView/>
-        </DataTemplate>
-
-        <views:ShellViewSelector x:Key="ShellViewSelector" 
-                                 StartupView="{StaticResource StartupView}" 
-                                 LibrarySelectionView="{StaticResource LibrarySelectionView}"
-                                 LibraryCreationView="{StaticResource LibraryCreationView}" 
-                                 LibraryView="{StaticResource LibraryView}" 
-                                 ListeningView="{StaticResource ListeningView}"
-                                 TimelineView="{StaticResource TimelineView}"/>
     </Window.Resources>
 
     <metro:MetroWindow.IconTemplate>
@@ -88,5 +57,5 @@
         </metro:WindowCommands>
     </metro:MetroWindow.RightWindowCommands>
 
-    <ContentControl regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.ShellView}"/>
+    <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:RegionNames.ShellView}"/>
 </metro:MetroWindow>

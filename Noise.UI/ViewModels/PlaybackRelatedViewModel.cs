@@ -8,16 +8,16 @@ using System.Reactive.Linq;
 using System.Windows.Data;
 using Caliburn.Micro;
 using DynamicData;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Prism;
 using ReactiveUI;
 using ReusableBits.ExtensionClasses;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.UI.ViewModels {
     class PlaybackRelatedViewModel : ReactiveObject, IActiveAware, IDisposable,

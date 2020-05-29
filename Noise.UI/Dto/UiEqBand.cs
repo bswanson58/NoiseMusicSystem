@@ -1,15 +1,15 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-	public class UiEqBand : ViewModelBase {
-		public	long						BandId { get; private set; }
-		public	float						CenterFrequency { get; private set; }
+	public class UiEqBand : PropertyChangeBase {
+		public	long						BandId { get; }
+		public	float						CenterFrequency { get; }
 		private float						mGain;
 		private readonly Action<UiEqBand>	mOnChange;
 
-		public	bool						IsEditable { get; private set; }
+		public	bool						IsEditable { get; }
 
 		public UiEqBand( ParametricBand band, Action<UiEqBand> onChange, bool isPreset ) {
 			BandId = band.BandId;
@@ -20,16 +20,14 @@ namespace Noise.UI.Dto {
 		}
 
 		public float Gain {
-			get{ return( mGain ); }
-			set {
+			get => ( mGain );
+            set {
 				mGain = value;
 
 				RaisePropertyChanged( () => Gain );
 
-				if( mOnChange != null ) {
-					mOnChange( this );
-				}
-			}
+                mOnChange?.Invoke( this );
+            }
 		}
 	}
 }

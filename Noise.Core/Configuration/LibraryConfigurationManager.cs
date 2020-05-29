@@ -42,7 +42,7 @@ namespace Noise.Core.Configuration {
         public void Initialize() {
 			LoadLibraries();
 
-			mEventAggregator.PublishOnUIThread( new Events.LibraryConfigurationLoaded( this ));
+			mEventAggregator.BeginPublishOnUIThread( new Events.LibraryConfigurationLoaded( this ));
 		}
 
 		public void Shutdown() {

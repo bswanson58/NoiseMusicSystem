@@ -1,25 +1,22 @@
-﻿using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Unity;
-using Noise.AudioSupport.Logging;
+﻿using Noise.AudioSupport.Logging;
 using Noise.AudioSupport.Player;
 using Noise.AudioSupport.ReplayGain;
 using Noise.Infrastructure.Interfaces;
+using Prism.Ioc;
+using Prism.Modularity;
 
 namespace Noise.AudioSupport {
 	public class AudioSupportModule : IModule {
-		private readonly IUnityContainer    mContainer;
+        public void RegisterTypes( IContainerRegistry containerRegistry ) {
+            containerRegistry.RegisterSingleton<IAudioPlayer, AudioPlayer>();
+            containerRegistry.RegisterSingleton<IEqManager, EqManager>();
 
-		public AudioSupportModule( IUnityContainer container ) {
-			mContainer = container;
-		}
+            containerRegistry.Register<IReplayGainScanner, ReplayGainScanner>();
 
-		public void Initialize() {
-			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<IEqManager, EqManager>( new ContainerControlledLifetimeManager());
+            containerRegistry.Register<ILogAudioPlay, LogAudioPlay>();
+        }
 
-			mContainer.RegisterType<IReplayGainScanner, ReplayGainScanner>();
-
-			mContainer.RegisterType<ILogAudioPlay, LogAudioPlay>();
-		}
-	}
+        public void OnInitialized( IContainerProvider containerProvider ) {
+        }
+    }
 }

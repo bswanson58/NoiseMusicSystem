@@ -2,7 +2,7 @@
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-	public class UiBase : AutomaticCommandBase {
+	public class UiBase : AutomaticPropertyBase {
 		private Int16			mRating;
 		private bool			mIsFavorite;
 

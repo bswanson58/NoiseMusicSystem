@@ -3,17 +3,17 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 mc:Ignorable="d" 
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:PlayingAlbumViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
-	<UserControl.DataContext>
-		<Binding Path="PlayingAlbumViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
-
 	<UserControl.Resources>
-		<ValueConverters:ByteImageConverter x:Key="imageConverter" />
+		<valueConverters:ByteImageConverter x:Key="imageConverter" />
 	</UserControl.Resources>
 
 	<Grid>
@@ -24,13 +24,13 @@
 
 		<Viewbox Grid.Column="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
 			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Left"
-					   Behaviours:FadedPropertyChange.Property="Text" Behaviours:FadedPropertyChange.Binding="{Binding AlbumName}"
-					   Behaviours:FadedPropertyChange.Duration="0:0:0.2" />
+					   behaviours:FadedPropertyChange.Property="Text" behaviours:FadedPropertyChange.Binding="{Binding AlbumName}"
+					   behaviours:FadedPropertyChange.Duration="0:0:0.2" />
 		</Viewbox>
 
 		<Image Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="50" MinHeight="50" Margin="9" Stretch="Uniform" 
-			   Behaviours:FadedPropertyChange.Property="Source" Behaviours:FadedPropertyChange.Binding="{Binding AlbumImage.Image, Converter={StaticResource imageConverter}}" 
-			   Behaviours:FadedPropertyChange.Duration="0:0:0.2" RenderTransformOrigin="0.5,0.5">
+			   behaviours:FadedPropertyChange.Property="Source" behaviours:FadedPropertyChange.Binding="{Binding AlbumImage.Image, Converter={StaticResource imageConverter}}" 
+			   behaviours:FadedPropertyChange.Duration="0:0:0.2" RenderTransformOrigin="0.5,0.5">
 			<Image.RenderTransform>
 				<RotateTransform Angle="{Binding AlbumImage.Rotation}"/>
 			</Image.RenderTransform>

@@ -1,12 +1,13 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ArtistArtworkView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
              Height="750" Width="950"
              Tag="Artist Portfolio">
+
     <UserControl.Resources>
-        <ValueConverters:ByteImageConverter x:Key="ImageConverter" />
+        <valueConverters:ByteImageConverter x:Key="ImageConverter" />
     </UserControl.Resources>
 
     <Grid>

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 namespace Noise.UI.Dto {
-	[DebuggerDisplay("Category = {Name}")]
+	[DebuggerDisplay("Category = {" + nameof( Name ) + "}")]
 	public class UiCategory : UiBase {
 		private readonly Action<long, bool>	mOnSelection;
 		private bool						mIsSelected;
@@ -17,15 +17,13 @@ namespace Noise.UI.Dto {
 		}
 
 		public bool IsSelected {
-			get{ return( mIsSelected ); }
-			set {
+			get => ( mIsSelected );
+            set {
 				if( mIsSelected != value ) {
 					mIsSelected = value;
 
-					if( mOnSelection != null ) {
-						mOnSelection( DbId, mIsSelected );
-					}
-				}
+                    mOnSelection?.Invoke( DbId, mIsSelected );
+                }
 			}
 		}
 	}

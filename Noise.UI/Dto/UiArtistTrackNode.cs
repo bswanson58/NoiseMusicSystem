@@ -2,32 +2,39 @@
 using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-	public class UiAlbumTrack : ViewModelBase {
-        public	DbAlbum		Album { get; }
-        public	UiTrack		Track { get; }
-		public	bool		IsExpanded { get; set; }
+	public class UiAlbumTrack : PropertyChangeBase {
+        public	DbAlbum			Album { get; }
+        public	UiTrack			Track { get; }
+		public	bool			IsExpanded { get; set; }
+
+		public	DelegateCommand	Play { get; }
 
 		public UiAlbumTrack( DbAlbum album, UiTrack track ) {
 			Album = album;
 			Track = track;
+
+			Play = new DelegateCommand( OnPlay );
         }
 
-        public void Execute_Play() {
-            Track.Execute_Play();
+        private void OnPlay() {
+            Track.Play.Execute();
         }
     }
 
-	public class UiArtistTrackNode : ViewModelBase {
-		private bool		mIsExpanded;
+	public class UiArtistTrackNode : PropertyChangeBase {
+		private bool				mIsExpanded;
 
-        public	DbAlbum		Album { get; }
-        public	UiTrack		Track { get; }
-		public	string		TrackName => Track.Name;
-        public	string		AlbumName => MultipleAlbums ? IsExpanded ? "Album List:" : $" (on {Children.Count} albums - expand to view list)" : Album.Name;
-        public	bool		IsPlayable => Children.Count == 0;
-		public	bool		MultipleAlbums => Children.Count > 0;
+        public	DbAlbum				Album { get; }
+        public	UiTrack				Track { get; }
+		public	string				TrackName => Track.Name;
+        public	string				AlbumName => MultipleAlbums ? IsExpanded ? "Album List:" : $" (on {Children.Count} albums - expand to view list)" : Album.Name;
+        public	bool				IsPlayable => Children.Count == 0;
+		public	bool				MultipleAlbums => Children.Count > 0;
+		public	DelegateCommand		Play { get; }
 
 		public	ObservableCollectionEx<UiAlbumTrack>	Children { get; }
 
@@ -35,6 +42,7 @@ namespace Noise.UI.Dto {
 			Album = album;
 			Track = track;
 			Children = new ObservableCollectionEx<UiAlbumTrack>();
+			Play = new DelegateCommand( OnPlay, CanPlay );
 
 			mIsExpanded = false;
 		}
@@ -58,14 +66,14 @@ namespace Noise.UI.Dto {
             }
         }
 
-        public void Execute_Play() {
+        private void OnPlay() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 
-			Track.Execute_Play();
+			Track.Play.Execute();
 		}
 
-		public bool CanExecute_Play() {
+		private bool CanPlay() {
 			return IsPlayable;
 		}
     }

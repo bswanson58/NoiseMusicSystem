@@ -1,23 +1,31 @@
-﻿using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Unity;
-using Noise.Desktop.Models;
+﻿using Noise.Desktop.Models;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Views;
+using Prism.Ioc;
+using Prism.Modularity;
+using Prism.Regions;
 using ReusableBits.Platform;
 
 namespace Noise.Desktop {
     public class DesktopModule : IModule {
-        private readonly IUnityContainer		mContainer;
+        public void RegisterTypes( IContainerRegistry containerRegistry ) {
+            containerRegistry.RegisterSingleton<INoiseWindowManager, WindowManager>();
 
-        public DesktopModule( IUnityContainer container ) {
-            mContainer = container;
+            containerRegistry.RegisterSingleton<IIpcManager, IpcManager>();
+            containerRegistry.RegisterSingleton<IIpcHandler, IpcHandler>();
+            containerRegistry.Register<IPlaybackPublisher, PlaybackPublisher>();
         }
 
-        public void Initialize() {
-            mContainer.RegisterType<INoiseWindowManager, WindowManager>( new ContainerControlledLifetimeManager());
+        public void OnInitialized( IContainerProvider containerProvider ) {
+			var regionManager = containerProvider.Resolve<IRegionManager>();
 
-            mContainer.RegisterType<IIpcManager, IpcManager>( new ContainerControlledLifetimeManager());
-            mContainer.RegisterType<IIpcHandler, IpcHandler>( new ContainerControlledLifetimeManager());
-            mContainer.RegisterType<IPlaybackPublisher, PlaybackPublisher>();
+//            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupLibraryCreationView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupLibrarySelectionView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( LibraryView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( ListeningView ));
+            regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( TimelineView ));
         }
     }
 }

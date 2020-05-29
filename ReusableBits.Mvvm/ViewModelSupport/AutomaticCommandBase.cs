@@ -2,7 +2,7 @@
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Practices.Prism.Commands;
+using Prism.Commands;
 
 namespace ReusableBits.Mvvm.ViewModelSupport {
     internal static class Extensions {

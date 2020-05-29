@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.ObjectBuilder2;
 using Noise.Core.Database;
 using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using Stateless;
 
 namespace Noise.Core.FileProcessor {

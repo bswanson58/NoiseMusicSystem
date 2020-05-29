@@ -24,7 +24,7 @@ namespace Noise.Metadata {
 		private IDocumentStore							mDocumentStore;
 
 		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
-								IEnumerable<IMetadataUpdater> updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider, INoiseLog log ) {
+								IMetadataUpdater[] updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mNoiseEnvironment = noiseEnvironment;
@@ -75,7 +75,8 @@ namespace Noise.Metadata {
 				updater.Shutdown();
 			}
 
-			mDocumentStore.Dispose();
+			mDocumentStore?.Dispose();
+			mDocumentStore = null;
 		}
 
 		public void Handle( Events.ArtistAdded args ) {
@@ -126,17 +127,20 @@ namespace Noise.Metadata {
         public async void ExportMetadata( string exportPath ) {
 			try {
 				if( mDocumentStore is EmbeddableDocumentStore ) {
-					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions();
-					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
+                    var options = new SmugglerOptions();
 
-					using( var stream = File.OpenWrite( exportPath )) {
-						await exporter.ExportData( stream, options, false );
-					}
+                    if( mDocumentStore is EmbeddableDocumentStore embeddedStore ) {
+                        var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
+
+                        using( var stream = File.OpenWrite( exportPath )) {
+
+                            await exporter.ExportData( stream, options, false );
+                        }
+                    }
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string .Format( "Exporting Metadata to \"{0}\"", exportPath ), ex );
+				mLog.LogException( $"Exporting Metadata to \"{exportPath}\"", ex );
 			}
 		}
 
@@ -144,17 +148,19 @@ namespace Noise.Metadata {
 			try {
 				if(( mDocumentStore is EmbeddableDocumentStore ) &&
 				   ( File.Exists( importPath ))) {
-					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions();
-					var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
+                    var options = new SmugglerOptions();
 
-					using( var stream = File.OpenRead( importPath )) {
-						await importer.ImportData( stream, options );
+                    if( mDocumentStore is EmbeddableDocumentStore embeddedStore ) {
+					    var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
+
+					    using( var stream = File.OpenRead( importPath )) {
+						    await importer.ImportData( stream, options );
+					    }
 					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Importing Metadata from \"{0}\"", importPath ), ex );
+				mLog.LogException( $"Importing Metadata from \"{importPath}\"", ex );
 			}
 		}
 	}

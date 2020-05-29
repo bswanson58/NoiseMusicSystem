@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.ObjectBuilder;
+using Unity.Builder;
+using Unity.Extension;
+using Unity.Strategies;
 
 namespace ReusableBits.Mvvm.CaliburnSupport {
 	public class UnityEventSubscriber : UnityContainerExtension {
@@ -22,7 +22,7 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 				mEventAggregator = eventAggregator;
 			}
 
-			public override void PostBuildUp( IBuilderContext context ) {
+            public override void PostBuildUp( ref BuilderContext context ) {
 				if(( context.Existing is IHandle ) &&
 				   (!( context.Existing is IDisableAutoEventSubscribe ))) {
 					mEventAggregator.Subscribe( context.Existing );

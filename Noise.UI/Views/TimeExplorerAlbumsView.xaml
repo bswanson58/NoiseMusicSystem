@@ -3,13 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:TimeExplorerAlbumsViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="300" d:DesignWidth="300">
-    
-    <UserControl.DataContext>
-        <Binding Path="TimeExplorerAlbumsViewModel" Source="{StaticResource ViewModelLocator}" />
-    </UserControl.DataContext>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Albums For Year ">
         <Grid>
@@ -19,7 +19,7 @@
 
             <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=AlbumList}" SelectedItem="{Binding SelectedAlbum}"
                       ItemContainerStyle="{StaticResource ListViewItemStretch}"
-                      Behaviours:ListViewColumns.Stretch="true">
+                      behaviours:ListViewColumns.Stretch="true">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">

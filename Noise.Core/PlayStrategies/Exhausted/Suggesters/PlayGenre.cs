@@ -3,7 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
-    class PlayGenre : ExhaustedHandlerBase {
+    public class PlayGenre : ExhaustedHandlerBase {
         private readonly IArtistProvider	mArtistProvider;
         private readonly IAlbumProvider     mAlbumProvider;
         private readonly ITrackProvider     mTrackProvider;

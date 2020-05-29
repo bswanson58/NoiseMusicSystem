@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.Dto {
@@ -14,15 +15,20 @@ namespace Noise.UI.Dto {
 		public	long					ExternalGenre { get; set; }
 		public	long					UserGenre { get; set; }
 		public	DbGenre					DisplayGenre { get ; set; }
-	    public string                   SortName { get; set; }
+	    public	string                  SortName { get; set; }
         private string                  mDisplayName;
 		private readonly Action<long>	mOnPlay;
 
+		public	DelegateCommand			PlayAlbum { get; }
+
 		public UiAlbum() {
 		    mDisplayName = String.Empty;
+
+			PlayAlbum = new DelegateCommand( OnPlayAlbum );
 		}
 
-		public UiAlbum( Action<long> onPlay ) {
+		public UiAlbum( Action<long> onPlay ) :
+            this () {
 			mOnPlay = onPlay;
 		}
 
@@ -116,7 +122,7 @@ namespace Noise.UI.Dto {
 			return( Name );
 		}
 
-		public void Execute_PlayAlbum() {
+		private void OnPlayAlbum() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 

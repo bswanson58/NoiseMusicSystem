@@ -1,5 +1,5 @@
 ﻿namespace Noise.Core.Sidecars {
-	internal interface ISidecarBuilder {
+	public interface ISidecarBuilder {
 		void	Process();
 		void	Stop();
 	}

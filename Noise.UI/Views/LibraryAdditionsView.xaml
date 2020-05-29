@@ -9,11 +9,14 @@
 			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
-			 DataContext="{Binding LibraryAdditionsViewModel, Source={StaticResource ViewModelLocator}}"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:LibraryAdditionsViewModel, IsDesignTimeCreatable=False}"
 			 Tag="What's New"
 			 AllowDrop="{Binding DisplayMarker}"
 			 reusableBehaviours:ViewDisplayedNotifier.NotifyCommand="{Binding ViewDisplayed}"
-			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 			<!-- The AllowDrop property is used to hold the boolean flag for displaying the marker on the TabItem header -->
 	

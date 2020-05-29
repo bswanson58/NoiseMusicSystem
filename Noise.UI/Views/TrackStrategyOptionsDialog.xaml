@@ -6,8 +6,8 @@
              mc:Ignorable="d" 
              Width="350"
              Height="120"
-             Tag="Strategy Play Options"
-             >
+             Tag="Strategy Play Options">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

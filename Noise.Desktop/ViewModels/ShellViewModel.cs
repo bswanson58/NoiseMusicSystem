@@ -3,34 +3,23 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Commands;
-using Microsoft.Practices.Prism.Regions;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using Noise.UI.Views;
+using Prism.Commands;
+using Prism.Regions;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Desktop.ViewModels {
-    enum ShellViews {
-        Startup,
-        LibrarySelection,
-        LibraryCreation,
-        Library,
-        Listening,
-        Timeline
-    }
-
-    class ShellViewModel : PropertyChangeBase, IHandle<Events.NoiseSystemReady>, IHandle<Events.LibraryConfigurationLoaded>, IHandle<Events.WindowLayoutRequest> {
+    class ShellViewModel : PropertyChangeBase, IHandle<Events.WindowLayoutRequest> {
         private readonly INoiseWindowManager            mWindowManager;
         private readonly IRegionManager                 mRegionManager;
         private readonly IIpcManager			        mIpcManager;
         private readonly IDialogService                 mDialogService;
         private readonly IPreferences		            mPreferences;
-        private ILibraryConfiguration		            mLibraryConfiguration;
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
         public  bool									HaveCompanionApplications => CompanionApplications.Any();
@@ -55,9 +44,6 @@ namespace Noise.Desktop.ViewModels {
 
             CompanionApplications.CollectionChanged += OnCollectionChanged;
 
-//            SetShellView( ShellViews.Startup );
-            SetShellView( nameof( StartupView ));
-
             eventAggregator.Subscribe( this );
         }
 
@@ -65,30 +51,18 @@ namespace Noise.Desktop.ViewModels {
             RaisePropertyChanged( () => HaveCompanionApplications );
         }
 
-        public void Handle( Events.NoiseSystemReady args ) {
-            if(( args.WasInitialized ) &&
-               ( mLibraryConfiguration != null )) {
-                var preferences = mPreferences.Load<NoiseCorePreferences>();
-
-                var lastLibraryUsed = preferences.LastLibraryUsed;
-                var loadLastLibraryOnStartup = preferences.LoadLastLibraryOnStartup;
-
-                if(( loadLastLibraryOnStartup ) &&
-                   ( lastLibraryUsed != Constants.cDatabaseNullOid )) {
-                    mLibraryConfiguration.Open( lastLibraryUsed );
-
-                    SetShellView( nameof( LibraryView ));
-                }
-                else {
-                    SetShellView( mLibraryConfiguration.Libraries.Any() ? nameof( StartupLibrarySelectionView ) : nameof( StartupLibraryCreationView ));
-                }
-            }
-        }
-
         public void Handle( Events.WindowLayoutRequest eventArgs ) {
             switch( eventArgs.LayoutName ) {
+                case Constants.StartupLayout:
+                    SetShellView( nameof( StartupView ));
+                    break;
+
                 case Constants.LibraryCreationLayout:
                     SetShellView( nameof( StartupLibraryCreationView ));
+                    break;
+
+                case Constants.LibrarySelectionLayout:
+                    SetShellView( nameof( StartupLibrarySelectionView ));
                     break;
 
                 case Constants.ExploreLayout:
@@ -99,10 +73,6 @@ namespace Noise.Desktop.ViewModels {
                     mWindowManager.ToggleSmallPlayer();
                     break;
             }
-        }
-
-        public void Handle( Events.LibraryConfigurationLoaded args ) {
-            mLibraryConfiguration = args.LibraryConfiguration;
         }
 
         private void OnLibraryLayout() {
@@ -128,9 +98,9 @@ namespace Noise.Desktop.ViewModels {
         private void OnOptions() {
             var dialogModel = new ConfigurationViewModel( mPreferences );
 
-            if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
-                dialogModel.UpdatePreferences();
-            }
+//            if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
+//                dialogModel.UpdatePreferences();
+//            }
         }
     }
 }

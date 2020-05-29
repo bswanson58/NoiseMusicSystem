@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Unity;
+using Prism.Ioc;
+using Prism.Modularity;
+using Unity;
+using Unity.Lifetime;
 
 namespace ReusableBits.Mvvm.CaliburnSupport {
 	public class UnityBootstrapper<TRootViewModel> : BootstrapperBase {
@@ -112,8 +114,9 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 
 		protected void AddModule( Type moduleType ) {
 			var module = Container.Resolve( moduleType ) as IModule;
+			var registry = Container.Resolve<IContainerRegistry>();
 
-		    module?.Initialize();
+		    module?.RegisterTypes( registry );
 		}
 	}
 }

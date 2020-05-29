@@ -1,5 +1,5 @@
-﻿using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure.Interfaces;
+using Unity;
 
 namespace Noise.AppSupport.Preferences {
 	public static class PreferencesFactory<T> where T : new() {

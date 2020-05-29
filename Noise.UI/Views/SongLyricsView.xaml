@@ -3,18 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:Controls="clr-namespace:Noise.UI.Controls"
-             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
-             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:controls="clr-namespace:Noise.UI.Controls"
+             xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+             xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:SongLyricsViewModel, IsDesignTimeCreatable=False}"
+             reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
              d:DesignHeight="300" d:DesignWidth="450">
     
-    <UserControl.DataContext>
-        <Binding Path="SongLyricsViewModel" Source="{StaticResource ViewModelLocator}"/>
-    </UserControl.DataContext>
-
     <Grid x:Name="LayoutRoot">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
@@ -35,8 +35,8 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Border BorderThickness="1" CornerRadius="3" Margin="0">
-            <Grid Behaviours:GridUtils.ColumnDefinitions="*,Auto" Margin="5"
-                  Behaviours:GridUtils.RowDefinitions="Auto,*,Auto">
+            <Grid behaviours:GridUtils.ColumnDefinitions="*,Auto" Margin="5"
+                  behaviours:GridUtils.RowDefinitions="Auto,*,Auto">
                 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="7,0,0,0">
                     <TextBlock Text="Song lyrics for '"/>
@@ -53,7 +53,7 @@
                     </ScrollViewer>
                 </Border>
                 <Grid Grid.Row="2" Grid.Column="0"  Margin="0,5,0,0" Grid.ColumnSpan="2"
-                      Behaviours:GridUtils.ColumnDefinitions="5,Auto,*,9,Auto,Auto,Auto">
+                      behaviours:GridUtils.ColumnDefinitions="5,Auto,*,9,Auto,Auto,Auto">
                     <TextBlock Grid.Column="1" Text="Other versions:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                     <ComboBox Grid.Column="2" ItemsSource="{Binding PossibleLyrics}" SelectedItem="{Binding SelectedLyric}">
                         <ComboBox.ItemTemplate>
@@ -67,11 +67,11 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     <Button Grid.Column="4" Content="Select This Version" Padding="5,1" Command="{Binding SelectLyric}"/>
-                    <Controls:LinkLabel Grid.Column="5" HorizontalAlignment="Right" Padding="0" LinkLabelBehavior="HoverUnderline" Content="source" Margin="7,0,0,0" VerticalAlignment="Bottom">
-                        <EventCommandTriggers:CommandSource.Trigger>
-                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=LyricsSourceClicked}"/>
-                        </EventCommandTriggers:CommandSource.Trigger>
-                    </Controls:LinkLabel>
+                    <controls:LinkLabel Grid.Column="5" HorizontalAlignment="Right" Padding="0" LinkLabelBehavior="HoverUnderline" Content="source" Margin="7,0,0,0" VerticalAlignment="Bottom">
+                        <eventCommandTriggers:CommandSource.Trigger>
+                            <eventCommandTriggers:EventCommandTrigger RoutedEvent="controls:LinkLabel.Click" Command="{Binding Path=LyricsSourceClicked}"/>
+                        </eventCommandTriggers:CommandSource.Trigger>
+                    </controls:LinkLabel>
                     <Button Grid.Column="6" Content="{StaticResource Path_Edit}" Command="{Binding Path=Edit}" Height="22" Margin="7,0,0,0"/>
                 </Grid>
             </Grid>

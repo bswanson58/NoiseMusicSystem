@@ -44,18 +44,14 @@ namespace Noise.Core {
 			mPreferences = preferences;
 		}
 
-		public async Task<bool> AsyncInitialize() {
-			var initTask = new Task<bool>(() => ( InitializeAndNotify()));
-
-			initTask.Start();
-
-			return( await initTask );
+		public Task<bool> AsyncInitialize() {
+			return Task.Run( InitializeAndNotify );
 		}
 
 		public bool InitializeAndNotify() {
 			var retValue = Initialize();
 
-			mEvents.PublishOnUIThreadAsync( new Events.NoiseSystemReady( this, retValue ));
+			mEvents.BeginPublishOnUIThread( new Events.NoiseSystemReady( this, retValue ));
 
 			return( retValue );
 		}

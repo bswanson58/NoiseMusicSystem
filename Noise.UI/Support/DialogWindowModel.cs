@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters.DynamicProxies;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Support {
     public interface IDialogWindow {
         void    Close( bool isConfirmed );
     }
 
-	internal class DialogWindowModel : ViewModelBase, IDialogWindow {
+	internal class DialogWindowModel : AutomaticPropertyBase, IDialogWindow {
 		public FrameworkElement			DialogContent { get; set; }
 		private bool?					mDialogResult;
 		private INotifyPropertyChanged	mEditObjectChanged;

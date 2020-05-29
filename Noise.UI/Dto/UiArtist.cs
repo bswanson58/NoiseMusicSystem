@@ -2,18 +2,23 @@
 using System.Diagnostics;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Artist = {" + nameof(Name) + "}")]
 	public class UiArtist : UiBase, IPlayingItem {
         private readonly Action<UiArtist>   mOnGenreClicked;
 
-		public string			SortName { get; set; }
-		public long				CalculatedGenre { get; set; }
-		public long				ExternalGenre { get; set; }
-		public long				UserGenre { get; set; }
+		public	string						SortName { get; set; }
+		public	long						CalculatedGenre { get; set; }
+		public	long						ExternalGenre { get; set; }
+		public	long						UserGenre { get; set; }
 
-        public UiArtist() { }
+		public	DelegateCommand				GenreClicked { get; }
+
+        public UiArtist() {
+			GenreClicked = new DelegateCommand( OnGenreClicked );
+        }
 
         public UiArtist( Action<UiArtist> onGenreClicked ) {
             mOnGenreClicked = onGenreClicked;
@@ -123,7 +128,7 @@ namespace Noise.UI.Dto {
             IsPlaying = DbId.Equals( item.Artist );
         }
 
-        public void Execute_GenreClicked() {
+        private void OnGenreClicked() {
             mOnGenreClicked?.Invoke( this );
         }
     }

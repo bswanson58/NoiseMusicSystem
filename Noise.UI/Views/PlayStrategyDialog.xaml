@@ -3,17 +3,17 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 Width="800"
 			 Height="450"
 			 Tag="Play Strategy Configuration"
 			 mc:Ignorable="d">
 
 	<UserControl.Resources>
-		<ValueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
+		<valueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
 
-        <DataTemplate x:Key="PlayHandlerTemplate" DataType="Dto:UiStrategyDescription">
+        <DataTemplate x:Key="PlayHandlerTemplate" DataType="dto:UiStrategyDescription">
             <StackPanel Orientation="Horizontal">
                 <CheckBox IsChecked="{Binding IsSelected}"/>
                 <TextBlock Text="{Binding Description}"/>

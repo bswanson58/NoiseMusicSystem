@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 
 namespace ReusableBits.ExtensionClasses.MoreLinq {
-    public static class MoreEnumerable {
+    public static partial class MoreEnumerable {
         /// <summary>
         /// Returns all distinct elements of the given source, where "distinctness"
         /// is determined via a projection and the default equality comparer for the projected type.

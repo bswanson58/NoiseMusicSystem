@@ -2,7 +2,7 @@
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
-    class FavoriteTracks : ExhaustedHandlerBase {
+    public class FavoriteTracks : ExhaustedHandlerBase {
         private readonly ITrackProvider     mTrackProvider;
 
         public FavoriteTracks( ITrackProvider trackProvider ) :

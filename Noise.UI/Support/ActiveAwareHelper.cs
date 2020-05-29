@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Practices.Prism;
+using Prism;
 using ReusableBits.Ui.Utility;
 
 namespace Noise.UI.Support {
@@ -31,8 +31,8 @@ namespace Noise.UI.Support {
 		}
 
 		public bool IsActive {
-			get{ return( mIsActive ); }
-			set {
+			get => ( mIsActive );
+            set {
 				mIsActive = value;
 				mActiveChanged( mParent, new EventArgs());
 

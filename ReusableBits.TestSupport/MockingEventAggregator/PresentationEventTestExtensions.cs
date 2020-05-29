@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Practices.Prism.Events;
 using Rhino.Mocks;
 
 namespace ReusableBits.TestSupport.MockingEventAggregator {

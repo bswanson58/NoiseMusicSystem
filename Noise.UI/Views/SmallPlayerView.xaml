@@ -1,15 +1,20 @@
-﻿<Mah:MetroWindow x:Class="Noise.UI.Views.SmallPlayerView"
+﻿<mah:MetroWindow x:Class="Noise.UI.Views.SmallPlayerView"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+                 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-                 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-                 xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
-                 xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-                 xmlns:Views="clr-namespace:Noise.UI.Views"
-                 xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:noiseControls="clr-namespace:Noise.UI.Controls"
+                 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+                 xmlns:valueConverters="clr-namespace:Noise.UI.ValueConverters"
+                 xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+                 xmlns:views="clr-namespace:Noise.UI.Views"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:prism="http://prismlibrary.com/"
+                 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+                 mc:Ignorable="d" 
+                 prism:ViewModelLocator.AutoWireViewModel="True"
+                 d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}"
                  Width="700"
                  Height="75"
                  AllowsTransparency="True"
@@ -19,18 +24,13 @@
                  WindowStyle="None"
                  ShowTitleBar="False"
                  TitlebarHeight="0"
-                 BorderThickness="0" 
-                 mc:Ignorable="d">
+                 BorderThickness="0">
 
-    <Window.DataContext>
-        <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
-    </Window.DataContext>
-    
     <Window.Resources>
-        <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
-        <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
-        <ReusableConverters:EmptyStringVisibilityConverter x:Key="CollapseIfEmptyString" HideOnEmpty="False" IsHidden="False"/>
-        <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="False"/>
+        <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
+        <valueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
+        <reusableConverters:EmptyStringVisibilityConverter x:Key="CollapseIfEmptyString" HideOnEmpty="False" IsHidden="False"/>
+        <reusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="False"/>
 
         <DataTemplate x:Key="AfterTemplate">
             <Rectangle Fill="{DynamicResource SignatureBrush}" Margin="0,4,-4,4"/>
@@ -41,8 +41,8 @@
                   Fill="{DynamicResource SignatureBrush}" RenderTransformOrigin="0,0.5" Stretch="Fill" StrokeThickness="0" Height="9" Width="9" >
                 <Path.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="{Binding DataContext.RightLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:SmallPlayerView}}}"
-                                        ScaleY="{Binding DataContext.LeftLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:SmallPlayerView}}}"/>
+                        <ScaleTransform ScaleX="{Binding DataContext.RightLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:SmallPlayerView}}}"
+                                        ScaleY="{Binding DataContext.LeftLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:SmallPlayerView}}}"/>
                         <SkewTransform/>
                         <RotateTransform/>
                         <TranslateTransform/>
@@ -56,10 +56,10 @@
         </DataTemplate>
 
         <Storyboard x:Key="FocusStoryboard">
-            <ReusableBehaviours:GridLengthAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="5*" />
+            <reusableBehaviours:GridLengthAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="5*" />
         </Storyboard>
         <Storyboard x:Key="UnfocusStoryboard">
-            <ReusableBehaviours:GridLengthAnimation BeginTime="0:0:3" Duration="0:0:1.3" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="0*" />
+            <reusableBehaviours:GridLengthAnimation BeginTime="0:0:3" Duration="0:0:1.3" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="0*" />
         </Storyboard>
     </Window.Resources>
 
@@ -90,7 +90,7 @@
                 <!--Slider Grid.Column="1" Margin="7,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
                         Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" Value="{Binding Path=TrackPosition, Mode=TwoWay}"
                         Style="{StaticResource PlayerPositionSliderStyle}"/-->
-                <NoiseControls:TrackSlider Grid.Row="0" Margin="7,3,7,0" Height="11" VerticalAlignment="Center" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}"
+                <noiseControls:TrackSlider Grid.Row="0" Margin="7,3,7,0" Height="11" VerticalAlignment="Center" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}"
                                            BeforeTemplate="{StaticResource BeforeTemplate}" ThumbTemplate="{StaticResource ThumbTemplate}" AfterTemplate="{StaticResource AfterTemplate}"
                                            Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" SmoothedValue="{Binding Path=TrackPosition, Mode=TwoWay}"/>
 
@@ -101,17 +101,17 @@
                                    Text="Play Something!" FontSize="18" />
 
                         <TextBlock VerticalAlignment="Bottom" FontSize="18" FontWeight="Bold" Style="{StaticResource ControlTitleStyle}"
-                                   ReusableBehaviours:FadedPropertyChange.Property="Text"
-                                   ReusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
-                                   ReusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
-                                   ReusableBehaviours:FadedPropertyChange.Binding="{Binding TrackName}"/>
+                                   reusableBehaviours:FadedPropertyChange.Property="Text"
+                                   reusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
+                                   reusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
+                                   reusableBehaviours:FadedPropertyChange.Binding="{Binding TrackName}"/>
                         <TextBlock Margin="0,0,0,1" VerticalAlignment="Bottom" FontSize="14" Style="{StaticResource ControlTitleStyle}"
-                                   ReusableBehaviours:FadedPropertyChange.Property="Text"
-                                   ReusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
-                                   ReusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
-                                   ReusableBehaviours:FadedPropertyChange.Binding="{Binding ArtistAlbumName}"
-                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                                   reusableBehaviours:FadedPropertyChange.Property="Text"
+                                   reusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
+                                   reusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
+                                   reusableBehaviours:FadedPropertyChange.Binding="{Binding ArtistAlbumName}"
+                                   reusableBehaviours:FadeTrimming.IsEnabled="True"
+                                   reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                     </StackPanel>
                 </Viewbox>
 
@@ -127,14 +127,14 @@
                         <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Position: "/>
                         <TextBlock Width="35" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
                                    Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
-                                <EventCommandTriggers:CommandSource.Trigger>
-                                    <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
-                                </EventCommandTriggers:CommandSource.Trigger>
+                                <eventCommandTriggers:CommandSource.Trigger>
+                                    <eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+                                </eventCommandTriggers:CommandSource.Trigger>
                         </TextBlock>
                     </StackPanel>
 
                     <!-- Vu Meter -->
-                    <NoiseControls:HorizontalVuMeter Grid.Column="1" Margin="30,1" Foreground="{DynamicResource SignatureBrush}" PeakColor="{DynamicResource SignatureBrush}"
+                    <noiseControls:HorizontalVuMeter Grid.Column="1" Margin="30,1" Foreground="{DynamicResource SignatureBrush}" PeakColor="{DynamicResource SignatureBrush}"
                                                      LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
                 </Grid>
 
@@ -162,7 +162,7 @@
                     <!-- Favorite and rating -->
                     <StackPanel Grid.Column="1" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
                         <CheckBox Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" />
-                        <NoiseControls:RatingControl Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=Rating, Mode=TwoWay}" />
+                        <noiseControls:RatingControl Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=Rating, Mode=TwoWay}" />
                     </StackPanel>
 
                     <!-- Mute Button -->
@@ -213,4 +213,4 @@
             </Grid>
         </Grid>
     </Border>
-</Mah:MetroWindow>
+</mah:MetroWindow>

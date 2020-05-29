@@ -1,27 +1,29 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Adapters {
-	public class SearchViewNode : ViewModelBase {
+	public class SearchViewNode : PropertyChangeBase {
 	    private readonly Action<SearchViewNode> mOnPlay;
 
 	    public  SearchResultItem    SearchItem { get; }
-		public  bool				CanPlay { get; }
 	    public  DbArtist            Artist => SearchItem.Artist;
 	    public  DbAlbum             Album => SearchItem.Album;
 	    public  DbTrack             Track => SearchItem.Track;
 	    public  string              Title => SearchItem.ItemDescription;
+        public  bool				CanPlay => Album != null || Track != null;
+
+		public	DelegateCommand		Play { get; }
 
 		public SearchViewNode( SearchResultItem searchResult, Action<SearchViewNode> onPlay ) {
 			SearchItem = searchResult;
-
-			CanPlay = ( Album != null ) || ( Track != null );
-
 			mOnPlay = onPlay;
+
+			Play = new DelegateCommand( OnPlay );
 		}
 
-	    public void Execute_Play() {
+	    private void OnPlay() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 

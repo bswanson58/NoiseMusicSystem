@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.ObjectBuilder2;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Support;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.UI.ViewModels {
 	public class PlayStrategyDialogModel : DialogModelBase {

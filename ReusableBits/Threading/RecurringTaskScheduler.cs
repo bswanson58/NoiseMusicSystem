@@ -4,9 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using ReusableBits.Interfaces;
 using ReusableBits.Support;
 
 namespace ReusableBits.Threading {
+	public class DefaultTaskScheduler : RecurringTaskScheduler {
+		public DefaultTaskScheduler() { }
+    }
+
 	public class RecurringTaskScheduler : IRecurringTaskScheduler {
 		private readonly List<RecurringTaskContext>			mTaskList;
 		private readonly Timer								mTimer;

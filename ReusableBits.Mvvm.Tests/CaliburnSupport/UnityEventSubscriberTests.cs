@@ -1,6 +1,5 @@
 ﻿using Caliburn.Micro;
 using FluentAssertions;
-using Microsoft.Practices.ObjectBuilder2;
 using Moq;
 using NUnit.Framework;
 using ReusableBits.Mvvm.CaliburnSupport;

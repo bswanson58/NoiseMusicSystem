@@ -1,13 +1,16 @@
 ﻿<UserControl x:Class="Noise.UI.Views.PlayingTrackView"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:Controls="clr-namespace:Noise.UI.Controls"
-			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui">
+			 xmlns:controls="clr-namespace:Noise.UI.Controls"
+			 xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}">
 	
-	<UserControl.DataContext>
-		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
-
 	<UserControl.Resources>
 		<DataTemplate x:Key="AfterTemplate">
             <Rectangle Fill="{DynamicResource SignatureBrush}"/>
@@ -28,7 +31,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Controls:SpectrumAnalyzerDisplay Grid.Row="0"  Margin="5,0"
+		<controls:SpectrumAnalyzerDisplay Grid.Row="0"  Margin="5,0"
 										  ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
 										  ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
 										  SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
@@ -36,19 +39,19 @@
 		<!-- Track Name -->
 		<Viewbox Grid.Row="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
 			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right"
-					   Behaviours:FadedPropertyChange.Property="Text" Behaviours:FadedPropertyChange.Binding="{Binding TrackName}"
-					   Behaviours:FadedPropertyChange.Duration="0:0:0.1" />
+					   behaviours:FadedPropertyChange.Property="Text" behaviours:FadedPropertyChange.Binding="{Binding TrackName}"
+					   behaviours:FadedPropertyChange.Duration="0:0:0.1" />
 
 		</Viewbox>
 
 		<!-- Playing Time -->
-		<TextBlock Grid.Row="0" Style="{StaticResource LargeTitleStyle}" FontSize="32"
+		<TextBlock Grid.Row="0" Style="{StaticResource LargeTitleStyle}"
 						   Margin="0,0,15,18" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-						   Visibility="{Binding TrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
-						   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
+						   Visibility="{Binding RightTrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
+						   Text="{Binding RightTrackTime, Converter={StaticResource TimeSpanConverter}}" />
 
 		<!-- Playing Time Bar -->
-		<Controls:TrackSlider Grid.Row="1" Margin="5,5,15,1" Height="15"
+		<controls:TrackSlider Grid.Row="1" Margin="5,5,15,1" Height="15"
 										   BeforeTemplate="{StaticResource BeforeTemplate}" ThumbTemplate="{StaticResource ThumbTemplate}" AfterTemplate="{StaticResource AfterTemplate}"
 										   Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" SmoothedValue="{Binding Path=TrackPosition, Mode=TwoWay}"/>
 	</Grid>

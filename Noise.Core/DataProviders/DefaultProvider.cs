@@ -2,12 +2,12 @@
 
 namespace Noise.Core.DataProviders {
 	internal class DefaultProvider {
-		public IMetaDataProvider GetProvider( StorageFile forFile ) {
+		public IMetadataInfoProvider GetProvider( StorageFile forFile ) {
 			return( new UnknownProvider());
 		}
 	}
 
-	internal class UnknownProvider : IMetaDataProvider {
+	internal class UnknownProvider : IMetadataInfoProvider {
 		public string Artist {
 			get{ return( "Unknown Artist" ); }
 		}

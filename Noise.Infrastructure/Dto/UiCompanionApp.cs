@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using Microsoft.Practices.Prism.Commands;
+using Prism.Commands;
 
 namespace Noise.Infrastructure.Dto {
     public class UiCompanionApp {

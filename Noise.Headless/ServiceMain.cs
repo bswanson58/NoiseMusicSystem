@@ -2,7 +2,6 @@
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
-using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using ReusableBits.Service;
 

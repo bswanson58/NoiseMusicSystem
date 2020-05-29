@@ -1,81 +1,62 @@
-﻿using Caliburn.Micro;
-using Microsoft.Practices.Prism;
+﻿using System;
+using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
+using Prism.Regions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    enum PlayerViews {
-        Regular,
-        Extended
-    }
-
     class LibraryViewModel : PropertyChangeBase, IHandle<Events.ViewDisplayRequest>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
-        private readonly ArtistTracksViewModel  mArtistTracksViewModel;
-        private readonly ArtistInfoViewModel    mArtistInfoViewModel;
-        private readonly RatedTracksViewModel   mRatedTracksViewModel;
+        private readonly IRegionManager mRegionManager;
 
-        public  PlayerViews                     CurrentPlayer { get; private set; }
-        public  PropertyChangeBase              CurrentAlbumView {  get; private set; }
+        public LibraryViewModel( IEventAggregator eventAggregator, IRegionManager regionManager ) {
+            mRegionManager = regionManager;
 
-        public LibraryViewModel( IEventAggregator eventAggregator, ArtistInfoViewModel artistInfoView, 
-                                 ArtistTracksViewModel artistTracksView, RatedTracksViewModel ratedTracksView ) {
-            mArtistInfoViewModel = artistInfoView;
-            mArtistTracksViewModel = artistTracksView;
-            mRatedTracksViewModel = ratedTracksView;
-
-            CurrentPlayer = PlayerViews.Regular;
-            SetAlbumInfoView( mArtistInfoViewModel );
+            SetAlbumInfoView( ViewNames.ArtistInfoView );
+            SetPlayerView( ViewNames.PlayerView );
 
             eventAggregator.Subscribe( this );
         }
 
         public void Handle( Events.ViewDisplayRequest eventArgs ) {
-            switch( eventArgs.ViewName ) {
-                case ViewNames.AlbumInfoView:
-                    break;
-
-                case ViewNames.ArtistInfoView:
-                    SetAlbumInfoView( mArtistInfoViewModel );
-                    break;
-
-                case ViewNames.ArtistTracksView:
-                    SetAlbumInfoView( mArtistTracksViewModel );
-                    break;
-
-                case ViewNames.RatedTracksView:
-                    SetAlbumInfoView( mRatedTracksViewModel );
-                    break;
-
-                case ViewNames.RelatedTracksView:
-                    break;
+            if( eventArgs.ViewName.Equals( ViewNames.RelatedTracksView )) {
+                SetLibraryView( ViewNames.RelatedTracksView );
+            }
+            else {
+                SetAlbumInfoView( eventArgs.ViewName );
             }
         }
 
-        private void SetAlbumInfoView( PropertyChangeBase view ) {
-            if( CurrentAlbumView is IActiveAware previousAware ) {
-                previousAware.IsActive = false;
+        private void SetLibraryView( string viewName ) {
+            var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryLeftPanel );
+
+            if( region != null ) {
+                Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
             }
+        }
 
-            CurrentAlbumView = view;
-            RaisePropertyChanged( () => CurrentAlbumView );
+        private void SetAlbumInfoView( string viewName ) {
+            var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryAlbumPanel );
 
-            if( CurrentAlbumView is IActiveAware currentAware ) {
-                currentAware.IsActive = false;
+            if( region != null ) {
+                Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
             }
         }
 
         public void Handle( Events.StandardPlayerRequest eventArgs ) {
-            SetPlayerView( PlayerViews.Regular );
+            SetPlayerView( ViewNames.PlayerView );
         }
 
         public void Handle( Events.ExtendedPlayerRequest eventArgs ) {
-            SetPlayerView( PlayerViews.Extended );
+            SetPlayerView( ViewNames.ExtendedPlayerView );
         }
 
-        private void SetPlayerView( PlayerViews toPlayer ) {
-            CurrentPlayer = toPlayer;
+        private void SetPlayerView( string viewName ) {
+            var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryPlayerPanel );
 
-            RaisePropertyChanged( () => CurrentPlayer );
+            if( region != null ) {
+                Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
+            }
         }
     }
 }

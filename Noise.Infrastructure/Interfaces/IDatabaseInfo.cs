@@ -9,5 +9,6 @@ namespace Noise.Infrastructure.Interfaces {
 		DbVersion	DatabaseVersion { get; }
 
 		void		InitializeDatabaseVersion( Int16 databaseVersion );
+		void		SetDatabaseClosed();
 	}
 }

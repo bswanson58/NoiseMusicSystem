@@ -1,7 +1,7 @@
 ﻿using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted {
-    interface IExhaustedContextFactory {
+    public interface IExhaustedContextFactory {
         IExhaustedSelectionContext  CreateContext( IPlayQueue playQueue, long suggesterParameter );
     }
 }

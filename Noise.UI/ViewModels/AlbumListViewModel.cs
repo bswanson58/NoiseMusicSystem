@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -16,6 +15,7 @@ using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Resources;
 using Observal.Extensions;
+using Prism;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 

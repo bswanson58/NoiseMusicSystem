@@ -8,9 +8,12 @@
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
-			 mc:Ignorable="d"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 Tag="Favorites"
-			 DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
+             d:DataContext="{d:DesignInstance viewModels:FavoritesViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="500">
 	
 	<UserControl.Resources>

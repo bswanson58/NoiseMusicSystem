@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ViewModels="clr-namespace:Noise.UI.ViewModels"
-             xmlns:Controls="clr-namespace:Noise.UI.Controls"
-             xmlns:Views="clr-namespace:Noise.UI.Views"
-             xmlns:Drag="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:controls="clr-namespace:Noise.UI.Controls"
+             xmlns:views="clr-namespace:Noise.UI.Views"
+             xmlns:drag="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
              Width="750"
              Height="600"
              d:DesignHeight="300"
@@ -20,21 +20,21 @@
             <Setter Property="Focusable" Value="False"/>
         </Style>
 
-        <DataTemplate x:Key="TrackEditTemplate" DataType="ViewModels:UiTrackEdit">
+        <DataTemplate x:Key="TrackEditTemplate" DataType="viewModels:UiTrackEdit">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="0,0,2,0" VerticalAlignment="Center" Text="{Binding TrackIndex}"/>
-                <Controls:EditableTextBlock FontSize="14" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <controls:EditableTextBlock FontSize="14" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
         </DataTemplate>
 
-        <HierarchicalDataTemplate x:Key="VolumeEditTemplate" DataType="ViewModels:UiVolumeEdit" ItemsSource="{Binding Tracks}">
+        <HierarchicalDataTemplate x:Key="VolumeEditTemplate" DataType="viewModels:UiVolumeEdit" ItemsSource="{Binding Tracks}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Controls:EditableTextBlock Grid.Column="0" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <controls:EditableTextBlock Grid.Column="0" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Button x:Name="VolumeDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
                         BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
@@ -47,11 +47,11 @@
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
 
-        <HierarchicalDataTemplate x:Key="AlbumEditTemplate" DataType="ViewModels:UiAlbumEdit" ItemsSource="{Binding Children}">
-            <Controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <HierarchicalDataTemplate x:Key="AlbumEditTemplate" DataType="viewModels:UiAlbumEdit" ItemsSource="{Binding Children}">
+            <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </HierarchicalDataTemplate>
 
-        <Views:AlbumEditTemplateSelector x:Key="EditTemplateSelector" 
+        <views:AlbumEditTemplateSelector x:Key="EditTemplateSelector" 
                                          AlbumTemplate="{StaticResource AlbumEditTemplate}" 
                                          VolumeTemplate="{StaticResource VolumeEditTemplate}" 
                                          TrackTemplate="{StaticResource TrackEditTemplate}"/>
@@ -73,7 +73,7 @@
         </StackPanel>
 
         <TreeView Grid.Row="1" ItemsSource="{Binding EditList}" ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ItemTemplateSelector="{StaticResource EditTemplateSelector}"
-                  Drag:DragDrop.IsDragSource="true" Drag:DragDrop.IsDropTarget="True" Drag:DragDrop.DropHandler="{Binding}" />
+                  drag:DragDrop.IsDragSource="true" drag:DragDrop.IsDropTarget="True" drag:DragDrop.DropHandler="{Binding}" />
 
         <Rectangle Grid.Row="2" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 

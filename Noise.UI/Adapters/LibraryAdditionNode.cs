@@ -1,20 +1,25 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
+using Prism.Commands;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Adapters {
-	public class LibraryAdditionNode : ViewModelBase, IPlayingItem {
-		public	DbArtist		Artist { get; }
+	public class LibraryAdditionNode : AutomaticPropertyBase, IPlayingItem {
+        private readonly Action<LibraryAdditionNode>	mAlbumPlayAction;
+
+        public	DbArtist		Artist { get; }
 		public	DbAlbum			Album { get; }
 		public	double			RelativeAge { get; set; }
-		private readonly Action<LibraryAdditionNode>	mAlbumPlayAction;
+        public  DelegateCommand Play { get; }
 
 		public LibraryAdditionNode( DbArtist artist, DbAlbum album, Action<LibraryAdditionNode> albumPlayAction ) {
 			Artist = artist;
 			Album = album;
 
 			mAlbumPlayAction = albumPlayAction;
+
+            Play = new DelegateCommand( OnPlay );
 		}
 
         public bool IsPlaying {
@@ -26,7 +31,7 @@ namespace Noise.UI.Adapters {
             IsPlaying = Album.DbId.Equals( item.Album );
         }
 
-        public void Execute_Play( object sender ) {
+        private void OnPlay() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
-using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Prism.PubSubEvents;
+using Prism.Events;
 using Rhino.Mocks;
 
 namespace ReusableBits.TestSupport.MockingEventAggregator {

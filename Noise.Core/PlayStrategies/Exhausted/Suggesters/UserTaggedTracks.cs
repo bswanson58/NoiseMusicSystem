@@ -7,7 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
-    class UserTaggedTracks : ExhaustedHandlerBase, IDisposable,
+    public class UserTaggedTracks : ExhaustedHandlerBase, IDisposable,
                              IHandle<Events.UserTagsChanged> {
         private IEventAggregator                mEventAggregator;
         private readonly ITrackProvider         mTrackProvider;

@@ -70,6 +70,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 
 		private void CloseDatabase() {
+			mDatabaseInfo.SetDatabaseClosed();
 			mEventAggregator.PublishOnUIThread( new Events.DatabaseClosing());
 
 			mLog.ClosedDatabase();

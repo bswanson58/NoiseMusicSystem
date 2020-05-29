@@ -8,15 +8,13 @@
 			 xmlns:noiseUiViewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:noiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              Height="215"
 			 d:DesignHeight="300"
 			 d:DesignWidth="1200"
-             d:DataContext="{d:DesignInstance noiseUiViewModels:PlayerViewModel, IsDesignTimeCreatable=False}"
-			 mc:Ignorable="d">
-
-	<UserControl.DataContext>
-		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
+             d:DataContext="{d:DesignInstance noiseUiViewModels:PlayerViewModel, IsDesignTimeCreatable=False}">
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid>

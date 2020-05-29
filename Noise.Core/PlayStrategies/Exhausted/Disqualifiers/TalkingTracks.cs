@@ -1,14 +1,13 @@
-﻿using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
-using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Disqualifiers {
-    class TalkingTracks : ExhaustedHandlerBase {
+    public class TalkingTracks : ExhaustedHandlerBase {
         public TalkingTracks() : base( eTrackPlayHandlers.TalkingTracks, eTrackPlayStrategy.Disqualifier, "Talking Tracks", "Don't suggest tracks that are named to be chatty." ) { }
 
         public override void SelectTrack( IExhaustedSelectionContext context ) {
-            var tracks = context.SelectedTracks.ToArray();
+            var tracks = context.SelectedTracks;
 
             tracks.ForEach( 
                 track => {

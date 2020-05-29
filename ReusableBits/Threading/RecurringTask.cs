@@ -7,7 +7,10 @@ namespace ReusableBits.Threading {
 		private readonly Action<RecurringTask>	mAction;
 		private readonly RecurringTaskSchedule	mTaskSchedule;
 
-		public RecurringTask( Action<RecurringTask> action ) :
+        public	string							TaskId => mTaskId;
+        public	RecurringTaskSchedule			TaskSchedule => mTaskSchedule;
+
+        public RecurringTask( Action<RecurringTask> action ) :
 			this( action, Guid.NewGuid().ToString()) { }
 
 		public RecurringTask( Action<RecurringTask> action, string taskId ) {
@@ -18,15 +21,7 @@ namespace ReusableBits.Threading {
 			mTaskSchedule = new RecurringTaskSchedule();
 		}
 
-		public string TaskId {
-			get{ return( mTaskId ); }
-		}
- 
-		public RecurringTaskSchedule TaskSchedule {
-			get{ return( mTaskSchedule ); }
-		}
-
-		internal void Execute() {
+        internal void Execute() {
 			mAction( this );
 		}
 	}

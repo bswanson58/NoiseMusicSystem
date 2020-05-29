@@ -1,6 +1,6 @@
 ﻿using System;
-using Microsoft.Practices.Prism;
 using Noise.UI.Support;
+using Prism;
 
 namespace Noise.UI.Views {
 	/// <summary>
@@ -18,8 +18,8 @@ namespace Noise.UI.Views {
 		}
 
 		public bool IsActive {
-			get { return( mActiveAwareHelper.IsActive ); }
-			set { mActiveAwareHelper.IsActive = value; }
-		}
+			get => ( mActiveAwareHelper.IsActive );
+            set => mActiveAwareHelper.IsActive = value;
+        }
 	}
 }

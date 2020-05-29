@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Data;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Prism;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 

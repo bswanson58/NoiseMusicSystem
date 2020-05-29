@@ -8,7 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using ReusableBits;
 
 namespace Noise.Core.PlayQueue {
-	internal class PlayQueueRandomTracks : IPlayQueueSupport,
+	public class PlayQueueRandomTracks : IPlayQueueSupport,
 										   IHandle<Events.PlayArtistTracksRandom>, IHandle<Events.PlayAlbumTracksRandom> {
 		private const int							cTracksToQueue = 10;
 

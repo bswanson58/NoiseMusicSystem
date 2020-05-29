@@ -7,8 +7,11 @@
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
-             DataContext="{Binding TagAssociationViewModel, Source={StaticResource ViewModelLocator}}"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance viewModels:TagAssociationViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>

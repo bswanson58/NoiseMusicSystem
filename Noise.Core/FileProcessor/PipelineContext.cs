@@ -10,7 +10,7 @@ namespace Noise.Core.FileProcessor {
 		public	ILogLibraryClassification	Log {  get; private set; }
 		public	DatabaseCache<DbArtist>		ArtistCache { get; private set; }
 		public	DatabaseCache<DbAlbum>		AlbumCache { get; private set; }
-		public	List<IMetaDataProvider>		MetaDataProviders { get; set; }
+		public	List<IMetadataInfoProvider>		MetaDataProviders { get; set; }
 		public	DatabaseChangeSummary		Summary { get; private set; }
 
 		public	StorageFile					StorageFile { get; private set; }

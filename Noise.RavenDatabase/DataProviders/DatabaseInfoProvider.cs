@@ -7,6 +7,7 @@ using Noise.RavenDatabase.Support;
 namespace Noise.RavenDatabase.DataProviders {
 	internal class DatabaseInfoProvider : BaseProvider<DbVersion>, IDatabaseInfo {
 		private DbVersion		mDatabaseVersion;
+		private bool			mIsOpen;
 
 		public DatabaseInfoProvider( IDbFactory databaseFactory, ILogRaven log ) :
 			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
@@ -38,11 +39,9 @@ namespace Noise.RavenDatabase.DataProviders {
 			}
 		}
 
-		public bool IsOpen {
-			get { return( DbFactory.IsOpen ); }
-		}
+		public bool IsOpen => mIsOpen && DbFactory.IsOpen;
 
-		public void InitializeDatabaseVersion( short databaseVersion ) {
+        public void InitializeDatabaseVersion( short databaseVersion ) {
 			RetrieveDatabaseVersion();
 
 			if( mDatabaseVersion != null ) {
@@ -52,10 +51,15 @@ namespace Noise.RavenDatabase.DataProviders {
 			}
 
 			mDatabaseVersion = new DbVersion( databaseVersion );
+			mIsOpen = true;
 			Database.Add( mDatabaseVersion );
 		}
 
-		private void RetrieveDatabaseVersion() {
+        public void SetDatabaseClosed() {
+			mIsOpen = false;
+        }
+
+        private void RetrieveDatabaseVersion() {
 			mDatabaseVersion = Database.Get( DbVersion.DatabaseVersionDbId );
 		}
 	}

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using Noise.Infrastructure.Dto;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
     [DebuggerDisplay("Tag = {" + nameof( Name ) + "}")]
-    public class UiTag : AutomaticCommandBase {
+    public class UiTag : PropertyChangeBase {
         private readonly Action<UiTag>  mEditAction;
         private readonly Action<UiTag>  mPlayAction;
 
@@ -14,9 +15,18 @@ namespace Noise.UI.Dto {
         public  bool        IsChecked { get; set; }
         public  bool        IsPlaying { get; private set; }
 
+        public  DelegateCommand Edit { get; }
+        public  DelegateCommand Play { get; }
+
+        private UiTag() {
+            Edit = new DelegateCommand( OnEdit );
+            Play = new DelegateCommand( OnPlay );
+        }
+
         public UiTag( DbTag tag ) : this( tag, null, null ) { }
 
-        public UiTag( DbTag tag, Action<UiTag> onEdit, Action<UiTag> onPlay ) {
+        public UiTag( DbTag tag, Action<UiTag> onEdit, Action<UiTag> onPlay ) :
+            this () {
             Tag = tag;
             IsChecked = false;
 
@@ -30,11 +40,11 @@ namespace Noise.UI.Dto {
             RaisePropertyChanged( () => IsPlaying );
         }
 
-        public void Execute_Edit() {
+        private void OnEdit() {
             mEditAction?.Invoke( this );
         }
 
-        public void Execute_Play() {
+        private void OnPlay() {
             mPlayAction?.Invoke( this );
         }
     }

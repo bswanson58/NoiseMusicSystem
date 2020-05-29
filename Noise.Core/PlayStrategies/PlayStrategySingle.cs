@@ -3,7 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal class PlayStrategySingle : PlayStrategyBase {
+	public class PlayStrategySingle : PlayStrategyBase {
 		public PlayStrategySingle() :
 			base( ePlayStrategy.Next, "Normal", "Plays tracks from the play queue in sequential order." ) {
 		}

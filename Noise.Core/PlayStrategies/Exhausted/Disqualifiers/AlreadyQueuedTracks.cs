@@ -3,7 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Disqualifiers {
-    class AlreadyQueuedTracks : ExhaustedHandlerBase {
+    public class AlreadyQueuedTracks : ExhaustedHandlerBase {
         public AlreadyQueuedTracks() : 
             base ( eTrackPlayHandlers.AlreadyQueuedTracks, eTrackPlayStrategy.Disqualifier, 
                    "Prevent previously queued tracks", "Don't suggest tracks already in the play queue." ) { }

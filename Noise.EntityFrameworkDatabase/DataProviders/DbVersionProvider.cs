@@ -8,6 +8,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal class DbVersionProvider : BaseProvider<DbVersion>, IDatabaseInfo {
 		private DbVersion		mDatabaseVersion;
+		private bool			mIsOpen;
 
 		public DbVersionProvider( IContextProvider contextProvider, ILogDatabase log ) :
 			base( contextProvider, log ) { }
@@ -40,15 +41,19 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		public bool IsOpen {
 			get {
-				bool retValue;
+				var retValue = mIsOpen;
 
 				using( var context = CreateContext()) {
-					retValue = context.IsValidContext;
+					retValue &= context.IsValidContext;
 				}
 
 				return( retValue );
 			}
 		}
+
+        public void SetDatabaseClosed() {
+            mIsOpen = false;
+        }
 
 		public void InitializeDatabaseVersion( Int16 databaseVersion ) {
 			var dbVersion = new DbVersion( databaseVersion );
@@ -57,10 +62,12 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				Set( context ).Add( dbVersion );
 
 				context.SaveChanges();
+
+				mIsOpen = true;
 			}
 		}
 
-		private void RetrieveDatabaseVersion() {
+        private void RetrieveDatabaseVersion() {
 			using( var context = CreateContext()) {
 				if( context.IsValidContext ) {
 					mDatabaseVersion = Set( context ).FirstOrDefault( entity => entity.DbId == DbVersion.DatabaseVersionDbId );

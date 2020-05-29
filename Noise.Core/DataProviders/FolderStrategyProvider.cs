@@ -16,12 +16,12 @@ namespace Noise.Core.DataProviders {
 			mLog = log;
 		}
 
-		public IMetaDataProvider GetProvider( StorageFile forFile ) {
+		public IMetadataInfoProvider GetProvider( StorageFile forFile ) {
 			return( new FileStrategyProvider( mTagManager, mStorageFolderSupport, forFile, mLog ));
 		}
 	}
 
-	internal class FileStrategyProvider : IMetaDataProvider {
+	internal class FileStrategyProvider : IMetadataInfoProvider {
 		private	readonly ITagManager						mTagManager;
 		private readonly IStorageFolderSupport				mStorageFolderSupport;
 		private readonly INoiseLog							mLog;

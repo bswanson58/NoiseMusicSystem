@@ -12,7 +12,17 @@ namespace Noise.Core.PlayStrategies {
 		private IPlayQueue				mQueueMgr;
 		private IPlayStrategyParameters	mParameters;
 
-		protected abstract string FormatDescription();
+		protected abstract string		FormatDescription();
+        protected IPlayQueue			PlayQueueMgr => mQueueMgr;
+
+        public	ePlayStrategy			StrategyId => mStrategy;
+        public	string					StrategyName => mStrategyName;
+        public	string					StrategyDescription => mStrategyDescription;
+        public	string					ConfiguredDescription => FormatDescription();
+        public	bool					RequiresParameters => mParametersRequired;
+        public	string					ParameterName => mParameterName;
+        public	IPlayStrategyParameters Parameters => mParameters;
+
 
 		protected PlayStrategyBase( ePlayStrategy strategy, string strategyName, string strategyDescription ) {
 			mStrategy = strategy;
@@ -28,39 +38,7 @@ namespace Noise.Core.PlayStrategies {
 			mParameterName = parameterName;
 		}
 
-		public ePlayStrategy StrategyId {
-			get {  return( mStrategy ); }
-		}
-
-		public string StrategyName {
-			get {  return( mStrategyName ); }
-		}
-
-		public string StrategyDescription {
-			get {  return( mStrategyDescription ); }
-		}
-
-		public string ConfiguredDescription {
-			get {  return( FormatDescription()); }
-		}
-
-		public bool RequiresParameters {
-			get {  return( mParametersRequired ); }
-		}
-
-		public string ParameterName {
-			get {  return( mParameterName ); }
-		}
-
-		public IPlayStrategyParameters Parameters {
-			get {  return( mParameters ); }
-		}
-
-		protected IPlayQueue PlayQueueMgr {
-			get {  return( mQueueMgr ); }
-		}
-
-		protected virtual void ProcessParameters( IPlayStrategyParameters parameters ) { }
+        protected virtual void ProcessParameters( IPlayStrategyParameters parameters ) { }
 
 		public virtual bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			mQueueMgr = queueMgr;

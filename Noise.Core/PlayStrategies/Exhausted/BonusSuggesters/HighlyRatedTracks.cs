@@ -5,7 +5,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
-    class HighlyRatedTracks : ExhaustedHandlerBase {
+    public class HighlyRatedTracks : ExhaustedHandlerBase {
         private const string                cBreadCrumb = "Highly Rated Tracks";
         private readonly ITrackProvider     mTrackProvider;
 

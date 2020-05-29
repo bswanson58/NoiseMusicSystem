@@ -9,14 +9,12 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 d:DesignHeight="200"
 			 d:DesignWidth="600"
-             d:DataContext="{d:DesignInstance viewModels:ArtistTracksViewModel, IsDesignTimeCreatable=False}"
-			 mc:Ignorable="d">
-
-    <!-- UserControl.DataContext>
-		<Binding Path="ArtistTracksViewModel" Source="{StaticResource ViewModelLocator}" />
-	</-->
+             d:DataContext="{d:DesignInstance viewModels:ArtistTracksViewModel, IsDesignTimeCreatable=False}">
 
 	<UserControl.Resources>
         <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">

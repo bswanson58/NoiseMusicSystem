@@ -6,21 +6,23 @@ using System.Windows.Data;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-    public class RelatedTrackNode : AutomaticCommandBase, IPlayingItem {
+    public class RelatedTrackNode : PropertyChangeBase, IPlayingItem {
         protected readonly Action<RelatedTrackNode> OnPlay;
         private bool                                mIsExpanded;
 
-        public  string      Key { get; }
-        public  DbArtist    Artist { get; }
-        public  DbAlbum     Album { get; }
-        public  DbTrack     Track { get; }
-        public  string      AlbumName => $"{Artist.Name}/{Album.Name}";
-        public  bool        DisplayTrackName { get; set; }
-        public  string      SortTrackName => DisplayTrackName ? Track.Name : String.Empty;
-        public  bool        IsPlaying { get; private set; }
+        public  string          Key { get; }
+        public  DbArtist        Artist { get; }
+        public  DbAlbum         Album { get; }
+        public  DbTrack         Track { get; }
+        public  string          AlbumName => $"{Artist.Name}/{Album.Name}";
+        public  bool            DisplayTrackName { get; set; }
+        public  string          SortTrackName => DisplayTrackName ? Track.Name : String.Empty;
+        public  bool            IsPlaying { get; private set; }
+        public  DelegateCommand Play { get; }
 
         public RelatedTrackNode( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) {
             Key = key;
@@ -29,6 +31,8 @@ namespace Noise.UI.Dto {
             Track = track;
 
             OnPlay = onPlay;
+
+            Play = new DelegateCommand( OnPlayCommand );
         }
 
         public bool IsExpanded {
@@ -41,7 +45,7 @@ namespace Noise.UI.Dto {
             }
         }
 
-        public void Execute_Play() {
+        private void OnPlayCommand() {
             // trigger the track queue animation
             RaisePropertyChanged( "AnimateQueueTrack" );
 

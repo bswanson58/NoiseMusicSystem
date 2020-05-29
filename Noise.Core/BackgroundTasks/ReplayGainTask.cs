@@ -46,19 +46,17 @@ namespace Noise.Core.BackgroundTasks {
 
 			mAlbumList = new List<DbAlbum>();
 
-			var audioCongfiguration = preferences.Load<AudioPreferences>();
-			if( audioCongfiguration != null ) {
-				mReplayGainEnabled = audioCongfiguration.ReplayGainEnabled;
+			var audioConfiguration = preferences.Load<AudioPreferences>();
+			if( audioConfiguration != null ) {
+				mReplayGainEnabled = audioConfiguration.ReplayGainEnabled;
 			}
 
 			mEventAggregator.Subscribe( this );
 		}
 
-		public string TaskId {
-			get { return ( "Task_ReplayGainScanner" ); }
-		}
+		public string TaskId => ( "Task_ReplayGainScanner" );
 
-		public void Handle( Events.DatabaseOpened message ) {
+        public void Handle( Events.DatabaseOpened message ) {
 			InitializeScan();
 		}
 
@@ -140,7 +138,7 @@ namespace Noise.Core.BackgroundTasks {
 							}
 						}
 						catch( Exception ex ) {
-							mLog.LogException( string.Format( "ReplayGainTask scanning: {0}", album ), ex );
+							mLog.LogException( $"ReplayGainTask scanning: {album}", ex );
 
 							spinCount = 0;
 						}

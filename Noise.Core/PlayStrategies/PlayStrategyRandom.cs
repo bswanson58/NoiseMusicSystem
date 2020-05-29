@@ -4,7 +4,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal class PlayStrategyRandom : PlayStrategyBase {
+	public class PlayStrategyRandom : PlayStrategyBase {
 		public PlayStrategyRandom() :
 			base( ePlayStrategy.Random, "Random", "Plays selected tracks from the queue in random order." ) {
 		}

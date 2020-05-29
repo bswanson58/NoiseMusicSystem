@@ -6,16 +6,16 @@ using System.Threading;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Prism;
 using ReusableBits;
 using ReusableBits.ExtensionClasses;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {

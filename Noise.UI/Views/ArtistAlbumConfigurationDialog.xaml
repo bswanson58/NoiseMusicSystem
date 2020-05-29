@@ -3,15 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
              Height="95" Width="300"
              Tag="Explorer Artist/Album Options"
              FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
     
-    <Grid Behaviours:GridUtils.ColumnDefinitions="110,*"
-          Behaviours:GridUtils.RowDefinitions="9,Auto,5,Auto">
+    <Grid behaviours:GridUtils.ColumnDefinitions="110,*"
+          behaviours:GridUtils.RowDefinitions="9,Auto,5,Auto">
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" Text="Sort Artist by:" VerticalAlignment="Center"/>
         <ComboBox x:Name="FirstFocus" Grid.Row="1" Grid.Column="1" Margin="0" DisplayMemberPath="DisplayName"
                   ItemsSource="{Binding Path=ArtistSorts}" SelectedItem="{Binding Path=SelectedArtistSort}" VerticalAlignment="Center"/>

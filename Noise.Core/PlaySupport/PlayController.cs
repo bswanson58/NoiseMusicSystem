@@ -345,7 +345,7 @@ namespace Noise.Core.PlaySupport {
 					mCurrentStatus = value;
 
 					mLog.PlaybackStatusChanged( mCurrentStatus );
-					mEventAggregator.PublishOnUIThread( new Events.PlaybackStatusChanged( mCurrentStatus ));
+					mEventAggregator.BeginPublishOnUIThread( new Events.PlaybackStatusChanged( mCurrentStatus ));
 				}
 			}
 		}
@@ -650,13 +650,13 @@ namespace Noise.Core.PlaySupport {
 			FireStateChange( eStateTriggers.UiPlay );
 		}
 
-		public bool CanPlay => ( mPlayStateController.CanFire( eStateTriggers.UiPlay ));
+		public bool CanPlay => mPlayStateController?.CanFire( eStateTriggers.UiPlay ) == true;
 
         public void Pause() {
 			FireStateChange( eStateTriggers.UiPause );
 		}
 
-		public bool CanPause => ( mPlayStateController.CanFire( eStateTriggers.UiPause ));
+		public bool CanPause => mPlayStateController?.CanFire( eStateTriggers.UiPause ) == true;
 
         public void Stop() {
 			FireStateChange( eStateTriggers.UiStop );
@@ -666,7 +666,7 @@ namespace Noise.Core.PlaySupport {
 			mPlayQueue.StopAtEndOfTrack();
 		}
 
-		public bool CanStop => ( mPlayStateController.CanFire( eStateTriggers.UiStop ));
+		public bool CanStop => mPlayStateController?.CanFire( eStateTriggers.UiStop ) == true;
 
         public bool CanStopAtEndOfTrack => ( mPlayQueue.CanStopAtEndOfTrack() && mPlayStateController.CanFire( eStateTriggers.UiStop ));
 
@@ -674,14 +674,14 @@ namespace Noise.Core.PlaySupport {
 			FireStateChange( eStateTriggers.UiPlayNext );
 		}
 
-		public bool CanPlayNextTrack => mPlayStateController.CanFire( eStateTriggers.UiPlayNext ) && mPlayQueue.CanPlayNextTrack();
+		public bool CanPlayNextTrack => ( mPlayStateController?.CanFire( eStateTriggers.UiPlayNext ) == true ) && mPlayQueue.CanPlayNextTrack();
 
         public void PlayPreviousTrack() {
 			FireStateChange( eStateTriggers.UiPlayPrevious );
 		}
 
 		public bool CanPlayPreviousTrack => ( mPlayQueue.CanPlayPreviousTrack()) &&
-                                            ( mPlayStateController.CanFire( eStateTriggers.UiPlayPrevious )) ||
+                                            ( mPlayStateController?.CanFire( eStateTriggers.UiPlayPrevious ) == true ) ||
                                            (( CurrentTrack != null ) &&
                                             ( CurrentStatus != ePlaybackStatus.Stopped ) &&
                                             ( mCurrentPosition > new TimeSpan( 0,0,5 )));

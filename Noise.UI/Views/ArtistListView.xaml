@@ -11,14 +11,12 @@
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
-			 mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ArtistListViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300">
-	
-	<UserControl.DataContext>
-		<Binding Path="ArtistListViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
 	
 	<UserControl.Resources>
 		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
@@ -147,10 +145,10 @@
 				<VisualState x:Name="_normal" />
 				<VisualState x:Name="_displaySortDescriptions">
 					<Storyboard>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(UIElement.Opacity)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(UIElement.Opacity)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="160" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
@@ -173,7 +171,7 @@
 				</i:Interaction.Behaviors>
 			</ListBox>
 
-			<noiseControls:SortDescriptionList x:Name="SortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
+			<noiseControls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
 			
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
