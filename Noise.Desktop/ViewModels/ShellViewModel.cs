@@ -6,7 +6,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.ViewModels;
 using Noise.UI.Views;
 using Prism.Commands;
 using Prism.Regions;
@@ -19,7 +18,6 @@ namespace Noise.Desktop.ViewModels {
         private readonly IRegionManager                 mRegionManager;
         private readonly IIpcManager			        mIpcManager;
         private readonly IDialogService                 mDialogService;
-        private readonly IPreferences		            mPreferences;
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
         public  bool									HaveCompanionApplications => CompanionApplications.Any();
@@ -29,10 +27,8 @@ namespace Noise.Desktop.ViewModels {
         public  DelegateCommand                         TimelineLayout { get; }
         public  DelegateCommand                         Options { get; }
 
-        public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager, IDialogService dialogService,
-                               IPreferences preferences, IEventAggregator eventAggregator ) {
+        public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
             mDialogService = dialogService;
-            mPreferences = preferences;
             mWindowManager = windowManager;
             mRegionManager = regionManager;
             mIpcManager = ipcManager;
@@ -96,11 +92,7 @@ namespace Noise.Desktop.ViewModels {
         }
 
         private void OnOptions() {
-            var dialogModel = new ConfigurationViewModel( mPreferences );
-
-//            if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
-//                dialogModel.UpdatePreferences();
-//            }
+            mDialogService.ShowDialog( nameof( ConfigurationDialog ), new DialogParameters(), result => { });
         }
     }
 }

@@ -6,11 +6,21 @@
 		xmlns:models="clr-namespace:Noise.UI.Models"
 		xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 		xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+		xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
 		mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance viewModels:ConfigurationViewModel, IsDesignTimeCreatable=False}"
-		Height="385" Width="375"
-		Tag="Noise Options">
-    
+		Height="415" Width="375">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
     <UserControl.Resources>
         <valueConverters:ColorToBrushConverter x:Key="BrushConverter"/>
         
@@ -23,13 +33,14 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <StackPanel Grid.Row="0" Margin="5" Orientation="Vertical">
+        <StackPanel Grid.Row="0" Orientation="Vertical">
             <Label Margin="5,0,0,0" Content="Theme Settings:"/>
 
             <Grid>
@@ -57,7 +68,7 @@
             </Grid>
         </StackPanel>
         
-        <Grid Grid.Row="1" Margin="5">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
@@ -85,5 +96,10 @@
             <Label Grid.Column="0" Grid.Row="8" Content="Sort Prefixes:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Grid.Row="8" Margin="3,5" Text="{Binding Path=SortPrefixes}"/>
         </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+        </StackPanel>
     </Grid>
 </UserControl>
