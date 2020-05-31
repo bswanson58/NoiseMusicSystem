@@ -1,35 +1,60 @@
-﻿using Noise.Infrastructure.Dto;
-using Noise.UI.Support;
+﻿using System;
+using Noise.Infrastructure.Dto;
+using Prism.Commands;
+using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    public class TrackStrategyOptionsDialogModel : DialogModelBase {
-        private bool    mDoNotPlay;
+    public class TrackStrategyOptionsDialogModel : PropertyChangeBase, IDialogAware {
+        public  const string                        cTrackParameter = "track";
 
-        public  DbTrack Track { get; }
+        private bool                                mDoNotPlay;
+
+        public  DbTrack                             Track { get; private set; }
         
-        public  bool    PlayNext { get; set; }
-        public  bool    PlayPrevious { get; set; }
-        public  bool    CanPlayAdjacent { get; set; }
+        public  bool                                PlayNext { get; set; }
+        public  bool                                PlayPrevious { get; set; }
+        public  bool                                CanPlayAdjacent { get; set; }
 
-        public TrackStrategyOptionsDialogModel( DbTrack forTrack ) {
-            Track = forTrack;
+        public  string                              Title { get; }
+        public  DelegateCommand                     Ok { get; }
+        public  DelegateCommand                     Cancel { get; }
+        public  event Action<IDialogResult>         RequestClose;
 
-            DoNotPlay = Track.DoNotStrategyPlay;
+        public TrackStrategyOptionsDialogModel() {
+            Title = "Strategy Play Options";
 
-            switch( Track.PlayAdjacentStrategy ) {
-                case ePlayAdjacentStrategy.PlayNext:
-                    PlayNext = true;
-                    break;
+            Ok = new DelegateCommand( OnOk );
+            Cancel = new DelegateCommand( OnCancel );
+        }
 
-                case ePlayAdjacentStrategy.PlayPrevious:
-                    PlayPrevious = true;
-                    break;
+        public void OnDialogOpened( IDialogParameters parameters ) {
+            Track = parameters.GetValue<DbTrack>( cTrackParameter );
 
-                case ePlayAdjacentStrategy.PlayNextPrevious:
-                    PlayNext = true;
-                    PlayPrevious = true;
-                    break;
+            if( Track != null ) {
+                DoNotPlay = Track.DoNotStrategyPlay;
+
+                switch( Track.PlayAdjacentStrategy ) {
+                    case ePlayAdjacentStrategy.PlayNext:
+                        PlayNext = true;
+                        break;
+
+                    case ePlayAdjacentStrategy.PlayPrevious:
+                        PlayPrevious = true;
+                        break;
+
+                    case ePlayAdjacentStrategy.PlayNextPrevious:
+                        PlayNext = true;
+                        PlayPrevious = true;
+                        break;
+                }
             }
+
+            RaisePropertyChanged( () => Track );
+            RaisePropertyChanged( () => PlayNext );
+            RaisePropertyChanged( () => PlayPrevious );
+            RaisePropertyChanged( () => CanPlayAdjacent );
+            RaisePropertyChanged( () => DoNotPlay );
         }
 
         public bool DoNotPlay {
@@ -47,6 +72,39 @@ namespace Noise.UI.ViewModels {
                 RaisePropertyChanged( () => PlayNext );
                 RaisePropertyChanged( () => PlayPrevious );
             }
+        }
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+            if( PlayNext  && !PlayPrevious ) {
+                Track.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNext;
+            }
+            else if( PlayPrevious && !PlayNext ) {
+                Track.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayPrevious;
+            }
+            else if( PlayPrevious && PlayNext ) {
+                Track.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNextPrevious;
+            }
+            else if(!PlayPrevious && !PlayNext ) {
+                Track.PlayAdjacentStrategy = ePlayAdjacentStrategy.None;
+            }
+
+            Track.DoNotStrategyPlay = DoNotPlay;
+
+            RaiseRequestClose( new DialogResult( ButtonResult.OK, new DialogParameters{{ cTrackParameter, Track }}));
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
         }
     }
 }

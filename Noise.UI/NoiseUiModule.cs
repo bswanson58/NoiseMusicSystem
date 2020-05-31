@@ -25,6 +25,10 @@ namespace Noise.UI {
 
             var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
             containerRegistry.RegisterInstance<IResourceProvider>( resourceLoader );
+
+            containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationViewModel>();
+            containerRegistry.RegisterDialog<TagAssociationDialog, TagAssociationDialogModel>();
+            containerRegistry.RegisterDialog<TrackStrategyOptionsDialog, TrackStrategyOptionsDialogModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

@@ -4,29 +4,22 @@ using System.Linq;
 using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Prism.Commands;
-using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Noise.UI.Views;
 using Observal.Extensions;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Mvvm.ViewModelSupport;
+using IDialogService = Prism.Services.Dialogs.IDialogService;
 
 namespace Noise.UI.ViewModels {
-    internal class TagEditInfo : InteractionRequestData<TagAssociationDialogModel> {
-        public TagEditInfo( TagAssociationDialogModel viewModel ) : base( viewModel ) { }
-    }
-
-    internal class PlayStrategyInfo : InteractionRequestData<TrackStrategyOptionsDialogModel> {
-        public PlayStrategyInfo( TrackStrategyOptionsDialogModel viewModel ) : base( viewModel ) { }
-    }
-
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
 										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged>, IHandle<Events.AlbumStructureChanged> {
 		private readonly IEventAggregator				mEventAggregator;
@@ -37,6 +30,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly IRatings						mRatings;
         private readonly IPlayingItemHandler            mPlayingItemHandler;
+		private readonly IDialogService					mDialogService;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
         private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
@@ -44,13 +38,11 @@ namespace Noise.UI.ViewModels {
 		private long									mCurrentAlbumId;
 
         public BindableCollection<UiTrack>              TrackList => mTracks;
-        public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
-        public InteractionRequest<PlayStrategyInfo>     StrategyEditRequest {  get; }
         public DelegateCommand                          ClearTrackRatings { get; }
 		public UiTrack									PlayingTrack { get; private set; }
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
-									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
+									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
@@ -59,6 +51,7 @@ namespace Noise.UI.ViewModels {
 			mPlayCommand = playCommand;
             mTagManager = tagManager;
             mPlayingItemHandler = playingItemHandler;
+			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
 
@@ -68,8 +61,8 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-            TagEditRequest = new InteractionRequest<TagEditInfo>();
-            StrategyEditRequest = new InteractionRequest<PlayStrategyInfo>();
+//            TagEditRequest = new InteractionRequest<TagEditInfo>();
+//            StrategyEditRequest = new InteractionRequest<PlayStrategyInfo>();
 
             ClearTrackRatings = new DelegateCommand( OnClearRatings );
 
@@ -310,17 +303,13 @@ namespace Noise.UI.ViewModels {
             var track = mTrackProvider.GetTrack( trackId );
 
             if( track != null ) {
-                var dialogModel = new TagAssociationDialogModel( track, mTagManager.GetUserTagList(), mTagManager.GetAssociatedTags( track.DbId ));
-				
-                TagEditRequest.Raise( new TagEditInfo( dialogModel ), OnTagEdited );
-            }
-        }
+				var parameters = new DialogParameters{{ TagAssociationDialogModel.cTrackParameter, track }};
 
-        private void OnTagEdited( TagEditInfo confirmation ) {
-            if( confirmation.Confirmed ) {
-                mTagManager.UpdateAssociations( confirmation.ViewModel.Track, confirmation.ViewModel.GetSelectedTags());
-
-                SetTrackTags( TrackList.FirstOrDefault( t => t.DbId.Equals( confirmation.ViewModel.Track.DbId )));
+				mDialogService.ShowDialog( nameof( TagAssociationDialog ), parameters, result => {
+					if( result.Result == ButtonResult.OK ) {
+                        SetTrackTags( TrackList.FirstOrDefault( t => t.DbId.Equals( track.DbId )));
+                    }
+                });
             }
         }
 
@@ -328,42 +317,32 @@ namespace Noise.UI.ViewModels {
             var track = mTrackProvider.GetTrack( trackId );
 
             if( track != null ) {
-                var dialogModel = new TrackStrategyOptionsDialogModel( track );
+				var parameters = new DialogParameters{{ TrackStrategyOptionsDialogModel.cTrackParameter, track }};
 
-                StrategyEditRequest.Raise( new PlayStrategyInfo( dialogModel ), OnStrategyEdited );
-            }
-        }
+				mDialogService.ShowDialog( nameof( TrackStrategyOptionsDialog ), parameters, result => {
+					if( result.Result == ButtonResult.OK ) {
+						var editedTrack = result.Parameters.GetValue<DbTrack>( TrackStrategyOptionsDialogModel.cTrackParameter );
 
-        private void OnStrategyEdited( PlayStrategyInfo dialogInfo ) {
-            if( dialogInfo.Confirmed ) {
-                using( var track = mTrackProvider.GetTrackForUpdate( dialogInfo.ViewModel.Track.DbId ) ) {
-                    if( track.Item != null ) {
-                        if( dialogInfo.ViewModel.PlayNext  && !dialogInfo.ViewModel.PlayPrevious ) {
-                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNext;
+						if( editedTrack != null ) {
+                            using( var updateTrack = mTrackProvider.GetTrackForUpdate( editedTrack.DbId ) ) {
+                                if( updateTrack.Item != null ) {
+									updateTrack.Item.PlayAdjacentStrategy = editedTrack.PlayAdjacentStrategy;
+									updateTrack.Item.DoNotStrategyPlay = editedTrack.DoNotStrategyPlay;
+
+                                    updateTrack.UpdateTrackAndAlbum();
+								}
+							}
+
+                            TrackList.FirstOrDefault( t => t.DbId.Equals( editedTrack.DbId ))?.SetStrategyOption( editedTrack.PlayAdjacentStrategy, editedTrack.DoNotStrategyPlay );
+
+                            mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "TrackStrategyPlayEdited" ));
                         }
-                        else if( dialogInfo.ViewModel.PlayPrevious && !dialogInfo.ViewModel.PlayNext ) {
-                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayPrevious;
-                        }
-                        else if( dialogInfo.ViewModel.PlayPrevious && dialogInfo.ViewModel.PlayNext ) {
-                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNextPrevious;
-                        }
-                        else if(!dialogInfo.ViewModel.PlayPrevious && !dialogInfo.ViewModel.PlayNext ) {
-                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.None;
-                        }
-
-                        track.Item.DoNotStrategyPlay = dialogInfo.ViewModel.DoNotPlay;
-
-                        track.UpdateTrackAndAlbum();
-
-                        TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayAdjacentStrategy, track.Item.DoNotStrategyPlay );
-
-                        mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "TrackStrategyPlayEdited" ));
                     }
-                }
+                });
             }
         }
 
-		private void OnFocusRequest( long trackId ) {
+        private void OnFocusRequest( long trackId ) {
 			var track = mTrackProvider.GetTrack( trackId );
 
 			if( track != null ) {

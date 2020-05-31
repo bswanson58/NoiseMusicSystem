@@ -3,26 +3,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             Width="350"
-             Height="120"
-             Tag="Strategy Play Options">
+             d:DataContext="{d:DesignInstance viewModels:TrackStrategyOptionsDialogModel, IsDesignTimeCreatable=False}"
+             Width="350" Height="170">
 
-    <Grid>
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="15"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="1" Text="Play adjacent tracks:"/>
-        <CheckBox Grid.Row="2" Margin="8,3" IsChecked="{Binding PlayPrevious}" IsEnabled="{Binding CanPlayAdjacent}" Content="Play the previous track first"/>
-        <CheckBox Grid.Row="3" Margin="8,3" IsChecked="{Binding PlayNext}" IsEnabled="{Binding CanPlayAdjacent}" Content="Continue with the next track"/>
+        <TextBlock Grid.Row="0" Margin="0,0,0,5" Style="{StaticResource ControlTitleStyle}" Text="Play adjacent tracks:"/>
+        <CheckBox Grid.Row="1" Margin="0,3" IsChecked="{Binding PlayPrevious}" IsEnabled="{Binding CanPlayAdjacent}" Content="Play the previous track first"/>
+        <CheckBox Grid.Row="2" Margin="0,3" IsChecked="{Binding PlayNext}" IsEnabled="{Binding CanPlayAdjacent}" Content="Continue with the next track"/>
 
-        <CheckBox Grid.Row="5" Margin="8,3" IsChecked="{Binding DoNotPlay}" Content="Don't strategy play"/>
+        <CheckBox Grid.Row="4" Margin="0,3" IsChecked="{Binding DoNotPlay}" Content="Don't strategy play"/>
+
+        <StackPanel Grid.Row="6" Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+        </StackPanel>
     </Grid>
 </UserControl>
