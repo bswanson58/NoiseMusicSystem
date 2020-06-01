@@ -11,13 +11,14 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Logging;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
 using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class UiEditChild : AutomaticCommandBase { }
+	public class UiEditChild : PropertyChangeBase { }
 
     [DebuggerDisplay("Track = {" + nameof( Name ) + "}")]
     public class UiTrackEdit : UiEditChild {
@@ -49,6 +50,7 @@ namespace Noise.UI.ViewModels {
 		private string								mVolumeName;
 
 		public	ObservableCollection<UiTrackEdit>	Tracks { get; }
+		public	DelegateCommand						DeleteVolume { get; }
 
 		public UiVolumeEdit( string key, string volumeName, IEnumerable<UiTrackEdit> tracks, Action<UiVolumeEdit> deleteVolume, Action<UiVolumeEdit> changeVolumeName ) :
             base( key ) {
@@ -56,6 +58,8 @@ namespace Noise.UI.ViewModels {
 			mDeleteVolume = deleteVolume;
 			mChangeVolumeName = changeVolumeName;
 			mVolumeName = volumeName;
+
+			DeleteVolume = new DelegateCommand( OnDeleteVolume );
         }
 
         public string Name {
@@ -67,7 +71,7 @@ namespace Noise.UI.ViewModels {
             }
         }
 
-		public void Execute_DeleteVolume() {
+		private void OnDeleteVolume() {
 			mDeleteVolume?.Invoke( this );
         }
     }
@@ -105,13 +109,16 @@ namespace Noise.UI.ViewModels {
         }
     }
 
-	public class AlbumEditDialogModel : DialogModelBase, IDropTarget, IDataErrorInfo {
+	public class AlbumEditDialogModel : PropertyChangeBase, IDialogAware, IDropTarget, IDataErrorInfo {
+		public	const string							cAlbumIdParameter = "albumId";
+
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly IUiLog							mLog;
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly List<DbTrack>					mTrackList;
 		private readonly Dictionary<string, VolumeInfo>	mVolumeAssociations;
+		private long									mAlbumId;
 		private TaskHandler								mDatabaseTaskHandler;
 		private string									mNewVolumeName;
 
@@ -119,7 +126,13 @@ namespace Noise.UI.ViewModels {
 		public	ObservableCollection<UiEditChild>		EditList { get; }
         public	string									PublishedDate { get; set; }
 
-		public AlbumEditDialogModel( IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log, IEventAggregator eventAggregator, long albumId ) {
+        public  string									Title { get; }
+        public  DelegateCommand							Ok { get; }
+        public  DelegateCommand							Cancel { get; }
+		public	DelegateCommand							CreateVolume { get; }
+        public  event Action<IDialogResult>				RequestClose;
+
+		public AlbumEditDialogModel( IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log, IEventAggregator eventAggregator ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mLog = log;
@@ -131,8 +144,20 @@ namespace Noise.UI.ViewModels {
 			mNewVolumeName = String.Empty;
 			PublishedDate = String.Empty;
 
-			LoadData( albumId );
+			Title = "Album Editor";
+
+			Ok = new DelegateCommand( OnOk );
+			Cancel = new DelegateCommand( OnCancel );
+			CreateVolume = new DelegateCommand( OnCreateVolume, CanCreateVolume );
 		}
+
+        public void OnDialogOpened( IDialogParameters parameters ) {
+			mAlbumId = parameters.GetValue<long>( cAlbumIdParameter );
+
+			if( mAlbumId != Constants.cDatabaseNullOid ) {
+                LoadData( mAlbumId );
+            }
+        }
 
         internal TaskHandler DatabaseTaskHandler {
             get {
@@ -152,7 +177,7 @@ namespace Noise.UI.ViewModels {
 				mNewVolumeName = value;
 
 				RaisePropertyChanged( () => NewVolumeName );
-				RaiseCanExecuteChangedEvent( "CanExecute_CreateVolume" );
+				CreateVolume.RaiseCanExecuteChanged();
             }
         }
 
@@ -237,7 +262,7 @@ namespace Noise.UI.ViewModels {
 			BuildUiList();
 		}
 
-		public bool UpdateData() {
+		private bool UpdateData() {
 			var retValue = false;
 
             if( EditList.FirstOrDefault( i => i is UiAlbumEdit ) is UiAlbumEdit album ) {
@@ -303,17 +328,17 @@ namespace Noise.UI.ViewModels {
 			return retValue;
         }
 
-		public void Execute_CreateVolume() {
+		private void OnCreateVolume() {
 			if((!String.IsNullOrWhiteSpace( NewVolumeName )) &&
                (!mVolumeAssociations.ContainsKey( NewVolumeName ))) {
 				mVolumeAssociations.Add( NewVolumeName, new VolumeInfo( NewVolumeName ));
 
 				BuildUiList();
-				RaiseCanExecuteChangedEvent( "CanExecute_CreateVolume" );
+				CreateVolume.RaiseCanExecuteChanged();
 			}
         }
 
-		public bool CanExecute_CreateVolume() {
+		private bool CanCreateVolume() {
 			return !String.IsNullOrWhiteSpace( NewVolumeName ) && !mVolumeAssociations.ContainsKey( NewVolumeName );
         }
 
@@ -386,5 +411,30 @@ namespace Noise.UI.ViewModels {
         }
 
         public string Error => null;
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+			if( UpdateData()) {
+				var parameters = new DialogParameters{{ cAlbumIdParameter, mAlbumId }};
+
+                RaiseRequestClose( new DialogResult( ButtonResult.OK, parameters ));
+            }
+			else {
+				RaiseRequestClose( new DialogResult( ButtonResult.Abort ));
+            }
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
+        }
     }
 }

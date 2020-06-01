@@ -1,88 +1,154 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
+using ReusableBits;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Interfaces;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class AlbumArtworkViewModel : DialogModelBase {
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly IResourceProvider	mResourceProvider;
-		private readonly long				mAlbumId;
-		private AlbumSupportInfo			mAlbumInfo;
-		private	readonly BackgroundWorker	mBackgroundWorker;
+	public class AlbumArtworkViewModel : PropertyChangeBase, IDialogAware {
+		public	const string						cAlbumIdParameter = "albumId";
+
+		private readonly IAlbumProvider				mAlbumProvider;
+		private readonly IArtworkProvider			mArtworkProvider;
+		private readonly IResourceProvider			mResourceProvider;
+		private readonly IPlatformLog				mLog;
 		private readonly ObservableCollectionEx<UiAlbumExtra>	mAlbumImages;
+        private AlbumSupportInfo					mAlbumInfo;
+		private TaskHandler<AlbumSupportInfo>		mAlbumInfoHandler;
+		private long								mAlbumId;
+		private UiAlbumExtra						mCurrentImage;
 
+        public  string                              Title { get; }
+        public  DelegateCommand                     Ok { get; }
+        public  DelegateCommand                     Cancel { get; }
+        public  event Action<IDialogResult>         RequestClose;
+        public	IEnumerable<UiAlbumExtra>			AlbumImages => mAlbumImages;
 
-		public AlbumArtworkViewModel( IAlbumProvider albumProvider, IResourceProvider resourceProvider, long albumId ) {
+		public AlbumArtworkViewModel( IAlbumProvider albumProvider, IArtworkProvider artworkProvider, IResourceProvider resourceProvider, IPlatformLog log ) {
 			mAlbumProvider = albumProvider;
+			mArtworkProvider = artworkProvider;
 			mResourceProvider = resourceProvider;
-			mAlbumId = albumId;
+			mLog = log;
 
 			mAlbumImages = new ObservableCollectionEx<UiAlbumExtra>();
 
-			mBackgroundWorker = new BackgroundWorker();
-			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAlbumInfo((long)args.Argument );
-			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetAlbumInfo( result.Result as AlbumSupportInfo );
+            Ok = new DelegateCommand( OnOk );
+			Cancel = new DelegateCommand( OnCancel );
 
-			mBackgroundWorker.RunWorkerAsync( mAlbumId );
+			Title = "Album Artwork";
 		}
 
-		private AlbumSupportInfo RetrieveAlbumInfo( long albumId ) {
-			return( mAlbumProvider.GetAlbumSupportInfo( albumId ));
+        public void OnDialogOpened( IDialogParameters parameters ) {
+			mAlbumId = parameters.GetValue<long>( cAlbumIdParameter );
+
+			if( mAlbumId != Constants.cDatabaseNullOid ) {
+				RetrieveAlbumInfo( mAlbumId );
+            }
+        }
+
+        internal TaskHandler<AlbumSupportInfo> AlbumRetrievalTaskHandler {
+            get {
+                if( mAlbumInfoHandler == null ) {
+                    Execute.OnUIThread( () => mAlbumInfoHandler = new TaskHandler<AlbumSupportInfo>());
+                }
+
+                return( mAlbumInfoHandler );
+            }
+
+            set => mAlbumInfoHandler = value;
+        }
+
+        private void RetrieveAlbumInfo( long albumId ) {
+			AlbumRetrievalTaskHandler.StartTask( () => mAlbumProvider.GetAlbumSupportInfo( albumId ), SetAlbumInfo, ex => { mLog.LogException( "AlbumArtworkViewModel", ex ); });
 		}
 
 		private void SetAlbumInfo( AlbumSupportInfo albumInfo ) {
 			mAlbumInfo = albumInfo;
-			mAlbumImages.SuspendNotification();
 			mAlbumImages.Clear();
 
 			if( mAlbumInfo != null ) {
+                var images = new List<Artwork>();
+
 				if( mAlbumInfo.AlbumCovers != null ) {
-					mAlbumImages.AddRange( from Artwork artwork in mAlbumInfo.AlbumCovers where !artwork.IsUserSelection select new UiAlbumExtra( artwork ));
+					images.AddRange( mAlbumInfo.AlbumCovers );
 				}
 
-				if( mAlbumInfo.Artwork != null ) {
-					mAlbumImages.AddRange( from Artwork artwork in mAlbumInfo.Artwork select new UiAlbumExtra( artwork ));
+                if( mAlbumInfo.Artwork != null ) {
+                    images.AddRange( mAlbumInfo.Artwork );
+                }
+
+                mAlbumImages.AddRange( images.DistinctBy( i => i.Name ).OrderBy( i => i.Name ).Select( artwork => new UiAlbumExtra( artwork )));
+
+                if( mAlbumInfo.Info != null ) {
+					mAlbumImages.AddRange( from TextInfo info in mAlbumInfo.Info orderby info.Name select new UiAlbumExtra( info, mResourceProvider.RetrieveImage( "Text Document.png" )));
 				}
 
-				if( mAlbumInfo.Info != null ) {
-					mAlbumImages.AddRange( from TextInfo info in mAlbumInfo.Info select new UiAlbumExtra( info, mResourceProvider.RetrieveImage(  "Text Document.png" )));
-				}
-
-				if( mAlbumImages.Count > 0 ) {
-					CurrentImage = mAlbumImages[0];
-				}
-			}
-
-			mAlbumImages.ResumeNotification();
+                CurrentImage = mAlbumImages.FirstOrDefault( a => a.Artwork.IsUserSelection ) ?? mAlbumImages.FirstOrDefault();
+            }
 		}
 
-		[DependsUpon("CurrentImage")]
 		public bool PreferredCover {
-			get{ return( CurrentImage != null && CurrentImage.Artwork != null ? CurrentImage.Artwork.IsUserSelection : false ); }
-			set {
-				if(( CurrentImage != null ) &&
-				   ( CurrentImage.Artwork != null ) &&
-				   ( value ) &&
-				   (!CurrentImage.Artwork.IsUserSelection )) {
-					AlbumImages.Where( image => image.Artwork.IsUserSelection = false );
-					CurrentImage.SetPreferredImage();
+			get => CurrentImage?.Artwork != null && CurrentImage.Artwork.IsUserSelection;
+            set {
+				if( CurrentImage?.Artwork != null ) {
+					AlbumImages.ForEach( image => image.UserSelection( false ));
+
+                    CurrentImage.UserSelection( value );
 				}
 			}
 		}
+
+		private void UpdateArtwork() {
+            mAlbumImages.Where( a => a.IsDirty ).Select( a => a.Artwork ).ForEach( artwork => {
+                using( var update = mArtworkProvider.GetArtworkForUpdate( artwork.DbId )) {
+                    if( update?.Item != null ) {
+                        update.Item.Rotation = artwork.Rotation;
+                        update.Item.IsUserSelection = artwork.IsUserSelection;
+
+                        update.Update();
+                    }
+                }
+            });
+        }
 
 		public UiAlbumExtra CurrentImage {
-			get{ return( Get( () => CurrentImage )); }
-			set{ Set( () => CurrentImage, value ); }
+			get => mCurrentImage;
+            set {
+                mCurrentImage = value;
+
+				RaisePropertyChanged( () => CurrentImage );
+				RaisePropertyChanged( () => PreferredCover );
+            }
 		}
 
-		public IEnumerable<UiAlbumExtra> AlbumImages {
-			get{ return( mAlbumImages ); }
-		}
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+			UpdateArtwork();
+
+            RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
+        }
 	}
 }

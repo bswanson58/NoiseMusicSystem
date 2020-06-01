@@ -7,12 +7,11 @@
              xmlns:controls="clr-namespace:Noise.UI.Controls"
              xmlns:views="clr-namespace:Noise.UI.Views"
              xmlns:drag="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
-             Width="750"
-             Height="600"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
-             Tag="Album Editor"
-             mc:Ignorable="d">
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:AlbumEditDialogModel, IsDesignTimeCreatable=False}"
+             Width="750" Height="640">
 
     <UserControl.Resources>
         <Style x:Key="TreeViewItemStyleExpanded" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
@@ -57,10 +56,11 @@
                                          TrackTemplate="{StaticResource TrackEditTemplate}"/>
     </UserControl.Resources>
 
-    <Grid Margin="5">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -81,10 +81,15 @@
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Click names in list above to edit them."/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Drag tracks to volume/album headers to reassign."/>
         </StackPanel>
-        <StackPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Margin="0,5,0,10" Orientation="Horizontal" HorizontalAlignment="Right">
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="New Volume:" Margin="0,0,3,0"/>
             <TextBox Width="150" VerticalAlignment="Center" Text="{Binding NewVolumeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="Create" Command="{Binding CreateVolume}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
         </StackPanel>
     </Grid>
 </UserControl>

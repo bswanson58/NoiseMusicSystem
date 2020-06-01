@@ -54,10 +54,10 @@ namespace Noise.UI.Dto {
 		}
 
 
-        public void SetPreferredImage() {
+        public void UserSelection( bool value ) {
 			if(( Artwork != null ) &&
-			   (!Artwork.IsUserSelection )) {
-				Artwork.IsUserSelection = true;
+			   ( Artwork.IsUserSelection != value )) {
+				Artwork.IsUserSelection = value;
 
 				IsDirty = true;
 			}
