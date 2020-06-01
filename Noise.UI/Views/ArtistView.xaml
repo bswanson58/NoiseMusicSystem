@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ArtistView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
@@ -10,11 +9,12 @@
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 Height="200"
 			 d:DesignWidth="800"
-             DataContext="{Binding ArtistViewModel, Source={StaticResource ViewModelLocator}}"
-             d:DataContext="{d:DesignInstance viewModels:ArtistViewModel, IsDesignTimeCreatable=False}"
-			 mc:Ignorable="d">
+             d:DataContext="{d:DesignInstance viewModels:ArtistViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
 		<valueConverters:ByteImageConverter x:Key="ImageConverter" />
@@ -34,16 +34,7 @@
         </Style>
     </UserControl.Resources>
 
-	<i:Interaction.Behaviors>
-		<behaviours:InteractionRequestDialogBehavior DialogClass="ArtistEdit"
-													 DialogService="{Binding Source={StaticResource DialogService}}"
-													 InteractionRequest="{Binding Path=ArtistEditRequest}" />
-        <behaviours:InteractionRequestDialogBehavior DialogClass="ArtistArtworkDisplay"
-                                                     DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=ArtistArtworkDisplayRequest}" />
-	</i:Interaction.Behaviors>
-
-	<GroupBox Margin="1,0,0,0" Style="{StaticResource PlayingItemBorder}" Header=" Artist ">
+    <GroupBox Margin="1,0,0,0" Style="{StaticResource PlayingItemBorder}" Header=" Artist ">
 		<Grid>
             <Grid Visibility="{Binding ArtistValid, Converter={StaticResource DisplayIfFalse}}">
                 <TextBlock VerticalAlignment="Center" Style="{StaticResource EmptyListTextStyle}" Text="Select an artist!" />
@@ -87,7 +78,7 @@
 
                             <!--  Rating controls  -->
                             <StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,11,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
+                                <CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" Style="{StaticResource FavoriteCheckBoxStyle}"
 									  Opacity="{Binding Path=Artist.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
 									  IsChecked="{Binding Artist.FavoriteValue, Mode=TwoWay}" />
                                 <controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}"
@@ -145,10 +136,10 @@
                             </controls:LinkLabel>
 
                             <!--  Artist website link  -->
-                            <controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,7,0,0" Padding="0"  Content="{Binding ArtistWebsite.DisplayText}"
-											IsEnabled="{Binding ArtistWebsite.IsLinked}" LinkLabelBehavior="HoverUnderline">
+                            <controls:LinkLabel Grid.Row="4" HorizontalAlignment="Right" Margin="0,7,0,0" Padding="0"  Content="{Binding Artist.Website}"
+                                                LinkLabelBehavior="HoverUnderline">
                                 <eventCommandTriggers:CommandSource.Trigger>
-                                    <eventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="controls:LinkLabel.Click" />
+                                    <eventCommandTriggers:EventCommandTrigger Command="{Binding WebsiteClicked}" RoutedEvent="controls:LinkLabel.Click" />
                                 </eventCommandTriggers:CommandSource.Trigger>
                             </controls:LinkLabel>
 

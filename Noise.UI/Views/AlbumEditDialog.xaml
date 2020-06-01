@@ -13,6 +13,15 @@
              d:DataContext="{d:DesignInstance viewModels:AlbumEditDialogModel, IsDesignTimeCreatable=False}"
              Width="750" Height="640">
 
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
     <UserControl.Resources>
         <Style x:Key="TreeViewItemStyleExpanded" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
             <Setter Property="IsExpanded" Value="True"/>

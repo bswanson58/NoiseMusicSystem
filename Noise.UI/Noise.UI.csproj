@@ -350,6 +350,7 @@
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistArtworkViewModel.cs" />
+    <Compile Include="ViewModels\ArtistEditDialogModel.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModel.cs" />
     <Compile Include="ViewModels\ArtistListViewFilters.cs" />
     <Compile Include="ViewModels\ArtistListViewModel.cs" />

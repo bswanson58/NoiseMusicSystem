@@ -3,16 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
-             Height="80" Width="550"
-             Tag="Artist Properties"
-             FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
+             Height="95" Width="550"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    
-    <Grid behaviours:GridUtils.ColumnDefinitions="90,*"
-          behaviours:GridUtils.RowDefinitions="Auto,Auto">
-        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Name:"/>
-        <TextBox x:Name="FirstFocus" Grid.Row="0" Grid.Column="1" Margin="0,5,5,5" Text="{Binding Path=Name}"/>
+             d:DataContext="{d:DesignInstance viewModels:ArtistEditDialogModel, IsDesignTimeCreatable=False}">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Name:"/>
+        <TextBox Tag="InitialFocus" Grid.Row="0" Grid.Column="1" Margin="0,5,5,5" Text="{Binding Path=Artist.Name}"/>
+
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+        </StackPanel>
     </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviours:FocusOnLoad FocusElementTag="InitialFocus"/>
+    </i:Interaction.Behaviors>
 </UserControl>

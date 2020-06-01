@@ -1,32 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Logging;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    class ArtistArtworkViewModel : DialogModelBase {
+    class ArtistArtworkViewModel : PropertyChangeBase, IDialogAware {
+        public  const string                        cArtistParameter = "artist";
+        public  const string                        cArtworkParameter = "artwork";
+
         private readonly IUiLog                     mLog;
-        private readonly UiArtist                   mArtist;
         private readonly IMetadataManager           mMetadataManager;
-        private readonly string                     mInitialArtworkName;
+        private string                              mInitialArtworkName;
+        private UiArtist                            mArtist;
         private TaskHandler<IEnumerable<Artwork>>   mArtworkTask;
         private Artwork                             mCurrentArtwork;
 
         public  BindableCollection<Artwork>         Portfolio { get; }
+        public  string                              Title { get; }
+        public  DelegateCommand                     Ok { get; }
+        public  event Action<IDialogResult>         RequestClose;
 
-        public ArtistArtworkViewModel( IMetadataManager metadataManager, UiArtist artist, IUiLog log, string currentArtworkName ) {
+        public ArtistArtworkViewModel( IMetadataManager metadataManager, IUiLog log ) {
             mMetadataManager = metadataManager;
-            mArtist = artist;
             mLog = log;
-            mInitialArtworkName = currentArtworkName;
 
             Portfolio = new BindableCollection<Artwork>();
-            LoadArtwork();
+
+            Ok = new DelegateCommand( OnOk );
+
+            Title = "Artist Portfolio";
+        }
+
+        public void OnDialogOpened( IDialogParameters parameters ) {
+            mInitialArtworkName = parameters.GetValue<string>( cArtworkParameter );
+            mArtist = parameters.GetValue<UiArtist>( cArtistParameter );
+
+            if( mArtist != null ) {
+                LoadArtwork();
+            }
         }
 
         public Artwork CurrentArtwork {
@@ -59,7 +78,7 @@ namespace Noise.UI.ViewModels {
 
         private void SetArtwork( IEnumerable<Artwork>  artworkList ) {
             Portfolio.Clear();
-            Portfolio.AddRange( artworkList );
+            Portfolio.AddRange( from artwork in artworkList orderby artwork.Name select artwork );
 
             if(!string.IsNullOrWhiteSpace( mInitialArtworkName )) {
                 CurrentArtwork = Portfolio.FirstOrDefault( a => a.Name.Equals( mInitialArtworkName ));
@@ -68,6 +87,20 @@ namespace Noise.UI.ViewModels {
             if( CurrentArtwork == null ) {
                 CurrentArtwork = Portfolio.FirstOrDefault();
             }
+        }
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+            RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
         }
     }
 }

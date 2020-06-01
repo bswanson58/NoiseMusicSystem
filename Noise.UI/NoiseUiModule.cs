@@ -28,6 +28,8 @@ namespace Noise.UI {
 
             containerRegistry.RegisterDialog<AlbumArtworkView, AlbumArtworkViewModel>();
             containerRegistry.RegisterDialog<AlbumEditDialog, AlbumEditDialogModel>();
+            containerRegistry.RegisterDialog<ArtistArtworkView, ArtistArtworkViewModel>();
+            containerRegistry.RegisterDialog<ArtistEditDialog, ArtistEditDialogModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationViewModel>();
             containerRegistry.RegisterDialog<TagAssociationDialog, TagAssociationDialogModel>();
             containerRegistry.RegisterDialog<TrackStrategyOptionsDialog, TrackStrategyOptionsDialogModel>();
