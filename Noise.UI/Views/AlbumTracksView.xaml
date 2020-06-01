@@ -12,11 +12,11 @@
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
-             d:DesignHeight="100"
-             d:DesignWidth="530"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:AlbumTracksViewModel, IsDesignTimeCreatable=False}"
-             DataContext="{Binding AlbumTracksViewModel, Source={StaticResource ViewModelLocator}}"
-             mc:Ignorable="d">
+             d:DesignHeight="100" d:DesignWidth="530">
 
     <UserControl.Resources>
         <reusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
@@ -189,15 +189,6 @@
             </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
-
-    <i:Interaction.Behaviors>
-        <behaviours:InteractionRequestDialogBehavior DialogClass="TagAssociationDialog"
-                                                     DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=TagEditRequest}" />
-        <behaviours:InteractionRequestDialogBehavior DialogClass="TrackStrategyOptionsDialog"
-                                                     DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=StrategyEditRequest}" />
-    </i:Interaction.Behaviors>
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
 

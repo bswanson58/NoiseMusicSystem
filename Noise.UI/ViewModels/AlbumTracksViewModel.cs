@@ -61,9 +61,6 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-//            TagEditRequest = new InteractionRequest<TagEditInfo>();
-//            StrategyEditRequest = new InteractionRequest<PlayStrategyInfo>();
-
             ClearTrackRatings = new DelegateCommand( OnClearRatings );
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );

@@ -9,14 +9,12 @@
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
 			 Height="200"
 			 d:DesignWidth="600"
-             d:DataContext="{d:DesignInstance viewModels:AlbumViewModel, IsDesignTimeCreatable=False}"
-			 mc:Ignorable="d">
-
-	<UserControl.DataContext>
-		<Binding Path="AlbumViewModel" Source="{StaticResource ViewModelLocator}" />
-	</UserControl.DataContext>
+             d:DataContext="{d:DesignInstance viewModels:AlbumViewModel, IsDesignTimeCreatable=False}">
 
 	<UserControl.Resources>
 		<valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
@@ -36,17 +34,8 @@
             </Style.Triggers>
         </Style>
 	</UserControl.Resources>
-	
-	<i:Interaction.Behaviors>
-		<behaviours:InteractionRequestDialogBehavior DialogClass="AlbumEdit"
-													 DialogService="{Binding Source={StaticResource DialogService}}"
-													 InteractionRequest="{Binding Path=AlbumEditRequest}" />
-		<behaviours:InteractionRequestDialogBehavior DialogClass="AlbumArtworkDisplay"
-													 DialogService="{Binding Source={StaticResource DialogService}}"
-													 InteractionRequest="{Binding Path=AlbumArtworkDisplayRequest}" />
-	</i:Interaction.Behaviors>
 
-	<GroupBox Style="{StaticResource PlayingItemBorder}" Header=" Album ">
+    <GroupBox Style="{StaticResource PlayingItemBorder}" Header=" Album ">
         <Border BorderThickness="0" CornerRadius="5" Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Grid Background="{StaticResource NoiseBrush}" 
 				  behaviours:GridUtils.ColumnDefinitions="Auto,*">
@@ -70,7 +59,7 @@
                 <ContentPresenter Grid.Column="0" Margin="5,7,0,5" Opacity="0.5" HorizontalAlignment="Left" Content="{StaticResource Path_UnknownAlbum}"
                                   Visibility="{Binding ArtworkValid, Converter={StaticResource DisplayIfFalse}}"/>
 
-                <Grid x:Name="GridParent" Grid.Column="1" Margin="3,7,5,3">
+                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,5,3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -81,39 +70,39 @@
                     </Grid.RowDefinitions>
 
                     <!--  Album name -->
-					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=GridParent, Path=ActualWidth}">
+					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
 						<TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->
-					<StackPanel x:Name="RatingPanel" Grid.Row="1" Margin="0,11,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
-						<CheckBox x:Name="FavoriteControl" Margin="0,0,7,1" Style="{StaticResource FavoriteCheckBoxStyle}"
+					<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,11,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+						<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" Style="{StaticResource FavoriteCheckBoxStyle}"
 								  Opacity="{Binding Path=Album.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
 								  IsChecked="{Binding Path=Album.FavoriteValue, Mode=TwoWay}" />
-						<controls:RatingControl x:Name="RatingControl" Style="{StaticResource NoiseRatingStyle}" 
+						<controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}" 
 												Opacity="{Binding Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
 												Rating="{Binding Album.UiRating, Mode=TwoWay}" UseAlternate="{Binding Album.UseAlternateRating}"/>
 						
 						<StackPanel.Triggers>
-							<EventTrigger SourceName="RatingPanel" RoutedEvent="StackPanel.MouseEnter">
+							<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
 								<BeginStoryboard>
-									<Storyboard Storyboard.TargetName="FavoriteControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
 										</DoubleAnimationUsingKeyFrames>
 									</Storyboard>
 								</BeginStoryboard>
 								<BeginStoryboard>
-									<Storyboard Storyboard.TargetName="RatingControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
 										</DoubleAnimationUsingKeyFrames>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>
-							<EventTrigger SourceName="RatingPanel" RoutedEvent="StackPanel.MouseLeave">
+							<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseLeave">
 								<BeginStoryboard >
-									<Storyboard Storyboard.TargetName="FavoriteControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="{Binding Path=Album.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}" 
 																  KeyTime="0:0:0.7" />
@@ -121,7 +110,7 @@
 									</Storyboard>
 								</BeginStoryboard>
 								<BeginStoryboard >
-									<Storyboard Storyboard.TargetName="RatingControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="{Binding Path=Album.UiRating, Converter={StaticResource DefaultValueOpacityConverter}}" 
 																  KeyTime="0:0:0.7" />
