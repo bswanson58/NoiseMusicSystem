@@ -5,12 +5,23 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
-			 Width="800"
-			 Height="450"
-			 Tag="Play Strategy Configuration"
-			 mc:Ignorable="d">
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:PlayStrategyDialogModel, IsDesignTimeCreatable=False}"
+			 Width="800" Height="470">
 
-	<UserControl.Resources>
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <UserControl.Resources>
 		<valueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
 
         <DataTemplate x:Key="PlayHandlerTemplate" DataType="dto:UiStrategyDescription">
@@ -25,7 +36,7 @@
 		<Control.Template> <!-- A bit of a hack to include the triggers below. -->
 			<ControlTemplate>
 				<StackPanel Orientation="Vertical" Margin="11" >
-                    <TextBlock Text="PLAY STRATEGY"/>
+                    <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="PLAY STRATEGY"/>
                     <TextBlock Margin="5,0,0,10" Style="{StaticResource ControlTitleStyle}"
 							   Text="The play strategy determines how tracks that you have added to the queue are played."/>
 
@@ -43,8 +54,8 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="1" VerticalAlignment="Center" Width="150" TextAlignment="Right" Text="{Binding PlayParameterName}"/>
-							<TextBlock Grid.Column="2" VerticalAlignment="Center" Text=": "/>
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Width="150" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayParameterName}"/>
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text=": "/>
 
 							<Grid Grid.Column="3">
 								<ComboBox x:Name="_playParameters" Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
@@ -60,7 +71,7 @@
 
 					<Rectangle Margin="3,15" Height="1" StrokeThickness="0" Opacity="0.3"  Fill="{StaticResource DoubleFadedBrush}" />
 
-                    <TextBlock Text="EXHAUSTED STRATEGY"/>
+                    <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="EXHAUSTED STRATEGY"/>
 					<TextBlock Margin="5,0,0,10" Style="{StaticResource ControlTitleStyle}"
 							   Text="The exhausted strategy determines how tracks are chosen for play when the selections you have added to the queue have played."/>
 
@@ -77,8 +88,8 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="1" VerticalAlignment="Center" Width="150" TextAlignment="Right" Text="{Binding ExhaustedParameterName}"/>
-							<TextBlock Grid.Column="2" VerticalAlignment="Center" Text=": "/>
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Width="150" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding ExhaustedParameterName}"/>
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text=": "/>
 
 							<Grid Grid.Column="3">
 								<ComboBox x:Name="_exhaustedParameters" Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
@@ -111,9 +122,14 @@
                         <ListBox Grid.Row="1" Grid.Column="3" Margin="3,0" ItemsSource="{Binding BonusStrategyList}" ItemTemplate="{StaticResource PlayHandlerTemplate}"/>
                     </Grid>
 					<Rectangle Margin="3,15" Height="1" StrokeThickness="0" Opacity="0.3"  Fill="{StaticResource DoubleFadedBrush}" />
-					
-                    <TextBlock Text="OPTIONS"/>
-					<CheckBox Margin="7,5,0,0" IsChecked="{Binding DeletePlayedTracks}" Content="Remove older played tracks from the play queue."></CheckBox>
+
+                    <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="OPTIONS"/>
+					<CheckBox Margin="7,5,0,0" IsChecked="{Binding DeletePlayedTracks}" Content="Remove older played tracks from the play queue."/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+                        <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+                    </StackPanel>
 				</StackPanel>
 
 				<ControlTemplate.Triggers>

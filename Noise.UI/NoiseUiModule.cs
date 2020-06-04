@@ -31,6 +31,7 @@ namespace Noise.UI {
             containerRegistry.RegisterDialog<ArtistArtworkView, ArtistArtworkViewModel>();
             containerRegistry.RegisterDialog<ArtistEditDialog, ArtistEditDialogModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationViewModel>();
+            containerRegistry.RegisterDialog<PlayStrategyDialog, PlayStrategyDialogModel>();
             containerRegistry.RegisterDialog<TagAssociationDialog, TagAssociationDialogModel>();
             containerRegistry.RegisterDialog<TrackStrategyOptionsDialog, TrackStrategyOptionsDialogModel>();
         }
@@ -58,7 +59,7 @@ namespace Noise.UI {
             regionManager.RegisterViewWithRegion( RegionNames.LibraryRightPanel, typeof( PlayHistoryView ));
 
             regionManager.RegisterViewWithRegion( RegionNames.LibraryPlayerPanel, typeof( PlayerView ));
-            regionManager.RegisterViewWithRegion( RegionNames.LibraryPlayerPanel, typeof (PlayerExtendedView ));
+            regionManager.RegisterViewWithRegion( RegionNames.LibraryPlayerPanel, typeof(PlayerExtendedView ));
         }
     }
 }

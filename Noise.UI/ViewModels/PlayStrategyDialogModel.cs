@@ -1,18 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits.ExtensionClasses.MoreLinq;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayStrategyDialogModel : DialogModelBase {
+	public class PlayStrategyDialogModel : AutomaticPropertyBase, IDialogAware {
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IGenreProvider             mGenreProvider;
 		private readonly ITagProvider               mTagProvider;
+		private readonly IPlayQueue					mPlayQueue;
 		private readonly IPlayStrategyFactory       mPlayStrategyFactory;
 		private readonly IExhaustedStrategyFactory  mExhaustedStrategyFactory;
 		private readonly List<DbArtist>				mArtistList;
@@ -23,20 +27,26 @@ namespace Noise.UI.ViewModels {
         private ExhaustedStrategySpecification      mExhaustedStrategySpecification;
         private IStrategyDescription                mSelectedExhaustedStrategy;
 
-        private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
-		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
-		private readonly BindableCollection<NameIdPair>				mPlayParameters;
+        private readonly BindableCollection<NameIdPair>			mExhaustedParameters; 
+		private readonly BindableCollection<PlayStrategyItem>	mPlayStrategies;
+		private readonly BindableCollection<NameIdPair>			mPlayParameters;
 
-        public  BindableCollection<PlayStrategyItem>                PlayStrategyList => mPlayStrategies;
-        public  BindableCollection<IStrategyDescription>            ExhaustedStrategyList { get; }
-        public  BindableCollection<UiStrategyDescription>           DisqualifierList { get; }
-        public  BindableCollection<UiStrategyDescription>           BonusStrategyList { get; }
+        public  BindableCollection<PlayStrategyItem>            PlayStrategyList => mPlayStrategies;
+        public  BindableCollection<IStrategyDescription>        ExhaustedStrategyList { get; }
+        public  BindableCollection<UiStrategyDescription>       DisqualifierList { get; }
+        public  BindableCollection<UiStrategyDescription>       BonusStrategyList { get; }
 
-        public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
+        public  string											Title { get; }
+        public  DelegateCommand									Ok { get; }
+        public  DelegateCommand									Cancel { get; }
+        public  event Action<IDialogResult>						RequestClose;
+
+        public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider, IPlayQueue playQueue,
 										IPlayStrategyFactory strategyFactory, IExhaustedStrategyFactory exhaustedFactory ) {
 			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
+			mPlayQueue = playQueue;
 			mPlayStrategyFactory = strategyFactory;
 			mExhaustedStrategyFactory = exhaustedFactory;
 
@@ -58,30 +68,47 @@ namespace Noise.UI.ViewModels {
 			mArtistList = new List<DbArtist>();
 			mArtistGenreList = new List<DbGenre>();
             mUserTags = new List<DbTag>();
+
+			Ok = new DelegateCommand( OnOk, () => IsConfigurationValid );
+			Cancel = new DelegateCommand( OnCancel );
+			Title = "Play Strategy Configuration";
 		}
 
-		public bool DeletePlayedTracks {
+        public void OnDialogOpened( IDialogParameters parameters ) {
+            PlayStrategy = mPlayQueue.PlayStrategy.StrategyId;
+            PlayStrategyParameter = mPlayQueue.PlayStrategy.Parameters;
+            ExhaustedStrategySpecification = mPlayQueue.ExhaustedPlayStrategy;
+            DeletePlayedTracks = mPlayQueue.DeletedPlayedTracks;
+        }
+
+        public bool DeletePlayedTracks {
 			get { return( Get( () => DeletePlayedTracks )); }
 			set { Set( () => DeletePlayedTracks, value ); }
 		}
 
 		public ePlayStrategy PlayStrategy {
-			get => ( mSelectedPlayStrategy.StrategyId );
+			get => mSelectedPlayStrategy.StrategyId;
             set {
 				mSelectedPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( value );
 
 				SelectedPlayStrategy = mPlayStrategies.FirstOrDefault( strategy => strategy.StrategyId == mSelectedPlayStrategy.StrategyId );
+
+				RaisePropertyChanged( () => PlayStrategy );
+				Ok.RaiseCanExecuteChanged();
 			}
 		}
 
 		public IPlayStrategyParameters PlayStrategyParameter {
-			get => ( mPlayStrategyParameters );
+			get => mPlayStrategyParameters;
             set {
 				mPlayStrategyParameters = value;
 
 				if( mPlayStrategyParameters is PlayStrategyParameterDbId dbParms ) {
                     SelectedPlayParameter = mPlayParameters.FirstOrDefault( parameter => parameter.Id == dbParms.DbItemId );
 				}
+
+				RaisePropertyChanged( () => PlayStrategyParameter );
+                Ok.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -95,6 +122,9 @@ namespace Noise.UI.ViewModels {
                 mExhaustedStrategySpecification = value;
 
                 LoadStrategySpecification();
+
+				RaisePropertyChanged( () => ExhaustedStrategySpecification );
+                Ok.RaiseCanExecuteChanged();
             }
         }
 
@@ -148,7 +178,7 @@ namespace Noise.UI.ViewModels {
 
 				if( mSelectedExhaustedStrategy != null ) {
 					if( mSelectedExhaustedStrategy.RequiresParameters ) {
-						retValue = SelectedExhaustedParameter != null;
+						retValue &= SelectedExhaustedParameter != null;
 					}
 				}
 				else {
@@ -169,6 +199,9 @@ namespace Noise.UI.ViewModels {
 				if( mSelectedPlayStrategy != null ) {
 					SetupPlayParameters( mSelectedPlayStrategy, mPlayParameters );
 				}
+
+				RaisePropertyChanged( () => SelectedPlayStrategy );
+				Ok.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -188,6 +221,9 @@ namespace Noise.UI.ViewModels {
 				if( value != null ) {
 					mPlayStrategyParameters = new PlayStrategyParameterDbId( eTrackPlayHandlers.PlayArtist ) { DbItemId = SelectedPlayParameter.Id };
 				}
+
+				RaisePropertyChanged( () => SelectedPlayParameter );
+				Ok.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -211,6 +247,9 @@ namespace Noise.UI.ViewModels {
 				if( mSelectedExhaustedStrategy != null ) {
 					SetupExhaustedParameters( mSelectedExhaustedStrategy, mExhaustedParameters );
 				}
+
+				RaisePropertyChanged( () => SelectedExhaustedStrategy );
+				Ok.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -223,7 +262,11 @@ namespace Noise.UI.ViewModels {
 
         public NameIdPair SelectedExhaustedParameter {
 			get { return( Get( () => SelectedExhaustedParameter )); }
-			set { Set( () => SelectedExhaustedParameter, value ); }
+			set {
+                Set( () => SelectedExhaustedParameter, value );
+
+				Ok.RaiseCanExecuteChanged();
+            }
 		}
 
 		public string ExhaustedParameterName {
@@ -350,6 +393,33 @@ namespace Noise.UI.ViewModels {
 
             collection.IsNotifying = true;
             collection.Refresh();
+        }
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+			if( IsConfigurationValid ) {
+                mPlayQueue.ExhaustedPlayStrategy = ExhaustedStrategySpecification;
+                mPlayQueue.DeletedPlayedTracks = DeletePlayedTracks;
+                mPlayQueue.SetPlayStrategy( PlayStrategy, PlayStrategyParameter );
+
+                RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+            }
+			else {
+                RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+            }
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
         }
 	}
 }

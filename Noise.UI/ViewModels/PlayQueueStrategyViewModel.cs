@@ -2,24 +2,32 @@
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
+using Noise.UI.Views;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayQueueStrategyViewModel : AutomaticCommandBase,
+	public class PlayQueueStrategyViewModel : AutomaticPropertyBase,
 											  IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayStrategyChanged>,
                                               IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackStopped> {
-		private readonly IEventAggregator                           mEventAggregator;
-		private readonly IPlayQueue                                 mPlayQueue;
-		private readonly IDialogService                             mDialogService;
-		private readonly PlayStrategyDialogModel					mConfigurationDialog;
-		private PlayQueueTrack										mPlayingItem;
+		private readonly IEventAggregator	mEventAggregator;
+		private readonly IPlayQueue         mPlayQueue;
+		private readonly IDialogService     mDialogService;
+		private PlayQueueTrack				mPlayingItem;
 
-		public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IDialogService dialogService, PlayStrategyDialogModel configurationDialog ) {
+		public	DelegateCommand				StartStrategy { get; }
+		public	DelegateCommand				PlayingFocus { get; }
+		public	DelegateCommand				ConfigureStrategy { get; }
+
+		public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mDialogService = dialogService;
-			mConfigurationDialog = configurationDialog;
+
+			StartStrategy = new DelegateCommand( OnStartStrategy, CanStartStrategy  );
+			PlayingFocus = new DelegateCommand( OnPlayingFocus, CanPlayingFocus );
+			ConfigureStrategy = new DelegateCommand( OnConfigureStrategy );
 
 			SetStrategyDescriptions();
 
@@ -27,7 +35,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.PlayQueueChanged eventArgs ) {
-			RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
+			StartStrategy.RaiseCanExecuteChanged();
 		}
 
 		public void Handle( Events.PlayStrategyChanged args ) {
@@ -37,13 +45,13 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.PlaybackTrackStarted args ) {
 			mPlayingItem = args.Track;
 
-			RaiseCanExecuteChangedEvent( "CanExecute_PlayingFocus" );
+			PlayingFocus.RaiseCanExecuteChanged();
         }
 
 		public void Handle( Events.PlaybackStopped args ) {
 			mPlayingItem = null;
 
-            RaiseCanExecuteChangedEvent( "CanExecute_PlayingFocus" );
+			PlayingFocus.RaiseCanExecuteChanged();
         }
 
 		private void SetStrategyDescriptions() {
@@ -51,11 +59,11 @@ namespace Noise.UI.ViewModels {
             PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy?.Description;
         }
 
-		public void Execute_StartStrategy() {
+		private void OnStartStrategy() {
 			mPlayQueue.StartPlayStrategy();
 		}
 
-		public bool CanExecute_StartStrategy() {
+		private bool CanStartStrategy() {
 			return( mPlayQueue.CanStartPlayStrategy );
 		}
 
@@ -69,31 +77,22 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => PlayStrategyDescription, value ); }
 		}
 
-		public void Execute_PlayingFocus() {
+		private void OnPlayingFocus() {
 			if( mPlayingItem?.Album != null ) {
                 mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mPlayingItem.Artist.DbId, mPlayingItem.Album.DbId, true ));
             }
         }
 
-		public bool CanExecute_PlayingFocus() {
+		private bool CanPlayingFocus() {
 			return  mPlayingItem != null;
         }
 
-		public void Execute_ConfigureStrategy() {
-			mConfigurationDialog.PlayStrategy = mPlayQueue.PlayStrategy.StrategyId;
-			mConfigurationDialog.PlayStrategyParameter = mPlayQueue.PlayStrategy.Parameters;
-            mConfigurationDialog.ExhaustedStrategySpecification = mPlayQueue.ExhaustedPlayStrategy;
-			mConfigurationDialog.DeletePlayedTracks = mPlayQueue.DeletedPlayedTracks;
-
-			if( mDialogService.ShowDialog( DialogNames.PlayStrategyConfiguration, mConfigurationDialog ) == true ) {
-				if( mConfigurationDialog.IsConfigurationValid ) {
-					mPlayQueue.ExhaustedPlayStrategy = mConfigurationDialog.ExhaustedStrategySpecification;
-					mPlayQueue.DeletedPlayedTracks = mConfigurationDialog.DeletePlayedTracks;
-                    mPlayQueue.SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
-
-					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
-				}
-			} 
+		private void OnConfigureStrategy() {
+			mDialogService.ShowDialog( nameof( PlayStrategyDialog ), new DialogParameters(), result => {
+				if( result.Result == ButtonResult.OK ) {
+					StartStrategy.RaiseCanExecuteChanged();
+                }
+            });
 		}
 	}
 }
