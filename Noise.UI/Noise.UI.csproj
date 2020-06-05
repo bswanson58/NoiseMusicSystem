@@ -358,7 +358,6 @@
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
-    <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryBackupDialogModel.cs" />
@@ -437,9 +436,6 @@
     </Compile>
     <Compile Include="Views\CloudConfigurationDialog.xaml.cs">
       <DependentUpon>CloudConfigurationDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DatabaseConfigurationDialog.xaml.cs">
-      <DependentUpon>DatabaseConfigurationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
@@ -773,10 +769,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CloudConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DatabaseConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
