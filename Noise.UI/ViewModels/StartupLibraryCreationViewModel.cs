@@ -2,17 +2,24 @@
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.UI.ViewModels {
-	public class StartupLibraryCreationViewModel : AutomaticCommandBase {
+	public class StartupLibraryCreationViewModel : AutomaticPropertyBase {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
-		private readonly IDialogService			mDialogService;
+		private readonly IPlatformDialogService	mDialogService;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 
-		public StartupLibraryCreationViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
+        public	bool							IsNotLoading => !IsLoading;
+
+        public	DelegateCommand					CreateLibrary { get; }
+		public	DelegateCommand					Browse { get; }
+		public	DelegateCommand					Exit {  get; }
+
+		public StartupLibraryCreationViewModel( IEventAggregator eventAggregator, IPlatformDialogService dialogService,
 												ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
 			mEventAggregator = eventAggregator;
 			mLibraryConfiguration = libraryConfiguration;
@@ -21,9 +28,13 @@ namespace Noise.UI.ViewModels {
 
 			LibraryName = string.Empty;
 			LibraryPath = string.Empty;
+
+			CreateLibrary = new DelegateCommand( OnCreateLibrary, CanCreateLibrary );
+			Browse = new DelegateCommand( OnBrowse );
+			Exit = new DelegateCommand( OnExit );
 		}
 
-		public async void Execute_CreateLibrary() {
+		private async void OnCreateLibrary() {
 			IsLoading = true;
 
 			var mediaLocation = new MediaLocation { Path = LibraryPath, PreferFolderStrategy = true };
@@ -45,32 +56,39 @@ namespace Noise.UI.ViewModels {
 
 		public string LibraryName {
 			get{ return( Get( () => LibraryName )); }
-			set{ Set( () => LibraryName, value ); }
+			set {
+                Set( () => LibraryName, value );
+
+				CreateLibrary.RaiseCanExecuteChanged();
+            }
 		}
 
 		public string LibraryPath {
 			get { return ( Get( () => LibraryPath )); }
-			set { Set( () => LibraryPath, value ); }
+			set {
+                Set( () => LibraryPath, value );
+
+				CreateLibrary.RaiseCanExecuteChanged();
+            }
 		}
 
 		public bool IsLoading {
 			get { return ( Get( () => IsLoading ) ); }
-			set { Set( () => IsLoading, value ); }
+			set {
+                Set( () => IsLoading, value );
+
+				RaisePropertyChanged( () => IsLoading );
+				RaisePropertyChanged( () => IsNotLoading );
+            }
 		}
 
-		[DependsUpon( "IsLoading" )]
-		public bool IsNotLoading {
-			get { return ( !IsLoading ); }
-		}
 
-		[DependsUpon( "LibraryName" )]
-		[DependsUpon( "LibraryPath" )]
-		public bool CanExecute_CreateLibrary() {
+		private bool CanCreateLibrary() {
 			return((!string.IsNullOrWhiteSpace( LibraryName )) &&
 				   (!string.IsNullOrWhiteSpace( LibraryPath )));
 		}
 
-		public void Execute_Browse( object sender ) {
+		private void OnBrowse() {
 			string path = LibraryPath;
 
 			if( mDialogService.SelectFolderDialog( "Select Music Location", ref path ).GetValueOrDefault( false )) {
@@ -78,7 +96,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_Exit() {
+		private void OnExit() {
 			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 	}
