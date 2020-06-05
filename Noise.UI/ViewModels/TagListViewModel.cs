@@ -2,55 +2,54 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
-using Noise.UI.Support;
+using Noise.UI.Views;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.UI.ViewModels {
-    internal class TagEditRequest : InteractionRequestData<TagEditDialogModel> {
-        public TagEditRequest( TagEditDialogModel viewModel ) : base( viewModel ) { }
-    }
+    class TagListViewModel : PropertyChangeBase, IDisposable, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+        private readonly IEventAggregator           mEventAggregator;
+        private readonly ITagProvider               mTagProvider;
+        private readonly IPlayCommand               mPlayCommand;
+        private readonly IUserTagManager            mTagManager;
+        private readonly IDialogService             mDialogService;
+        private readonly IPlatformDialogService     mPlatformDialogs;
+        private readonly IUiLog                     mLog;
+        private readonly IDataExchangeManager       mDataExchangeManager;
+        private TaskHandler<IEnumerable<UiTag>>     mTaskHandler;
+        private UiTag                               mCurrentTag;
+        private IDisposable                         mSelectionStateSubscription;
 
-    class TagListViewModel : AutomaticCommandBase, IDisposable, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-        private readonly IEventAggregator                   mEventAggregator;
-        private readonly ITagProvider                       mTagProvider;
-        private readonly IPlayCommand                       mPlayCommand;
-        private readonly IUserTagManager                    mTagManager;
-        private readonly IDialogService                     mDialogService;
-        private readonly IUiLog                             mLog;
-        private readonly IDataExchangeManager               mDataExchangeManager;
-        private readonly InteractionRequest<TagEditRequest> mTagAddRequest;
-        private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
-        private TaskHandler<IEnumerable<UiTag>>             mTaskHandler;
-        private UiTag                                       mCurrentTag;
-        private IDisposable                                 mSelectionStateSubscription;
-
-        public BindableCollection<UiTag>    TagList { get; }
-        public IInteractionRequest          TagAddRequest => mTagAddRequest;
-        public IInteractionRequest          TagEditRequest => mTagEditRequest;
+        public  BindableCollection<UiTag>           TagList { get; }
+        public  DelegateCommand                     AddTag { get; }
+        public  DelegateCommand                     ExportTags { get; }
+        public  DelegateCommand                     ImportTags { get; }
 
         public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, IPlayCommand playCommand, ISelectionState selectionState,
-                                 IDataExchangeManager exchangeManager, IDialogService dialogService, IEventAggregator eventAggregator, IUiLog log ) {
+                                 IDataExchangeManager exchangeManager, IDialogService dialogService, IPlatformDialogService platformDialogService, IEventAggregator eventAggregator, IUiLog log ) {
             mTagManager = tagManager;
             mTagProvider = tagProvider;
             mPlayCommand = playCommand;
             mDataExchangeManager = exchangeManager;
             mDialogService = dialogService;
+            mPlatformDialogs = platformDialogService;
             mEventAggregator = eventAggregator;
             mLog = log;
-            mTagAddRequest = new InteractionRequest<TagEditRequest>();
-            mTagEditRequest = new InteractionRequest<TagEditRequest>();
 
             TagList = new BindableCollection<UiTag>();
+            AddTag = new DelegateCommand( OnAddTag );
+            ExportTags = new DelegateCommand( OnExportTags, CanExportTags );
+            ImportTags = new DelegateCommand( OnImportTags );
 
             if( databaseInfo.IsOpen ) {
                 LoadTags();
@@ -114,13 +113,13 @@ namespace Noise.UI.ViewModels {
             TagList.Clear();
             TagList.AddRange( list );
 
-            RaiseCanExecuteChangedEvent( "CanExecute_ExportTags" );
+            ExportTags.RaiseCanExecuteChanged();
         }
 
         private void ClearTags() {
             TagList.Clear();
 
-            RaiseCanExecuteChangedEvent( "CanExecute_ExportTags" );
+            ExportTags.RaiseCanExecuteChanged();
         }
 
         private void OnPlayTag( UiTag tag ) {
@@ -128,59 +127,61 @@ namespace Noise.UI.ViewModels {
         }
 
         private void OnEditTag( UiTag tag ) {
-            var dialogModel = new TagEditDialogModel( tag );
+            var parameters = new DialogParameters{{ TagEditDialogModel.cTagParameter, tag } };
 
-            mTagEditRequest.Raise( new TagEditRequest( dialogModel ), OnTagEdited );
-        }
+            mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, result => {
+                if( result.Result == ButtonResult.OK ) {
+                    var deleteRequested = result.Parameters.GetValue<bool>( TagEditDialogModel.cDeleteRequested );
+                    var editedTag = result.Parameters.GetValue<UiTag>( TagEditDialogModel.cTagParameter );
 
-        private void OnTagEdited( TagEditRequest confirmation) {
-            if( confirmation.Confirmed ) {
-                if( confirmation.ViewModel.DeleteRequested ) {
-                    mTagManager.DeleteTag( confirmation.ViewModel.Tag.Tag );
-                }
-                else {
-                    if(confirmation.ViewModel.IsValid) {
-                        var updater = mTagProvider.GetTagForUpdate(confirmation.ViewModel.Tag.Tag.DbId);
+                    if( editedTag != null ) {
+                        if( deleteRequested ) {
+                            mTagManager.DeleteTag( editedTag.Tag );
+                        }
+                        else {
+                            var updater = mTagProvider.GetTagForUpdate( editedTag.Tag.DbId );
 
-                        if (updater.Item != null) {
-                            updater.Item.UpdateFrom(confirmation.ViewModel.Tag.Tag);
+                            if( updater.Item != null ) {
+                                updater.Item.UpdateFrom( editedTag.Tag );
 
-                            updater.Update();
+                                updater.Update();
+                            }
                         }
                     }
+
+                    LoadTags();
                 }
-
-                LoadTags();
-            }
+            });
         }
 
-        public void Execute_AddTag() {
+        private void OnAddTag() {
             var tag = new UiTag( new DbTag( eTagGroup.User, String.Empty ));
-            var dialogModel = new TagEditDialogModel( tag );
+            var parameters = new DialogParameters{{ TagEditDialogModel.cTagParameter, tag }};
 
-            mTagAddRequest.Raise( new TagEditRequest( dialogModel ), OnTagAdded );
+            mDialogService.ShowDialog( nameof( TagAddDialog ), parameters, result => {
+                if( result.Result == ButtonResult.OK ) {
+                    var editedTag = result.Parameters.GetValue<UiTag>( TagEditDialogModel.cTagParameter );
+
+                    if( editedTag != null ) {
+                        mTagProvider.AddTag( editedTag.Tag );
+
+                        LoadTags();
+                    }
+                }
+            });
         }
 
-        private void OnTagAdded( TagEditRequest confirmation) {
-            if(( confirmation.Confirmed ) &&
-               ( confirmation.ViewModel.IsValid )) {
-                mTagProvider.AddTag( confirmation.ViewModel.Tag.Tag );
-
-                LoadTags();
-            }
-        }
-
-        public void Execute_ExportTags() {
-            if( mDialogService.SaveFileDialog( "Export Tags", Constants.ExportFileExtension, "Export Tags|*" + Constants.ExportFileExtension, out var fileName ) == true ) {
+        private void OnExportTags() {
+            if( mPlatformDialogs.SaveFileDialog( "Export Tags", Constants.ExportFileExtension, "Export Tags|*" + Constants.ExportFileExtension, out var fileName ) == true ) {
                 mDataExchangeManager.ExportUserTags( fileName );
             }
         }
 
-        public bool CanExecute_ExportTags() {
+        private bool CanExportTags() {
             return( TagList.Count > 0 );
         }
 
-        public void Execute_ImportTags() {
+        private void OnImportTags() {
             GlobalCommands.ImportUserTags.Execute( null );
 
             LoadTags();

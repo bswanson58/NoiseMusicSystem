@@ -26,9 +26,6 @@ namespace Noise.UI {
 
             containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();
 
-            var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
-            containerRegistry.RegisterInstance<IResourceProvider>( resourceLoader );
-
             containerRegistry.RegisterDialog<AlbumArtworkView, AlbumArtworkViewModel>();
             containerRegistry.RegisterDialog<AlbumEditDialog, AlbumEditDialogModel>();
             containerRegistry.RegisterDialog<ArtistArtworkView, ArtistArtworkViewModel>();
@@ -38,14 +35,20 @@ namespace Noise.UI {
             containerRegistry.RegisterDialog<LibraryConfigurationDialog, LibraryConfigurationDialogModel>();
             containerRegistry.RegisterDialog<PlayStrategyDialog, PlayStrategyDialogModel>();
             containerRegistry.RegisterDialog<TagAssociationDialog, TagAssociationDialogModel>();
+            containerRegistry.RegisterDialog<TagAddDialog, TagEditDialogModel>();
+            containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
             containerRegistry.RegisterDialog<TrackStrategyOptionsDialog, TrackStrategyOptionsDialogModel>();
+
+            ViewModelLocationProvider.Register<PlayingTrackView, PlayerViewModel>();
+            ViewModelLocationProvider.Register<PlayerExtendedView, PlayerViewModel>();
+            ViewModelLocationProvider.Register<TagAddDialog, TagEditDialogModel>();
+
+            var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
+            containerRegistry.RegisterInstance<IResourceProvider>( resourceLoader );
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {
             var regionManager = containerProvider.Resolve<IRegionManager>();
-
-            ViewModelLocationProvider.Register<PlayingTrackView, PlayerViewModel>();
-            ViewModelLocationProvider.Register<PlayerExtendedView, PlayerViewModel>();
 
             regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( LibraryArtistView ));
             regionManager.RegisterViewWithRegion( RegionNames.LibraryLeftPanel, typeof( LibraryRecentView ));
