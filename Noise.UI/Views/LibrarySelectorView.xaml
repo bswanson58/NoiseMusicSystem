@@ -4,18 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:prism="http://prismlibrary.com/"
              mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:LibrarySelectorViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="75" d:DesignWidth="400"
+             d:DesignWidth="400"
              Height="55">
-
-    <UserControl.DataContext>
-        <Binding Path="LibrarySelectorViewModel" Source="{StaticResource ViewModelLocator}" />
-    </UserControl.DataContext>
 
     <UserControl.Resources>
         <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
@@ -62,15 +59,6 @@
             </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
-
-    <i:Interaction.Behaviors>
-        <behaviours:InteractionRequestDialogBehavior DialogClass="LibraryConfiguration"
-                                                     DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=LibraryConfigurationRequest}" />
-        <behaviours:InteractionRequestDialogBehavior DialogClass="LibraryBackup"
-                                                     DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=LibraryBackupRequest}" />
-    </i:Interaction.Behaviors>
 
     <GroupBox Margin="3,0,5,0"  Style="{DynamicResource SectionBorderStyle}" Header=" Libraries ">
         <Grid>

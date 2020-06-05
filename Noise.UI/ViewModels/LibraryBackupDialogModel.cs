@@ -5,10 +5,12 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    class LibraryBackupDialogModel : DialogModelBase, IDataErrorInfo {
+    class LibraryBackupDialogModel : AutomaticPropertyBase, IDialogAware, IDataErrorInfo {
         private readonly ILibraryConfiguration  mLibraryConfiguration;
         private readonly ILibraryBackupManager  mLibraryBackup;
         private readonly ILibraryBuilder        mLibraryBuilder;
@@ -17,6 +19,13 @@ namespace Noise.UI.ViewModels {
 
         public  ObservableCollectionEx<LibraryConfiguration>   Libraries { get; }
 
+        public  string                          Title { get; }
+        public  event Action<IDialogResult>     RequestClose;
+
+        public  DelegateCommand                 Ok { get; }
+        public  DelegateCommand                 Cancel { get; }
+        public  DelegateCommand                 BackupLibrary { get; }
+
         public LibraryBackupDialogModel( ILibraryBackupManager libraryBackup, ILibraryConfiguration configuration, ILibraryBuilder libraryBuilder, IPreferences preferences ) {
             mLibraryBackup = libraryBackup;
             mLibraryConfiguration = configuration;
@@ -24,9 +33,14 @@ namespace Noise.UI.ViewModels {
             mPreferences = preferences;
 
             Libraries = new ObservableCollectionEx<LibraryConfiguration>();
+
+            Ok = new DelegateCommand( OnOk );
+            Cancel = new DelegateCommand( OnCancel );
+            BackupLibrary = new DelegateCommand( OnBackupLibrary, CanBackupLibrary );
+            Title = "Library Backup";
         }
 
-        public void Initialize() {
+        public void OnDialogOpened( IDialogParameters parameters ) {
             Libraries.AddRange( mLibraryConfiguration.Libraries );
             CurrentLibrary = mLibraryConfiguration.Current;
 
@@ -100,7 +114,7 @@ namespace Noise.UI.ViewModels {
             }
         }
 
-        public async void Execute_BackupLibrary() {
+        private async void OnBackupLibrary() {
             BackupActive = true;
             BackupSucceeded = await mLibraryBackup.BackupLibrary( OnBackupProgress );
 
@@ -113,12 +127,12 @@ namespace Noise.UI.ViewModels {
             ProgressStatus = $"{progress.CurrentItem} - {progress.CurrentPhase}";
         }
 
-        public bool CanExecute_BackupLibrary() {
+        private bool CanBackupLibrary() {
             return mLibraryConfiguration.Current != null && 
                   !mLibraryBuilder.LibraryUpdateInProgress;
         }
 
-        public void SaveOptions() {
+        private void SaveOptions() {
             var corePreferences = mPreferences.Load<NoiseCorePreferences>();
 
             corePreferences.EnforceBackupCopyLimit = EnforceBackupCopyLimit;
@@ -127,6 +141,26 @@ namespace Noise.UI.ViewModels {
             }
 
             mPreferences.Save( corePreferences );
+        }
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+            SaveOptions();
+
+            RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
         }
 
         public string this[string columnName] {

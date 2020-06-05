@@ -3,74 +3,91 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 mc:Ignorable="d" 
-			 Height="290" Width="600"
-			 Tag="Library Configuration"
-		>
-	<Grid>
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:LibraryConfigurationDialogModel, IsDesignTimeCreatable=False}"
+			 Height="340" Width="600">
 
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="*"/>
-				</Grid.RowDefinitions>
-				
-				<StackPanel Grid.Row="0" Margin="5" Orientation="Horizontal">
-					<Label VerticalAlignment="Center" Margin="5,0,0,0" Content="Libraries:"/>
-					<ComboBox Margin="5,5" Width="385" Height="25" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
-				</StackPanel>
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
 
-				<GroupBox Grid.Row="1" Margin="7" Header="Library Properties">
-					<Grid Margin="5">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="100"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
-						<Label Grid.Column="0" Grid.Row="0" Content="Library Name:" HorizontalAlignment="Right"/>
-						<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+    <Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
 
-						<Label Grid.Column="0" Grid.Row="1" Content="Database Name:" HorizontalAlignment="Right"/>
-						<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
-
-						<Label Grid.Column="0" Grid.Row="2" Content="Media Path:" HorizontalAlignment="Right"/>
-						<Grid Grid.Column="1" Grid.Row="2">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*"/>
-								<ColumnDefinition Width="Auto"/>
-							</Grid.ColumnDefinitions>
-							<TextBox Grid.Column="0" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
-							<Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
-						</Grid>
-
-                        <CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
-                        <CheckBox Grid.Column="1" Grid.Row="4" Margin="3" Content="Copy Artwork To Database" IsChecked="{Binding CopyMetadata}"/>
-
-                        <Button Grid.Column="1" Grid.Row="5" Style="{StaticResource GeneralButtonStyle}" Margin="0,5,0,0" Width="65" HorizontalAlignment="Right"
-							Content="Update" Command="{Binding UpdateConfiguration}"/>
-					</Grid>
-				</GroupBox>
-			</Grid>
-
-			<StackPanel Grid.Column="1" Margin="15,5,0,0">
-				<Button Margin="7,5" Style="{StaticResource GeneralButtonStyle}" Content="Open Library" Command="{Binding Path=OpenLibrary}"/>
-				<Button Margin="7,5" Style="{StaticResource GeneralButtonStyle}" Content="Close Library" Command="{Binding Path=CloseLibrary}"/>
-				<Button Margin="7,5" Style="{StaticResource GeneralButtonStyle}" Content="Update Library" Command="{Binding Path=UpdateLibrary}"/>
-				<Button Margin="7,20,7,0" Style="{StaticResource GeneralButtonStyle}" Content="New Library" Command="{Binding Path=CreateLibrary}"/>
+		<Grid Grid.Row="0" Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			
+			<StackPanel Grid.Row="0" Margin="5" Orientation="Horizontal">
+				<Label VerticalAlignment="Center" Margin="5,0,0,0" Content="Libraries:"/>
+				<ComboBox Margin="5,5" Width="385" Height="25" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
 			</StackPanel>
+
+			<GroupBox Grid.Row="1" Margin="7" Header="Library Properties">
+				<Grid Margin="5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="100"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<Label Grid.Column="0" Grid.Row="0" Content="Library Name:" HorizontalAlignment="Right"/>
+					<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+
+					<Label Grid.Column="0" Grid.Row="1" Content="Database Name:" HorizontalAlignment="Right"/>
+					<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+
+					<Label Grid.Column="0" Grid.Row="2" Content="Media Path:" HorizontalAlignment="Right"/>
+					<Grid Grid.Column="1" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBox Grid.Column="0" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+						<Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
+					</Grid>
+
+                    <CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
+                    <CheckBox Grid.Column="1" Grid.Row="4" Margin="3" Content="Copy Artwork To Database" IsChecked="{Binding CopyMetadata}"/>
+
+                    <Button Grid.Column="1" Grid.Row="5" Style="{StaticResource GeneralButtonStyle}" Margin="0,5,0,0" Width="65" HorizontalAlignment="Right"
+						Content="Update" Command="{Binding UpdateConfiguration}"/>
+				</Grid>
+			</GroupBox>
 		</Grid>
 
+		<StackPanel Grid.Row="0" Grid.Column="1" Margin="15,5,0,0">
+			<Button Margin="0,5" Style="{StaticResource GeneralButtonStyle}" Content="Open Library" Command="{Binding Path=OpenLibrary}"/>
+			<Button Margin="0,5" Style="{StaticResource GeneralButtonStyle}" Content="Close Library" Command="{Binding Path=CloseLibrary}"/>
+			<Button Margin="0,5" Style="{StaticResource GeneralButtonStyle}" Content="Update Library" Command="{Binding Path=UpdateLibrary}"/>
+			<Button Margin="0,20" Style="{StaticResource GeneralButtonStyle}" Content="New Library" Command="{Binding Path=CreateLibrary}"/>
+		</StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Ok}" IsDefault="True"/>
+        </StackPanel>
 	</Grid>
 </UserControl>

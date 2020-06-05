@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Behaviours;
 using Noise.UI.Logging;
+using Noise.UI.Views;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class LibraryConfigurationInfo : InteractionRequestData<LibraryConfigurationDialogModel> {
-		public LibraryConfigurationInfo( LibraryConfigurationDialogModel viewModel ) : base( viewModel ) { }
-	}
-
-	internal class LibraryBackupInfo : InteractionRequestData<LibraryBackupDialogModel> {
-		public LibraryBackupInfo( LibraryBackupDialogModel viewModel ) : base( viewModel ) { }
-    }
-
-	internal class LibrarySelectorViewModel : AutomaticCommandBase,
+	internal class LibrarySelectorViewModel : PropertyChangeBase, IDisposable,
 											  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
 											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, IHandle<Events.DatabaseStatisticsUpdated>, 
                                               IHandle<Events.LibraryBackupPressure>, IHandle<Events.LibraryBackupPressureThreshold> {
@@ -29,11 +22,8 @@ namespace Noise.UI.ViewModels {
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IPreferences			mPreferences;
-		private readonly LibraryBackupDialogModel						mLibraryBackupDialog;
-		private readonly LibraryConfigurationDialogModel				mLibraryConfigurationDialog;
-		private readonly InteractionRequest<LibraryBackupInfo>			mLibraryBackupRequest;
-		private	readonly InteractionRequest<LibraryConfigurationInfo>	mLibraryConfigurationRequest;
-		private readonly BindableCollection<LibraryConfiguration>		mLibraries;
+		private readonly IDialogService			mDialogService;
+		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
 	    private TaskHandler						mLibraryOpenTask;  
 		private string							mDatabaseStatistics;
 
@@ -42,23 +32,24 @@ namespace Noise.UI.ViewModels {
 		public	bool										BackupNeeded { get; private set; }
 		public	double										BackupPressurePercentage { get; private set; }
 
-		public	IInteractionRequest							LibraryBackupRequest => mLibraryBackupRequest;
-	    public  IInteractionRequest                         LibraryConfigurationRequest => mLibraryConfigurationRequest;
+		public	DelegateCommand								LibraryConfiguration { get; }
+		public	DelegateCommand								LibraryBackup { get; }
+		public	DelegateCommand								UpdateLibrary { get; }
 
-		public LibrarySelectorViewModel( IEventAggregator eventAggregator,
-                                         LibraryBackupDialogModel libraryBackupDialog, LibraryConfigurationDialogModel libraryConfigurationDialog,
+		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
 										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder, IPreferences preferences, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
 			mLibraryConfiguration = libraryConfiguration;
 			mLibraryBuilder = libraryBuilder;
-			mLibraryBackupDialog = libraryBackupDialog;
-			mLibraryConfigurationDialog = libraryConfigurationDialog;
+			mDialogService = dialogService;
 
-			mLibraryBackupRequest = new InteractionRequest<LibraryBackupInfo>();
-			mLibraryConfigurationRequest = new InteractionRequest<LibraryConfigurationInfo>();
-			mLibraries = new BindableCollection<LibraryConfiguration>();
+            mLibraries = new BindableCollection<LibraryConfiguration>();
+
+			LibraryBackup = new DelegateCommand( OnLibraryBackup );
+			LibraryConfiguration = new DelegateCommand( OnLibraryConfiguration );
+			UpdateLibrary = new DelegateCommand( OnUpdateLibrary, CanUpdateLibrary );
 
 			LoadLibraries();
 		    SetLibraryStatistics( mLibraryBuilder.LibraryStatistics );
@@ -95,7 +86,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.LibraryChanged args ) {
 			RaisePropertyChanged( () => CurrentLibrary );
-			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+			UpdateLibrary.RaiseCanExecuteChanged();
 
 			UpdateBackupNeeded();
 			UpdateBackupPressure();
@@ -106,11 +97,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.LibraryUpdateStarted message ) {
-			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+			UpdateLibrary.RaiseCanExecuteChanged();
 		}
 
 		public void Handle( Events.LibraryUpdateCompleted message ) {
-			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+			UpdateLibrary.RaiseCanExecuteChanged();
 		}
 
 		public void Handle( Events.DatabaseStatisticsUpdated message ) {
@@ -166,41 +157,35 @@ namespace Noise.UI.ViewModels {
             RaisePropertyChanged( () => BackupNeeded );
         }
 
-		public void Execute_UpdateLibrary() {
+		private void OnUpdateLibrary() {
 			mLibraryBuilder.StartLibraryUpdate();
 		}
 
-		public bool CanExecute_UpdateLibrary() {
+		private bool CanUpdateLibrary() {
 			return(( mLibraryConfiguration.Current != null ) &&
 			       (!mLibraryBuilder.LibraryUpdateInProgress ));
 		}
 
-		public void Execute_LibraryBackup() {
+		private void OnLibraryBackup() {
 			try {
-                mLibraryBackupDialog.Initialize();
-
-				mLibraryBackupRequest.Raise( new LibraryBackupInfo( mLibraryBackupDialog ), OnLibraryBackupCompleted );
+				mDialogService.ShowDialog( nameof( LibraryBackupDialog ), new DialogParameters(), result => { });
             }
 			catch( Exception ex ) {
                 mLog.LogException( "Executing Library Backup", ex );
             }
         }
 
-		private void OnLibraryBackupCompleted( LibraryBackupInfo info ) {
-			if( info.Confirmed ) {
-				info.ViewModel.SaveOptions();
-            }
-        }
-
-		public void Execute_LibraryConfiguration() {
+        private void OnLibraryConfiguration() {
 			try {
-                mLibraryConfigurationDialog.Initialize();
-
-				mLibraryConfigurationRequest.Raise( new LibraryConfigurationInfo( mLibraryConfigurationDialog ));
+				mDialogService.ShowDialog( nameof( LibraryConfigurationDialog ), new DialogParameters(), result => {});
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Executing Library Configuration", ex );
 			}
 		}
-	}
+
+        public void Dispose() {
+			mEventAggregator.Unsubscribe( this );
+        }
+    }
 }

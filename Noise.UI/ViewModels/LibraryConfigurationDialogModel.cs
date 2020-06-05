@@ -1,15 +1,19 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.UI.ViewModels {
-	internal class LibraryConfigurationDialogModel : DialogModelBase, 
+	internal class LibraryConfigurationDialogModel : AutomaticCommandBase, IDialogAware, IDisposable,
 													 IHandle<Events.LibraryListChanged> {
 		private readonly IEventAggregator							mEventAggregator;
-		private readonly IDialogService								mDialogService;
+		private readonly IPlatformDialogService						mDialogService;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibraryBuilder							mLibraryBuilder;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
@@ -21,7 +25,15 @@ namespace Noise.UI.ViewModels {
         private bool                                                mCopyMetadata;
 		private bool												mLibraryDirty;
 
-		public LibraryConfigurationDialogModel( IEventAggregator eventAggregator, IDialogService dialogService,
+        public IObservableCollection<LibraryConfiguration>			LibraryList => mLibraries;
+
+        public  string                              Title { get; }
+        public  DelegateCommand                     Ok { get; }
+        public  event Action<IDialogResult>         RequestClose;
+
+		public	DelegateCommand						UpdateLibrary { get; }
+
+        public LibraryConfigurationDialogModel( IEventAggregator eventAggregator, IPlatformDialogService dialogService,
 												ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
 			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;
@@ -29,10 +41,15 @@ namespace Noise.UI.ViewModels {
 			mLibraryBuilder = libraryBuilder;
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 
+			Ok = new DelegateCommand( OnOk );
+			UpdateLibrary = new DelegateCommand( OnUpdateLibrary, CanUpdateLibrary );
+
+			Title = "Library Configuration";
+
 			mEventAggregator.Subscribe( this );
 		}
 
-		public void Initialize() {
+        public void OnDialogOpened( IDialogParameters parameters ) {
             LoadLibraries();
 
             SelectedLibrary = mLibraryConfiguration.Current ?? mLibraryConfiguration.Libraries.FirstOrDefault();
@@ -50,8 +67,6 @@ namespace Noise.UI.ViewModels {
 
 			SelectedLibrary = selectedLibrary;
 		}
-
-		public IObservableCollection<LibraryConfiguration> LibraryList => ( mLibraries );
 
         public LibraryConfiguration SelectedLibrary {
 			get => mSelectedLibrary;
@@ -231,7 +246,7 @@ namespace Noise.UI.ViewModels {
 			       ( mSelectedLibrary == mLibraryConfiguration.Current ));
 		}
 
-		public void Execute_UpdateLibrary() {
+		private void OnUpdateLibrary() {
 			if(!mLibraryBuilder.LibraryUpdateInProgress ) {
 				mLibraryBuilder.StartLibraryUpdate();
 
@@ -239,8 +254,31 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public bool CanExecute_UpdateLibrary() {
+		private bool CanUpdateLibrary() {
 			return(!mLibraryBuilder.LibraryUpdateInProgress );
 		}
-	}
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+
+            RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
+        }
+
+        public void Dispose() {
+			mEventAggregator.Unsubscribe( this );
+        }
+    }
 }
