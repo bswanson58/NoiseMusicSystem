@@ -26,12 +26,12 @@ namespace Noise.UI.ViewModels {
 			mLibraryBuilder = libraryBuilder;
 			mDialogService = dialogService;
 
-			LibraryName = string.Empty;
-			LibraryPath = string.Empty;
-
 			CreateLibrary = new DelegateCommand( OnCreateLibrary, CanCreateLibrary );
 			Browse = new DelegateCommand( OnBrowse );
 			Exit = new DelegateCommand( OnExit );
+
+            LibraryName = string.Empty;
+            LibraryPath = string.Empty;
 		}
 
 		private async void OnCreateLibrary() {
