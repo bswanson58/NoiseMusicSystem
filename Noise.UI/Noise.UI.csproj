@@ -377,7 +377,6 @@
     <Compile Include="ViewModels\RatedTracksViewModel.cs" />
     <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
-    <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StartupLibraryCreationViewModel.cs" />
     <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
@@ -565,9 +564,6 @@
     </Compile>
     <Compile Include="Views\SmallPlayerView.xaml.cs">
       <DependentUpon>SmallPlayerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SongLyricsView.xaml.cs">
-      <DependentUpon>SongLyricsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartupLibraryCreationView.xaml.cs">
       <DependentUpon>StartupLibraryCreationView.xaml</DependentUpon>
@@ -941,10 +937,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SmallPlayerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SongLyricsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
