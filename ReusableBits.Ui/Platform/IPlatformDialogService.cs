@@ -1,4 +1,4 @@
-﻿namespace ArchiveLoader.Platform {
+﻿namespace ReusableBits.Ui.Platform {
 	public interface IPlatformDialogService {
 		bool?	OpenFileDialog( string title, string extensions, string filter, out string fileName );
 		bool?	SaveFileDialog( string title, string extensions, string filter, out string fileName );

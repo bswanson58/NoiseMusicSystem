@@ -5,10 +5,10 @@ using System.Linq;
 using ArchiveLoader.Behaviours;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
-using ArchiveLoader.Platform;
 using ArchiveLoader.Views;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace ArchiveLoader.ViewModels {
     internal class FileHandlerEditRequest : InteractionRequestData<FileHandlerDialogModel> {

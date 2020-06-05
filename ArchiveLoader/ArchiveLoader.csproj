@@ -215,13 +215,8 @@
     <Compile Include="Platform\DriveEjector.cs" />
     <Compile Include="Platform\DriveNotifier.cs" />
     <Compile Include="Platform\FileCopier.cs" />
-    <Compile Include="Platform\FolderBrowserDialogEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Platform\IPlatformDialogService.cs" />
     <Compile Include="Platform\ProcessRunner\IProcessRunner.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
-    <Compile Include="Platform\PlatformDialogService.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Platform\ProcessRunner\ProcessExitedEventHandler.cs" />
     <Compile Include="Platform\ProcessRunner\ProcessOutputEventHandler.cs" />

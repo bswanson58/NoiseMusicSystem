@@ -150,6 +150,11 @@
     <Compile Include="Localization\ResourceFormattedLocalizedValue.cs" />
     <Compile Include="Localization\ResourceLocalizedValue.cs" />
     <Compile Include="Localization\ResourceManagerExtension.cs" />
+    <Compile Include="Platform\FolderBrowserDialogEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Platform\IPlatformDialogService.cs" />
+    <Compile Include="Platform\PlatformDialogService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Themes\ThemeSelector.cs" />
     <Compile Include="Utility\DependencyObjectExtensions.cs" />

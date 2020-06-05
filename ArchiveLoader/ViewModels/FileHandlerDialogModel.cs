@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
-using ArchiveLoader.Platform;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace ArchiveLoader.ViewModels {
     class FileHandlerDialogModel : AutomaticCommandBase, IDialogAware  {

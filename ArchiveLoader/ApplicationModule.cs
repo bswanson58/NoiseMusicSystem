@@ -8,6 +8,7 @@ using Caliburn.Micro;
 using Prism.Ioc;
 using Prism.Modularity;
 using ReusableBits.Mvvm.VersionSpinner;
+using ReusableBits.Ui.Platform;
 
 namespace ArchiveLoader {
     class ApplicationModule : IModule {

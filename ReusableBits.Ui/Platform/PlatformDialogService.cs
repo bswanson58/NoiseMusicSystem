@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 
-namespace ArchiveLoader.Platform {
+namespace ReusableBits.Ui.Platform {
 	public class PlatformDialogService : IPlatformDialogService {
 		public bool? OpenFileDialog( string title, string extensions, string filter, out string fileName ) {
 			fileName = "";
