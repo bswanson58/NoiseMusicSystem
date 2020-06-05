@@ -13,6 +13,7 @@ using Prism.Regions;
 using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Support;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.UI {
 	public class NoiseUiModule : IModule {
@@ -22,6 +23,8 @@ namespace Noise.UI {
             containerRegistry.Register<IPlayingItemHandler, PlayingItemHandler>();
 			containerRegistry.Register<IUiLog, UiLogger>();
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
+
+            containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();
 
             var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
             containerRegistry.RegisterInstance<IResourceProvider>( resourceLoader );

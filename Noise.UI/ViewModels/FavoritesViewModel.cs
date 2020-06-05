@@ -10,9 +10,10 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
-using Noise.UI.Support;
+using Prism.Commands;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.UI.ViewModels {
 	public class FavoriteFilter {
@@ -29,7 +30,7 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	public class FavoritesViewModel : AutomaticCommandBase,
+	public class FavoritesViewModel : AutomaticPropertyBase, IDisposable,
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUpdateCompleted>,
 									  IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -41,13 +42,14 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayCommand			mPlayCommand;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
-		private readonly IDialogService			mDialogService;
-		private readonly ISelectionState		mSelectionState;
+		private readonly IPlatformDialogService	mDialogService;
         private readonly IPlayingItemHandler    mPlayingItemHandler;
         private readonly IPrefixedNameHandler   mPrefixedNameHandler;
+        private readonly List<FavoriteFilter>	mFilterList; 
 		private FavoriteViewNode				mSelectedNode;
 		private ICollectionView					mFavoritesView;
-		private readonly List<FavoriteFilter>	mFilterList; 
+		private	IDisposable						mArtistSubscription;
+		private	IDisposable						mAlbumSubscription;
 		private TaskHandler<IEnumerable<FavoriteViewNode>>		mTaskHandler; 
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
@@ -56,9 +58,13 @@ namespace Noise.UI.ViewModels {
 		public	bool											IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
         public	SortableCollection<FavoriteViewNode>			FavoritesCollection => mFavoritesList;
 
+		public	DelegateCommand									PlayRandom { get; }
+		public	DelegateCommand									ExportFavorites { get; }
+		public	DelegateCommand									ImportFavorites { get; }
+
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState, IPrefixedNameHandler nameHandler,
-								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IPlayingItemHandler playingItemHandler, IUiLog log ) {
+								   IDataExchangeManager dataExchangeManager, IPlatformDialogService dialogService, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
@@ -69,7 +75,6 @@ namespace Noise.UI.ViewModels {
 			mPlayQueue = playQueue;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
-			mSelectionState = selectionState;
             mPlayingItemHandler = playingItemHandler;
             mPrefixedNameHandler = nameHandler;
 
@@ -82,9 +87,13 @@ namespace Noise.UI.ViewModels {
 													 new FavoriteFilter( "Tracks", false, false, true )};
 			CurrentFilter = defaultFilter;
 
+			PlayRandom = new DelegateCommand( OnPlayRandom, CanPlayRandom );
+			ExportFavorites = new DelegateCommand( OnExportFavorites, CanExportFavorites );
+			ImportFavorites = new DelegateCommand( OnImportFavorites );
+
 			mEventAggregator.Subscribe( this );
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
-			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+			mArtistSubscription = selectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mAlbumSubscription = selectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mPlayingItemHandler.StartHandler( mFavoritesList );
 
 			if( databaseInfo.IsOpen ) {
@@ -271,8 +280,8 @@ namespace Noise.UI.ViewModels {
 
             mPlayingItemHandler.UpdateList();
 
-			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
-			RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
+			ExportFavorites.RaiseCanExecuteChanged();
+            PlayRandom.RaiseCanExecuteChanged();
 		}
 
 		private void ClearFavorites() {
@@ -280,6 +289,8 @@ namespace Noise.UI.ViewModels {
 			mSelectedNode = null;
 
 			RaisePropertyChanged( () => SelectedNode );
+            ExportFavorites.RaiseCanExecuteChanged();
+			PlayRandom.RaiseCanExecuteChanged();
 		}
 
 		private void PlayArtist( FavoriteViewNode node ) {
@@ -294,26 +305,34 @@ namespace Noise.UI.ViewModels {
 			mPlayCommand.Play( node.Track );
 		}
 
-		public void Execute_PlayRandom() {
+		private void OnPlayRandom() {
 			mPlayQueue.Add( mTrackSelector.SelectTracksFromFavorites( track => !mPlayQueue.IsTrackQueued( track ), 10 ));
 		}
 
-		public bool CanExecute_PlayRandom() {
+		private bool CanPlayRandom() {
 			return( mFavoritesList.Any());
 		}
 
-		public void Execute_ExportFavorites() {
+		private void OnExportFavorites() {
             if( mDialogService.SaveFileDialog( "Export Favorites", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out var fileName ) == true ) {
 				mDataExchangeMgr.ExportFavorites( fileName );
 			}
 		}
 
-		public bool CanExecute_ExportFavorites() {
+		private bool CanExportFavorites() {
 			return( mFavoritesList.Count > 0 );
 		}
 
-		public void Execute_ImportFavorites() {
+		private void OnImportFavorites() {
 			GlobalCommands.ImportFavorites.Execute( null );
 		}
-	}
+
+        public void Dispose() {
+            mArtistSubscription?.Dispose();
+			mArtistSubscription = null;
+
+            mAlbumSubscription?.Dispose();
+			mAlbumSubscription = null;
+        }
+    }
 }
