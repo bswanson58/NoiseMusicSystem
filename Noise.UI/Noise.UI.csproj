@@ -318,7 +318,6 @@
     </Compile>
     <Compile Include="Support\ActiveAwareHelper.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
-    <Compile Include="Support\DialogNames.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
     <Compile Include="Support\PrefixedNameHandler.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
@@ -419,9 +418,6 @@
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\InternetStreamDialog.xaml.cs">
-      <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryAdditionsView.xaml.cs">
       <DependentUpon>LibraryAdditionsView.xaml</DependentUpon>
@@ -732,10 +728,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FavoritesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\InternetStreamDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
