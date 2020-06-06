@@ -11,6 +11,7 @@ using Prism.Commands;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.Desktop.ViewModels {
     class ShellViewModel : PropertyChangeBase, IHandle<Events.WindowLayoutRequest> {
@@ -18,6 +19,8 @@ namespace Noise.Desktop.ViewModels {
         private readonly IRegionManager                 mRegionManager;
         private readonly IIpcManager			        mIpcManager;
         private readonly IDialogService                 mDialogService;
+        private readonly IPlatformDialogService         mPlatformDialogs;
+        private readonly IDataExchangeManager	        mDataExchangeMgr;
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
         public  bool									HaveCompanionApplications => CompanionApplications.Any();
@@ -27,11 +30,14 @@ namespace Noise.Desktop.ViewModels {
         public  DelegateCommand                         TimelineLayout { get; }
         public  DelegateCommand                         Options { get; }
 
-        public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager, IDialogService dialogService, IEventAggregator eventAggregator ) {
+        public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager, IDataExchangeManager dataExchangeManager, 
+                               IDialogService dialogService, IPlatformDialogService platformDialogService, IEventAggregator eventAggregator ) {
             mDialogService = dialogService;
             mWindowManager = windowManager;
             mRegionManager = regionManager;
             mIpcManager = ipcManager;
+            mDataExchangeMgr = dataExchangeManager;
+            mPlatformDialogs = platformDialogService;
 
             LibraryLayout = new DelegateCommand( OnLibraryLayout );
             ListeningLayout = new DelegateCommand( OnListeningLayout );
@@ -39,6 +45,11 @@ namespace Noise.Desktop.ViewModels {
             Options = new DelegateCommand( OnOptions );
 
             CompanionApplications.CollectionChanged += OnCollectionChanged;
+
+            var importCommand = new DelegateCommand( OnImport );
+            GlobalCommands.ImportFavorites.RegisterCommand( importCommand );
+            GlobalCommands.ImportRadioStreams.RegisterCommand( importCommand );
+            GlobalCommands.ImportUserTags.RegisterCommand( importCommand );
 
             eventAggregator.Subscribe( this );
         }
@@ -93,6 +104,16 @@ namespace Noise.Desktop.ViewModels {
 
         private void OnOptions() {
             mDialogService.ShowDialog( nameof( ConfigurationDialog ), new DialogParameters(), result => { });
+        }
+
+        private void OnImport() {
+            if( mPlatformDialogs.OpenFileDialog( "Import", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out var fileName ) == true ) {
+
+                var	importCount = mDataExchangeMgr.Import( fileName, true );
+                var	importMessage = importCount > 0 ? $"{importCount} item(s) were imported." : "No items were imported.";
+
+                mPlatformDialogs.MessageDialog( "Import Results", importMessage );
+            }
         }
     }
 }
