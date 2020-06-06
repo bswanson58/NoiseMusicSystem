@@ -472,9 +472,6 @@
     <Compile Include="Views\ListenStageView.xaml.cs">
       <DependentUpon>ListenStageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LyricsEditDialog.xaml.cs">
-      <DependentUpon>LyricsEditDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PlaybackContextDialog.xaml.cs">
       <DependentUpon>PlaybackContextDialog.xaml</DependentUpon>
     </Compile>
@@ -813,10 +810,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ListenStageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LyricsEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
