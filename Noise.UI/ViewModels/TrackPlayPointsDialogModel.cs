@@ -2,10 +2,16 @@
 using System.Globalization;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
+using Prism.Commands;
+using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    public class TrackPlayPointsDialogModel : DialogModelBase {
+    public class TrackPlayPointsDialogModel : PropertyChangeBase, IDialogAware {
+        public  const string                    cTrackParameter = "track";
+        public  const string                    cCurrentPosition = "position";
+        public  const string                    cTrackLength = "trackLength";
+
         private readonly IPlaybackContextWriter mContextWriter;
         private DbTrack                         mTrack;
         private TimeSpan                        mCurrentPosition;
@@ -16,14 +22,33 @@ namespace Noise.UI.ViewModels {
         public  string                          PlayStartTime { get; private set; }
         public  string                          PlayStopTime { get; private set; }
 
+        public  DelegateCommand                 Ok { get; }
+        public  DelegateCommand                 Cancel { get; }
+        public  DelegateCommand                 SetEndTime { get; }
+        public  DelegateCommand                 ClearEndTime { get; }
+        public  DelegateCommand                 SetStartTime { get; }
+        public  DelegateCommand                 ClearStartTime { get; }
+
+        public  string                          Title { get; }
+        public  event Action<IDialogResult>     RequestClose;
+
         public TrackPlayPointsDialogModel( IPlaybackContextWriter playbackContextWriter ) {
             mContextWriter = playbackContextWriter;
+
+            Ok = new DelegateCommand( OnOk );
+            Cancel = new DelegateCommand( OnCancel );
+            SetEndTime = new DelegateCommand( OnSetEndTime, CanSetEndTime );
+            ClearEndTime = new DelegateCommand( OnClearEndTime, CanClearEndTime );
+            SetStartTime = new DelegateCommand( OnSetStartTime, CanSetStartTime );
+            ClearStartTime = new DelegateCommand( OnClearStartTime, CanClearStartTime );
+
+            Title = "Track Play Points";
         }
 
-        public void SetTrack( DbTrack track, long currentPosition, long trackLength ) {
-            mTrack = track;
-            mCurrentPosition = TimeSpan.FromTicks( currentPosition );
-            mTrackLength = TimeSpan.FromTicks( trackLength );
+        public void OnDialogOpened( IDialogParameters parameters ) {
+            mTrack = parameters.GetValue<DbTrack>( cTrackParameter );
+            mCurrentPosition = TimeSpan.FromTicks( parameters.GetValue<long>( cCurrentPosition ));
+            mTrackLength = TimeSpan.FromTicks( parameters.GetValue<long>( cTrackLength ));
 
             mPlayPoints = mContextWriter.GetTrackPlayPoints( mTrack );
 
@@ -37,13 +62,13 @@ namespace Noise.UI.ViewModels {
             UpdateControls();
         }
 
-        public void Execute_SetStartTime() {
+        private void OnSetStartTime() {
             PlayStartTime = CurrentTime;
 
             UpdateControls();
         }
 
-        public bool CanExecute_SetStartTime() {
+        private bool CanSetStartTime() {
             var retValue = false;
             
             if( TimeSpan.TryParse( PlayStopTime, CultureInfo.CurrentUICulture, out TimeSpan timeOut )) {
@@ -56,13 +81,13 @@ namespace Noise.UI.ViewModels {
             return retValue;
         }
 
-        public void Execute_ClearStartTime() {
+        private void OnClearStartTime() {
             PlayStartTime = TimeSpan.FromSeconds( 0 ).ToString();
 
             UpdateControls();
         }
 
-        public bool CanExecute_ClearStartTime() {
+        private bool CanClearStartTime() {
             var retValue = false;
             
             if( TimeSpan.TryParse( PlayStartTime, CultureInfo.CurrentUICulture, out TimeSpan timeIn )) {
@@ -72,13 +97,13 @@ namespace Noise.UI.ViewModels {
             return retValue;
         }
 
-        public void Execute_SetEndTime() {
+        private void OnSetEndTime() {
             PlayStopTime = CurrentTime;
 
             UpdateControls();
         }
 
-        public bool CanExecute_SetEndTime() {
+        private bool CanSetEndTime() {
             var retValue = false;
             
             if( TimeSpan.TryParse( PlayStartTime, CultureInfo.CurrentUICulture, out TimeSpan timeIn )) {
@@ -91,13 +116,13 @@ namespace Noise.UI.ViewModels {
             return retValue;
         }
 
-        public void Execute_ClearEndTime() {
+        private void OnClearEndTime() {
             PlayStopTime = TimeSpan.FromSeconds( 0 ).ToString();
 
             UpdateControls();
         }
 
-        public bool CanExecute_ClearEndTime() {
+        private bool CanClearEndTime() {
             var retValue = false;
             
             if( TimeSpan.TryParse( PlayStopTime, CultureInfo.CurrentUICulture, out TimeSpan timeOut )) {
@@ -135,10 +160,30 @@ namespace Noise.UI.ViewModels {
             RaisePropertyChanged( () => PlayStartTime );
             RaisePropertyChanged( () => PlayStopTime );
             RaisePropertyChanged( () => CurrentTime );
-            RaiseCanExecuteChangedEvent( nameof( CanExecute_ClearStartTime ));
-            RaiseCanExecuteChangedEvent( nameof( CanExecute_ClearEndTime ));
-            RaiseCanExecuteChangedEvent( nameof( CanExecute_SetStartTime ));
-            RaiseCanExecuteChangedEvent( nameof( CanExecute_SetEndTime ));
+            ClearStartTime.RaiseCanExecuteChanged();
+            ClearEndTime.RaiseCanExecuteChanged();
+            SetStartTime.RaiseCanExecuteChanged();
+            SetEndTime.RaiseCanExecuteChanged();
+        }
+
+        public bool CanCloseDialog() {
+            return true;
+        }
+
+        public void OnDialogClosed() { }
+
+        public void OnOk() {
+            SavePlayPoints();
+
+            RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+        }
+
+        public void OnCancel() {
+            RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));
+        }
+
+        private void RaiseRequestClose( IDialogResult dialogResult ) {
+            RequestClose?.Invoke( dialogResult );
         }
     }
 }

@@ -3,31 +3,43 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 mc:Ignorable="d"
-			 Tag="Playback Context"
-			 Height="160"
-			 Width="450"
-			 >
-	<Grid Margin="15">
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:PlaybackContextDialogManager, IsDesignTimeCreatable=False}"
+			 Height="190" Width="450">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <Grid Margin="10">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="11"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
 		<StackPanel Grid.Row="0" Orientation="Horizontal">
-			<TextBlock VerticalAlignment="Center" Margin="0,0,3,0">Set the following values when playing the current:</TextBlock>
+			<TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0">Set the following values when playing the current:</TextBlock>
 			<ComboBox Margin="5,0,0,0" Width="100" ItemsSource="{Binding ContextTypes}" SelectedItem="{Binding CurrentContext}" DisplayMemberPath="ContextName"/>
 		</StackPanel>
 
 		<StackPanel Grid.Row="1" Margin="15,0,0,0" Orientation="Horizontal">
-			<TextBlock Text="Entitled: '"/>
-			<TextBlock Text="{Binding ContextDescription}"/>
-			<TextBlock Text="'"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="Entitled: '"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ContextDescription}"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="'"/>
 		</StackPanel>
 
-		<Grid Grid.Row="3">
+		<Grid Grid.Row="2" Margin="0,10">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="*"/>
@@ -49,5 +61,11 @@
 			<CheckBox Grid.Column="2" Grid.Row="1" Margin="5,3" Content="Pan Position" IsChecked="{Binding PlaybackContext.PanPositionValid}" />
 			<CheckBox Grid.Column="2" Grid.Row="2" Margin="5,3" Content="Play Speed" IsChecked="{Binding PlaybackContext.PlaySpeedValid}" />
 		</Grid>
-	</Grid>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+        </StackPanel>
+
+</Grid>
 </UserControl>

@@ -14,6 +14,7 @@ using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Support;
 using ReusableBits.Ui.Platform;
+using ViewModelLocator = Noise.UI.Support.ViewModelLocator;
 
 namespace Noise.UI {
 	public class NoiseUiModule : IModule {
@@ -33,15 +34,19 @@ namespace Noise.UI {
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationViewModel>();
             containerRegistry.RegisterDialog<LibraryBackupDialog, LibraryBackupDialogModel>();
             containerRegistry.RegisterDialog<LibraryConfigurationDialog, LibraryConfigurationDialogModel>();
+            containerRegistry.RegisterDialog<PlaybackContextDialog, PlaybackContextDialogManager>();
             containerRegistry.RegisterDialog<PlayStrategyDialog, PlayStrategyDialogModel>();
             containerRegistry.RegisterDialog<TagAssociationDialog, TagAssociationDialogModel>();
             containerRegistry.RegisterDialog<TagAddDialog, TagEditDialogModel>();
             containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
+            containerRegistry.RegisterDialog<TrackPlayPointsDialog, TrackPlayPointsDialogModel>();
             containerRegistry.RegisterDialog<TrackStrategyOptionsDialog, TrackStrategyOptionsDialogModel>();
 
+            ViewModelLocationProvider.Register<PlaybackContextDialog, PlaybackContextDialogManager>();
             ViewModelLocationProvider.Register<PlayingTrackView, PlayerViewModel>();
             ViewModelLocationProvider.Register<PlayerExtendedView, PlayerViewModel>();
             ViewModelLocationProvider.Register<TagAddDialog, TagEditDialogModel>();
+            ViewModelLocationProvider.Register<TrackPlayPointsDialog, TrackPlayPointsDialogModel>();
 
             var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
             containerRegistry.RegisterInstance<IResourceProvider>( resourceLoader );

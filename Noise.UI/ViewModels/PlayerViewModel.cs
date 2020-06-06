@@ -5,19 +5,21 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism;
-using Microsoft.Practices.Prism.Regions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Resources;
-using Noise.UI.Support;
+using Noise.UI.Views;
+using Prism;
+using Prism.Regions;
+using Prism.Services.Dialogs;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	[SyncActiveState]
-	public class PlayerViewModel : ViewModelBase, IActiveAware,
+	public class PlayerViewModel : AutomaticCommandBase, IActiveAware,
 								   IHandle<Events.SystemShutdown>,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
 								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo>, IHandle<Events.PlaybackTrackUpdated>,
@@ -37,21 +39,16 @@ namespace Noise.UI.ViewModels {
 		private readonly Timer				mSpectrumUpdateTimer;
 		private ImageSource					mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
-		private readonly PlaybackContextDialogManager		mPlaybackContextDialogManager;
-		private readonly TrackPlayPointsDialogModel			mTrackPlayPointsDialogModel;
 
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController,
-								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager, TrackPlayPointsDialogModel playPointsDialogModel ) {
+		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 			mAudioController = audioController;
 			mDialogService = dialogService;
-			mPlaybackContextDialogManager = playbackContextDialogManager;
-			mTrackPlayPointsDialogModel = playPointsDialogModel;
 
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
@@ -84,9 +81,9 @@ namespace Noise.UI.ViewModels {
 		public string PlayState {
 			get {
 #if DEBUG
-				return( Get( () => PlayState ));
+				return Get( () => PlayState );
 #else
-				return( string.Empty );
+				return string.Empty;
 #endif
 			} 
 			private set { Set( () => PlayState, value ); }
@@ -127,22 +124,22 @@ namespace Noise.UI.ViewModels {
 			AudioParametersFlag++;
 		}
 
-		private ePlaybackStatus CurrentStatus {
+		public ePlaybackStatus CurrentStatus {
 			get { return( Get(() => CurrentStatus, ePlaybackStatus.Stopped ));  }
 			set { Set(() => CurrentStatus, value ); }
 		}
 
-		private int StartTrackFlag {
+		public int StartTrackFlag {
 			get{ return( Get( () => StartTrackFlag, 0 )); }
 			set{ Set( () => StartTrackFlag, value  ); }
 		}
 
-		private int InfoUpdateFlag {
+		public int InfoUpdateFlag {
 			get{ return( Get( () => InfoUpdateFlag, 0 ));  }
 			set{ Execute.OnUIThread( () => Set( () => InfoUpdateFlag, value )); }
 		}
 
-		private int AudioParametersFlag {
+		public int AudioParametersFlag {
 			get { return(Get( () => AudioParametersFlag, 0 )); }
 			set { Execute.OnUIThread( () => Set( () => AudioParametersFlag, value ));}
 		}
@@ -157,11 +154,8 @@ namespace Noise.UI.ViewModels {
 
 					retValue = track.IsStream ? track.StreamInfo != null ? track.StreamInfo.Title : track.Stream.Name : track.Track.Name;
 				}
-				else if( IsInDesignMode ) {
-					retValue = "The Flying Dutchmens Tribute";
-				}
 
-				return( retValue );
+				return retValue;
 			} 
 		}
 
@@ -174,7 +168,7 @@ namespace Noise.UI.ViewModels {
 					retValue = mPlayQueue.PlayingTrack.IsStream ? mPlayQueue.PlayingTrack.StreamInfo.Artist : mPlayQueue.PlayingTrack.Artist.Name;
 				}
 
-				return( retValue );
+				return retValue;
 			}
 		}
 
@@ -188,11 +182,8 @@ namespace Noise.UI.ViewModels {
 
 					retValue = track.IsStream ? track.StreamInfo != null ? track.StreamInfo.Album : track.Stream.Description : track.Album.Name;
 				}
-				else if( IsInDesignMode ) {
-					retValue = "( The Trubedours/Timeless Hits and Classics)";
-				}
 
-				return( retValue );
+				return retValue;
 			}
 		}
 
@@ -209,11 +200,8 @@ namespace Noise.UI.ViewModels {
                                                    $" - {track.Stream.Description}" : 
                                                    $" ({track.Artist.Name}/{track.Album.Name})";
 				}
-				else if( IsInDesignMode ) {
-					retValue = "( The Trubedours/Timeless Hits and Classics)";
-				}
 
-				return( retValue );
+				return retValue;
 			}
 		}
 
@@ -641,33 +629,29 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ManagePlaybackContext() {
-			if(( mPlayController.CurrentTrack != null ) &&
-			   ( mDialogService != null ) &&
-			   ( mPlaybackContextDialogManager != null )) {
-				mPlaybackContextDialogManager.SetTrack( mPlayController.CurrentTrack.Album, mPlayController.CurrentTrack.Track );
+			if( mPlayController.CurrentTrack != null ) {
+				var parameters = new DialogParameters {
+                    { PlaybackContextDialogManager.cTrackParameter, mPlayController.CurrentTrack.Track },
+					{ PlaybackContextDialogManager.cAlbumParameter, mPlayController.CurrentTrack.Album }};
 
-				if( mDialogService.ShowDialog( DialogNames.ManagePlaybackContext, mPlaybackContextDialogManager ) == true ) {
-					mPlaybackContextDialogManager.UpdatePlaybackContext();
-				}
+				mDialogService.ShowDialog( nameof( PlaybackContextDialog ), parameters, result => { });
 			}
 		}
 
 		[DependsUpon("StartTrackFlag")]
 		public bool CanExecute_ManagePlaybackContext() {
 			return(( mDialogService != null ) && 
-				   ( mPlaybackContextDialogManager != null ) &&
 				   ( mPlayController.CurrentTrack != null ));
 		}
 
 		public void Execute_DefinePlayPoints() {
 			if(( mDialogService != null ) &&
-			   ( mPlayController.CurrentTrack != null ) &&
-			   ( mTrackPlayPointsDialogModel != null )) {
-				mTrackPlayPointsDialogModel.SetTrack( mPlayController.CurrentTrack.Track, mPlayController.PlayPosition, mPlayController.TrackEndPosition );
-
-				if( mDialogService.ShowDialog( DialogNames.TrackPlayPointsDialog, mTrackPlayPointsDialogModel ) == true ) {
-					mTrackPlayPointsDialogModel.SavePlayPoints();
-                }
+			   ( mPlayController.CurrentTrack != null )) {
+				var parameters = new DialogParameters {
+                    { TrackPlayPointsDialogModel.cTrackParameter, mPlayController.CurrentTrack.Track },
+					{ TrackPlayPointsDialogModel.cCurrentPosition, mPlayController.PlayPosition },
+					{ TrackPlayPointsDialogModel.cTrackLength, mPlayController.TrackEndPosition }};
+				mDialogService.ShowDialog( nameof( TrackPlayPointsDialog ), parameters, result => { });
             }
         }
         [DependsUpon( "CurrentStatus" )]
