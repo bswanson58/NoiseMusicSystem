@@ -14,7 +14,6 @@ using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Support;
 using ReusableBits.Ui.Platform;
-using ViewModelLocator = Noise.UI.Support.ViewModelLocator;
 
 namespace Noise.UI {
 	public class NoiseUiModule : IModule {

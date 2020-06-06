@@ -318,17 +318,7 @@
     </Compile>
     <Compile Include="Support\ActiveAwareHelper.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
-    <Compile Include="Support\DialogModelBase.cs" />
     <Compile Include="Support\DialogNames.cs" />
-    <Compile Include="Support\DialogService.cs" />
-    <Compile Include="Support\DialogWindow.xaml.cs">
-      <DependentUpon>DialogWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Support\DialogWindowModel.cs" />
-    <Compile Include="Support\FolderBrowserDialogEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
     <Compile Include="Support\PrefixedNameHandler.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
@@ -346,7 +336,6 @@
     <Compile Include="ViewModels\AlbumEditDialogModel.cs" />
     <Compile Include="ViewModels\AlbumListViewModel.cs" />
     <Compile Include="ViewModels\AlbumTracksViewModel.cs" />
-    <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistArtworkViewModel.cs" />
@@ -356,7 +345,6 @@
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
-    <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
@@ -387,7 +375,6 @@
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
-    <Compile Include="ViewModels\TrackEditDialogModel.cs" />
     <Compile Include="ViewModels\TrackPlayPointsDialogModel.cs" />
     <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
     <Compile Include="ViewModels\TransportViewModel.cs" />
@@ -412,9 +399,6 @@
     <Compile Include="Views\AlbumView.xaml.cs">
       <DependentUpon>AlbumView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ArtistAlbumConfigurationDialog.xaml.cs">
-      <DependentUpon>ArtistAlbumConfigurationDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ArtistArtworkView.xaml.cs">
       <DependentUpon>ArtistArtworkView.xaml</DependentUpon>
     </Compile>
@@ -432,9 +416,6 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CloudConfigurationDialog.xaml.cs">
-      <DependentUpon>CloudConfigurationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
@@ -586,9 +567,6 @@
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TrackEditDialog.xaml.cs">
-      <DependentUpon>TrackEditDialog.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
@@ -705,10 +683,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Support\DialogWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\AlbumArtworkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -733,10 +707,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ArtistAlbumConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\ArtistArtworkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -758,10 +728,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\CloudConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -962,10 +928,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\TrackEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
