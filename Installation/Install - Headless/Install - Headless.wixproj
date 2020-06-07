@@ -41,14 +41,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\Noise.Headless\Noise.Headless.csproj">
-      <Name>Noise.Headless</Name>
-      <Project>{8af36109-6d52-4b28-9699-2b27a751a0a4}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\..\ReusableBits.Service\ReusableBits.Service.csproj">
       <Name>ReusableBits.Service</Name>
       <Project>{8dfa71be-5591-41a2-b640-a9f3984422a9}</Project>
