@@ -64,14 +64,6 @@
     <Content Include="Version.wxi" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\LayoutManager\Layout Manager.csproj">
-      <Name>Layout Manager</Name>
-      <Project>{28833337-bdb1-412f-b378-575901285100}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\..\Noise.AppSupport\Noise.AppSupport.csproj">
       <Name>Noise.AppSupport</Name>
       <Project>{7ed4f983-3946-48eb-aab7-587cefac4d03}</Project>
