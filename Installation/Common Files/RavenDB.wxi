@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
 	<DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="AWSSDK.dll" Guid="2CCC13D2-9C26-49DC-A5E3-D9BA54B54593">
+      <File Id="AWSSDK.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)AWSSDK.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
 		<Component Id="Esent.Interop.dll" Guid="0570fd90-e8ad-4fb1-a3de-9663d1d5a53d">
 			<File Id="Esent.Interop.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Esent.Interop.dll" KeyPath="yes" Checksum="yes" />
 		</Component>
@@ -65,7 +68,8 @@
 	</DirectoryRef>
 
 	<ComponentGroup Id="RavenDBFiles">
-		<ComponentRef Id="Esent.Interop.dll" />
+    <ComponentRef Id="AWSSDK.dll" />
+    <ComponentRef Id="Esent.Interop.dll" />
 		<ComponentRef Id="ICSharpCode.NRefactory.dll" />
 		<ComponentRef Id="ICSharpCode.NRefactory.CSharp.dll" />
 		<ComponentRef Id="GeoAPI.dll" />

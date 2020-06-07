@@ -4,21 +4,9 @@
     <Component Id="System.Windows.Interactivity.dll" Guid="05e0e0dc-082d-44b0-94c4-0aacfb56280d">
       <File Id="System.Windows.Interactivity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Windows.Interactivity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="System.Reactive.dll" Guid="1ED14DD6-01B0-4829-B437-5828B8083C67">
-      <File Id="System.Reactive.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Reactive.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="System.Threading.Tasks.Extensions.dll" Guid="53239675-6F06-452C-BFAC-605F988B92D6">
-      <File Id="System.Threading.Tasks.Extensions.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Threading.Tasks.Extensions.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="System.ValueTuple.dll" Guid="D33F3085-C42C-4941-A386-BC2354256D3D">
-      <File Id="System.ValueTuple.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.ValueTuple.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="MicrosoftFiles">
     <ComponentRef Id="System.Windows.Interactivity.dll" />
-    <ComponentRef Id="System.Reactive.dll"/>
-    <ComponentRef Id="System.Threading.Tasks.Extensions.dll"/>
-    <ComponentRef Id="System.ValueTuple.dll" />
   </ComponentGroup>
 </Include>

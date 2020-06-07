@@ -11,7 +11,6 @@
 		<?include CuttingEdge.wxi ?>
 		<?include DotNetZip.wxi ?>
 		<?include EntityFramework.wxi ?>
-		<?include GDataDB.wxi ?>
 		<?include GongSolutions.wxi ?>
 		<?include LastFmScrobbler.wxi ?>
 		<?include Lucene.wxi ?>
@@ -30,5 +29,6 @@
 		<?include Stateless.wxi ?>
     <?include TagLibSharp.wxi ?>
     <?include TinyIpc.wxi ?>
+    <?include Unity.wxi ?>
 	</Fragment>
 </Wix>

@@ -82,31 +82,6 @@
 			<Component Id="Noise.UI.Style.dll" Guid="3c616b69-2034-4242-af37-71de5b4bd13b">
 				<File Id="Noise.UI.Style.dll" DiskId="1" Source="$(var.Noise.UI.Style.TargetDir)Noise.UI.Style.dll" KeyPath="yes" Checksum="yes" />
 			</Component>
-
-			<!-- Screen Layouts -->
-			<Directory Id="UiLayoutConfig" Name="Layouts">
-				<Component Id="LayoutConfiguration.xaml" Guid="a75c8e62-b6da-4115-b3b7-c5c4c157f0d8">
-					<File Id="LayoutConfiguration.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\LayoutConfiguration.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-				<Component Id="ExploreLayout.xaml" Guid="7d7c0259-f984-4bb5-b226-ae2fee70a89d">
-					<File Id="ExploreLayout.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\ExploreLayout.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-				<Component Id="ListenLayout.xaml" Guid="990f43b1-8c77-4212-ab4d-bf8e106deeb4">
-					<File Id="ListenLayout.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\ListenLayout.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-				<Component Id="TimeExplorerLayout.xaml" Guid="d891860b-5151-40db-9b72-f3766955d3f2">
-					<File Id="TimeExplorerLayout.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\TimeExplorerLayout.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-				<Component Id="StartupLayout.xaml" Guid="71e37f9d-5be7-4d76-893c-fe7b73bf1851">
-					<File Id="StartupLayoutLayout.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\StartupLayout.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-				<Component Id="LibraryCreation.xaml" Guid="5938115d-6e14-4426-938a-01175af44361">
-					<File Id="LibraryCreation.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\LibraryCreation.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-				<Component Id="LibrarySelection.xaml" Guid="cfaf8ddf-c0b0-4c4d-a3f9-c6d6fe1b9339">
-					<File Id="LibrarySelection.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\LibrarySelection.xaml" KeyPath="yes" Checksum="yes" />
-				</Component>
-			</Directory>
 		</DirectoryRef>
 
 		<!-- Shortcuts -->
@@ -133,13 +108,6 @@
 			<ComponentRef Id="Noise.Desktop.exe" />
 			<ComponentRef Id="Noise.Desktop.config" />
 			<ComponentRef Id="Noise.UI.Style.dll"/>
-			<ComponentRef Id="LayoutConfiguration.xaml"/>
-			<ComponentRef Id="ExploreLayout.xaml"/>
-			<ComponentRef Id="ListenLayout.xaml"/>
-			<ComponentRef Id="TimeExplorerLayout.xaml"/>
-			<ComponentRef Id="StartupLayout.xaml"/>
-			<ComponentRef Id="LibraryCreation.xaml"/>
-			<ComponentRef Id="LibrarySelection.xaml"/>
 			<ComponentRef Id="ApplicationShortcut" />
 			<ComponentRef Id="DesktopShortcut"/>
 			<ComponentRef Id="NoiseMenuFolder" />
@@ -156,7 +124,6 @@
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
         <ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
-				<ComponentGroupRef Id="GDataDBFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
 				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
@@ -175,6 +142,7 @@
 				<ComponentGroupRef Id="StatelessFiles"/>
         <ComponentGroupRef Id="TagLibSharpFiles"/>
         <ComponentGroupRef Id="TinyIpcFiles"/>
+        <ComponentGroupRef Id="UnityFiles"/>
 			</Feature>
 		</Feature>
 

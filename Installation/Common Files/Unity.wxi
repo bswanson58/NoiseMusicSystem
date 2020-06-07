@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+		<Component Id="Unity.Abstractions.dll" Guid="3DE6418E-0FF5-472D-AC7A-139774C8D5ED">
+			<File Id="Unity.Abstractions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Unity.Abstractions.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+    <Component Id="Unity.Container.dll" Guid="B6BED9DE-142B-49E1-8373-578365E19719">
+      <File Id="Unity.Container.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Unity.Container.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="E003EA8E-0166-446D-8651-45238AB8F566">
+      <File Id="System.Runtime.CompilerServices.Unsafe.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="System.Threading.Tasks.Extensions.dll" Guid="B2C3788A-95A3-48EE-9E73-9C4FBB220BF4">
+      <File Id="System.Threading.Tasks.Extensions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Threading.Tasks.Extensions.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+	</DirectoryRef>
+
+	<ComponentGroup Id="UnityFiles">
+    <ComponentRef Id="Unity.Abstractions.dll" />
+    <ComponentRef Id="Unity.Container.dll" />
+    <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll" />
+    <ComponentRef Id="System.Threading.Tasks.Extensions.dll" />
+	</ComponentGroup>
+</Include>

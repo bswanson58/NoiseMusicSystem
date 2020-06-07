@@ -16,13 +16,17 @@
     <Component Id="Splat.Drawing.dll" Guid="B3321D1A-429C-4DC8-B956-8BF51505F537">
       <File Id="Splat.Drawing.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Splat.Drawing.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="System.Reactive.dll" Guid="1ED14DD6-01B0-4829-B437-5828B8083C67">
+      <File Id="System.Reactive.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Reactive.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="ReactiveUIFiles">
+    <ComponentRef Id="DynamicData.dll" />
     <ComponentRef Id="ReactiveUI.dll" />
     <ComponentRef Id="ReactiveUI.WPF.dll" />
     <ComponentRef Id="Splat.dll"/>
     <ComponentRef Id="Splat.Drawing.dll"/>
-    <ComponentRef Id="DynamicData.dll" />
+    <ComponentRef Id="System.Reactive.dll"/>
   </ComponentGroup>
 </Include>
