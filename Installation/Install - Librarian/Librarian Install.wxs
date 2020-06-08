@@ -106,7 +106,6 @@
 			<Feature Id="Application" Title="Noise Librarian Application" Level="1">
 				<ComponentGroupRef Id="ApplicationFiles" />
 				<ComponentGroupRef Id="CoreFiles"/>
-				<ComponentGroupRef Id="AutomapperFiles"/>
 				<ComponentGroupRef Id="BassAudioFiles"/>
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>

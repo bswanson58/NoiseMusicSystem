@@ -34,7 +34,6 @@
     <Compile Include="Common Files.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Automapper.wxi" />
     <Content Include="BASS Audio.wxi" />
     <Content Include="CaliburnMicro.wxi" />
     <Content Include="Configuration.wxi" />
