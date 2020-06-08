@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -153,9 +152,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
-			var retValue = new UiAlbum();
+			var retValue = new UiAlbum( dbAlbum );
 
-			Mapper.Map( dbAlbum, retValue );
 			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
@@ -338,7 +336,7 @@ namespace Noise.UI.ViewModels {
 			if(( mCurrentAlbum != null ) &&
 			   ( eventArgs.AlbumId == mCurrentAlbum.DbId )) {
 				mChangeObserver.Release( mCurrentAlbum );
-				Mapper.Map( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
+				mCurrentAlbum.UpdateFromSource( mAlbumProvider.GetAlbum( eventArgs.AlbumId ));
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 		}

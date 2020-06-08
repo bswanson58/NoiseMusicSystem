@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Category = {" + nameof( Name ) + "}")]
@@ -12,8 +13,16 @@ namespace Noise.UI.Dto {
 
 		public UiCategory() { }
 
-		public UiCategory( Action<long, bool> onSelected ) {
+		public UiCategory( DbTag tag, Action<long, bool> onSelected ) {
 			mOnSelection = onSelected;
+
+			if( tag != null ) {
+                DbId = tag.DbId;
+                Name = tag.Name;
+                Description = tag.Description;
+                UiIsFavorite = tag.IsFavorite;
+                UiRating = tag.Rating;
+            }
 		}
 
 		public bool IsSelected {

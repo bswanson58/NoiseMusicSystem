@@ -16,12 +16,32 @@ namespace Noise.UI.Dto {
 
 		public	DelegateCommand				GenreClicked { get; }
 
-        public UiArtist() {
+        public UiArtist( DbArtist artist ) {
 			GenreClicked = new DelegateCommand( OnGenreClicked );
+
+			UpdateFromSource( artist );
         }
 
-        public UiArtist( Action<UiArtist> onGenreClicked ) {
+        public UiArtist( DbArtist artist, Action<UiArtist> onGenreClicked ) : 
+            this( artist ) {
             mOnGenreClicked = onGenreClicked;
+        }
+
+		public void UpdateFromSource( DbArtist artist ) {
+            if( artist != null ) {
+				DbId = artist.DbId;
+
+                Name = artist.Name;
+                SortName = artist.Name;
+				AlbumCount = artist.AlbumCount;
+				IsFavorite = artist.IsFavorite;
+				HasFavorites = artist.HasFavorites;
+				CalculatedRating = artist.CalculatedRating;
+				UserRating = artist.UserRating;
+				Rating = artist.Rating;
+                UiIsFavorite = artist.IsFavorite;
+                UiRating = artist.Rating;
+            }
         }
 
 		public string ActiveYears {

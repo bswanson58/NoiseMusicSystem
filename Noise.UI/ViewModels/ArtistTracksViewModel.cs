@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows.Data;
-using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -247,11 +246,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, null, null );
-
-			Mapper.Map( dbTrack, retValue );
-
-			return( retValue );
+			return new UiTrack( dbTrack, OnTrackPlay, null, null );
 		}
 
 		private void OnTrackPlay( long trackId ) {

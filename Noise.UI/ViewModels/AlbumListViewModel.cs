@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows.Data;
-using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -359,11 +358,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
-			var retValue = new UiAlbum( OnPlay );
+			var retValue = new UiAlbum( dbAlbum, OnPlay );
 
 			if( dbAlbum != null ) {
-				Mapper.Map( dbAlbum, retValue );
-
                 FormatSortPrefix( retValue );
 			}
 
@@ -411,7 +408,7 @@ namespace Noise.UI.ViewModels {
 
 				if( album != null ) {
 					mChangeObserver.Release( uiAlbum );
-					Mapper.Map( album, uiAlbum );
+					uiAlbum.UpdateFromSource( album );
 					mChangeObserver.Add( uiAlbum );
 				}
 			}

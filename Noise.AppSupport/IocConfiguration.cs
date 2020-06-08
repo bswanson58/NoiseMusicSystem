@@ -81,7 +81,7 @@ namespace Noise.AppSupport {
 					break;
 			}
 
-		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.Ui", "Noise.RemoteHost" ));
+		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.RemoteHost" ));
 		    Mapper.AssertConfigurationIsValid();
 
 			return( true );

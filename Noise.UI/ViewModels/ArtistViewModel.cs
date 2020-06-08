@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -127,10 +126,9 @@ namespace Noise.UI.ViewModels {
         }
 
         private UiArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new UiArtist();
+			var retValue = new UiArtist( dbArtist );
 
 			if( dbArtist != null ) {
-				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
 				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
@@ -364,7 +362,7 @@ namespace Noise.UI.ViewModels {
 						if( artist != null ) {
                             using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
                                 if( updater.Item != null ) {
-                                    Mapper.Map( artist, updater.Item );
+									updater.Item.Name = artist.Name;
 
                                     updater.Update();
                                 }

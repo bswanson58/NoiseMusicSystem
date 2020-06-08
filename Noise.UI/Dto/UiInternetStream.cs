@@ -19,7 +19,7 @@ namespace Noise.UI.Dto {
 		public	Int32					Bitrate { get; set; }
 		public	Int16					Channels { get; set; }
 		public	Int16					Rating { get; set; }
-		public	DateTime				DateAdded { get; }
+		public	DateTime				DateAdded { get; private set; }
 		public	eAudioEncoding			Encoding { get; set; }
 		public	long					ExternalGenre { get; set; }
 		public	long					UserGenre { get; set; }
@@ -46,11 +46,36 @@ namespace Noise.UI.Dto {
 			PlayStream = new DelegateCommand( OnPlayStream );
         }
 
-		public UiInternetStream( Action<UiInternetStream> onClick, Action<long> onPlay ) :
+		public UiInternetStream( DbInternetStream stream, Action<UiInternetStream> onClick, Action<long> onPlay ) :
             this () {
 			mOnClick = onClick;
 			mOnPlay = onPlay;
+
+			UpdateFromSource( stream );
 		}
+
+		private void UpdateFromSource( DbInternetStream stream ) {
+			if( stream != null ) {
+				DbId = stream.DbId;
+
+				Name = stream.Name;
+				Description = stream.Description;
+				Url = stream.Url;
+				Bitrate = stream.Bitrate;
+				Channels = stream.Channels;
+				Rating = stream.Rating;
+				DateAdded = stream.DateAdded;
+				Encoding = stream.Encoding;
+				ExternalGenre = stream.ExternalGenre;
+				UserGenre = stream.UserGenre;
+				IsPlaylistWrapped = stream.IsPlaylistWrapped;
+				IsFavorite = stream.IsFavorite;
+				Website = stream.Website;
+
+				UiIsFavorite = stream.IsFavorite;
+				UiRating = stream.Rating;
+            }
+        }
 
 		public long Genre {
 			get => ( UserGenre == Constants.cDatabaseNullOid ?  ExternalGenre : UserGenre );

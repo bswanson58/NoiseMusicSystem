@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -201,13 +200,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions, OnFocusRequest );
-
-			if( dbTrack != null ) {
-				Mapper.Map( dbTrack, retValue );
-			}
-
-			return( retValue );
+			return new UiTrack( dbTrack, OnTrackPlay, OnTagEdit, OnStrategyOptions, OnFocusRequest );
 		}
 
         private void SetTrackTags( UiTrack track ) {

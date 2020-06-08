@@ -49,7 +49,7 @@ namespace Noise.UI.Dto {
 
         protected UiTrack() { }
 
-		public UiTrack( Action<long> playAction, Action<long> editAction, Action<long> strategyEdit, Action<long> focusRequest = null ) {
+		public UiTrack( DbTrack track, Action<long> playAction, Action<long> editAction, Action<long> strategyEdit, Action<long> focusRequest = null ) {
 			mPlayAction = playAction;
 			mEditAction = editAction;
             mStrategyAction = strategyEdit;
@@ -61,7 +61,35 @@ namespace Noise.UI.Dto {
             Edit = new DelegateCommand( OnEdit, CanEdit );
             StrategyOptions = new DelegateCommand( OnStrategyOptions, CanEditStrategyOptions );
             FocusRequest = new DelegateCommand( OnFocusRequest, CanFocusRequest );
+
+            UpdateFromSource( track );
 		}
+
+        public void UpdateFromSource( DbTrack track ) {
+            if( track != null ) {
+                DbId = track.DbId;
+
+                Name = track.Name;
+                Performer = track.Performer;
+                Album = track.Album;
+                Duration = new TimeSpan( 0, 0, 0, 0, track.DurationMilliseconds );
+                Bitrate = track.Bitrate;
+                SampleRate = track.SampleRate;
+                Channels = track.Channels;
+                Rating = track.Rating;
+                TrackNumber = track.TrackNumber;
+                VolumeName = track.VolumeName;
+                PublishedYear = track.PublishedYear;
+                DateAdded = track.DateAdded;
+                Encoding = track.Encoding;
+                IsFavorite = track.IsFavorite;
+                PlayAdjacentStrategy = track.PlayAdjacentStrategy;
+                DoNotStrategyPlay = track.DoNotStrategyPlay;
+
+                UiIsFavorite = track.IsFavorite;
+                UiRating = track.Rating;
+            }
+        }
 
         public bool IsHighlighted {
             get {  return( Get(() => IsHighlighted ));}

@@ -21,16 +21,39 @@ namespace Noise.UI.Dto {
 
 		public	DelegateCommand			PlayAlbum { get; }
 
-		public UiAlbum() {
-		    mDisplayName = String.Empty;
+		public UiAlbum( DbAlbum album ) {
+			UpdateFromSource( album );
 
 			PlayAlbum = new DelegateCommand( OnPlayAlbum );
 		}
 
-		public UiAlbum( Action<long> onPlay ) :
-            this () {
+		public UiAlbum( DbAlbum album, Action<long> onPlay ) :
+            this ( album ) {
 			mOnPlay = onPlay;
 		}
+
+		public void UpdateFromSource( DbAlbum album ) {
+			if( album != null ) {
+				DbId = album.DbId;
+
+				Name = album.Name;
+				Artist = album.Artist;
+				IsFavorite = album.IsFavorite;
+				HasFavorites = album.HasFavorites;
+				CalculatedRating = album.CalculatedRating;
+				PublishedYear = album.PublishedYear;
+				Rating = album.Rating;
+				TrackCount = album.TrackCount;
+				CalculatedGenre = album.CalculatedGenre;
+				ExternalGenre = album.ExternalGenre;
+				UserGenre = album.UserGenre;
+				UserRating = album.UserRating;
+
+                UiIsFavorite = album.IsFavorite;
+                UiRating = album.Rating;
+                SortName = album.Name;
+            }
+        }
 
 		public string Name {
 			get{ return( Get( () => Name )); }
@@ -48,7 +71,7 @@ namespace Noise.UI.Dto {
                     mDisplayName = CreateDisplayName( Name );
                 }
 
-                return ( mDisplayName );
+                return mDisplayName;
 	        }
             set => mDisplayName = CreateDisplayName( value );
 	    }

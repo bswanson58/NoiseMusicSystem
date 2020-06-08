@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -212,10 +211,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new UiArtist();
+			var retValue = new UiArtist( dbArtist );
 
 			if( dbArtist != null ) {
-				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 			}
 

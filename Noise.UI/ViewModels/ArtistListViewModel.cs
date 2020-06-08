@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
-using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -328,10 +327,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new UiArtist( OnGenreClicked );
+			var retValue = new UiArtist( dbArtist, OnGenreClicked );
 
 			if( dbArtist != null ) {
-				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
                 FormatSortPrefix( retValue );
@@ -379,7 +377,7 @@ namespace Noise.UI.ViewModels {
 
 				if( artist != null ) {
 					mChangeObserver.Release( uiArtist );
-					Mapper.Map( artist, uiArtist );
+					uiArtist.UpdateFromSource( artist );
 					uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
 					mChangeObserver.Add( uiArtist );
 
