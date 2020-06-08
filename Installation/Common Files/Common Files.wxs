@@ -12,7 +12,6 @@
 		<?include DotNetZip.wxi ?>
 		<?include EntityFramework.wxi ?>
 		<?include GongSolutions.wxi ?>
-		<?include LastFmScrobbler.wxi ?>
 		<?include Lucene.wxi ?>
 		<?include MahApps.wxi?>
 		<?include Microsoft.wxi ?>

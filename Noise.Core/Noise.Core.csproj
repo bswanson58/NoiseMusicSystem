@@ -123,9 +123,6 @@
     <Reference Include="Ionic.Zip, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="Lpfm.LastFmScrobbler">
-      <HintPath>..\packages\Lpfm.LastFmScrobbler.dll.1.3.0\lib\net40\Lpfm.LastFmScrobbler.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
@@ -329,7 +326,6 @@
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Platform\SleepPreventer.cs" />
     <Compile Include="PlayHistory\PlayHistoryMgr.cs" />
-    <Compile Include="PlayHistory\PlayScrobbler.cs" />
     <Compile Include="PlayQueue\IPlayQueueSupport.cs" />
     <Compile Include="PlayQueue\PlayQueueRandomTracks.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />

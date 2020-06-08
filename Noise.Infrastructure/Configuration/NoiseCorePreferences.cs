@@ -2,7 +2,6 @@
 	public class NoiseCorePreferences {
 		public	int								DisplayPlayTimeMode { get; set; }
 		public	bool					        EnableRemoteAccess { get; set; }
-		public	bool					        EnablePlaybackScrobbling { get; set; }
 		public	bool					        HasNetworkAccess { get; set; }
 		public	long					        LastLibraryUsed { get; set; }
 		public	bool					        LoadLastLibraryOnStartup { get; set; }
@@ -27,7 +26,6 @@
 			DeletePlayedTracks = true;
 			MaximumPlayedTracks = 12;
 
-			EnablePlaybackScrobbling = false;
 			EnableRemoteAccess = false;
 
 			MaximumBackupPressure = 50;

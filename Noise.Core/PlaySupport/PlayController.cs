@@ -41,7 +41,6 @@ namespace Noise.Core.PlaySupport {
 		private readonly IPlayQueue					mPlayQueue;
 		private readonly IPlayHistory				mPlayHistory;
 		private readonly IRatings					mRatings;
-		private readonly IScrobbler					mScrobbler;
 		private readonly IPreferences				mPreferences;
 		private readonly PlayTimeDisplay			mPlayTimeDisplay;
 		private TimeSpan							mCurrentPosition;
@@ -65,7 +64,7 @@ namespace Noise.Core.PlaySupport {
         public	bool								IsRightTrackTimeActive => mPlayTimeDisplay.IsRightDisplayed;
 
         public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IRatings ratings,
-							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
+							   IPlayQueue playQueue, IPlayHistory playHistory, IPlaybackContextManager playbackContext,
 							   IPlaybackContextWriter contextWriter, IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -73,7 +72,6 @@ namespace Noise.Core.PlaySupport {
 			mPlayHistory = playHistory;
 			mPlaybackContext = playbackContext;
 			mContextWriter = contextWriter;
-			mScrobbler = scrobbler;
 			mRatings = ratings;
 			mAudioPlayer = audioPlayer;
 			mPreferences = preferences;
@@ -408,7 +406,6 @@ namespace Noise.Core.PlaySupport {
 			if( track != null ) {
 				track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
 				mPlayHistory.TrackPlayCompleted( track );
-				mScrobbler.TrackPlayed( track );
 
 				mPlaybackContext.CloseContext( track.Track );
 			}
@@ -470,8 +467,6 @@ namespace Noise.Core.PlaySupport {
 				mAudioPlayer.Play( channel );
 
 				retValue = true;
-
-				mScrobbler.TrackStarted( track );
 			}
 
 			return( retValue );

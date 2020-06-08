@@ -125,7 +125,6 @@
         <ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
-				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MahAppsMetroFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>

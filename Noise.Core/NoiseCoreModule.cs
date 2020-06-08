@@ -63,7 +63,6 @@ namespace Noise.Core {
 			containerRegistry.RegisterSingleton<IPlayController, PlayController>();
 			containerRegistry.RegisterSingleton<IPlaybackContextManager, PlaybackContextManager>();
 			containerRegistry.Register<IPlaybackContextWriter, PlaybackContextWriter>();
-			containerRegistry.Register<IScrobbler, PlayScrobbler>();
 			containerRegistry.RegisterSingleton<ISearchProvider, LuceneSearchProvider>();
 			containerRegistry.RegisterSingleton<ISidecarBuilder, SidecarBuilder>();
 			containerRegistry.Register<ISidecarCreator, SidecarCreator>();
