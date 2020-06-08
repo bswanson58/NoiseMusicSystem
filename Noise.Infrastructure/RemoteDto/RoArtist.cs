@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
@@ -14,5 +15,15 @@ namespace Noise.Infrastructure.RemoteDto {
 		public string			Genre { get; set; }
 		[DataMember]
 		public bool				IsFavorite { get; set; }
+
+		public RoArtist( DbArtist artist ) {
+			DbId = artist.DbId;
+			Name = artist.Name;
+			AlbumCount = artist.AlbumCount;
+			Rating = artist.Rating;
+			IsFavorite = artist.IsFavorite;
+
+			Genre = String.Empty;
+        }
 	}
 }

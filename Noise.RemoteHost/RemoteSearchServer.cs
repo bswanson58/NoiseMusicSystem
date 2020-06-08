@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using AutoMapper;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -31,11 +30,7 @@ namespace Noise.RemoteHost {
 		}
 
 		private static RoSearchResultItem TransformSearchItem( SearchResultItem searchItem ) {
-			var retValue = new RoSearchResultItem();
-
-			Mapper.Map( searchItem, retValue );
-
-			return( retValue );
+			return new RoSearchResultItem( searchItem );
 		}
 
 		public SearchResult Search( string searchText ) {

@@ -1,5 +1,4 @@
 ﻿using System;
-using AutoMapper;
 using CommonServiceLocator;
 using Noise.AppSupport.Logging;
 using Noise.AppSupport.Preferences;
@@ -81,10 +80,7 @@ namespace Noise.AppSupport {
 					break;
 			}
 
-		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.RemoteHost" ));
-		    Mapper.AssertConfigurationIsValid();
-
-			return( true );
+			return true;
 		}
 
 		private void InitializeUnity() {

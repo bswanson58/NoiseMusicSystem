@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceModel;
-using AutoMapper;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
@@ -28,7 +27,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			else {
-				retValue.ErrorMessage = string.Format( "The specified library id ({0}) does not exist", libraryId );
+				retValue.ErrorMessage = $"The specified library id ({libraryId}) does not exist";
 			}
 
 			return( retValue );
@@ -55,11 +54,7 @@ namespace Noise.RemoteHost {
 		}
 
 		private RoLibrary TransformLibrary( LibraryConfiguration library ) {
-			var retValue = new RoLibrary();
-
-			Mapper.Map( library, retValue );
-
-			return( retValue );
+			return new RoLibrary( library );
 		}
 
 		public LibraryListResult GetLibraryList() {

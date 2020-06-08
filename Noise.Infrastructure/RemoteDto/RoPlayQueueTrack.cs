@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
@@ -28,5 +29,20 @@ namespace Noise.Infrastructure.RemoteDto {
 		public bool		IsFaulted { get; set; }
 		[DataMember]
 		public bool		IsStrategySourced { get; set; }
+
+		public RoPlayQueueTrack( PlayQueueTrack track ) {
+			Id = track.Uid;
+			TrackId = track.Track.DbId;
+			TrackName = track.Track.Name;
+			AlbumId = track.Album.DbId;
+			AlbumName = track.Album.Name;
+			ArtistId = track.Artist.DbId;
+			ArtistName = track.Artist.Name;
+			DurationMilliseconds = track.Track.DurationMilliseconds;
+			IsPlaying = track.IsPlaying;
+			HasPlayed = track.HasPlayed;
+			IsFaulted = track.IsFaulted;
+			IsStrategySourced = track.StrategySource != eStrategySource.User;
+        }
 	}
 }

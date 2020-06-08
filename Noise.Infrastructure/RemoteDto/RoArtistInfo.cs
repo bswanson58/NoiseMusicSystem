@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
@@ -32,5 +33,9 @@ namespace Noise.Infrastructure.RemoteDto {
 			TopTrackIds = new long[0];
 			SimilarArtists = new string[0];
 		}
+
+		public RoArtistInfo( DbArtist artist ) {
+			ArtistId = artist.DbId;
+        }
 	}
 }

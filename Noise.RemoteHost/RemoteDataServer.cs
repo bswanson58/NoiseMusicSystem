@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using AutoMapper;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -51,9 +50,8 @@ namespace Noise.RemoteHost {
 		}
 
 		private RoArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new RoArtist();
+			var retValue = new RoArtist( dbArtist );
 
-			Mapper.Map( dbArtist, retValue );
 			retValue.Genre = RetrieveGenre( dbArtist.Genre );
 
 			return( retValue );
@@ -78,9 +76,7 @@ namespace Noise.RemoteHost {
 		}
 
 		private static RoArtistInfo TransformArtistInfo( DbArtist artist, IArtistMetadata artistMetadata, Artwork artistImage ) {
-			var retValue = new RoArtistInfo();
-
-			Mapper.Map( artist, retValue );
+			var retValue = new RoArtistInfo( artist );
 
 			retValue.Biography = artistMetadata.GetMetadata( eMetadataType.Biography );
 			retValue.BandMembers = artistMetadata.GetMetadataArray( eMetadataType.BandMembers ).ToArray();
@@ -89,8 +85,7 @@ namespace Noise.RemoteHost {
 			retValue.TopTracks = artistMetadata.GetMetadataArray( eMetadataType.TopTracks ).ToArray();
 			retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
 			
-			if(( artistImage != null ) &&
-			   ( artistImage.Image != null )) {
+			if( artistImage?.Image != null ) {
 				retValue.ArtistImage = Convert.ToBase64String( artistImage.Image );
 			}
 
@@ -137,7 +132,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "GetArtistInfo for {0}", artistId ), ex );
+				mLog.LogException( $"GetArtistInfo for {artistId}", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -146,9 +141,8 @@ namespace Noise.RemoteHost {
 		}
 
 		private RoAlbum TransformAlbum( DbAlbum dbAlbum ) {
-			var retValue = new RoAlbum();
+			var retValue = new RoAlbum( dbAlbum );
 
-			Mapper.Map( dbAlbum, retValue );
 			retValue.Genre = RetrieveGenre( dbAlbum.Genre );
 
 			return( retValue );
@@ -168,7 +162,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "GetAlbumList for {0}", artistId ), ex );
+				mLog.LogException( $"GetAlbumList for {artistId}", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -205,10 +199,7 @@ namespace Noise.RemoteHost {
 		}
 
 		private static RoAlbumInfo TransformAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo ) {
-			var retValue = new RoAlbumInfo();
-
-			Mapper.Map( album, retValue );
-			Mapper.Map( supportInfo, retValue );
+			var retValue = new RoAlbumInfo( album );
 
 			var	artwork = SelectAlbumCover( supportInfo );
 			if(( artwork != null ) &&

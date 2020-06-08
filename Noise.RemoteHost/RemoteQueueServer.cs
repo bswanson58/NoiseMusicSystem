@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using AutoMapper;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
@@ -100,12 +99,8 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private static RoPlayQueueTrack TransformQueueTrack( PlayQueueTrack queueTrac ) {
-			var retValue = new RoPlayQueueTrack();
-
-			Mapper.Map( queueTrac, retValue );
-
-			return( retValue );
+		private static RoPlayQueueTrack TransformQueueTrack( PlayQueueTrack queueTrack ) {
+			return new RoPlayQueueTrack( queueTrack );
 		}
 
 		public PlayQueueListResult GetQueuedTrackList() {

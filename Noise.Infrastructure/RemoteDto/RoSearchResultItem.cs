@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
@@ -17,5 +19,16 @@ namespace Noise.Infrastructure.RemoteDto {
 		public string	ArtistName { get; set; }
 		[DataMember]
 		public bool		CanPlay { get; set; }
+
+		public RoSearchResultItem( SearchResultItem src ) {
+            ArtistId = src.Artist?.DbId ?? Constants.cDatabaseNullOid;
+            ArtistName = src.Artist != null ? src.Artist.Name : String.Empty;
+            AlbumId = src.Album?.DbId ?? Constants.cDatabaseNullOid;
+            AlbumName = src.Album != null ? src.Album.Name : String.Empty;
+            TrackId = src.Track?.DbId ?? Constants.cDatabaseNullOid;
+            TrackName = src.Track != null ? src.Track.Name : String.Empty;
+
+            CanPlay = false;
+        }
 	}
 }
