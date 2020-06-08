@@ -207,10 +207,6 @@
       <Project>{2c697760-1b66-4ded-b57a-b3438d5a75fc}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.RavenDatabase\Noise.RavenDatabase.csproj">
-      <Project>{81c2209c-f8da-4693-8b2f-c68ab0c436ed}</Project>
-      <Name>Noise.RavenDatabase</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

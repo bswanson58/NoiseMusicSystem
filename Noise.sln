@@ -40,8 +40,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReusableBits.Ui", "Reusable
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Metadata", "Noise.Metadata\Noise.Metadata.csproj", "{983D3C18-8012-48AE-AE21-B6503FC0F5B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RavenDatabase", "Noise.RavenDatabase\Noise.RavenDatabase.csproj", "{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}"
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Install - Desktop Bundle", "Installation\Install - Desktop Bundle\Install - Desktop Bundle.wixproj", "{EFBE506C-C260-409A-9AB8-D6619A091F54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BundlerUi", "Installation\BundlerUi\BundlerUi.csproj", "{415BAE6C-7FFE-47DD-860C-A1012E20400C}"
@@ -433,30 +431,6 @@ Global
 		{983D3C18-8012-48AE-AE21-B6503FC0F5B8}.Release|x64.Build.0 = Release|x64
 		{983D3C18-8012-48AE-AE21-B6503FC0F5B8}.Release|x86.ActiveCfg = Release|x86
 		{983D3C18-8012-48AE-AE21-B6503FC0F5B8}.Release|x86.Build.0 = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x64.ActiveCfg = Debug|x64
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x64.Build.0 = Debug|x64
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x86.ActiveCfg = Debug|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x86.Build.0 = Debug|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Mixed Platforms.ActiveCfg = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Mixed Platforms.Build.0 = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x64.ActiveCfg = Release|x64
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x64.Build.0 = Release|x64
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x86.ActiveCfg = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x86.Build.0 = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Mixed Platforms.Build.0 = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x64.ActiveCfg = Release|x64
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x64.Build.0 = Release|x64
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x86.ActiveCfg = Release|x86
-		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x86.Build.0 = Release|x86
 		{EFBE506C-C260-409A-9AB8-D6619A091F54}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{EFBE506C-C260-409A-9AB8-D6619A091F54}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{EFBE506C-C260-409A-9AB8-D6619A091F54}.Debug|Mixed Platforms.Build.0 = Debug|x86

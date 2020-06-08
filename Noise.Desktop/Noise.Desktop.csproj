@@ -310,10 +310,6 @@
       <Project>{983d3c18-8012-48ae-ae21-b6503fc0f5b8}</Project>
       <Name>Noise.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.RavenDatabase\Noise.RavenDatabase.csproj">
-      <Project>{81c2209c-f8da-4693-8b2f-c68ab0c436ed}</Project>
-      <Name>Noise.RavenDatabase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Noise.RemoteHost\Noise.RemoteHost.csproj">
       <Project>{85472B64-4F49-4182-8709-9229E25E5119}</Project>
       <Name>Noise.RemoteHost</Name>
