@@ -112,8 +112,6 @@
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
 				<ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
-				<ComponentGroupRef Id="GDataDBFiles"/>
-				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>
 				<ComponentGroupRef Id="NewtonsoftJsonFiles"/>
@@ -122,6 +120,7 @@
 				<ComponentGroupRef Id="RavenDBFiles"/>
 				<ComponentGroupRef Id="ReclsFiles"/>
 				<ComponentGroupRef Id="SeriLogFiles"/>
+        <ComponentGroupRef Id="UnityFiles"/>
 			</Feature>
 		</Feature>
 
