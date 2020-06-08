@@ -26,13 +26,11 @@ namespace Noise.Librarian.ViewModels {
 			LoadDatabases();
 		}
 
-		public BindableCollection<DatabaseInfo> DatabaseList {
-			get {  return( mAvailableDatabases ); }
-		}
+		public BindableCollection<DatabaseInfo> DatabaseList => ( mAvailableDatabases );
 
-		public DatabaseInfo CurrentDatabase {
-			get {  return( mCurrentDatabase ); }
-			set {
+        public DatabaseInfo CurrentDatabase {
+			get => ( mCurrentDatabase );
+            set {
 				mCurrentDatabase = value;
 
 				RaisePropertyChanged( () => CurrentDatabase );

@@ -6,17 +6,17 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Models;
 using Noise.UI.Logging;
-using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.Librarian.ViewModels {
 	public class ImportDatabaseViewModel : AutomaticCommandBase {
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IUiLog				mLog;
-		private readonly IDialogService		mDialogService;
-		private readonly ILibrarian			mLibrarian;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
+		private readonly IPlatformDialogService	mDialogService;
+		private readonly ILibrarian				mLibrarian;
 
-		public ImportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, IDialogService dialogService, IUiLog log ) {
+		public ImportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, IPlatformDialogService dialogService, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mLibrarian = librarian;

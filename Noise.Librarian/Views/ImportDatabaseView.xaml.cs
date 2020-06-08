@@ -1,10 +1,8 @@
-﻿using Microsoft.Practices.Prism.Mvvm;
-
-namespace Noise.Librarian.Views {
+﻿namespace Noise.Librarian.Views {
 	/// <summary>
 	/// Interaction logic for ImportDatabaseView.xaml
 	/// </summary>
-	public partial class ImportDatabaseView : IView {
+	public partial class ImportDatabaseView {
 		public ImportDatabaseView() {
 			InitializeComponent();
 		}

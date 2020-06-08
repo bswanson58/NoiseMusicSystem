@@ -5,20 +5,20 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Models;
-using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Ui.Platform;
 
 namespace Noise.Librarian.ViewModels {
 	public class ExportDatabaseViewModel : AutomaticCommandBase,
 										   IHandle<Events.SystemInitialized>, IHandle<Events.LibraryListChanged> {
 		private readonly IEventAggregator							mEventAggregator;
-		private readonly IDialogService								mDialogService;
+		private readonly IPlatformDialogService						mDialogService;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibrarian									mLibrarian;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries; 
 		private LibraryConfiguration								mCurrentLibrary;
 
-		public ExportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration, IDialogService dialogService ) {
+		public ExportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration, IPlatformDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mLibrarian = librarian;
 			mLibraryConfiguration = libraryConfiguration;

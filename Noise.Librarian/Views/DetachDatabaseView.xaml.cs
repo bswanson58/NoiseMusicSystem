@@ -1,10 +1,8 @@
-﻿using Microsoft.Practices.Prism.Mvvm;
-
-namespace Noise.Librarian.Views {
+﻿namespace Noise.Librarian.Views {
 	/// <summary>
 	/// Interaction logic for DetachDatabaseView.xaml
 	/// </summary>
-	public partial class DetachDatabaseView : IView {
+	public partial class DetachDatabaseView {
 		public DetachDatabaseView() {
 			InitializeComponent();
 		}

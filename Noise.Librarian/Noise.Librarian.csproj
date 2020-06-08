@@ -148,7 +148,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Models\ProgressEvent.cs" />
     <Compile Include="ViewModels\BackupDatabaseViewModel.cs" />
     <Compile Include="ViewModels\DetachDatabaseViewModel.cs" />
