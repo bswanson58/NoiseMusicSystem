@@ -7,10 +7,14 @@
     <Component Id="ControlzEx.dll" Guid="05FA42A2-B3C5-464C-9903-FCA95EDF9D6D">
       <File Id="ControlzEx.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ControlzEx.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Microsoft.Xaml.Behaviors.dll" Guid="D82E1F44-5F17-4A6D-990F-EEE61223F442">
+      <File Id="Microsoft.Xaml.Behaviors.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Xaml.Behaviors.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="MahAppsMetroFiles">
     <ComponentRef Id="MahApps.Metro.dll" />
     <ComponentRef Id="ControlzEx.dll" />
+    <ComponentRef Id="Microsoft.Xaml.Behaviors.dll" />
   </ComponentGroup>
 </Include>

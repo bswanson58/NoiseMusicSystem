@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
 	<DirectoryRef Id="INSTALLDIRECTORY">
-		<Component Id="Ionic.Zip.dll" Guid="84d6f0a4-0896-43fb-be31-ebf159d8362e">
-			<File Id="Ionic.Zip.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Ionic.Zip.dll" KeyPath="yes" Checksum="yes" />
+		<Component Id="DotNetZip.dll" Guid="84d6f0a4-0896-43fb-be31-ebf159d8362e">
+			<File Id="DotNetZip.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)DotNetZip.dll" KeyPath="yes" Checksum="yes" />
 		</Component>
 	</DirectoryRef>
 
 	<ComponentGroup Id="DotNetZipFiles">
-		<ComponentRef Id="Ionic.Zip.dll" />
+		<ComponentRef Id="DotNetZip.dll" />
 	</ComponentGroup>
 </Include>
