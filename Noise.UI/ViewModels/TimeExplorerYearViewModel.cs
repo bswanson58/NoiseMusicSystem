@@ -3,17 +3,21 @@ using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class TimeExplorerYearViewModel : AutomaticCommandBase, IHandle<Events.TimeExplorerAlbumFocus> {
+	public class TimeExplorerYearViewModel : AutomaticPropertyBase, IHandle<Events.TimeExplorerAlbumFocus> {
 		private readonly IEventAggregator	mEventAggregator;
 		private IEnumerable<DbAlbum>		mAlbumList;
+
+		public	DelegateCommand				PlayRandom { get; }
 
 		public TimeExplorerYearViewModel( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
 
-			YearValid = false;
+			PlayRandom = new DelegateCommand( OnPlayRandom, CanPlayRandom );
+            YearValid = false;
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -32,7 +36,11 @@ namespace Noise.UI.ViewModels {
 
 		public bool YearValid {
 			get{ return( Get( () => YearValid )); }
-			set{ Set( () => YearValid, value ); }
+			set {
+                Set( () => YearValid, value );
+
+				PlayRandom.RaiseCanExecuteChanged();
+            }
 		}
 
 		public int CurrentYear {
@@ -50,14 +58,13 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => AlbumCount, value ); }
 		}
 
-		public void Execute_PlayRandom() {
-			if( CanExecute_PlayRandom()) {
+		private void OnPlayRandom() {
+			if( CanPlayRandom()) {
 				mEventAggregator.PublishOnUIThread( new Events.PlayAlbumTracksRandom( mAlbumList ));
 			}
 		}
 
-		[DependsUponAttribute( "YearValid" )]
-		public bool CanExecute_PlayRandom() {
+		private bool CanPlayRandom() {
 			return(( mAlbumList != null ) &&
 				   ( mAlbumList.Any()));
 		}

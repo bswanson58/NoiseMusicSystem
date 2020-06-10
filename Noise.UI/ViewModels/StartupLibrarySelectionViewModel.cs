@@ -4,15 +4,20 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class StartupLibrarySelectionViewModel : AutomaticCommandBase {
+	public class StartupLibrarySelectionViewModel : AutomaticPropertyBase {
 		private readonly IEventAggregator							mEventAggregator;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly IPreferences								mPreferences;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
 		public	bool												AlwaysOpenLastUsedLibrary { get; set; }
+        public	BindableCollection<LibraryConfiguration>			LibraryList => mLibraries;
+
+		public	DelegateCommand										CreateLibrary { get; }
+		public	DelegateCommand										Exit { get; }
 
 		public StartupLibrarySelectionViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
@@ -20,14 +25,14 @@ namespace Noise.UI.ViewModels {
 			mPreferences = preferences;
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
+
+			CreateLibrary = new DelegateCommand( OnCreateLibrary );
+			Exit = new DelegateCommand( OnExit );
+
 			LoadLibraries();
 		}
 
-		public BindableCollection<LibraryConfiguration> LibraryList {
-			get { return ( mLibraries ); }
-		} 
-
-		public LibraryConfiguration SelectedLibrary {
+        public LibraryConfiguration SelectedLibrary {
 			get{ return( Get( () => SelectedLibrary )); }
 			set {
 				Set( () => SelectedLibrary, value );
@@ -41,11 +46,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon("IsLoading")]
-		public bool IsNotLoading {
-			get{ return(!IsLoading );}
-		}
+		public bool IsNotLoading => !IsLoading;
 
-		private async void OpenLibrary( LibraryConfiguration configuration ) {
+        private async void OpenLibrary( LibraryConfiguration configuration ) {
 			IsLoading = true;
 
 			await mLibraryConfiguration.AsyncOpen( configuration );
@@ -67,11 +70,11 @@ namespace Noise.UI.ViewModels {
 			mLibraries.Refresh();
 		}
 
-		public void Execute_CreateLibrary() {
+		private void OnCreateLibrary() {
 			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.LibraryCreationLayout ));
 		}
 
-		public void Execute_Exit() {
+		private void OnExit() {
 			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 	}

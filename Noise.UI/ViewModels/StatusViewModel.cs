@@ -6,13 +6,14 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
 using ReusableBits.Ui.Controls;
 
 namespace Noise.UI.ViewModels {
-	public class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent>, IDisposable {
+	public class StatusViewModel : AutomaticPropertyBase, IHandle<Events.StatusEvent>, IDisposable {
 		private const string	cGeneralStatusTemplate = "GeneralStatusTemplate";
 		private const string	cSpeechStatusTemplate  = "SpeechStatusTemplate";
 
@@ -24,12 +25,18 @@ namespace Noise.UI.ViewModels {
 		private bool							mViewAttached;
 		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}{mCompileDate}";
 
+		public	DelegateCommand					OpenDataFolder { get; }
+		public	DelegateCommand					ViewAttached { get; }
+
 		public StatusViewModel( IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment, IVersionFormatter versionFormatter, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mNoiseEnvironment = noiseEnvironment;
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
+
+			OpenDataFolder = new DelegateCommand( OnOpenDataFolder );
+			ViewAttached = new DelegateCommand( OnViewAttached );
 
 			var pref = preferences.Load<UserInterfacePreferences>();
 			if( pref.DisplayBuildDate ) {
@@ -57,7 +64,7 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => StatusMessage, value ); }
 		}
 
-		public void Execute_ViewAttached() {
+		private void OnViewAttached() {
 			StatusMessage = new StatusMessage( string.Empty ); // delay a few seconds before initial message.
 
 			StatusMessage = new StatusMessage( VersionInformation.Description, cGeneralStatusTemplate );
@@ -96,7 +103,7 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		public void Execute_OpenDataFolder() {
+		private void OnOpenDataFolder() {
             mEventAggregator.PublishOnUIThread( new Events.LaunchRequest( mNoiseEnvironment.ApplicationDirectory()));
         }
 

@@ -54,10 +54,8 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 		protected void RaiseCanExecuteChangedEvent( string canExecuteName ) {
 			var commandName = canExecuteName.StripLeft( cCanExecutePrefix.Length );
 			var command = Get<DelegateCommand<object>>( commandName );
-			if( command == null )
-				return;
 
-			command.RaiseCanExecuteChanged();
+            command?.RaiseCanExecuteChanged();
 		}
 
 		protected override void RaisePropertyChanged( string propertyName ) {

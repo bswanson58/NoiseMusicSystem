@@ -11,34 +11,27 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class YearList {
-		public int				Year { get; private set; }
-		public List<DbAlbum>	Albums { get; private set; }
+		public int				Year { get; }
+		public List<DbAlbum>	Albums { get; }
 		public double			YearPercentage { get; set; }
+
+        public int				AlbumsInYear => Albums.Count;
+        public bool				ShouldDisplayYear => AlbumsInYear > 0;
+        public string			Title => $"{Year} - {AlbumsInYear} albums";
 
 		public YearList( int year ) {
 			Year = year;
 			Albums = new List<DbAlbum>();
 		}
-
-		public int AlbumsInYear {
-			get{ return( Albums.Count ); }
-		}
-
-		public bool ShouldDisplayYear {
-			get{ return( AlbumsInYear > 0 ); }
-		}
-
-		public string Title {
-			get{ return( string.Format( "{0} - {1} albums", Year, AlbumsInYear )); }
-		}
-	}
+    }
 
 	public class DecadeList {
 		private readonly Action<YearList>	mOnYearSelected;
 
-		public int				Decade { get; private set; }
-		public List<YearList>	YearList { get; private set; }
+		public int				Decade { get; }
+		public List<YearList>	YearList { get; }
 		public double			DecadePercentage { get; set; }
+        public string			Title => $"{Decade}'s";
 
 		public DecadeList( int decade, Action<YearList> onYearSelected ) {
 			Decade = decade;
@@ -51,21 +44,17 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public string Title {
-			get{ return( string.Format( "{0}'s", Decade )); }
-		}
-
-		public int AlbumsInDecade {
+        public int AlbumsInDecade {
 			get{ return( YearList.Sum( y => y.AlbumsInYear )); }
 		}
 
 		public YearList SelectedYear {
-			get { return( null ); }
-			set { mOnYearSelected( value ); }
-		}
+			get => null;
+            set => mOnYearSelected( value );
+        }
 	}
 
-	internal class TimeExplorerViewModel : AutomaticCommandBase,
+	internal class TimeExplorerViewModel : PropertyChangeBase,
 										   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IUiLog				mLog;
@@ -95,11 +84,9 @@ namespace Noise.UI.ViewModels {
 			mDecadeList.Clear();
 		}
 
-		public BindableCollection<DecadeList> DecadeList {
-			get{ return( mDecadeList ); }
-		}
- 
-		public void OnYearSelected( YearList year ) {
+		public BindableCollection<DecadeList> DecadeList => mDecadeList;
+
+        public void OnYearSelected( YearList year ) {
 			mEventAggregator.PublishOnUIThread( new Events.TimeExplorerAlbumFocus( year.Albums ));	
 		}
 
@@ -112,8 +99,8 @@ namespace Noise.UI.ViewModels {
 				return( mAlbumLoaderTaskHandler );
 			}
 
-			set{ mAlbumLoaderTaskHandler = value; }
-		}
+			set => mAlbumLoaderTaskHandler = value;
+        }
 
 		private void LoadAlbums() {
 			AlbumLoaderTask.StartTask( () => {

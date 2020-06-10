@@ -11,7 +11,7 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class TimeExplorerAlbumsViewModel : AutomaticCommandBase,
+	internal class TimeExplorerAlbumsViewModel : AutomaticPropertyBase,
 												 IHandle<Events.TimeExplorerAlbumFocus>,
 												 IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
@@ -22,7 +22,9 @@ namespace Noise.UI.ViewModels {
 		private readonly SortableCollection<UiTimeExplorerAlbum>	mAlbumList; 
 		private TaskHandler							mAlbumLoadingTaskHandler;
 
-		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IPlayCommand playCommand, IUiLog log ) {
+        public	BindableCollection<UiTimeExplorerAlbum>	AlbumList => mAlbumList;
+
+        public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
@@ -47,11 +49,8 @@ namespace Noise.UI.ViewModels {
 			mAlbumList.Clear();
 		}
 
-		public BindableCollection<UiTimeExplorerAlbum> AlbumList {
-			get{ return( mAlbumList ); }
-		}
- 
-		public UiTimeExplorerAlbum SelectedAlbum {
+
+        public UiTimeExplorerAlbum SelectedAlbum {
 			get{ return( Get( () => SelectedAlbum )); }
 			set {
 				Set( () => SelectedAlbum, value );
@@ -72,8 +71,8 @@ namespace Noise.UI.ViewModels {
 				return( mAlbumLoadingTaskHandler );
 			}
 
-			set{ mAlbumLoadingTaskHandler = value; }
-		}
+			set => mAlbumLoadingTaskHandler = value;
+        }
 
 		private void LoadAlbums( IEnumerable<DbAlbum>  albumList ) {
 			AlbumLoaderTask.StartTask( () => {

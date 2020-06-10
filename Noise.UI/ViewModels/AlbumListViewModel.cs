@@ -15,14 +15,14 @@ using Noise.UI.Logging;
 using Noise.UI.Resources;
 using Observal.Extensions;
 using Prism;
+using Prism.Commands;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class AlbumListViewModel : AutomaticCommandBase, IActiveAware,
-										IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
-										IHandle<Events.AlbumUserUpdate> {
-		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
+	internal class AlbumListViewModel : AutomaticPropertyBase, IActiveAware,
+										IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.AlbumUserUpdate> {
+		private const string							cDisplaySortDescriptions = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
@@ -48,6 +48,7 @@ namespace Noise.UI.ViewModels {
 		public	bool									IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
 		public	event	EventHandler					IsActiveChanged = delegate { };
 	    public  IEnumerable<ViewSortStrategy>           SortDescriptions => mAlbumSorts;
+		public	DelegateCommand							ToggleSortDisplay { get; }
 
         public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
 								   IPrefixedNameHandler nameHandler, ISelectionState selectionState, IPlayingItemHandler playingItemHandler, IUiLog log ) {
@@ -63,6 +64,8 @@ namespace Noise.UI.ViewModels {
 
 			mAlbumList = new BindableCollection<UiAlbum>();
 			VisualStateName = cHideSortDescriptions;
+
+			ToggleSortDisplay = new DelegateCommand( OnToggleSortDisplay );
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnAlbumChanged );
@@ -272,8 +275,8 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_ToggleSortDisplay() {
-			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
+		private void OnToggleSortDisplay() {
+			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptions : cHideSortDescriptions;
 		}
 
 		internal TaskHandler<IEnumerable<UiAlbum>> AlbumsRetrievalTaskHandler {

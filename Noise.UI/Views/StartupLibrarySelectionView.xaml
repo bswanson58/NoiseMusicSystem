@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:StartupLibrarySelectionViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="600" d:DesignWidth="1100">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="LibraryListItem">
+        <DataTemplate x:Key="LibraryListItem" DataType="dto:LibraryConfiguration">
             <TextBlock Style="{StaticResource StartupTextStyle}" Text="{Binding LibraryName}"/>
         </DataTemplate>
     </UserControl.Resources>

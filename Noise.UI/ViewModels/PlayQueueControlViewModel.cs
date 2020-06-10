@@ -2,21 +2,29 @@
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    public class PlayQueueControlViewModel : AutomaticCommandBase,
+    public class PlayQueueControlViewModel : AutomaticPropertyBase,
                                              IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
-		private readonly IEventAggregator   mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private TimeSpan					mTotalTime;
 		private TimeSpan					mRemainingTime;
 
+        public	TimeSpan					TotalTime => mTotalTime;
+        public	TimeSpan					RemainingTime => mRemainingTime;
+
+        public	DelegateCommand				ClearQueue { get; }
+		public	DelegateCommand				ClearPlayed { get; }
+
         public PlayQueueControlViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) {
             mPlayQueue = playQueue;
-            mEventAggregator = eventAggregator;
 
-			mEventAggregator.Subscribe( this );
+			ClearQueue = new DelegateCommand( OnClearQueue, CanClearQueue );
+			ClearPlayed = new DelegateCommand( OnClearPlayed, CanClearPlayed );
+
+			eventAggregator.Subscribe( this );
         }
 
         public void Handle( Events.PlayQueueChanged eventArgs ) {
@@ -28,7 +36,7 @@ namespace Noise.UI.ViewModels {
         public void Handle( Events.PlaybackTrackStarted args ) {
             UpdatePlayTimes();
 
-            RaiseCanExecuteChangedEvent( "CanExecute_ClearPlayed" );
+			ClearPlayed.RaiseCanExecuteChanged();
         }
 
         private void UpdatePlayTimes() {
@@ -52,34 +60,30 @@ namespace Noise.UI.ViewModels {
 
 		public int PlayQueueChangedFlag {
 			get{ return( Get( () => PlayQueueChangedFlag, 0 )); }
-			set{ Set( () => PlayQueueChangedFlag, value  ); }
+			set {
+                Set( () => PlayQueueChangedFlag, value  );
+
+				RaisePropertyChanged( () => TotalTime );
+				RaisePropertyChanged( () => RemainingTime );
+				ClearPlayed.RaiseCanExecuteChanged();
+				ClearQueue.RaiseCanExecuteChanged();
+            }
 		}
 
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		public TimeSpan TotalTime {
-			get{ return( mTotalTime ); }
-		}
 
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		public TimeSpan RemainingTime {
-			get{ return( mRemainingTime ); }
-		}
-
-		public void Execute_ClearQueue( object sender ) {
+        private void OnClearQueue() {
 			mPlayQueue.ClearQueue();
 		}
 
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		public bool CanExecute_ClearQueue( object sender ) {
+		private bool CanClearQueue() {
 			return(!mPlayQueue.IsQueueEmpty );
 		}
 
-		public void Execute_ClearPlayed() {
+		private void OnClearPlayed() {
 			mPlayQueue.RemovePlayedTracks();
 		}
 
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		public bool CanExecute_ClearPlayed() {
+		private bool CanClearPlayed() {
 			return( mPlayQueue.PlayedTrackCount > 0 );
 		}
     }
