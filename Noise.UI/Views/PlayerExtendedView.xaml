@@ -48,26 +48,26 @@
 					</Grid.RowDefinitions>
 
 					<CheckBox Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}" />
-					<Slider Grid.Row="1" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+                    <Slider Grid.Row="1" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=StereoEnhancerEnable}" Style="{DynamicResource MahApps.Styles.Slider}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}" ToolTip="Width" />
-					<Slider Grid.Row="2" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+                    <Slider Grid.Row="2" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=StereoEnhancerEnable}" Style="{DynamicResource MahApps.Styles.Slider}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}" ToolTip="Wet - Dry"/>
 
 					<CheckBox Grid.Row="3" Grid.Column="0" Margin="5,3,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}" />
-					<Slider Grid.Row="4" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=SoftSaturationEnable}"
+                    <Slider Grid.Row="4" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=SoftSaturationEnable}" Style="{DynamicResource MahApps.Styles.Slider}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}" ToolTip="Saturation Factor" />
-					<Slider Grid.Row="5" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=SoftSaturationEnable}"
+                    <Slider Grid.Row="5" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=SoftSaturationEnable}" Style="{DynamicResource MahApps.Styles.Slider}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}" ToolTip="Saturation Depth"/>
 
 					<CheckBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="Reverb" IsChecked="{Binding Path=ReverbEnable}" />
-					<Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" IsEnabled="{Binding Path=ReverbEnable}"
+                    <Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" IsEnabled="{Binding Path=ReverbEnable}" Style="{DynamicResource MahApps.Styles.Slider}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=ReverbLevel, Mode=TwoWay}" ToolTip="Level (Wet Mix)" />
-					<Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" IsEnabled="{Binding Path=ReverbEnable}"
+                    <Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" IsEnabled="{Binding Path=ReverbEnable}" Style="{DynamicResource MahApps.Styles.Slider}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.01" Maximum="0.5" Value="{Binding Path=ReverbDelay, Mode=TwoWay}" ToolTip="Reverb Delay"/>
 
@@ -143,7 +143,7 @@
 						</Grid.ColumnDefinitions>
 						<CheckBox Grid.Column="0" Margin="3,0,0,0" VerticalAlignment="Center" Content="Overlap:" IsChecked="{Binding Path=TrackOverlapEnable}" />
 						<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="50" TextAlignment="Right" />
-						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" VerticalAlignment="Center"
+                        <Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" VerticalAlignment="Center" Style="{DynamicResource MahApps.Styles.Slider}"
                                 Maximum="2000" Minimum="50" Value="{Binding Path=TrackOverlapMilliseconds, Mode=TwoWay}" />
 						<TextBlock Grid.Column="3" VerticalAlignment="Center" Text="2s" />
 					</Grid>
@@ -163,7 +163,7 @@
 						</noiseControls:LinkLabel>
 
 						<TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="-" TextAlignment="Right" />
-						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" 
+                        <Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" Style="{DynamicResource MahApps.Styles.Slider}" 
 								Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
 						<TextBlock Grid.Column="3" VerticalAlignment="Center" Text="+" />
 					</Grid>
@@ -183,7 +183,7 @@
 						</noiseControls:LinkLabel>
 
 						<TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="L" TextAlignment="Right" />
-						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True"
+                        <Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" Style="{DynamicResource MahApps.Styles.Slider}"
 						        Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
 						<TextBlock Grid.Column="3" VerticalAlignment="Center" Text="R" />
 					</Grid>
@@ -267,8 +267,8 @@
 						<Button Margin="15,3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_FadePoints}" Command="{Binding DefinePlayPoints}" Padding="1"
                                 ToolTip="Set Track Start/End Playing Times"/>
 					</StackPanel>
-					
-					<Slider Grid.Row="1" Margin="10,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+
+                    <Slider Grid.Row="1" Margin="10,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True" Style="{DynamicResource MahApps.Styles.Slider}"
                             Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
 							Value="{Binding Path=TrackPosition,	Mode=TwoWay}" />
 				</Grid>
@@ -306,7 +306,7 @@
 						</Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Volume:" />
 						<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="-" />
-						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True"
+                        <Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True" Style="{DynamicResource MahApps.Styles.Slider}"
                                 Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
                         <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="+" />
 					</Grid>
