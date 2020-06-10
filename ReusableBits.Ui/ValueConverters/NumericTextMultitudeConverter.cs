@@ -44,7 +44,7 @@ namespace ReusableBits.Ui.ValueConverters {
                 return (int)formatValue;
             }
 
-			return( $"{formatValue:N2}{suffix}" );
+			return( $"{formatValue:N0}{suffix}" );
 		}
 
         public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture ) {
