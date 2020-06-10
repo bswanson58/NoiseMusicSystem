@@ -44,6 +44,7 @@ namespace Noise.UI {
             ViewModelLocationProvider.Register<PlaybackContextDialog, PlaybackContextDialogManager>();
             ViewModelLocationProvider.Register<PlayingTrackView, PlayerViewModel>();
             ViewModelLocationProvider.Register<PlayerExtendedView, PlayerViewModel>();
+            ViewModelLocationProvider.Register<SmallPlayerView, PlayerViewModel>();
             ViewModelLocationProvider.Register<TagAddDialog, TagEditDialogModel>();
             ViewModelLocationProvider.Register<TrackPlayPointsDialog, TrackPlayPointsDialogModel>();
 
