@@ -13,9 +13,7 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
-			 Height="85"
-			 d:DesignHeight="100"
-			 d:DesignWidth="1200"
+			 Height="85" d:DesignWidth="1200"
              d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
@@ -25,8 +23,8 @@
         <reusableConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
 
         <!-- MahApps Slider thumb dimensions -->
-        <system:Double x:Key="HorizontalThumbHeight">13</system:Double>
-        <system:Double x:Key="HorizontalThumbWidth">25</system:Double>
+        <system:Double x:Key="MahApps.Sizes.Slider.HorizontalThumb.Height">13</system:Double>
+        <system:Double x:Key="MahApps.Sizes.Slider.HorizontalThumb.Width">25</system:Double>
 	</UserControl.Resources>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
@@ -207,9 +205,8 @@
 						</StackPanel>
 
 						<!-- Play Position indicator -->
-						<Slider Grid.Column="2" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
-						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
-						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
+                        <Slider Grid.Column="2" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True" Style="{DynamicResource MahApps.Styles.Slider}"
+                                Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
 
                         <!-- Right Textual Play Position -->
                         <TextBlock Grid.Column="3" Margin="5,0,10,0" VerticalAlignment="Center" Style="{StaticResource SmallTitleStyle}" FontWeight="Bold" Cursor="Hand"
@@ -234,7 +231,7 @@
 
 					<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Volume:" />
 					<TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="-" />
-					<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True"
+                    <Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True" Style="{DynamicResource MahApps.Styles.Slider}"
 					        Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
 					<TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="+" />
 				</Grid>
