@@ -9,7 +9,6 @@
 			 xmlns:local="clr-namespace:Noise.UI.ValueConverters"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
-			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
@@ -20,7 +19,7 @@
              d:DataContext="{d:DesignInstance viewModels:ArtistInfoViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
-		<local:HtmlTextConverter x:Key="htmlConverter" />
+		<local:HtmlTextConverter x:Key="HtmlConverter" />
 	</UserControl.Resources>
 
 	<GroupBox Margin="1,0,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Artist Information ">
@@ -34,7 +33,7 @@
 					<FlowDocumentScrollViewer VerticalScrollBarVisibility="Hidden" IsHitTestVisible="False">
 						<FlowDocument ColumnWidth="100" IsHyphenationEnabled="True" IsOptimalParagraphEnabled="True">
 							<Paragraph>
-								<adapters:BindableRun BoundText="{Binding ArtistBiography, Converter={StaticResource htmlConverter}}" />
+								<adapters:BindableRun BoundText="{Binding ArtistBiography, Converter={StaticResource HtmlConverter}}" />
 							</Paragraph>
 						</FlowDocument>
 					</FlowDocumentScrollViewer>

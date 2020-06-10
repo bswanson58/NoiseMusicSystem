@@ -5,7 +5,6 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
-			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"

@@ -10,12 +10,13 @@ using Noise.UI.Adapters;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Prism;
+using Prism.Commands;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware, IHandle<Events.ViewDisplayRequest>, IHandle<Events.DatabaseClosing>,
-										 IHandle<Events.ArtistMetadataUpdated> {
+	internal class ArtistInfoViewModel : AutomaticPropertyBase, IActiveAware, 
+                                         IHandle<Events.ViewDisplayRequest>, IHandle<Events.DatabaseClosing>, IHandle<Events.ArtistMetadataUpdated> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
@@ -45,6 +46,8 @@ namespace Noise.UI.ViewModels {
         public	IEnumerable<string>						BandMembers => mBandMembers;
         public	IEnumerable<DbDiscographyRelease>		Discography => mDiscography;
 
+		public	DelegateCommand							FilterSimilarArtist { get; }
+
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IMetadataManager metadataManager,
 									IArtistProvider artistProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
@@ -65,6 +68,8 @@ namespace Noise.UI.ViewModels {
 			mTopTracks = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<string>();
 			mDiscography = new SortableCollection<DbDiscographyRelease>();
+
+			FilterSimilarArtist = new DelegateCommand( OnFilterSimilarArtist );
 		}
 
 		public bool IsActive {
@@ -299,7 +304,7 @@ namespace Noise.UI.ViewModels {
 			set { Set( () => ArtistBiography, value ); }
 		}
 
-		public void Execute_FilterSimilarArtist() {
+		private void OnFilterSimilarArtist() {
 			if( ArtistValid ) {
 				var artistList = new List<string> { mCurrentArtistName };
 
