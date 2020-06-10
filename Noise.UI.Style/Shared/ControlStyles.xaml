@@ -138,7 +138,7 @@
         <Setter Property="FontSize" Value="13"></Setter>
     </Style>
 
-    <Style x:Key="ListViewItemStretch" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
+    <Style x:Key="ListViewItemStretch" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MahApps.Styles.ListViewItem}">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
 

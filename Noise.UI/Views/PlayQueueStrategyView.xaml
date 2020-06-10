@@ -7,6 +7,7 @@
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:PlayQueueStrategyViewModel, IsDesignTimeCreatable=False}"
@@ -46,8 +47,8 @@
 			<Button Grid.Column="3" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding ConfigureStrategy}" 
                     Content="{StaticResource Path_Configure}" ToolTip="Configure Play Strategies"/>
         </Grid>
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
     </Grid>
 </UserControl>

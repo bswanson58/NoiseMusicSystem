@@ -6,12 +6,12 @@
 			 xmlns:noiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
 			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
@@ -166,9 +166,9 @@
 					 ItemsSource="{Binding ArtistList}"
 					 ItemTemplate="{StaticResource ArtistTemplate}"
 					 SelectedItem="{Binding SelectedArtist}">
-				<i:Interaction.Behaviors>
+				<b:Interaction.Behaviors>
 					<reusableBehaviours:ListBoxSelectionVisible />
-				</i:Interaction.Behaviors>
+				</b:Interaction.Behaviors>
 			</ListBox>
 
 			<noiseControls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
@@ -187,10 +187,10 @@
 			</Grid>
 		</Grid>
 
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

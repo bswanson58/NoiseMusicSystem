@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 using System.Windows.Media.Animation;
+using Microsoft.Xaml.Behaviors;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.Utility;
 

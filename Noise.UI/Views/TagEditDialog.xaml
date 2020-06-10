@@ -6,8 +6,8 @@
              xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:prism="http://prismlibrary.com/"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:TagEditDialogModel, IsDesignTimeCreatable=False}"
@@ -45,7 +45,7 @@
         </StackPanel>
     </Grid>
 
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <reusableBehaviours:FocusOnLoad FocusElementTag="FirstFocus"/>
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 </UserControl>

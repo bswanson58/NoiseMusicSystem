@@ -12,6 +12,7 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
 			 d:DesignHeight="400"
@@ -108,9 +109,9 @@
                 </GroupBox>
 			</Grid>
 
-            <i:Interaction.Behaviors>
+            <b:Interaction.Behaviors>
                 <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
-            </i:Interaction.Behaviors>
+            </b:Interaction.Behaviors>
 		</Grid>
 	</GroupBox>
 </UserControl>

@@ -4,12 +4,12 @@
 			 xmlns:controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
-			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
 			 Height="200"
@@ -51,11 +51,11 @@
 
                         <Image Grid.Column="0" MinWidth="50" MaxWidth="300" MinHeight="50" MaxHeight="180" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
 	    				   Source="{Binding ArtistImage, Converter={StaticResource ImageConverter}}" Cursor="Hand">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseLeftButtonDown" >
-                                    <i:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="MouseLeftButtonDown" >
+                                    <b:InvokeCommandAction Command="{Binding DisplayPortfolio}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
                         </Image>
 
                         <ContentPresenter Grid.Column="0" Margin="7,9,10,12" Opacity="0.5" Content="{StaticResource Path_UnknownArtist}"
@@ -161,9 +161,9 @@
 
                         </Grid>
                     </Grid>
-                    <i:Interaction.Behaviors>
+                    <b:Interaction.Behaviors>
                         <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-                    </i:Interaction.Behaviors>
+                    </b:Interaction.Behaviors>
                 </Border>
             </Grid>
         </Grid>

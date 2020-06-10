@@ -7,10 +7,10 @@
 			 xmlns:compMod="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
-			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:LibraryAdditionsViewModel, IsDesignTimeCreatable=False}"
@@ -30,13 +30,13 @@
 		</CollectionViewSource>
 
         <!-- Header Styles -->
-        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Opacity" Value="0.7"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
-        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="5,0,0,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -55,9 +55,9 @@
                 <TextBlock x:Name="ArtistName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Artist.Name}"/>
                 <TextBlock x:Name="NameSeparator" Style="{StaticResource ListViewTextStyle}" Text="/"/>
                 <TextBlock x:Name="AlbumName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Album.Name}">
-                    <i:Interaction.Behaviors>
+                    <b:Interaction.Behaviors>
                         <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Album.Name}" />
-                    </i:Interaction.Behaviors>
+                    </b:Interaction.Behaviors>
                 </TextBlock>
             </StackPanel>
             <DataTemplate.Triggers>
@@ -85,9 +85,9 @@
 		            <DataGridTemplateColumn Width="*" Header="Artist / Album" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
 		        </DataGrid.Columns>
 		    </DataGrid>
-            <i:Interaction.Behaviors>
+            <b:Interaction.Behaviors>
                 <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
-            </i:Interaction.Behaviors>
+            </b:Interaction.Behaviors>
 		</GroupBox>
 	</Grid>
 </UserControl>

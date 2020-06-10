@@ -8,6 +8,7 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:PlayHistoryViewModel, IsDesignTimeCreatable=False}"
@@ -59,8 +60,8 @@
 				 ItemTemplate="{StaticResource HistoryListItem}"
 				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

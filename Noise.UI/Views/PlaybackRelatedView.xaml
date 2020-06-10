@@ -3,13 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:vm="clr-namespace:Noise.UI.ViewModels;assembly=Noise.UI"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              Tag="Wander"
@@ -40,9 +40,9 @@
 
                 <TextBlock x:Name="TrackName" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource ListViewTextStyle}" Text="{Binding Track.Name}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
-                    <i:Interaction.Behaviors>
+                    <b:Interaction.Behaviors>
                         <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Track.Name}" />
-                    </i:Interaction.Behaviors>
+                    </b:Interaction.Behaviors>
                 </TextBlock>
 
                 <TextBlock x:Name="AlbumName" Grid.Row="1" Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
@@ -80,9 +80,9 @@
                     <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
                     <TextBlock x:Name="ParentName" Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding ParentName}"
                                behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
-                        <i:Interaction.Behaviors>
+                        <b:Interaction.Behaviors>
                             <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding ParentName}" />
-                        </i:Interaction.Behaviors>
+                        </b:Interaction.Behaviors>
                     </TextBlock>
                 </Grid>
 
@@ -129,11 +129,11 @@
         <Grid>
             <TreeView x:Name="TreeView" ItemsSource="{Binding Tracks}" ItemTemplate="{StaticResource RelatedParentTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction Command="{Binding TreeViewSelected}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectedItemChanged">
+                        <b:InvokeCommandAction Command="{Binding TreeViewSelected}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
             </TreeView>
 
             <StackPanel Margin="0,25" Orientation="Vertical" HorizontalAlignment="Center" Visibility="{Binding RelatedTracksAvailable, Converter={StaticResource HideIfTrue}}">
@@ -142,8 +142,8 @@
             </StackPanel>
         </Grid>
 
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

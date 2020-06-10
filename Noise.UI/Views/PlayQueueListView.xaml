@@ -8,12 +8,12 @@
 			 xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
 			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="150" d:DesignWidth="600"
@@ -56,7 +56,7 @@
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
 
-        <Style x:Key="BoldOnDragListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MetroListBoxItem}">
+        <Style x:Key="BoldOnDragListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
 			<Setter Property="Padding" Value="0"/>
             <Setter Property="LayoutTransform">
                 <Setter.Value>
@@ -184,11 +184,11 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  SelectedItem="{Binding Path=SelectedItem}">
-            <i:Interaction.Behaviors>
+            <b:Interaction.Behaviors>
                 <elementMover:ElementMoverListTarget NextInsertIndex="{Binding NextInsertIndex}"/>
                 <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
 				<reusableBehaviours:ListBoxItemVisible Item="{Binding PlayingItem}" />
-			</i:Interaction.Behaviors>
+			</b:Interaction.Behaviors>
 
 			<eventCommandTriggers:CommandSource.Trigger>
 				<eventCommandTriggers:CommandTriggerGroup>

@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:TagAssociationViewModel, IsDesignTimeCreatable=False}"
@@ -31,9 +31,9 @@
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
                 <TextBlock x:Name="TrackName" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding DisplayName}"
                            behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
-                    <i:Interaction.Behaviors>
+                    <b:Interaction.Behaviors>
                         <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
-                    </i:Interaction.Behaviors>
+                    </b:Interaction.Behaviors>
                 </TextBlock>
 
                 <Button x:Name="AssociationDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
@@ -54,13 +54,13 @@
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header="{Binding HeaderText}">
         <ListBox Margin="0,3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ItemsSource="{Binding Associations}" SelectedItem="{Binding SelectedAssociation}" ItemTemplate="{StaticResource AssociationTemplate}">
-            <i:Interaction.Behaviors>
+            <b:Interaction.Behaviors>
                 <behaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
-            </i:Interaction.Behaviors>
+            </b:Interaction.Behaviors>
         </ListBox>
 
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <behaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

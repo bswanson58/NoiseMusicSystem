@@ -5,14 +5,14 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
 			 xmlns:controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:prism="http://prismlibrary.com/"
-			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:AlbumListViewModel, IsDesignTimeCreatable=False}"
@@ -40,9 +40,9 @@
 
 						<Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
                             <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}">
-                                <i:Interaction.Behaviors>
+                                <b:Interaction.Behaviors>
                                     <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
-                                </i:Interaction.Behaviors>
+                                </b:Interaction.Behaviors>
                             </TextBlock>
 						</Viewbox>
 					</Grid>
@@ -147,9 +147,9 @@
 					 VirtualizingPanel.VirtualizationMode="Recycling"
 					 VirtualizingPanel.ScrollUnit="Pixel"
 					 >
-				<i:Interaction.Behaviors>
+				<b:Interaction.Behaviors>
 					<reusableBehaviours:ListBoxSelectionVisible />
-				</i:Interaction.Behaviors>
+				</b:Interaction.Behaviors>
 			</ListBox>
 
 			<controls:SortDescriptionList x:Name="SortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
@@ -169,10 +169,10 @@
 						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</Grid>
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
 </GroupBox>
 </UserControl>

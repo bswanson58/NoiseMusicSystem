@@ -9,8 +9,8 @@
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:system="clr-namespace:System;assembly=mscorlib"
-			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
 			 Height="85"
@@ -235,13 +235,13 @@
 					<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Volume:" />
 					<TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="-" />
 					<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True"
-					        Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+					        Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
 					<TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="+" />
 				</Grid>
 			</Grid>
 		</Grid>
 	</GroupBox>
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 </UserControl>

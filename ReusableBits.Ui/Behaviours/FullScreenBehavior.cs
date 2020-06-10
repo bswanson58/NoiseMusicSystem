@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interactivity;
 using System.Windows.Interop;
+using Microsoft.Xaml.Behaviors;
 
 namespace ReusableBits.Ui.Behaviours {
 	// from: http://josheinstein.com/blog/index.php/2010/02/fullscreenbehavior-wpf/

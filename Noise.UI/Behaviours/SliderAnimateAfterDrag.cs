@@ -3,9 +3,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Microsoft.Xaml.Behaviors;
 
 namespace Noise.UI.Behaviours {
-	public class SliderAnimateAfterDrag : System.Windows.Interactivity.Behavior<Slider> {
+	public class SliderAnimateAfterDrag : Behavior<Slider> {
 		private Slider	mSlider;
 		private Thumb	mThumb;
 

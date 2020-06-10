@@ -4,12 +4,12 @@
 			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
 			 Height="200"
@@ -50,9 +50,9 @@
 								<TranslateTransform X="{Binding Path=AlbumCover.ImageLeft}" Y="{Binding Path=AlbumCover.ImageTop}" />
 							</TransformGroup>
 						</Image.RenderTransform>
-						<i:Interaction.Behaviors>
+						<b:Interaction.Behaviors>
 							<behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
-						</i:Interaction.Behaviors>
+						</b:Interaction.Behaviors>
 					</Image>
 				</Viewbox>
 
@@ -159,9 +159,9 @@
 					</StackPanel>
 				</Grid>
 			</Grid>
-            <i:Interaction.Behaviors>
+            <b:Interaction.Behaviors>
                 <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-            </i:Interaction.Behaviors>
+            </b:Interaction.Behaviors>
 		</Border>
 	</GroupBox>
 </UserControl>

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Microsoft.Xaml.Behaviors;
 
 namespace Noise.UI.Behaviours {
 	public class ImageScrubberItem {
@@ -31,7 +32,7 @@ namespace Noise.UI.Behaviours {
 		}
 	}
 
-	public class ImageScrubber : System.Windows.Interactivity.Behavior<Image> {
+	public class ImageScrubber : Behavior<Image> {
 		private Image				mImage;
 		private bool				mScrubbing;
 		private	Point				mStartingPosition;

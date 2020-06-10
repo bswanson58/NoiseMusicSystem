@@ -21,9 +21,9 @@
                  Opacity="0.8"
                  ResizeMode="NoResize"
                  ShowInTaskbar="False"
+                 TitleBarHeight="0"
                  WindowStyle="None"
                  ShowTitleBar="False"
-                 TitlebarHeight="0"
                  BorderThickness="0">
 
     <Window.Resources>

@@ -5,11 +5,11 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
-			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:SearchViewModel, IsDesignTimeCreatable=False}"
@@ -18,13 +18,13 @@
 
     <UserControl.Resources>
         <!-- Header Styles -->
-        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Opacity" Value="0.7"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
-        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="5,0,0,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -40,9 +40,9 @@
 
         <DataTemplate x:Key="NameTemplate" DataType="adapters:SearchViewNode">
             <TextBlock Margin="5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}">
-                <i:Interaction.Behaviors>
+                <b:Interaction.Behaviors>
                     <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Title}" />
-                </i:Interaction.Behaviors>
+                </b:Interaction.Behaviors>
             </TextBlock>
         </DataTemplate>
     </UserControl.Resources>
@@ -101,9 +101,9 @@
 			</Grid>
 		</Grid>
 
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800"
@@ -19,7 +19,7 @@
     <UserControl.Resources>
         <valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
 
-        <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MetroListBoxItem}">
+        <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
             <Setter Property="Focusable" Value="False"/>
         </Style>
 
@@ -42,9 +42,9 @@
 
                     <TextBlock x:Name="TrackName" Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
                                reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
-                        <i:Interaction.Behaviors>
+                        <b:Interaction.Behaviors>
                             <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding TrackName}" />
-                        </i:Interaction.Behaviors>
+                        </b:Interaction.Behaviors>
                     </TextBlock>
 
                     <ContentPresenter Grid.Column="2" VerticalAlignment="Bottom" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
@@ -104,9 +104,9 @@
                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
         </Grid>
-        <i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-        </i:Interaction.Behaviors>
+        </b:Interaction.Behaviors>
     </GroupBox>
 </UserControl>
