@@ -49,15 +49,15 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Start Playing At:"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding PlayStartTime}" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding PlayStartTime}" />
             <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="0,0,55,0" Content="Clear" Command="{Binding ClearStartTime}"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="End Play At:"/>
-            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding PlayStopTime}"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding PlayStopTime}"/>
             <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="0,0,55,0" Content="Clear" Command="{Binding ClearEndTime}"/>
 
             <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Current Position:"/>
-            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" Margin="5,0,0,0" Text="{Binding CurrentTime}"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Margin="5,0,0,0" Text="{Binding CurrentTime}"/>
 
             <StackPanel Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
                 <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Set As Play Start" Command="{Binding SetStartTime}"/>

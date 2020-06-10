@@ -36,7 +36,7 @@
 		<Control.Template> <!-- A bit of a hack to include the triggers below. -->
 			<ControlTemplate>
 				<StackPanel Orientation="Vertical" Margin="11" >
-                    <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="PLAY STRATEGY"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="PLAY STRATEGY"/>
                     <TextBlock Margin="5,0,0,10" Style="{StaticResource ControlTitleStyle}"
 							   Text="The play strategy determines how tracks that you have added to the queue are played."/>
 
@@ -71,7 +71,7 @@
 
 					<Rectangle Margin="3,15" Height="1" StrokeThickness="0" Opacity="0.3"  Fill="{StaticResource DoubleFadedBrush}" />
 
-                    <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="EXHAUSTED STRATEGY"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="EXHAUSTED STRATEGY"/>
 					<TextBlock Margin="5,0,0,10" Style="{StaticResource ControlTitleStyle}"
 							   Text="The exhausted strategy determines how tracks are chosen for play when the selections you have added to the queue have played."/>
 
@@ -123,7 +123,7 @@
                     </Grid>
 					<Rectangle Margin="3,15" Height="1" StrokeThickness="0" Opacity="0.3"  Fill="{StaticResource DoubleFadedBrush}" />
 
-                    <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="OPTIONS"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="OPTIONS"/>
 					<CheckBox Margin="7,5,0,0" IsChecked="{Binding DeletePlayedTracks}" Content="Remove older played tracks from the play queue."/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
