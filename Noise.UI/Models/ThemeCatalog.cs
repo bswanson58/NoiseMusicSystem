@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
-using MahApps.Metro;
+using ControlzEx.Theming;
 
 namespace Noise.UI.Models {
     public abstract class ColorBase {
@@ -12,37 +12,10 @@ namespace Noise.UI.Models {
     }
 
     public class ThemeColors : ColorBase {
-        public ThemeColors( AppTheme theme ) {
+        public ThemeColors( Theme theme ) {
             Id = theme.Name;
-            Name = theme.Name.Replace( "Base", String.Empty );
-            try {
-                var color = theme.Resources["WindowBackgroundBrush"];
-
-                if( color is SolidColorBrush brush ) {
-                    Color = brush.Color;
-                }
-            }
-            catch( Exception ) {
-                Color = Colors.Black;
-            }
-        }
-    }
-
-    public class AccentColors : ColorBase {
-        public AccentColors( Accent accent ) {
-            Id = accent.Name;
-            Name = accent.Name;
-
-            try {
-                var color = accent.Resources["AccentColor"];
-
-                if( color != null ) {
-                    Color = (Color)color;
-                }
-            }
-            catch( Exception ) {
-                Color = Colors.Black;
-            }
+            Name = theme.DisplayName;
+            Color = theme.PrimaryAccentColor;
         }
     }
 
@@ -59,12 +32,10 @@ namespace Noise.UI.Models {
 
     public class ThemeCatalog {
         public IEnumerable<ThemeColors>     Themes { get; }
-        public IEnumerable<AccentColors>    Accents { get; }
         public IEnumerable<SignatureColors> Signatures { get; }
 
         public ThemeCatalog() {
-            Themes = from t in MahApps.Metro.ThemeManager.AppThemes select new ThemeColors( t );
-            Accents = from a in MahApps.Metro.ThemeManager.Accents select  new AccentColors( a );
+            Themes = from t in ControlzEx.Theming.ThemeManager.Current.Themes select new ThemeColors( t );
 
             Signatures = new List<SignatureColors> {
                                     new SignatureColors( "Orange", HexToColor( "#FFEA6500" ), "pack://application:,,,/Noise.UI.Style;component/Themes/Signature_Orange.xaml" ),

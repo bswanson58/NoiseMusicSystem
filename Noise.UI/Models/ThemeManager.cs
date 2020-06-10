@@ -2,44 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using MahApps.Metro;
+using ControlzEx.Theming;
 using ReusableBits.Ui.Themes;
 
 namespace Noise.UI.Models {
     public class ThemeManager {
-        private AppTheme                        mCurrentTheme;
-        private Accent                          mCurrentAccent;
-        private readonly IEnumerable<AppTheme>  mAvailableThemes;
-        private readonly IEnumerable<Accent>    mAvailableAccents;
+        private Theme                           mCurrentTheme;
+        private readonly IEnumerable<Theme>     mAvailableThemes;
 
         public ThemeManager() {
-            var current = MahApps.Metro.ThemeManager.DetectAppStyle( Application.Current );
+            var current = ControlzEx.Theming.ThemeManager.Current.DetectTheme( Application.Current );
 
-            mCurrentTheme = current?.Item1;
-            mCurrentAccent = current?.Item2;
+            mCurrentTheme = current;
 
-            mAvailableThemes = MahApps.Metro.ThemeManager.AppThemes;
-            mAvailableAccents = MahApps.Metro.ThemeManager.Accents;
+            mAvailableThemes = ControlzEx.Theming.ThemeManager.Current.Themes;
         }
 
         public IEnumerable<string>  AvailableThemes => from t in mAvailableThemes select t.Name;
-        public IEnumerable<string>  AvailableAccents => from a in mAvailableAccents select a.Name;
-
         public string               CurrentTheme => mCurrentTheme?.Name;
-        public string               CurrentAccent => mCurrentAccent?.Name;
 
-        public void UpdateApplicationTheme( string themeName, string accentName, string signatureName ) {
-            if((!String.IsNullOrWhiteSpace( themeName )) &&
-               (!String.IsNullOrWhiteSpace( accentName ))) {
-                var theme = MahApps.Metro.ThemeManager.GetAppTheme( themeName );
-                var accent = MahApps.Metro.ThemeManager.GetAccent( accentName );
+        public void UpdateApplicationTheme( string themeName, string signatureName ) {
+            if(!String.IsNullOrWhiteSpace( themeName )) {
+                var theme = ControlzEx.Theming.ThemeManager.Current.GetTheme( themeName );
 
-                if(( theme != null ) &&
-                   ( accent != null )) {
-                    SetApplicationTheme( theme, accent );
+                if( theme != null ) {
+                    SetApplicationTheme( theme );
 
                     mCurrentTheme = theme;
-                    mCurrentAccent = accent;
                 }
             }
 
@@ -48,20 +37,19 @@ namespace Noise.UI.Models {
             }
         }
 
-        public static void SetApplicationTheme( string themeName, string accentName, string signatureUri ) {
-            if((!String.IsNullOrWhiteSpace( themeName )) &&
-               (!String.IsNullOrWhiteSpace( accentName ))) {
-                SetApplicationTheme( MahApps.Metro.ThemeManager.GetAppTheme( themeName ), MahApps.Metro.ThemeManager.GetAccent( accentName ));
+        public static void SetApplicationTheme( string themeName, string signatureUri ) {
+            if(!String.IsNullOrWhiteSpace( themeName )) {
+                SetApplicationTheme( ControlzEx.Theming.ThemeManager.Current.GetTheme( themeName ));
             }
             if(!String.IsNullOrWhiteSpace( signatureUri )) {
                 SetApplicationResources( Application.Current.MainWindow, new Uri( signatureUri ));
             }
         }
 
-        public static void SetApplicationTheme( AppTheme theme, Accent accent ) {
-            if(( theme != null ) &&
-               ( accent != null )) {
-                MahApps.Metro.ThemeManager.ChangeAppStyle( Application.Current, accent, theme );
+        public static void SetApplicationTheme( Theme theme ) {
+            if( theme != null ) {
+             
+                ControlzEx.Theming.ThemeManager.Current.ChangeTheme( Application.Current, theme );
             }
         }
 

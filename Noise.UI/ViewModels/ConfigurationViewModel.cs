@@ -12,12 +12,10 @@ namespace Noise.UI.ViewModels {
         private readonly IPreferences   mPreferences;
         private readonly ThemeManager   mThemeManager;
         private ThemeColors             mCurrentTheme;
-        private AccentColors            mCurrentAccent;
         private SignatureColors         mCurrentSignature;
 
         public  bool                    EnableGlobalHotkeys { get; set; }
         public  bool                    EnableRemoteAccess { get; set; }
-        public  bool                    EnableSpeechCommands { get; set; }
         public  bool                    EnableSortPrefixes { get; set; }
         public  bool                    HasNetworkAccess { get; set; }
         public  bool                    LoadLastLibraryOnStartup { get; set; }
@@ -26,7 +24,6 @@ namespace Noise.UI.ViewModels {
         public  string                  SortPrefixes { get; set; }
 
         public  BindableCollection<ThemeColors>     AvailableThemes { get; }
-        public  BindableCollection<AccentColors>    AvailableAccents { get; }
         public  BindableCollection<SignatureColors> AvailableSignatures { get; }
 
         public  string                              Title { get; }
@@ -41,16 +38,6 @@ namespace Noise.UI.ViewModels {
 
                 UpdateTheme();
             }
-        }
-
-        public AccentColors CurrentAccent {
-            get => mCurrentAccent;
-            set {
-                mCurrentAccent = value;
-
-                UpdateTheme();
-            }
-            
         }
 
         public SignatureColors CurrentSignature {
@@ -68,8 +55,7 @@ namespace Noise.UI.ViewModels {
             mThemeManager = new ThemeManager();
             var themeCatalog = new ThemeCatalog();
 
-            AvailableThemes = new BindableCollection<ThemeColors>( themeCatalog.Themes );
-            AvailableAccents = new BindableCollection<AccentColors>( themeCatalog.Accents );
+            AvailableThemes = new BindableCollection<ThemeColors>( from theme in themeCatalog.Themes orderby theme.Name select theme );
             AvailableSignatures = new BindableCollection<SignatureColors>( themeCatalog.Signatures );
 
             var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
@@ -86,9 +72,6 @@ namespace Noise.UI.ViewModels {
 
             CurrentTheme = AvailableThemes.FirstOrDefault( t => t.Id.Equals( mThemeManager.CurrentTheme )) ??
                            AvailableThemes.FirstOrDefault( t => t.Id.Equals( interfacePreferences.ThemeName ));
-
-            CurrentAccent = AvailableAccents.FirstOrDefault( a => a.Id.Equals( mThemeManager.CurrentAccent )) ??
-                            AvailableAccents.FirstOrDefault( a => a.Id.Equals( interfacePreferences.ThemeAccent ));
 
             CurrentSignature = AvailableSignatures.FirstOrDefault( s => s.Location.Equals( interfacePreferences.ThemeSignature ));
 
@@ -115,9 +98,6 @@ namespace Noise.UI.ViewModels {
             if( CurrentTheme != null ) {
                 interfacePreferences.ThemeName = CurrentTheme.Id;
             }
-            if( CurrentAccent != null ) {
-                interfacePreferences.ThemeAccent = CurrentAccent.Id;
-            }
             if( CurrentSignature != null ) {
                 interfacePreferences.ThemeSignature = CurrentSignature.Location;
             }
@@ -129,10 +109,9 @@ namespace Noise.UI.ViewModels {
         }
 
         private void UpdateTheme() {
-            if(( CurrentAccent != null ) &&
-               ( CurrentSignature != null ) &&
+            if(( CurrentSignature != null ) &&
                ( CurrentTheme != null )) {
-                mThemeManager.UpdateApplicationTheme( CurrentTheme.Id, CurrentAccent.Id, CurrentSignature?.Location );
+                mThemeManager.UpdateApplicationTheme( CurrentTheme.Id, CurrentSignature?.Location );
             }
         }
 

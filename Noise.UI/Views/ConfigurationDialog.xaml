@@ -10,7 +10,7 @@
         prism:ViewModelLocator.AutoWireViewModel="True"
 		mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance viewModels:ConfigurationViewModel, IsDesignTimeCreatable=False}"
-		Height="415" Width="375">
+		Height="390" Width="375">
 
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -51,19 +51,15 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Content="Theme:"/>
                 <ComboBox Grid.Column="1" Grid.Row="0" Margin="3" ItemTemplate="{StaticResource ColorItemTemplate}"
                           SelectedItem="{Binding CurrentTheme, Mode=TwoWay}" ItemsSource="{Binding AvailableThemes}"/>
                 
-                <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Content="Accent:"/>
+               
+                <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Content="Highlight:"/>
                 <ComboBox Grid.Column="1" Grid.Row="1" Margin="3" ItemTemplate="{StaticResource ColorItemTemplate}"
-                          SelectedItem="{Binding CurrentAccent}" ItemsSource="{Binding AvailableAccents}"/>
-                
-                <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Content="Highlight:"/>
-                <ComboBox Grid.Column="1" Grid.Row="2" Margin="3" ItemTemplate="{StaticResource ColorItemTemplate}"
                           SelectedItem="{Binding CurrentSignature}" ItemsSource="{Binding AvailableSignatures}"/>
             </Grid>
         </StackPanel>

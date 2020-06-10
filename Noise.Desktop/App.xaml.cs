@@ -88,7 +88,7 @@ namespace Noise.Desktop {
             regionManager.RegisterViewWithRegion( RegionNames.ShellView, typeof( StartupView ));
 
             var preferences = Container.Resolve<UserInterfacePreferences>();
-            ThemeManager.SetApplicationTheme( preferences.ThemeName, preferences.ThemeAccent, preferences.ThemeSignature );
+            ThemeManager.SetApplicationTheme( preferences.ThemeName, preferences.ThemeSignature );
 
             StartNoise();
 
