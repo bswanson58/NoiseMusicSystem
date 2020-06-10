@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:Noise.UI.Behaviours.ElementMover"
              xmlns:controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
              xmlns:views="clr-namespace:Noise.UI.Views"
@@ -132,7 +131,7 @@
             </AdornerDecorator>
 
             <b:Interaction.Behaviors>
-                <behaviors:ElementMoverBehavior Storyboard="{StaticResource TrackQueueAnimation}" MoveControlName="_TrackQueueControl" MoveTargetTag="TrackQueueTarget"/>
+                <behaviors:ElementMoverBehavior Storyboard="{StaticResource TrackQueueAnimation}" MoveControlName="_trackQueueControl" MoveTargetTag="TrackQueueTarget"/>
             </b:Interaction.Behaviors>
 
         </Grid>
