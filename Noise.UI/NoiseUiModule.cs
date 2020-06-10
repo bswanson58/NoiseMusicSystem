@@ -72,6 +72,9 @@ namespace Noise.UI {
 
             regionManager.RegisterViewWithRegion( RegionNames.LibraryPlayerPanel, typeof( PlayerView ));
             regionManager.RegisterViewWithRegion( RegionNames.LibraryPlayerPanel, typeof(PlayerExtendedView ));
+
+            regionManager.RegisterViewWithRegion( RegionNames.TimelinePlayerPanel, typeof( PlayerView ));
+            regionManager.RegisterViewWithRegion( RegionNames.TimelinePlayerPanel, typeof(PlayerExtendedView ));
         }
     }
 }

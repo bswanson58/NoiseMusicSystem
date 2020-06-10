@@ -2,20 +2,34 @@
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Prism;
 using Prism.Regions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    class LibraryViewModel : PropertyChangeBase, IHandle<Events.ViewDisplayRequest>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
+    class LibraryViewModel : PropertyChangeBase, IActiveAware,
+                             IHandle<Events.ViewDisplayRequest>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
         private readonly IRegionManager mRegionManager;
+        private bool                    mIsActive;
+
+        public  event EventHandler      IsActiveChanged = delegate { };
 
         public LibraryViewModel( IEventAggregator eventAggregator, IRegionManager regionManager ) {
             mRegionManager = regionManager;
 
             SetAlbumInfoView( ViewNames.ArtistInfoView );
-            SetPlayerView( ViewNames.PlayerView );
+            SetLibraryPlayerView( ViewNames.PlayerView );
 
             eventAggregator.Subscribe( this );
+        }
+
+        public bool IsActive {
+            get => ( mIsActive );
+            set {
+                mIsActive = value;
+
+                IsActiveChanged( this, new EventArgs());
+            }
         }
 
         public void Handle( Events.ViewDisplayRequest eventArgs ) {
@@ -44,18 +58,20 @@ namespace Noise.UI.ViewModels {
         }
 
         public void Handle( Events.StandardPlayerRequest eventArgs ) {
-            SetPlayerView( ViewNames.PlayerView );
+            SetLibraryPlayerView( ViewNames.PlayerView );
         }
 
         public void Handle( Events.ExtendedPlayerRequest eventArgs ) {
-            SetPlayerView( ViewNames.ExtendedPlayerView );
+            SetLibraryPlayerView( ViewNames.ExtendedPlayerView );
         }
 
-        private void SetPlayerView( string viewName ) {
-            var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryPlayerPanel );
+        private void SetLibraryPlayerView( string viewName ) {
+            if( IsActive ) {
+                var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryPlayerPanel );
 
-            if( region != null ) {
-                Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
+                if( region != null ) {
+                    Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
+                }
             }
         }
     }

@@ -372,6 +372,7 @@
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
+    <Compile Include="ViewModels\TimelineViewModel.cs" />
     <Compile Include="ViewModels\TrackPlayPointsDialogModel.cs" />
     <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
     <Compile Include="ViewModels\TransportViewModel.cs" />

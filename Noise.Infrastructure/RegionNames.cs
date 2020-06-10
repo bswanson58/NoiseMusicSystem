@@ -6,5 +6,6 @@
         public  const string    LibraryAlbumPanel   = "AlbumPanel";
         public  const string    LibraryRightPanel   = "LibraryRightPanel";
         public  const string    LibraryPlayerPanel  = "Player";
+        public  const string    TimelinePlayerPanel = "TimelinePlayer";
     }
 }

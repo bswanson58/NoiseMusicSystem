@@ -133,7 +133,6 @@
             <b:Interaction.Behaviors>
                 <behaviors:ElementMoverBehavior Storyboard="{StaticResource TrackQueueAnimation}" MoveControlName="_trackQueueControl" MoveTargetTag="TrackQueueTarget"/>
             </b:Interaction.Behaviors>
-
         </Grid>
     </Grid>
 </UserControl>
