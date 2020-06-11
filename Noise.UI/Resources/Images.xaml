@@ -581,28 +581,28 @@
         </Canvas>
     </Viewbox>
 
-    <Viewbox x:Key="Path_Pause">
-        <Canvas Width="61.000" Height="61.399">
-            <Path StrokeThickness="0" StrokeMiterLimit="1.0" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
-                  Data="F1 M 25.500,60.899 L 0.500,60.899 L 0.500,0.500 L 25.500,0.500 L 25.500,60.899 Z"/>
-            <Path StrokeThickness="0" StrokeMiterLimit="1.0" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
-                  Data="F1 M 60.500,60.899 L 35.500,60.899 L 35.500,0.960 L 60.500,0.960 L 60.500,60.899 Z"/>
+    <Viewbox x:Key="Path_Pause" x:Shared="False">
+        <Canvas Width="60.000" Height="60.399">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 25.000,60.399 L 0.000,60.399 L 0.000,0.000 L 25.000,0.000 L 25.000,60.399 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 60.000,60.399 L 35.000,60.399 L 35.000,0.460 L 60.000,0.460 L 60.000,60.399 Z"/>
         </Canvas>
     </Viewbox>
 
-    <Viewbox x:Key="Path_Stop">
-        <Canvas Width="60.708" Height="61.399">
-            <Path StrokeThickness="0" StrokeMiterLimit="1.0" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
-                  Data="F1 M 60.208,60.899 L 0.500,60.899 L 0.500,0.500 L 60.208,0.500 L 60.208,60.899 Z"/>
+    <Viewbox x:Key="Path_Stop" x:Shared="False">
+        <Canvas Width="59.708" Height="60.399">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 59.708,60.399 L 0.000,60.399 L 0.000,0.000 L 59.708,0.000 L 59.708,60.399 Z"/>
         </Canvas>
     </Viewbox>
 
-    <Viewbox x:Key="Path_StopAtEnd">
-        <Canvas Width="71.000" Height="61.399">
-            <Path StrokeThickness="0" StrokeMiterLimit="1.0" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" 
-                  Data="F1 M 40.500,60.899 L 0.500,60.899 L 0.500,0.500 L 40.500,0.500 L 40.500,60.899 Z"/>
-            <Path StrokeThickness="0" StrokeMiterLimit="1.0" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" 
-                  Data="F1 M 70.500,60.899 L 55.500,60.899 L 55.500,0.960 L 70.500,0.960 L 70.500,60.899 Z"/>
+    <Viewbox x:Key="Path_StopAtEnd" x:Shared="False">
+        <Canvas Width="70.000" Height="60.399">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 40.000,60.399 L 0.000,60.399 L 0.000,0.000 L 40.000,0.000 L 40.000,60.399 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 70.000,60.399 L 55.000,60.399 L 55.000,0.460 L 70.000,0.460 L 70.000,60.399 Z"/>
         </Canvas>
     </Viewbox>
 </ResourceDictionary>
