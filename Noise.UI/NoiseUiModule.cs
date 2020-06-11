@@ -48,6 +48,41 @@ namespace Noise.UI {
             ViewModelLocationProvider.Register<TagAddDialog, TagEditDialogModel>();
             ViewModelLocationProvider.Register<TrackPlayPointsDialog, TrackPlayPointsDialogModel>();
 
+            // View registrations to improve startup times
+            ViewModelLocationProvider.Register<AlbumArtworkView, AlbumArtworkViewModel>();
+            ViewModelLocationProvider.Register<AlbumListView, AlbumListViewModel>();
+            ViewModelLocationProvider.Register<AlbumTracksView, AlbumTracksViewModel>();
+            ViewModelLocationProvider.Register<AlbumView, AlbumViewModel>();
+            ViewModelLocationProvider.Register<ArtistArtworkView, ArtistArtworkViewModel>();
+            ViewModelLocationProvider.Register<ArtistInfoView, ArtistInfoViewModel>();
+            ViewModelLocationProvider.Register<ArtistListView, ArtistListViewModel>();
+            ViewModelLocationProvider.Register<ArtistTracksView, ArtistTracksViewModel>();
+            ViewModelLocationProvider.Register<ArtistView, ArtistViewModel>();
+            ViewModelLocationProvider.Register<FavoritesView, FavoritesViewModel>();
+            ViewModelLocationProvider.Register<LibraryAdditionsView, LibraryAdditionsViewModel>();
+            ViewModelLocationProvider.Register<LibrarySelectorView, LibrarySelectorViewModel>();
+            ViewModelLocationProvider.Register<LibraryView, LibraryViewModel>();
+            ViewModelLocationProvider.Register<PlaybackRelatedView, PlaybackRelatedViewModel>();
+            ViewModelLocationProvider.Register<PlayHistoryView, PlayHistoryViewModel>();
+            ViewModelLocationProvider.Register<PlayingAlbumView, PlayingAlbumViewModel>();
+            ViewModelLocationProvider.Register<PlayingArtistView, PlayingArtistViewModel>();
+            ViewModelLocationProvider.Register<PlayingTransportView, PlayingTransportViewModel>();
+            ViewModelLocationProvider.Register<PlayQueueControlView, PlayQueueControlViewModel>();
+            ViewModelLocationProvider.Register<PlayQueueListView, PlayQueueListViewModel>();
+            ViewModelLocationProvider.Register<PlayQueueStrategyView, PlayQueueStrategyViewModel>();
+            ViewModelLocationProvider.Register<RatedTracksView, RatedTracksViewModel>();
+            ViewModelLocationProvider.Register<RecentArtistView, RecentArtistViewModel>();
+            ViewModelLocationProvider.Register<SearchView, SearchViewModel>();
+            ViewModelLocationProvider.Register<StartupLibraryCreationView, StartupLibraryCreationViewModel>();
+            ViewModelLocationProvider.Register<StartupLibrarySelectionView, StartupLibrarySelectionViewModel>();
+            ViewModelLocationProvider.Register<StatusView, StatusViewModel>();
+            ViewModelLocationProvider.Register<TagAssociationView, TagAssociationViewModel>();
+            ViewModelLocationProvider.Register<TagListView, TagListViewModel>();
+            ViewModelLocationProvider.Register<TimeExplorerAlbumsView, TimeExplorerAlbumsViewModel>();
+            ViewModelLocationProvider.Register<TimeExplorerView, TimeExplorerViewModel>();
+            ViewModelLocationProvider.Register<TimeExplorerYearView, TimeExplorerYearViewModel>();
+            ViewModelLocationProvider.Register<TimelineView, TimelineViewModel>();
+
             var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
             containerRegistry.RegisterInstance<IResourceProvider>( resourceLoader );
         }
