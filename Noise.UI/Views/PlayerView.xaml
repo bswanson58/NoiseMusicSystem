@@ -86,8 +86,9 @@
 					<!-- Transport Controls -->
 					<StackPanel Grid.Column="1" Margin="7,0" HorizontalAlignment="Center" Orientation="Horizontal">
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}" ToolTip="Play"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}" ToolTip="Pause"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}" ToolTip="Stop"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Pause}" Padding="8" Command="{Binding Pause}" ToolTip="Pause"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Stop}" Padding="8" Command="{Binding Stop}" ToolTip="Stop"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_StopAtEnd}" Padding="6" Command="{Binding StopAtEndOfTrack}" ToolTip="Stop At End Of Track"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" ToolTip="Start Previous Track"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}" ToolTip="Start Next Track"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" ToolTip="Replay Track"/>
