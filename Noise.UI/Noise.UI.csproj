@@ -375,7 +375,7 @@
     <Compile Include="ViewModels\TimelineViewModel.cs" />
     <Compile Include="ViewModels\TrackPlayPointsDialogModel.cs" />
     <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
-    <Compile Include="ViewModels\TransportViewModel.cs" />
+    <Compile Include="ViewModels\PlayingTransportViewModel.cs" />
     <Compile Include="Views\AdjacentPlaySelector.cs" />
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
@@ -428,9 +428,6 @@
     </Compile>
     <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
       <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LibraryFilterDialog.xaml.cs">
-      <DependentUpon>LibraryFilterDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryRecentView.xaml.cs">
       <DependentUpon>LibraryRecentView.xaml</DependentUpon>
@@ -504,8 +501,8 @@
     <Compile Include="Views\TrackStrategyOptionsDialog.xaml.cs">
       <DependentUpon>TrackStrategyOptionsDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TransportView.xaml.cs">
-      <DependentUpon>TransportView.xaml</DependentUpon>
+    <Compile Include="Views\PlayingTransportView.xaml.cs">
+      <DependentUpon>PlayingTransportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayListDialog.xaml.cs">
       <DependentUpon>PlayListDialog.xaml</DependentUpon>
@@ -745,10 +742,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LibraryFilterDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\LibraryRecentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -845,7 +838,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TransportView.xaml">
+    <Page Include="Views\PlayingTransportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

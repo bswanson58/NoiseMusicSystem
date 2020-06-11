@@ -6,9 +6,9 @@ using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class TransportViewModel : AutomaticPropertyBase, 
- 									  IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackUpdated>,
-									  IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged> {
+	public class PlayingTransportViewModel : AutomaticPropertyBase,
+                                             IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackUpdated>,
+									         IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged> {
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
 
@@ -19,7 +19,7 @@ namespace Noise.UI.ViewModels {
 		public	DelegateCommand				PreviousTrack {  get; }
 		public	DelegateCommand				ReplayTrack { get; }
 
-		public TransportViewModel( IEventAggregator eventAggregator, IPlayController playController, IPlayQueue playQueue ) {
+		public PlayingTransportViewModel( IEventAggregator eventAggregator, IPlayController playController, IPlayQueue playQueue ) {
 			mPlayController = playController;
 			mPlayQueue = playQueue;
 
