@@ -20,6 +20,8 @@ namespace Noise.UI.ViewModels {
             SetAlbumInfoView( ViewNames.ArtistInfoView );
             SetLibraryPlayerView( ViewNames.PlayerView );
 
+            mIsActive = true;
+
             eventAggregator.Subscribe( this );
         }
 
