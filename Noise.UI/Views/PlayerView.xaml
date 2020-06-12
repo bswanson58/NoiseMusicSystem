@@ -73,7 +73,6 @@
 								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
                                            reusableBehaviours:FadeTrimming.IsEnabled="True"
                                            reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                           reusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
                                            Text="{Binding ArtistAlbumName}" />
 							</Grid>
 
