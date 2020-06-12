@@ -13,7 +13,7 @@
 	<SolidColorBrush x:Key="BorderColor" Color="{StaticResource BorderLineColor}" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
     <SolidColorBrush x:Key="PopupBackground" Color="#FFB0B0B0"/>
-    <SolidColorBrush x:Key="DefaultForegroundBrush" Color="{DynamicResource IdealForegroundColor}"/>
+    <SolidColorBrush x:Key="DefaultForegroundBrush" Color="{DynamicResource MahApps.Colors.IdealForeground}"/>
 
     <!-- Blue palette
     <Color x:Key="PlayButtonNormalFill">#FFA7C6FF</Color>
