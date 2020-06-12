@@ -10,9 +10,10 @@
 
     <SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
-	<SolidColorBrush x:Key="BorderColor" Color="{StaticResource BorderLineColor}" />
+    <SolidColorBrush x:Key="BorderColor" Color="{StaticResource BorderLineColor}" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
     <SolidColorBrush x:Key="PopupBackground" Color="#FFB0B0B0"/>
+    <!-- "DefaultForegroundBrush" is used by the FadeTrimming behavior -->
     <SolidColorBrush x:Key="DefaultForegroundBrush" Color="{DynamicResource MahApps.Colors.IdealForeground}"/>
 
     <!-- Blue palette

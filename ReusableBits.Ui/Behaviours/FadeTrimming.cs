@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -124,8 +125,7 @@ namespace ReusableBits.Ui.Behaviours {
 			public void Detach() {
 				mTextBlock.SizeChanged -= UpdateForegroundBrush;
 
-				var parent = VisualTreeHelper.GetParent( mTextBlock ) as FrameworkElement;
-				if( parent != null ) {
+                if( VisualTreeHelper.GetParent( mTextBlock ) is FrameworkElement parent ) {
 					parent.SizeChanged -= UpdateForegroundBrush;
 				}
 
@@ -143,11 +143,24 @@ namespace ReusableBits.Ui.Behaviours {
 				}
 
 				// otherwise, if the textBlock has inherited a foreground color, use that
-				if( textBlock.Foreground is SolidColorBrush ) {
-					return ( textBlock.Foreground as SolidColorBrush ).Color;
+				if( textBlock.Foreground is SolidColorBrush solidBrush ) {
+					return solidBrush.Color;
 				}
 
-				return Colors.Black;
+                if(( textBlock.Foreground is LinearGradientBrush linearBrush ) &&
+                   ( linearBrush.GradientStops.Any())) {
+                    return linearBrush.GradientStops[0].Color;
+                }
+
+				// see if the application has defined a default brush for the foreground
+                if( Application.Current.Resources.Contains( "DefaultForegroundBrush" )) {
+					if( Application.Current.Resources["DefaultForegroundBrush"] is SolidColorBrush brush ) {
+						return brush.Color;
+                    }
+                }
+
+				// give up...
+                return Colors.Black;
 			}
 
 			private void UpdateForegroundBrush( object sender, EventArgs e ) {
