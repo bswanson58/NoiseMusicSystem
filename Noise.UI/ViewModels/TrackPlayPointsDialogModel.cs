@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Prism.Commands;
@@ -13,6 +14,7 @@ namespace Noise.UI.ViewModels {
         public  const string                    cTrackLength = "trackLength";
 
         private readonly IPlaybackContextWriter mContextWriter;
+        private readonly INoiseLog              mLog;
         private DbTrack                         mTrack;
         private TimeSpan                        mCurrentPosition;
         private TimeSpan                        mTrackLength;
@@ -32,8 +34,9 @@ namespace Noise.UI.ViewModels {
         public  string                          Title { get; }
         public  event Action<IDialogResult>     RequestClose;
 
-        public TrackPlayPointsDialogModel( IPlaybackContextWriter playbackContextWriter ) {
+        public TrackPlayPointsDialogModel( IPlaybackContextWriter playbackContextWriter, INoiseLog log ) {
             mContextWriter = playbackContextWriter;
+            mLog = log;
 
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
@@ -132,7 +135,7 @@ namespace Noise.UI.ViewModels {
             return retValue;
         }
 
-        public void SavePlayPoints() {
+        public async void SavePlayPoints() {
             if( TimeSpan.TryParse( PlayStartTime, CultureInfo.CurrentUICulture, out TimeSpan timeIn )) {
                 if( timeIn < mTrackLength ) {
                     mPlayPoints.StartPlaySeconds = (long)timeIn.TotalSeconds;
@@ -153,7 +156,14 @@ namespace Noise.UI.ViewModels {
                 mPlayPoints.StartPlaySeconds = 0;
             }
 
-            mContextWriter.SaveTrackPlayPoints( mTrack, mPlayPoints );
+            await Task.Run( () => {
+                try {
+                    mContextWriter.SaveTrackPlayPoints( mTrack, mPlayPoints );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "TrackPlayPointsDialogModel:SavePlayPoints", ex );
+                }
+            });
         }
 
         private void UpdateControls() {
@@ -187,3 +197,4 @@ namespace Noise.UI.ViewModels {
         }
     }
 }
+
