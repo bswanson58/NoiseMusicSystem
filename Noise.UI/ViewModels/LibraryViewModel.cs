@@ -2,17 +2,13 @@
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
-using Prism;
 using Prism.Regions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    class LibraryViewModel : PropertyChangeBase, IActiveAware,
+    class LibraryViewModel : PropertyChangeBase,
                              IHandle<Events.ViewDisplayRequest>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
         private readonly IRegionManager mRegionManager;
-        private bool                    mIsActive;
-
-        public  event EventHandler      IsActiveChanged = delegate { };
 
         public LibraryViewModel( IEventAggregator eventAggregator, IRegionManager regionManager ) {
             mRegionManager = regionManager;
@@ -20,18 +16,7 @@ namespace Noise.UI.ViewModels {
             SetAlbumInfoView( ViewNames.ArtistInfoView );
             SetLibraryPlayerView( ViewNames.PlayerView );
 
-            mIsActive = true;
-
             eventAggregator.Subscribe( this );
-        }
-
-        public bool IsActive {
-            get => ( mIsActive );
-            set {
-                mIsActive = value;
-
-                IsActiveChanged( this, new EventArgs());
-            }
         }
 
         public void Handle( Events.ViewDisplayRequest eventArgs ) {
@@ -68,12 +53,10 @@ namespace Noise.UI.ViewModels {
         }
 
         private void SetLibraryPlayerView( string viewName ) {
-            if( IsActive ) {
-                var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryPlayerPanel );
+            var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == RegionNames.LibraryPlayerPanel );
 
-                if( region != null ) {
-                    Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
-                }
+            if( region != null ) {
+                Execute.OnUIThread( () => region.RequestNavigate( new Uri( viewName, UriKind.Relative)));
             }
         }
     }
