@@ -26,6 +26,9 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler								mArtistRetrievalTaskHandler;
 		private bool									mIAskedForArtistFocus;
 
+        public	IEnumerable<UiArtist>					RecentlyPlayedArtists => mRecentlyPlayed;
+        public	IEnumerable<UiArtist>					RecentlyViewedArtists => mRecentlyViewed;
+
 		public RecentArtistViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 									  IArtistProvider artistProvider, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
@@ -99,15 +102,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IEnumerable<UiArtist> RecentlyPlayedArtists {
-			get{ return( mRecentlyPlayed ); }
-		} 
-
-		public IEnumerable<UiArtist> RecentlyViewedArtists {
-			get{ return( mRecentlyViewed ); }
-		}
-
-		public UiArtist SelectedArtist {
+        public UiArtist SelectedArtist {
 			get { return ( Get( () => SelectedArtist ) ); }
 			set {
 				Set( () => SelectedArtist, value );
@@ -134,8 +129,8 @@ namespace Noise.UI.ViewModels {
 
 				return ( mArtistRetrievalTaskHandler );
 			}
-			set { mArtistRetrievalTaskHandler = value; }
-		}
+			set => mArtistRetrievalTaskHandler = value;
+        }
 
 		private void RetrieveArtistList() {
 			ArtistsRetrievalTaskHandler.StartTask( () => {

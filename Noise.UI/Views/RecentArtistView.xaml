@@ -6,18 +6,36 @@
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance viewModels:RecentArtistViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
+        <Storyboard x:Key="ItemAddedAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1"/>
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="0.0" To="1.0" Duration="0:0:0.5"/>
+        </Storyboard>
+
+        <Storyboard x:Key="ItemDeletedAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.5"/>
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="1.0" To="0.0" Duration="0:0:0.5"/>
+        </Storyboard>
+
+        <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <DataTemplate x:Key="ArtistTemplate" DataType="{x:Type dto:UiArtist}">
-            <Viewbox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Stretch="Uniform" StretchDirection="DownOnly">
-                <TextBlock Style="{StaticResource ExplorerHeaderStyle}" Text="{Binding DisplayName}" />
+            <Viewbox HorizontalAlignment="Left" Stretch="Uniform" StretchDirection="DownOnly">
+                <TextBlock Style="{StaticResource ExplorerHeaderStyle}" Foreground="{StaticResource DefaultForegroundBrush}" Text="{Binding DisplayName}" />
             </Viewbox>
         </DataTemplate>
-
     </UserControl.Resources>
 
     <Grid>
@@ -34,9 +52,10 @@
                     <TextBlock Margin="0,17,0,0" Style="{StaticResource ExplorerTitleStyle}" Foreground="{StaticResource BorderTextColor}" Text="Recently Played:"/>
 
                     <ListBox BorderThickness="0" HorizontalContentAlignment="Stretch"
-                             ItemContainerStyle="{StaticResource AnimateOnInsertListBoxItemStyle}"
-                             ItemsSource="{Binding RecentlyPlayedArtists}"
-                             ItemTemplate="{StaticResource ArtistTemplate}"
+                             behaviours:ItemsControlAnimation.ItemsSource="{Binding RecentlyPlayedArtists}"
+                             behaviours:ItemsControlAnimation.FadeInAnimation="{StaticResource ItemAddedAnimation}"
+                             behaviours:ItemsControlAnimation.FadeOutAnimation="{StaticResource ItemDeletedAnimation}"
+                             ItemTemplate="{StaticResource ArtistTemplate}" ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                              SelectedItem="{Binding SelectedArtist}"/>
                 </StackPanel>
             </ScrollViewer>

@@ -32,6 +32,7 @@ namespace Noise.UI.Dto {
 				DbId = artist.DbId;
 
                 Name = artist.Name;
+				DisplayName = artist.Name;
                 SortName = artist.Name;
 				AlbumCount = artist.AlbumCount;
 				IsFavorite = artist.IsFavorite;
