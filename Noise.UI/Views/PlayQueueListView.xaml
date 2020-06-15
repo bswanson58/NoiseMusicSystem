@@ -71,7 +71,7 @@
         </Style>
 
 		<DataTemplate x:Key="QueueListItem" DataType="dto:UiPlayQueueTrack">
-            <Grid Margin="0,1,4,0" Background="Transparent">
+            <Grid Margin="0,1,4,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
