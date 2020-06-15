@@ -12,6 +12,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.Dto {
     public class RelatedTrackNode : PropertyChangeBase, IPlayingItem {
         protected readonly Action<RelatedTrackNode> OnPlay;
+        private readonly RelatedTrackParent         mParent;
         private bool                                mIsExpanded;
 
         public  string          Key { get; }
@@ -23,6 +24,11 @@ namespace Noise.UI.Dto {
         public  string          SortTrackName => DisplayTrackName ? Track.Name : String.Empty;
         public  bool            IsPlaying { get; private set; }
         public  DelegateCommand Play { get; }
+
+        public RelatedTrackNode( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay, RelatedTrackParent parent ) : 
+            this( key, artist, album, track, onPlay ) {
+            mParent = parent;
+        }
 
         public RelatedTrackNode( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) {
             Key = key;
@@ -55,6 +61,14 @@ namespace Noise.UI.Dto {
         public void SetPlayingStatus( PlayingItem item ) {
             IsPlaying = Track.DbId.Equals( item.Track );
 
+            if( IsPlaying ) {
+                IsExpanded = true;
+
+                if( mParent != null ) {
+                    mParent.IsExpanded = true;
+                }
+            }
+
             RaisePropertyChanged( () => IsPlaying );
         }
     }
@@ -72,9 +86,8 @@ namespace Noise.UI.Dto {
         public	bool		                    MultipleTracks => mTracks.Count > 0;
         public  bool                            IsCategoryParent => !String.IsNullOrWhiteSpace( mParentName );
 
-        public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay, bool expanded ) :
+        public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
             base( key, artist, album, track, onPlay ) {
-            IsExpanded = expanded;
 
             mParentName = String.Empty; 
             mTracks = new ObservableCollectionEx<RelatedTrackNode>();
@@ -86,11 +99,8 @@ namespace Noise.UI.Dto {
             Tracks.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
         }
 
-        public RelatedTrackParent( string key, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
-            this( key, artist, album, track, onPlay, false ) { }
-
         public RelatedTrackParent( string key, string parentName, DbArtist artist, DbAlbum album, DbTrack track, Action<RelatedTrackNode> onPlay ) :
-            this( key, artist, album, track, onPlay, false ) {
+            this( key, artist, album, track, onPlay ) {
             mParentName = parentName;
 
             AddNode( Artist, Album, Track );
@@ -109,7 +119,7 @@ namespace Noise.UI.Dto {
         }
 
         private void AddNode( DbArtist artist, DbAlbum album, DbTrack track ) {
-            var node = new RelatedTrackNode( Key, artist, album, track, OnPlay ) { DisplayTrackName = !String.IsNullOrWhiteSpace( mParentName ) };
+            var node = new RelatedTrackNode( Key, artist, album, track, OnPlay, this ) { DisplayTrackName = !String.IsNullOrWhiteSpace( mParentName ) };
 
             mTracks.Add( node );
         }

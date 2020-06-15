@@ -140,9 +140,7 @@ namespace Noise.UI.ViewModels {
                     mPlayingItemHandler.UpdateList( parent.TrackList );
                 }
                 else {
-                    var expanded = !mTracks.Any();
-                
-                    parent = new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay, expanded );
+                    parent = new RelatedTrackParent( key, item.Artist, item.Album, item.Track, OnPlay );
                     mPlayingItemHandler.UpdateItem( parent );
 
                     mTracks.Add( parent );
