@@ -581,6 +581,13 @@
         </Canvas>
     </Viewbox>
 
+    <Viewbox x:Key="Path_Play" x:Shared="False">
+        <Canvas Width="40.000" Height="60.000">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 0.000,0.000 L 0.000,60.000 L 40.000,30.000"/>
+        </Canvas>
+    </Viewbox>
+
     <Viewbox x:Key="Path_Pause" x:Shared="False">
         <Canvas Width="60.000" Height="60.399">
             <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
@@ -600,9 +607,31 @@
     <Viewbox x:Key="Path_StopAtEnd" x:Shared="False">
         <Canvas Width="70.000" Height="60.399">
             <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
-                  Data="F1 M 40.000,60.399 L 0.000,60.399 L 0.000,0.000 L 40.000,0.000 L 40.000,60.399 Z"/>
+                  Data="F1 M 45.000,60.399 L 0.000,60.399 L 0.000,0.000 L 45.000,0.000 L 45.000,60.399 Z"/>
             <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
                   Data="F1 M 70.000,60.399 L 55.000,60.399 L 55.000,0.460 L 70.000,0.460 L 70.000,60.399 Z"/>
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="Path_NextTrack" x:Shared="False">
+        <Canvas Width="60.000" Height="60.000">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 50.000,60.000 L 60.000,60.000 L 60.000,0.000 L 50.000,0.000 L 50.000,60.000 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 0.000,0.000 L 0.000,60.000 L 28.000,30.000"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 25.000,0.000 L 25.000,60.000 L 53.000,30.000"/>
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="Path_PreviousTrack" x:Shared="False">
+        <Canvas Width="60.000" Height="60.000">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 0.000,60.000 L 10.000,60.000 L 10.000,0.000 L 0.000,0.000 L 0.000,60.000 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 35.000,0.000 L 35.000,60.000 L 7.000,30.000"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 60.000,0.000 L 60.000,60.000 L 32.000,30.000"/>
         </Canvas>
     </Viewbox>
 </ResourceDictionary>
