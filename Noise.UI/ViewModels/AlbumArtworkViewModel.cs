@@ -93,7 +93,7 @@ namespace Noise.UI.ViewModels {
 					mAlbumImages.AddRange( from TextInfo info in mAlbumInfo.Info orderby info.Name select new UiAlbumExtra( info, mResourceProvider.RetrieveImage( "Text Document.png" )));
 				}
 
-                CurrentImage = mAlbumImages.FirstOrDefault( a => a.Artwork.IsUserSelection ) ?? mAlbumImages.FirstOrDefault();
+                CurrentImage = mAlbumImages.FirstOrDefault( a => a.Artwork?.IsUserSelection == true ) ?? mAlbumImages.FirstOrDefault();
             }
 		}
 
