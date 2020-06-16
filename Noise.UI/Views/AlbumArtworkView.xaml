@@ -53,7 +53,8 @@
                         <RotateTransform Angle="{Binding Path=CurrentImage.ImageRotation}"/>
                     </Image.RenderTransform>
                 </Image>
-                <TextBlock Text="{Binding Path=CurrentImage.Text}" Visibility="{Binding Path=CurrentImage.IsText, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                <TextBlock Foreground="{StaticResource ControlTextColor}" Text="{Binding Path=CurrentImage.Text}" 
+                           Visibility="{Binding Path=CurrentImage.IsText, Converter={StaticResource BooleanVisibilityConverter}}"/>
             </Grid>
         </ScrollViewer>
 
