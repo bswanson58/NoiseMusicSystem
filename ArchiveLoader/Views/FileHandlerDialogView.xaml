@@ -4,8 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:ArchiveLoader.ViewModels"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:FileHandlerDialogModel, IsDesignTimeCreatable=False}"
              Height="330" Width="800">
 
     <mvvm:Dialog.WindowStyle>
@@ -89,8 +91,8 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Margin="10,0" Width="80" Style="{StaticResource GeneralButtonStyle}" Content="Cancel" Command="{Binding OnCancel}"/>
-            <Button Margin="10,0" Width="80" Style="{StaticResource GeneralButtonStyle}" Content="OK" Command="{Binding OnOk}"/>
+            <Button Margin="10,0" Width="80" Style="{StaticResource GeneralButtonStyle}" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+            <Button Margin="10,0" Width="80" Style="{StaticResource GeneralButtonStyle}" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -3,15 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Dto="clr-namespace:ArchiveLoader.Dto"
-             xmlns:Mvvm="http://prismlibrary.com/"
-             xmlns:Behaviours="clr-namespace:ArchiveLoader.Behaviours"
-             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:dto="clr-namespace:ArchiveLoader.Dto"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:behaviours="clr-namespace:ArchiveLoader.Behaviours"
+             xmlns:viewModels="clr-namespace:ArchiveLoader.ViewModels"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:ProcessRecorderViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
-        <DataTemplate x:Key="VolumeItemTemplate" DataType="Dto:DisplayedStatusItem">
+        <DataTemplate x:Key="VolumeItemTemplate" DataType="dto:DisplayedStatusItem">
             <TextBlock x:Name="VolumeName" Text="{Binding Name}"/>
 
             <DataTemplate.Triggers>
@@ -33,7 +35,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <DataTemplate x:Key="HandlerItemTemplate" DataType="Dto:DisplayedStatusItem">
+        <DataTemplate x:Key="HandlerItemTemplate" DataType="dto:DisplayedStatusItem">
             <StackPanel Orientation="Horizontal">
                 <TextBlock x:Name="HandlerName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
                 <TextBlock x:Name="HandlerSeparator" Margin="5,0" Text="-"/>
@@ -52,7 +54,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <DataTemplate x:Key="CompletedItemTemplate" DataType="Dto:CompletedProcessItem">
+        <DataTemplate x:Key="CompletedItemTemplate" DataType="dto:CompletedProcessItem">
             <Grid Margin="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -88,7 +90,7 @@
         <CheckBox Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,3" Foreground="{StaticResource ControlTextColor}"
                   Content="Display Only Errors" IsChecked="{Binding DisplayOnlyErrors}"/>
 
-        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" Behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding LastItemAdded}"
+        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" behaviours:ListBoxLastItemVisible.ChangeTrigger="{Binding LastItemAdded}"
                  ItemsSource="{Binding ProcessList}" ItemTemplate="{StaticResource CompletedItemTemplate}"/>
     </Grid>
 </UserControl>

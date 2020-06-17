@@ -1,26 +1,31 @@
-﻿<Mah:MetroWindow x:Class="ArchiveLoader.Views.Shell"
+﻿<mah:MetroWindow x:Class="ArchiveLoader.Views.Shell"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
-                 xmlns:Mvvm="http://prismlibrary.com/" 
-                 xmlns:Views="clr-namespace:ArchiveLoader.Views"
-                 Mvvm:ViewModelLocator.AutoWireViewModel="True"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:mvvm="http://prismlibrary.com/" 
+                 xmlns:views="clr-namespace:ArchiveLoader.Views"
+                 xmlns:viewModels="clr-namespace:ArchiveLoader.ViewModels"
+                 mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
+                 mc:Ignorable="d" 
+                 d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}"
                  Title="Archive Loader" >
 
-    <Mah:MetroWindow.IconTemplate>
+    <mah:MetroWindow.IconTemplate>
         <DataTemplate>
             <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="5,3,0,3" Background="Transparent"
                   RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality">
                 <Image Source="../Resources/package.ico"/>
             </Grid>
         </DataTemplate>
-    </Mah:MetroWindow.IconTemplate>
+    </mah:MetroWindow.IconTemplate>
 
-    <Mah:MetroWindow.RightWindowCommands>
-        <Mah:WindowCommands>
-        </Mah:WindowCommands>
-    </Mah:MetroWindow.RightWindowCommands>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -31,19 +36,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <Views:ConfigurationView Grid.Row="0"/>
-        <Views:ProcessView Grid.Row="1"/>
-        <Views:ProcessRecorderView Grid.Row="2"/>
+        <views:ConfigurationView Grid.Row="0"/>
+        <views:ProcessView Grid.Row="1"/>
+        <views:ProcessRecorderView Grid.Row="2"/>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
-            <Views:ProcessControlView Grid.Column="0"/>
-            <Views:ProgressView Grid.Column="1"/>
+            <views:ProcessControlView Grid.Column="0"/>
+            <views:ProgressView Grid.Column="1"/>
         </Grid>
-        <Views:StatusView Grid.Row="4"/>
+        <views:StatusView Grid.Row="4"/>
     </Grid>
-</Mah:MetroWindow>
+</mah:MetroWindow>
 

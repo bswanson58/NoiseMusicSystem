@@ -1,8 +1,9 @@
 ﻿using System;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.Dto {
-    class DisplayedProcessItem : AutomaticCommandBase {
+    class DisplayedProcessItem : PropertyChangeBase {
         private readonly Action<DisplayedProcessItem> mContinueOnError;
         private readonly Action<DisplayedProcessItem> mOpenAction;
         private readonly Action<DisplayedProcessItem> mAbortAction;
@@ -22,6 +23,10 @@ namespace ArchiveLoader.Dto {
         public  bool            IsAborted => CurrentState == ProcessState.Aborted;
         public  bool            HasError => CurrentState == ProcessState.Error;
 
+        public  DelegateCommand Continue { get; }
+        public  DelegateCommand Abort { get; }
+        public  DelegateCommand OpenFolder { get; }
+
         public DisplayedProcessItem( ProcessItem item, Action<DisplayedProcessItem> onContinuation, Action<DisplayedProcessItem> abortAction, Action<DisplayedProcessItem> openAction ) {
             Key = item.Key;
             Name = item.Name;
@@ -29,6 +34,10 @@ namespace ArchiveLoader.Dto {
             mContinueOnError = onContinuation;
             mAbortAction = abortAction;
             mOpenAction = openAction;
+
+            Continue = new DelegateCommand( OnContinue );
+            Abort = new DelegateCommand( OnAbort );
+            OpenFolder = new DelegateCommand( OnOpenFolder );
 
             CurrentHandler = "File Copied";
             CurrentState = ProcessState.Pending;
@@ -66,15 +75,15 @@ namespace ArchiveLoader.Dto {
             RaisePropertyChanged( () => OutputFilePresent );
         }
 
-        public void Execute_OnContinue() {
+        private void OnContinue() {
             mContinueOnError?.Invoke( this );
         }
 
-        public void Execute_OnAbort() {
+        private void OnAbort() {
             mAbortAction?.Invoke( this );
         }
 
-        public void Execute_OpenFolder() {
+        private void OnOpenFolder() {
             mOpenAction?.Invoke( this );
         }
     }

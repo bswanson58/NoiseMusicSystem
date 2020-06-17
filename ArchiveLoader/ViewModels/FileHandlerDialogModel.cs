@@ -3,17 +3,24 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
+using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.Platform;
 
 namespace ArchiveLoader.ViewModels {
-    class FileHandlerDialogModel : AutomaticCommandBase, IDialogAware  {
+    class FileHandlerDialogModel : PropertyChangeBase, IDialogAware  {
         private readonly IPreferences           mPreferences;
         private readonly IPlatformDialogService mPlatformDialogs;
         private FileTypeHandler                 mCurrentHandler;
 
         public  ObservableCollection<FileTypeHandler>   Handlers { get; }
+
+        public  DelegateCommand             BrowseExe { get; }
+        public  DelegateCommand             AddHandler { get; }
+        public  DelegateCommand             DeleteHandler { get; }
+        public  DelegateCommand             Ok { get; }
+        public  DelegateCommand             Cancel { get; }
 
         public string                       Title { get; }
         public event Action<IDialogResult>  RequestClose;
@@ -21,6 +28,12 @@ namespace ArchiveLoader.ViewModels {
         public FileHandlerDialogModel( IPreferences preferences, IPlatformDialogService dialogService ) {
             mPreferences = preferences;
             mPlatformDialogs = dialogService;
+
+            BrowseExe = new DelegateCommand( OnBrowseExe, CanBrowseExe );
+            AddHandler = new DelegateCommand( OnAddHandler );
+            DeleteHandler = new DelegateCommand( OnDeleteHandler, CanDeleteHandler );
+            Ok = new DelegateCommand( OnOk );
+            Cancel = new DelegateCommand( OnCancel );
 
             Title = "File Handlers";
             Handlers = new ObservableCollection<FileTypeHandler>();
@@ -39,8 +52,8 @@ namespace ArchiveLoader.ViewModels {
                 RaisePropertyChanged( () => DeleteInputOnSuccess );
                 RaisePropertyChanged( () => TreatStdOutAsError );
 
-                RaiseCanExecuteChangedEvent( "CanExecute_DeleteHandler" );
-                RaiseCanExecuteChangedEvent( "CanExecute_BrowseExe" );
+                DeleteHandler.RaiseCanExecuteChanged();
+                BrowseExe.RaiseCanExecuteChanged();
             }
         }
 
@@ -109,7 +122,7 @@ namespace ArchiveLoader.ViewModels {
             }
         }
 
-        public void Execute_BrowseExe() {
+        private void OnBrowseExe() {
             if(( mCurrentHandler != null ) &&
                ( mPlatformDialogs.OpenFileDialog( "Select Executable", "*.exe", "Executable files (*.exe, *.bat)|*.exe;*.bat|All files (*.*)|*.*", out var fileName ) == true )) {
                 mCurrentHandler.ExePath = fileName;
@@ -118,18 +131,18 @@ namespace ArchiveLoader.ViewModels {
             }
         }
 
-        public bool CanExecute_BrowseExe() {
+        private bool CanBrowseExe() {
             return mCurrentHandler != null;
         }
 
-        public void Execute_AddHandler() {
+        private void OnAddHandler() {
             var handler = new FileTypeHandler { HandlerName = "New Handler" };
 
             Handlers.Add( handler );
             CurrentHandler = handler;
         }
 
-        public void Execute_DeleteHandler() {
+        private void OnDeleteHandler() {
             if( mCurrentHandler != null ) {
                 Handlers.Remove( mCurrentHandler );
 
@@ -137,11 +150,11 @@ namespace ArchiveLoader.ViewModels {
             }
         }
 
-        public bool CanExecute_DeleteHandler() {
+        private bool CanDeleteHandler() {
             return mCurrentHandler != null;
         }
 
-        public void Execute_OnOk() {
+        private void OnOk() {
             SaveHandlerList();
 
             RequestClose?.Invoke( new DialogResult( ButtonResult.OK ));
@@ -153,7 +166,7 @@ namespace ArchiveLoader.ViewModels {
             mPreferences.Save( handlerList );
         }
 
-        public void Execute_OnCancel() {
+        private void OnCancel() {
             RequestClose?.Invoke( new DialogResult( ButtonResult.OK ));
         }
 

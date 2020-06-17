@@ -1,8 +1,13 @@
 ﻿<UserControl x:Class="ArchiveLoader.Views.PreferencesDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Mvvm="http://prismlibrary.com/"
-             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:ArchiveLoader.ViewModels"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:PreferencesDialogModel, IsDesignTimeCreatable=False}"
              Height="145" Width="600">
 
     <Grid Margin="10,10">
@@ -29,8 +34,8 @@
         <Button Grid.Row="2" Grid.Column="3" Style="{StaticResource GeneralButtonStyle}" Height="25" Content="..." Command="{Binding BrowseReportFolder}"/>
         
         <StackPanel Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="0,0,8,0" Content="Cancel" Command="{Binding OnCancel}"/>
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="OK" Command="{Binding OnOk}"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="0,0,8,0" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </UserControl>

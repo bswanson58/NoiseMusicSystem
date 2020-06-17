@@ -6,21 +6,28 @@ using System.Windows.Data;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using Caliburn.Micro;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.ViewModels {
-    class ProcessViewModel : AutomaticCommandBase, IDisposable {
-        private readonly IProcessManager    mProcessManager;
-        private readonly IDisposable        mProcessingItemChangedSubscription;
-        private readonly IPlatformLog       mLog;
-        private bool                        mHaveErroredProcess;
+    class ProcessViewModel : PropertyChangeBase, IDisposable {
+        private readonly IProcessManager                mProcessManager;
+        private readonly IDisposable                    mProcessingItemChangedSubscription;
+        private readonly IPlatformLog                   mLog;
+        private bool                                    mHaveErroredProcess;
         private readonly BindableCollection<DisplayedProcessItem> mProcessItems;
 
-        public  ICollectionView             ProcessItems { get; }
+        public  ICollectionView                         ProcessItems { get; }
+
+        public  DelegateCommand                         ContinueAll { get; }
+        public  DelegateCommand                         AbortAll { get; }
 
         public ProcessViewModel( IProcessManager processManager, IPlatformLog log ) {
             mProcessManager = processManager;
             mLog = log;
+
+            ContinueAll = new DelegateCommand( OnContinueAll, CanContinueAll );
+            AbortAll = new DelegateCommand( OnAbortAll, CanAbortAll );
 
             mProcessItems = new BindableCollection<DisplayedProcessItem>();
             ProcessItems = CollectionViewSource.GetDefaultView( mProcessItems );
@@ -31,19 +38,19 @@ namespace ArchiveLoader.ViewModels {
             mProcessingItemChangedSubscription = mProcessManager.OnProcessingItemChanged.Subscribe( OnProcessingItemEvent );
         }
 
-        public void Execute_ContinueAll() {
+        private void OnContinueAll() {
             mProcessManager.ContinueAllProcesses();
         }
 
-        public bool CanExecute_ContinueAll() {
+        private bool CanContinueAll() {
             return mHaveErroredProcess;
         }
 
-        public void Execute_AbortAll() {
+        private void OnAbortAll() {
             mProcessManager.AbortAllProcesses();
         }
 
-        public bool CanExecute_AbortAll() {
+        private bool CanAbortAll() {
             return mHaveErroredProcess;
         }
 
@@ -109,8 +116,8 @@ namespace ArchiveLoader.ViewModels {
                     mHaveErroredProcess = mProcessItems.Any( i => i.HasError );
                 }
 
-                RaiseCanExecuteChangedEvent( "CanExecute_ContinueAll" );
-                RaiseCanExecuteChangedEvent( "CanExecute_AbortAll" );
+                ContinueAll.RaiseCanExecuteChanged();
+                AbortAll.RaiseCanExecuteChanged();
             }
         }
 
@@ -124,8 +131,8 @@ namespace ArchiveLoader.ViewModels {
                     mHaveErroredProcess = mProcessItems.Any( i => i.HasError );
                 }
 
-                RaiseCanExecuteChangedEvent( "CanExecute_ContinueAll" );
-                RaiseCanExecuteChangedEvent( "CanExecute_AbortAll" );
+                ContinueAll.RaiseCanExecuteChanged();
+                AbortAll.RaiseCanExecuteChanged();
             }
         }
 

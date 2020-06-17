@@ -3,14 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Mvvm="http://prismlibrary.com/"
-             xmlns:Dto="clr-namespace:ArchiveLoader.Dto"
-             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:dto="clr-namespace:ArchiveLoader.Dto"
+             xmlns:viewModels="clr-namespace:ArchiveLoader.ViewModels"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:ProcessViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
-        <DataTemplate x:Key="ProcessItemTemplate" DataType="Dto:DisplayedProcessItem">
+        <DataTemplate x:Key="ProcessItemTemplate" DataType="dto:DisplayedProcessItem">
             <Grid Margin="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -36,8 +38,8 @@
                     
                     <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0" Orientation="Horizontal">
                         <Button Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_Folder}" Height="25" Padding="5" Command="{Binding OpenFolder}"/>
-                        <Button x:Name="ContinueButton" Style="{StaticResource GeneralButtonStyle}" Margin="6,0" Content="Continue" Command="{Binding OnContinue}"/>
-                        <Button x:Name="AbortButton" Style="{StaticResource GeneralButtonStyle}" Content="Abort" Command="{Binding OnAbort}"/>
+                        <Button x:Name="ContinueButton" Style="{StaticResource GeneralButtonStyle}" Margin="6,0" Content="Continue" Command="{Binding Continue}"/>
+                        <Button x:Name="AbortButton" Style="{StaticResource GeneralButtonStyle}" Content="Abort" Command="{Binding Abort}"/>
                     </StackPanel>
                 </Grid>
             </Grid>

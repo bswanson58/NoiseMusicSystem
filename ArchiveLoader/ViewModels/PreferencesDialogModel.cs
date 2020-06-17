@@ -1,12 +1,13 @@
 ﻿using System;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
+using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.Platform;
 
 namespace ArchiveLoader.ViewModels {
-    class PreferencesDialogModel : AutomaticCommandBase, IDialogAware {
+    class PreferencesDialogModel : PropertyChangeBase, IDialogAware {
         private readonly IPreferences           mPreferences;
         private readonly IPlatformDialogService mPlatformDialogService;
 
@@ -16,9 +17,19 @@ namespace ArchiveLoader.ViewModels {
         public  string                          Title { get; }
         public  event Action<IDialogResult>     RequestClose;
 
+        public  DelegateCommand                 Ok { get; }
+        public  DelegateCommand                 Cancel { get; }
+        public  DelegateCommand                 BrowseCatalogFolder { get; }
+        public  DelegateCommand                 BrowseReportFolder { get; }
+
         public PreferencesDialogModel( IPlatformDialogService platformDialogService, IPreferences preferences ) {
             mPlatformDialogService = platformDialogService;
             mPreferences = preferences;
+
+            BrowseCatalogFolder = new DelegateCommand( OnBrowseCatalogFolder );
+            BrowseReportFolder = new DelegateCommand( OnBrowseReportFolder );
+            Ok = new DelegateCommand( OnOk );
+            Cancel = new DelegateCommand( OnCancel );
 
             Title = "Preferences";
         }
@@ -39,7 +50,7 @@ namespace ArchiveLoader.ViewModels {
 
         public void OnDialogClosed() {}
 
-        public void Execute_BrowseCatalogFolder() {
+        private void OnBrowseCatalogFolder() {
             var path = CatalogDirectory;
 
             if( mPlatformDialogService.SelectFolderDialog( "Select Catalog Folder", ref path ).GetValueOrDefault( false )) {
@@ -49,7 +60,7 @@ namespace ArchiveLoader.ViewModels {
             }
         }
 
-        public void Execute_BrowseReportFolder() {
+        private void OnBrowseReportFolder() {
             var path = ReportDirectory;
 
             if( mPlatformDialogService.SelectFolderDialog( "Select Report Folder", ref path ).GetValueOrDefault( false )) {
@@ -59,7 +70,7 @@ namespace ArchiveLoader.ViewModels {
             }
         }
 
-        public void Execute_OnOk() {
+        private void OnOk() {
             SavePreferences();
 
             RequestClose?.Invoke( new DialogResult( ButtonResult.OK ));
@@ -74,7 +85,7 @@ namespace ArchiveLoader.ViewModels {
             mPreferences.Save( preferences );
         }
 
-        public void Execute_OnCancel() {
+        private void OnCancel() {
             RequestClose?.Invoke( new DialogResult( ButtonResult.Cancel ));
         }
     }

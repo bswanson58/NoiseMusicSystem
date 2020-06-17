@@ -1,15 +1,22 @@
 ﻿using System;
 using ArchiveLoader.Interfaces;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.ViewModels {
-    class ProcessControlViewModel : AutomaticCommandBase, IDisposable {
+    class ProcessControlViewModel : PropertyChangeBase, IDisposable {
         private readonly IProcessManager    mProcessManager;
         private IDisposable                 mProcessingStateSubscription;
         private ProcessingState             mProcessingState;
 
+        public  DelegateCommand             StartProcessing { get; }
+        public  DelegateCommand             StopProcessing { get; }
+
         public ProcessControlViewModel( IProcessManager processManager ) {
             mProcessManager = processManager;
+
+            StartProcessing = new DelegateCommand( OnStartProcessing, CanStartProcessing );
+            StopProcessing = new DelegateCommand( OnStopProcessing, CanStopProcessing );
 
             mProcessingState = ProcessingState.Stopped;
 
@@ -19,23 +26,23 @@ namespace ArchiveLoader.ViewModels {
         private void OnProcessingStateChanged( ProcessingState state ) {
             mProcessingState = state;
 
-            RaiseCanExecuteChangedEvent( "CanExecute_StartProcessing" );
-            RaiseCanExecuteChangedEvent( "CanExecute_StopProcessing" );
+            StartProcessing.RaiseCanExecuteChanged();
+            StopProcessing.RaiseCanExecuteChanged();
         }
 
-        public void Execute_StartProcessing() {
+        private void OnStartProcessing() {
             mProcessManager.StartProcessing();
         }
 
-        public bool CanExecute_StartProcessing() {
+        private bool CanStartProcessing() {
             return mProcessingState != ProcessingState.Running;
         }
 
-        public void Execute_StopProcessing() {
+        private void OnStopProcessing() {
             mProcessManager.StopProcessing();
         }
 
-        public bool CanExecute_StopProcessing() {
+        private bool CanStopProcessing() {
             return mProcessingState == ProcessingState.Running;
         }
 

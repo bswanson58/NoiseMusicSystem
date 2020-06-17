@@ -171,7 +171,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
-    <Compile Include="Behaviours\InteractionRequestData.cs" />
     <Compile Include="Behaviours\ListBoxLastItemVisible.cs" />
     <Compile Include="Dto\ArchiveLoaderPreferences.cs" />
     <Compile Include="Dto\CompletedProcessItem.cs" />
