@@ -10,10 +10,11 @@ using System.Windows.Data;
 using Album4Matter.Dto;
 using Album4Matter.Interfaces;
 using Caliburn.Micro;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Album4Matter.ViewModels {
-    class StructureWorkshopViewModel : AutomaticCommandBase, IHandle<Events.WindowStateEvent>, IDataErrorInfo, IDisposable {
+    class StructureWorkshopViewModel : PropertyChangeBase, IHandle<Events.WindowStateEvent>, IDataErrorInfo, IDisposable {
         private readonly Regex                          mInvalidFilenamePattern = new Regex("[" + Regex.Escape(new string(Path.GetInvalidFileNameChars())) + "]");
 
         private readonly IEventAggregator               mEventAggregator;
@@ -31,7 +32,7 @@ namespace Album4Matter.ViewModels {
         private string                                  mPublishDate;
         private string                                  mLocation;
         private bool                                    mIsSoundboard;
-        private bool                                    mIsRadioBrodcast;
+        private bool                                    mIsRadioBroadcast;
         private bool                                    mIsRemastered;
         private bool                                    mIsDeluxeEdition;
         private bool                                    mIsOtherMetadata;
@@ -48,6 +49,13 @@ namespace Album4Matter.ViewModels {
         public  List<int>                               VolumeCountList { get; }
         public  bool                                    UseSourceTags {get; set; }
 
+        public  DelegateCommand                         BuildAlbum { get; }
+        public  DelegateCommand                         ClearMetadata { get; }
+        public  DelegateCommand                         CopyToAlbum { get; }
+        public  DelegateCommand                         BrowseSourceFolder { get; }
+        public  DelegateCommand                         RefreshSourceFolder { get; }
+        public  DelegateCommand                         OpenSourceDirectory { get; }
+
         public StructureWorkshopViewModel( IItemInspectionViewModel inspectionViewModel, IFinalStructureViewModel finalStructureViewModel, IAlbumBuilder albumBuilder, ISourceScanner sourceScanner,
                                            IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, IEventAggregator eventAggregator ) {
             InspectionViewModel = inspectionViewModel;
@@ -58,6 +66,13 @@ namespace Album4Matter.ViewModels {
             mPreferences = preferences;
             mEventAggregator = eventAggregator;
             mLog = log;
+
+            BuildAlbum = new DelegateCommand( OnBuildAlbum, CanBuildAlbum );
+            ClearMetadata = new DelegateCommand( OnClearMetadata );
+            CopyToAlbum = new DelegateCommand( OnCopyToAlbum, CanCopyToAlbum );
+            BrowseSourceFolder = new DelegateCommand( OnBrowseSourceFolder );
+            RefreshSourceFolder = new DelegateCommand( OnRefreshSourceFolder );
+            OpenSourceDirectory = new DelegateCommand( OnOpenSourceDirectory );
 
             mAlbumContents = new List<SourceItem>();
             mSourceList = new BindableCollection<SourceItem>();
@@ -162,9 +177,9 @@ namespace Album4Matter.ViewModels {
         }
 
         public bool IsRadioBroadcast {
-            get => mIsRadioBrodcast;
+            get => mIsRadioBroadcast;
             set {
-                mIsRadioBrodcast = value;
+                mIsRadioBroadcast = value;
 
                 RaisePropertyChanged( () => IsRadioBroadcast );
                 UpdateTargetStructure();
@@ -230,10 +245,10 @@ namespace Album4Matter.ViewModels {
         }
 
         private void OnSelectionChanged( object sender, NotifyCollectionChangedEventArgs args ) {
-            RaiseCanExecuteChangedEvent( "CanExecute_CopyToAlbum" );
+            CopyToAlbum.RaiseCanExecuteChanged();
         }
 
-        public void Execute_CopyToAlbum() {
+        public void OnCopyToAlbum() {
             AddSelectedItemsToVolume( mAlbumContents );
 
             UpdateTargetStructure();
@@ -250,7 +265,7 @@ namespace Album4Matter.ViewModels {
             SelectedSourceItems.Clear();
         }
 
-        public bool CanExecute_CopyToAlbum() {
+        public bool CanCopyToAlbum() {
             return SelectedSourceItems.Any();
         }
 
@@ -274,7 +289,7 @@ namespace Album4Matter.ViewModels {
             }
         }
 
-        public void Execute_BrowseSourceFolder() {
+        public void OnBrowseSourceFolder() {
             var directory = SourceDirectory;
 
             if( mDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
@@ -288,7 +303,7 @@ namespace Album4Matter.ViewModels {
             }
         }
 
-        public void Execute_RefreshSourceFolder() {
+        public void OnRefreshSourceFolder() {
             SelectedSourceItems.Clear();
             CollectSource();
         }
@@ -311,7 +326,7 @@ namespace Album4Matter.ViewModels {
             InspectionViewModel.SetInspectionItem( item );
         }
 
-        public async void Execute_BuildAlbum() {
+        public async void OnBuildAlbum() {
             var layout = CollectAlbumLayout();
             var result = await mAlbumBuilder.BuildAlbum( layout );
 
@@ -319,14 +334,14 @@ namespace Album4Matter.ViewModels {
                 result = await mAlbumBuilder.ClearSourceDirectory( layout );
 
                 if( result ) {
-                    ClearMetadata();
+                    ClearMetadataItems();
                 }
 
                 CollectSource();
             }
         }
 
-        public bool CanExecute_BuildAlbum() {
+        public bool CanBuildAlbum() {
             return !String.IsNullOrWhiteSpace( ArtistName ) && IsValidFilename( ArtistName ) &&
                    !String.IsNullOrWhiteSpace( AlbumName ) && IsValidFilename( BuildAlbumName()) &&
                    ( VolumeList.Any() || mAlbumContents.Any());
@@ -335,7 +350,7 @@ namespace Album4Matter.ViewModels {
         private void UpdateTargetStructure() {
             FinalStructureViewModel.SetTargetLayout( CollectAlbumLayout(), OnRemoveItem );
 
-            RaiseCanExecuteChangedEvent( "CanExecute_BuildAlbum" );
+            BuildAlbum.RaiseCanExecuteChanged();
         }
 
         private void OnRemoveItem( TargetItem item ) {
@@ -446,11 +461,11 @@ namespace Album4Matter.ViewModels {
             UpdateTargetStructure();
         }
 
-        public void Execute_ClearMetadata() {
-            ClearMetadata();
+        public void OnClearMetadata() {
+            ClearMetadataItems();
         }
 
-        private void ClearMetadata() {
+        private void ClearMetadataItems() {
             ArtistName = String.Empty;
             AlbumName = String.Empty;
             Location = String.Empty;
@@ -465,12 +480,13 @@ namespace Album4Matter.ViewModels {
             CreateVolumes = false;
 
             mAlbumContents.Clear();
+            SelectedSourceItems.Clear();
 
             InspectionViewModel.ClearInspectionItem();
             UpdateTargetStructure();
         }
 
-        public void Execute_OpenSourceDirectory() {
+        public void OnOpenSourceDirectory() {
             if( Directory.Exists( SourceDirectory )) {
                 try {
                     System.Diagnostics.Process.Start( SourceDirectory );
