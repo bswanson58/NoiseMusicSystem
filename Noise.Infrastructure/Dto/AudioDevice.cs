@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("Device = {Name}")]
+	[DebuggerDisplay("Device = {" + nameof( Name ) + "}")]
 	public class AudioDevice {
 		public	int			DeviceId { get; set; }
 		public	bool		IsDefault { get ;set; }
 		public	bool		IsEnabled { get; set; }
+		public	bool		WillMakeNoise {  get; set; }
 		public	string		Name { get; set; }
 
 		public AudioDevice() {
@@ -14,7 +15,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "Audio device \"{0}\"", Name ));
+			return( $"Audio device \"{Name}\"" );
 		}
 	}
 }

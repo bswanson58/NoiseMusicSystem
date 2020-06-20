@@ -16,7 +16,19 @@
 			 d:DesignWidth="1200"
              d:DataContext="{d:DesignInstance noiseUiViewModels:PlayerViewModel, IsDesignTimeCreatable=False}">
 
-	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
+	<UserControl.Resources>
+        <Style x:Key="AudioDeviceAvailable" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
+            <Setter Property="ToolTip" Value="Mute. Why Would You??"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding AudioDeviceAvailable}" Value="False">
+                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="ToolTip" Value="No Output Device Selected"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
@@ -257,7 +269,7 @@
 					</Grid.RowDefinitions>
 
 					<StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Play}" Command="{Binding Play}" ToolTip="Play"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Play}" Foreground="{StaticResource PlayingBrush}" Command="{Binding Play}" ToolTip="Play"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Pause}" Padding="8" Command="{Binding Pause}" ToolTip="Pause"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Stop}" Padding="8" Command="{Binding Stop}" ToolTip="Stop"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_StopAtEnd}" Padding="6" Command="{Binding StopAtEndOfTrack}" ToolTip="Stop At End Of Track"/>
@@ -290,9 +302,9 @@
 						<TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1" 
                                    FontFamily="Webdings" FontSize="21.333" Foreground="Red" IsHitTestVisible="False" Text="x"
 								   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
-						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" FontSize="18" Content="X" Command="{Binding Path=Mute}"/>
+                        <Button Grid.Column="0" Margin="3" Style="{StaticResource AudioDeviceAvailable}" FontSize="24" Padding="1" Content="X" Command="{Binding Path=Mute}"/>
 
-						<!-- Audio Device Selection -->
+                            <!-- Audio Device Selection -->
 						<TextBlock Grid.Column="1" Margin="9,0,3,0" VerticalAlignment="Center" Text="Device:"/>
 						<ComboBox Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0"
 								  ItemsSource="{Binding AudioDevices}" SelectedItem="{Binding CurrentAudioDevice}" DisplayMemberPath="Name" />

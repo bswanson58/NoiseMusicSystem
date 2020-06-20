@@ -30,17 +30,17 @@ namespace Noise.UI.ViewModels {
 		private readonly IAudioController	mAudioController;
 		private readonly IDialogService		mDialogService;
 		private readonly IDisposable		mPlayStateChangeDisposable;
+        private	readonly ObservableCollectionEx<UiEqBand>	mBands;
+        private readonly Color				mBaseColor;
+        private readonly Color				mPeakColor;
+        private readonly Color				mPeakHoldColor;
+        private readonly Timer				mSpectrumUpdateTimer;
 		private double						mSpectrumImageWidth;
 		private double						mSpectrumImageHeight;
 		private LyricsInfo					mLyricsInfo;
-		private readonly Color				mBaseColor;
-		private readonly Color				mPeakColor;
-		private readonly Color				mPeakHoldColor;
-		private readonly Timer				mSpectrumUpdateTimer;
 		private ImageSource					mSpectrumBitmap;
-		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
+		private	bool						mIsActive;
 
-		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
 		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController, IDialogService dialogService ) {
@@ -71,6 +71,18 @@ namespace Noise.UI.ViewModels {
 
 			IsActive = true; // default to the active state.
 		}
+
+        public bool	IsActive {
+            get => mIsActive;
+            set {
+				mIsActive = value;
+
+				if( IsActive ) {
+					RaisePropertyChanged( () => AudioDeviceAvailable );
+                }
+            }
+        }
+
 
 		private void OnPlayStateChange( ePlayState state ) {
 			PlayState = state.ToString();
@@ -420,6 +432,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public IEnumerable<AudioDevice>	AudioDevices => mAudioController.AudioDevices;
+		public bool AudioDeviceAvailable => CurrentAudioDevice?.WillMakeNoise == true;
 
         public AudioDevice CurrentAudioDevice {
 			get => mAudioController.CurrentAudioDevice;
@@ -428,6 +441,7 @@ namespace Noise.UI.ViewModels {
 				mAudioController.CurrentAudioDevice = value; 
 				
 				RaisePropertyChanged( () => CurrentAudioDevice );
+				RaisePropertyChanged( () => AudioDeviceAvailable );
 			}
 		}
 

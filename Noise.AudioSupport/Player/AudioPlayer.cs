@@ -148,8 +148,8 @@ namespace Noise.AudioSupport.Player {
 				var deviceInfo = Bass.BASS_GetDeviceInfo( device );
 
 				if( deviceInfo != null ) {
-					mDeviceList.Add( new AudioDevice { DeviceId = device, Name = deviceInfo.name,
-													   IsDefault = deviceInfo.IsDefault, IsEnabled = deviceInfo.IsEnabled });
+					mDeviceList.Add( new AudioDevice { DeviceId = device, Name = deviceInfo.name, IsDefault = deviceInfo.IsDefault, IsEnabled = deviceInfo.IsEnabled,
+                                                       WillMakeNoise = deviceInfo.type != BASSDeviceInfo.BASS_DEVICE_NONE });
 				}
 				else {
 					mLog.LogErrorCode( "Could not get device info", (int)Bass.BASS_ErrorGetCode());

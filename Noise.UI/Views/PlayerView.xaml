@@ -25,6 +25,16 @@
         <!-- MahApps Slider thumb dimensions -->
         <system:Double x:Key="MahApps.Sizes.Slider.HorizontalThumb.Height">13</system:Double>
         <system:Double x:Key="MahApps.Sizes.Slider.HorizontalThumb.Width">25</system:Double>
+
+        <Style x:Key="AudioDeviceAvailable" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
+            <Setter Property="ToolTip" Value="Mute. Why Would You??"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding AudioDeviceAvailable}" Value="False">
+                    <Setter Property="Foreground" Value="Red"/>
+					<Setter Property="ToolTip" Value="No Output Device Selected"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 	</UserControl.Resources>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
@@ -85,7 +95,7 @@
 
 					<!-- Transport Controls -->
 					<StackPanel Grid.Column="1" Margin="7,0" HorizontalAlignment="Center" Orientation="Horizontal">
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Play}" Command="{Binding Play}" ToolTip="Play"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Play}"  Foreground="{StaticResource PlayingBrush}" Command="{Binding Play}" ToolTip="Play"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Pause}" Padding="8" Command="{Binding Pause}" ToolTip="Pause"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Stop}" Padding="8" Command="{Binding Stop}" ToolTip="Stop"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_StopAtEnd}" Padding="6" Command="{Binding StopAtEndOfTrack}" ToolTip="Stop At End Of Track"/>
@@ -107,7 +117,7 @@
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Tag="dimmed" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" ToolTip="Mute. Why Would You??"/>
+					<Button Grid.Column="0" Tag="dimmed" Margin="3" Style="{StaticResource AudioDeviceAvailable}" Content="X" FontSize="24" Padding="1" Command="{Binding Path=Mute}"/>
 
 					<noiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
