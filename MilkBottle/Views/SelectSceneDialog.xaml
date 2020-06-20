@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:SelectSceneDialogModel, IsDesignTimeCreatable=False}"
@@ -38,7 +38,7 @@
         </StackPanel>
     </Grid>
 
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <behaviours:FocusOnLoad FocusElementTag="InitialFocus"/>
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 </UserControl>

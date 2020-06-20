@@ -7,11 +7,11 @@
                  xmlns:mvvm="http://prismlibrary.com/"
                  xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
                  xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                  xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
                  xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
                  xmlns:dto="clr-namespace:MilkBottle.Dto"
                  xmlns:views="clr-namespace:MilkBottle.Views"
+                 xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                  mvvm:ViewModelLocator.AutoWireViewModel="True"
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
@@ -79,7 +79,7 @@
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
             <Button Command="{Binding Configuration}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Configuration"
-                    Visibility="{Binding DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
             <ItemsControl ItemsSource="{Binding CompanionApplications}" ItemTemplate="{StaticResource CompanionAppTemplate}"
                           Visibility="{Binding HaveCompanionApplications, Converter={StaticResource HideOnFalse}}"
@@ -105,9 +105,9 @@
                           Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
     </Grid>
 
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <behaviors:MetroWindowTitleColor NormalBrush="{DynamicResource AccentColorBrush}" MaximizedBrush="Black"/>
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 
 </mah:MetroWindow>
 

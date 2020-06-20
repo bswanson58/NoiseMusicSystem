@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace MilkBottle.Behaviors {

@@ -46,18 +46,13 @@ Source: "..\..\MilkBottle\bin\{#Platform}\Release\CuttingEdge.Conditions.dll"; D
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\LanguageExt.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\LiteDB.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MahApps.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Practices.Prism.Composition.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Practices.Prism.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Practices.Prism.PubSubEvents.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Practices.Prism.SharedInterfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Practices.Unity.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Xaml.Behaviors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MilkBottle.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MoreLinq.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Noise.UI.Style.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\OpenTK.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\OpenTK.dll.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\OpenTK.GLControl.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Prism.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Prism.Unity.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -72,7 +67,6 @@ Source: "..\..\MilkBottle\bin\{#Platform}\Release\Serilog.Sinks.Console.dll"; De
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Serilog.Sinks.RollingFile.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Buffers.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Numerics.Vectors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Reactive.dll"; DestDir: "{app}"; Flags: ignoreversion

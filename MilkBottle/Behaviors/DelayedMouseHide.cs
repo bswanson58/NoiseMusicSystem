@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interactivity;
 using System.Windows.Threading;
+using Microsoft.Xaml.Behaviors;
 
 namespace MilkBottle.Behaviors {
     //<i:Interaction.Behaviors>

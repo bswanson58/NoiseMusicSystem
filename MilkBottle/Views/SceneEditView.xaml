@@ -125,7 +125,7 @@
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <TextBlock MinWidth="50" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Cycling:"/>
                         <ComboBox Width="150" ItemsSource="{Binding PresetCycling}" DisplayMemberPath="Title" SelectedItem="{Binding CurrentCycling}"/>
-                        <Slider Margin="10,0,0,0" VerticalAlignment="Center" Width="150" 
+                        <Slider Margin="10,0,0,0" VerticalAlignment="Center" Width="150" Style="{DynamicResource MahApps.Styles.Slider}"
                                 Minimum="{Binding MinimumCycleDuration}" Maximum="{Binding MaximumCycleDuration}" Value="{Binding CurrentCycleDuration}"/>
                         <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding CycleDurationLegend}"/>
                     </StackPanel>
@@ -134,7 +134,8 @@
                 <!-- Preset Overlap -->
                 <StackPanel Grid.Row="2" Margin="0,15,0,0" Orientation="Horizontal" IsEnabled="{Binding CanOverlap}">
                     <TextBlock MinWidth="50" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="0,0,5,0" Text="Overlap:"/>
-                    <Slider Width="150" Minimum="{Binding MinimumPresetOverlap}" Maximum="{Binding MaximumPresetOverlap}" Value="{Binding CurrentPresetOverlap}"/>
+                    <Slider Width="150" Minimum="{Binding MinimumPresetOverlap}" Maximum="{Binding MaximumPresetOverlap}" Value="{Binding CurrentPresetOverlap}" 
+                            Style="{DynamicResource MahApps.Styles.Slider}"/>
                     <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding PresetOverlapLegend}"/>
                 </StackPanel>
 

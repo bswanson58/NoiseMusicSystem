@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <Style TargetType="TabItem" BasedOn="{StaticResource MetroTabItem}">
+        <Style TargetType="TabItem" BasedOn="{StaticResource MahApps.Styles.TabItem}">
             <Setter Property="Header" Value="{Binding DataContext.Title}" />
         </Style>
     </UserControl.Resources>

@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:PresetControlViewModel, IsDesignTimeCreatable=False}"
@@ -134,7 +134,8 @@
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
 
             <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>
-            <Slider Width="120" VerticalAlignment="Center" Minimum="{Binding PresetDurationMinimum}" Maximum="{Binding PresetDurationMaximum}" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
+            <Slider Width="120" VerticalAlignment="Center" Minimum="{Binding PresetDurationMinimum}" Maximum="{Binding PresetDurationMaximum}" Value="{Binding PresetDuration}" 
+                    Style="{DynamicResource MahApps.Styles.Slider}" ToolTip="Preset Play Duration"/>
             <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" MinWidth="18" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PresetDuration}"/>
             <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
             <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
@@ -150,7 +151,7 @@
         </StackPanel>
     </Grid>
 
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 </UserControl>

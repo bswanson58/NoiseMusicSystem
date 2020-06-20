@@ -7,7 +7,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:TagEditDialogModel, IsDesignTimeCreatable=False}"
@@ -56,7 +56,7 @@
         </StackPanel>
     </Grid>
 
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <behaviours:DialogPlacement AssociatedControlTag="MainWindow" HorizontalPlacement="Center" VerticalPlacement="AlignBottom" VerticalOffset="-75"/>
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 </UserControl>

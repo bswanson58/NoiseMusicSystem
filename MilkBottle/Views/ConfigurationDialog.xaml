@@ -42,7 +42,7 @@
             <!-- Frame Rate -->
             <StackPanel Grid.Row="1" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Frame Rate:"/>
-                <Slider Width="180" Minimum="10" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding FrameRate}"/>
+                <Slider Width="180" Minimum="10" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding FrameRate}" Style="{DynamicResource MahApps.Styles.Slider}"/>
                 <TextBlock Margin="10,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding FrameRate}"/>
                 <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="frames per second"/>
             </StackPanel>
@@ -50,14 +50,14 @@
             <!-- MeshWidth/Height -->
             <StackPanel Grid.Row="2" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Mesh Dimensions:"/>
-                <Slider Width="180" Minimum="10" Maximum="200" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MeshWidth}"/>
+                <Slider Width="180" Minimum="10" Maximum="200" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MeshWidth}" Style="{DynamicResource MahApps.Styles.Slider}"/>
                 <TextBlock Margin="10,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding MeshDescription}"/>
             </StackPanel>
 
             <!-- SmoothPresetDuration -->
             <StackPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Preset Overlap Duration:"/>
-                <Slider Width="180" Minimum="1" Maximum="10" Value="{Binding SmoothPresetDuration}"/>
+                <Slider Width="180" Minimum="1" Maximum="10" Value="{Binding SmoothPresetDuration}" Style="{DynamicResource MahApps.Styles.Slider}"/>
                 <TextBlock Margin="3,0" MinWidth="18" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding SmoothPresetDuration}"/>
                 <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
             </StackPanel>
@@ -65,7 +65,7 @@
             <!-- BeatSensitivity -->
             <StackPanel Grid.Row="4" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Beat Sensitivity:"/>
-                <Slider Width="180" Minimum="0.0" Maximum="5.0" TickFrequency="0.25" IsSnapToTickEnabled="True" Value="{Binding BeatSensitivity}"/>
+                <Slider Width="180" Minimum="0.0" Maximum="5.0" TickFrequency="0.25" IsSnapToTickEnabled="True" Value="{Binding BeatSensitivity}"  Style="{DynamicResource MahApps.Styles.Slider}"/>
                 <TextBlock Margin="3,0" MinWidth="18" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding BeatSensitivity}"/>
             </StackPanel>
         </Grid>
