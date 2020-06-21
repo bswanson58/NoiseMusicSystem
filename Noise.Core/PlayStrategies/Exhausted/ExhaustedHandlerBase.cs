@@ -51,6 +51,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
 
         protected bool CanSuggestTrack( DbTrack track, IExhaustedSelectionContext context ) {
             return ( track != null ) &&
+                   (!track.DoNotStrategyPlay ) &&
                    ( context.SelectedTracks.All( t => t.DbId != track.DbId ));
         }
 
