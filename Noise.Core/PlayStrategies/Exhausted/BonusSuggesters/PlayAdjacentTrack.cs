@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
     public class PlayAdjacentTrack : ExhaustedHandlerBase {
@@ -12,72 +14,50 @@ namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
         }
 
         public override void SelectTrack( IExhaustedSelectionContext context ) {
-            bool tracksWereAdded;
+            var finalTracks = new List<DbTrack>();
 
-            do {
-                var trackList = context.SelectedTracks.ToList();
+            context.SelectedTracks.ForEach( t => {
+                if( t.PlayAdjacentStrategy == ePlayAdjacentStrategy.None ) {
+                    finalTracks.Add( t );
+                }
+                else {
+                    finalTracks.AddRange( BuildAdjacentTracks( t ));
+                }
+            });
 
-                tracksWereAdded = false;
-
-                trackList.ForEach( 
-                    track => {
-                        if(( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ) ||
-                           ( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious )) {
-                            tracksWereAdded |= CheckNext( track, context );
-                        }
-                    });
-
-                trackList.ForEach( 
-                    track => {
-                        if(( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
-                           ( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious )) {
-                            tracksWereAdded |= CheckPrevious( track, context );
-                        }
-                    });
-            } while( tracksWereAdded );
+            context.SelectedTracks.Clear();
+            finalTracks.ForEach( t => AddSuggestedTrack( t, context ));
         }
 
-        private bool CheckNext( DbTrack track, IExhaustedSelectionContext context ) {
-            var retValue = false;
+        private IEnumerable<DbTrack> BuildAdjacentTracks( DbTrack track ) {
+            var retValue = new List<DbTrack>{ track };
 
             using( var trackList = mTrackProvider.GetTrackList( track.Album )) {
-                var sortedList = from t in trackList.List orderby t.VolumeName, t.TrackNumber select t;
-                var followingTrack = sortedList.SkipWhile( t => !t.DbId.Equals( track.DbId )).Skip( 1 ).FirstOrDefault();
+                var sortedList = ( from t in trackList.List orderby t.VolumeName descending, t.TrackNumber descending select t ).ToList();
 
-                if( followingTrack != null ) {
-                    var nextQueuedTrack = context.SelectedTracks.SkipWhile( t => !t.DbId.Equals( followingTrack.DbId )).FirstOrDefault();
+                while(( retValue.FirstOrDefault()?.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
+                      ( retValue.FirstOrDefault()?.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious )) {
+                    var previousTrack = sortedList.SkipWhile( t => !t.DbId.Equals( retValue.First().DbId )).Skip( 1 ).FirstOrDefault();
 
-                    if(( nextQueuedTrack == null ) ||
-                       (!nextQueuedTrack.DbId.Equals( followingTrack.DbId ))) {
-                        if( CanSuggestTrack( followingTrack, context )) {
-                            context.SelectedTracks.Insert( context.SelectedTracks.IndexOf( track ) + 1, followingTrack );
-
-                            retValue = true;
-                        }
+                    if( previousTrack != null ) {
+                        retValue.Insert( 0, previousTrack );
+                    }
+                    else {
+                        break;
                     }
                 }
-            }
 
-            return retValue;
-        }
+                sortedList = ( from t in trackList.List orderby t.VolumeName, t.TrackNumber select t ).ToList();
 
-        private bool CheckPrevious( DbTrack track, IExhaustedSelectionContext context ) {
-            var retValue = false;
+                while(( retValue.LastOrDefault()?.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ) ||
+                      ( retValue.LastOrDefault()?.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious )) {
+                    var followingTrack = sortedList.SkipWhile( t => !t.DbId.Equals( retValue.Last().DbId )).Skip( 1 ).FirstOrDefault();
 
-            using( var trackList = mTrackProvider.GetTrackList( track.Album )) {
-                var sortedList = from t in trackList.List orderby t.VolumeName, t.TrackNumber select t;
-                var previousTrack = sortedList.Reverse().SkipWhile( t => !t.DbId.Equals( track.DbId )).Skip( 1 ).FirstOrDefault();
-
-                if( previousTrack != null ) {
-                    var previousQueuedTrack = context.SelectedTracks.Reverse().SkipWhile( t => !t.DbId.Equals( previousTrack.DbId )).FirstOrDefault();
-
-                    if(( previousQueuedTrack == null ) ||
-                       (!previousQueuedTrack.DbId.Equals( previousTrack.DbId ))) {
-                        if( CanSuggestTrack( previousTrack, context )) {
-                            context.SelectedTracks.Insert( context.SelectedTracks.IndexOf( track ), previousTrack );
-
-                            retValue = true;
-                        }
+                    if( followingTrack != null ) {
+                        retValue.Add( followingTrack );
+                    }
+                    else {
+                        break;
                     }
                 }
             }
