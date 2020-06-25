@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ReusableBits.ExtensionClasses.MoreLinq;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using TuneArchiver.Interfaces;
-using Unity.Interception.Utilities;
 
 namespace TuneArchiver.Logging {
     class LoggingSink {

@@ -44,11 +44,7 @@ Source: "..\..\TuneArchiver\bin\{#Platform}\Release\CommonServiceLocator.dll"; D
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\ControlzEx.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\CuttingEdge.Conditions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\MahApps.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Microsoft.Practices.Prism.Composition.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Microsoft.Practices.Prism.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Microsoft.Practices.Prism.PubSubEvents.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Microsoft.Practices.Prism.SharedInterfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Microsoft.Practices.Unity.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Microsoft.Xaml.Behaviors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Noise.UI.Style.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Prism.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -64,16 +60,14 @@ Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Serilog.Enrichers.Process.dl
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Serilog.Sinks.Console.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Serilog.Sinks.RollingFile.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\TuneArchiver\bin\{#Platform}\Release\System.Runtime.CompilerServices.Unsafe.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\TuneArchiver\bin\{#Platform}\Release\System.Threading.Tasks.Extensions.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\TuneArchiver\bin\{#Platform}\Release\System.ValueTuple.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\TinyIpc.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\TuneArchiver.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.Abstractions.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.Configuration.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.Container.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.Interception.Configuration.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.Interception.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.RegistrationByConvention.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneArchiver\bin\{#Platform}\Release\Unity.ServiceLocation.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

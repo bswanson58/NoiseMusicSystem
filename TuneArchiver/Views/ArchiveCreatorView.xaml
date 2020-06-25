@@ -3,17 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Mvvm="http://prismlibrary.com/"
-             xmlns:Models="clr-namespace:TuneArchiver.Models"
-             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-             Mvvm:ViewModelLocator.AutoWireViewModel="True"
-             mc:Ignorable="d" 
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:models="clr-namespace:TuneArchiver.Models"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:viewModels="clr-namespace:TuneArchiver.ViewModels"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewModels:ArchiveCreatorViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <ValueConverters:NumericTextMultitudeConverter x:Key="MultitudeConverter"/>
-        <ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" IsHidden="True" TriggerValue="False"/>
-        <DataTemplate x:Key="AlbumEntry" DataType="Models:Album">
+        <valueConverters:NumericTextMultitudeConverter x:Key="MultitudeConverter"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" IsHidden="True" TriggerValue="False"/>
+        <DataTemplate x:Key="AlbumEntry" DataType="models:Album">
             <TextBlock Text="{Binding DisplayName}"/>
         </DataTemplate>
 
@@ -157,7 +159,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Good Enough" Command="{Binding CancelSetCreation}"/>
-                    <ProgressBar Grid.Column="1" VerticalAlignment="Center" Maximum="{Binding ArchiveSetSize}" Value="{Binding CurrentSetSize}"/>
+                    <ProgressBar Grid.Column="1" VerticalAlignment="Center" Maximum="{Binding ArchiveSetSize}" Value="{Binding SelectedSize, Mode=OneWay}"/>
                 </Grid>
 
                 <Button Grid.Row="4" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Select Set" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SelectSet}"/>

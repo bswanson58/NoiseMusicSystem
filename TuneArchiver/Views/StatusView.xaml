@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
-             xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:Mvvm="http://prismlibrary.com/"
-             Mvvm:ViewModelLocator.AutoWireViewModel="True"
-             mc:Ignorable="d" 
+             xmlns:controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:TuneArchiver.ViewModels"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewModels:StatusViewModel, IsDesignTimeCreatable=False}"
              Height="25" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -17,13 +19,13 @@
             <Setter Property="Margin" Value="0" />
         </Style>
 
-        <DataTemplate x:Key="GeneralStatusTemplate" DataType="Controls:StatusMessage">
+        <DataTemplate x:Key="GeneralStatusTemplate" DataType="controls:StatusMessage">
             <TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
         </DataTemplate>
 
     </UserControl.Resources>
 
-    <StatusBar VerticalAlignment="Bottom" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
+    <StatusBar VerticalAlignment="Bottom" behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -33,7 +35,7 @@
 
             <TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding VersionString}"/>
             <Separator Grid.Column="1" Margin ="3,0"/>
-            <Controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
+            <controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
         </Grid>
     </StatusBar>
 </UserControl>

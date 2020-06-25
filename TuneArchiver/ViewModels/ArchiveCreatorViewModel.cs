@@ -4,13 +4,14 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneArchiver.Interfaces;
 using TuneArchiver.Models;
 using TuneArchiver.Platform;
 
 namespace TuneArchiver.ViewModels {
-    class ArchiveCreatorViewModel : AutomaticCommandBase {
+    class ArchiveCreatorViewModel : PropertyChangeBase {
         private readonly IDirectoryScanner      mDirectoryScanner;
         private readonly ISetCreator            mSetCreator;
         private readonly IArchiveBuilder        mArchiveBuilder;
@@ -35,7 +36,7 @@ namespace TuneArchiver.ViewModels {
 
         public  ObservableCollection<string>    ArchiveList { get; }
         private string                          mArchivePath;
-        public  string                          ArchiveLabel { get; private set; }
+        private string                          mArchiveLabel;
         private string                          mArchiveLabelFormat;
         private string                          mArchiveLabelIdentifier;
 
@@ -46,6 +47,16 @@ namespace TuneArchiver.ViewModels {
 
         public  IList<ArchiveMedia>             MediaList => mArchiveMedia.MediaTypes;
         private ArchiveMedia                    mSelectedMedia;
+
+        public  DelegateCommand                 ScanDirectory { get; }
+        public  DelegateCommand                 SelectSet { get; }
+        public  DelegateCommand                 CancelSetCreation { get; }
+        public  DelegateCommand                 CreateArchive { get; }
+        public  DelegateCommand                 CancelArchiveBuilding { get; }
+        public  DelegateCommand                 BrowseForBurnDirectory { get; }
+        public  DelegateCommand                 BrowseForStagingDirectory { get; }
+        public  DelegateCommand                 OpenArchiveFolder { get; }
+        public  DelegateCommand                 OpenStagingFolder { get; }
 
 
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
@@ -61,6 +72,16 @@ namespace TuneArchiver.ViewModels {
             StagingList = new ObservableCollection<Album>();
             SelectedList = new ObservableCollection<Album>();
             ArchiveList = new ObservableCollection<string>();
+
+            ScanDirectory = new DelegateCommand( OnScanDirectory, CanScanDirectory );
+            SelectSet = new DelegateCommand( OnSelectSet, CanSelectSet );
+            CancelSetCreation = new DelegateCommand( OnCancelSetCreation );
+            CreateArchive = new DelegateCommand( OnCreateArchive, CanCreateArchive );
+            CancelArchiveBuilding = new DelegateCommand( OnCancelArchiveBuilding );
+            BrowseForBurnDirectory = new DelegateCommand( OnBrowseForBurnDirectory );
+            BrowseForStagingDirectory = new DelegateCommand( OnBrowseForStagingDirectory );
+            OpenArchiveFolder = new DelegateCommand( OnOpenArchiveFolder, CanOpenArchiveFolder );
+            OpenStagingFolder = new DelegateCommand( OnOpenStagingFolder, CanOpenStagingFolder );
 
             var archivePreferences = mPreferences.Load<ArchiverPreferences>();
 
@@ -93,7 +114,7 @@ namespace TuneArchiver.ViewModels {
 
             RaisePropertyChanged(() => StagingCount );
             RaisePropertyChanged(() => StagingSize );
-            RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
+            SelectSet.RaiseCanExecuteChanged();
         }
 
         private async void UpdateBurnDirectory() {
@@ -114,7 +135,7 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => SelectedCount );
             RaisePropertyChanged( () => SelectionLevelAdequate );
             RaisePropertyChanged( () => SelectionLevelLow );
-            RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
+            CreateArchive.RaiseCanExecuteChanged();
         }
 
         public string StagingPath {
@@ -128,6 +149,8 @@ namespace TuneArchiver.ViewModels {
                 mPreferences.Save( preferences );
 
                 RaisePropertyChanged( () => StagingPath );
+                ScanDirectory.RaiseCanExecuteChanged();
+                OpenStagingFolder.RaiseCanExecuteChanged();
             }
         }
 
@@ -142,6 +165,18 @@ namespace TuneArchiver.ViewModels {
                 mPreferences.Save( preferences );
 
                 RaisePropertyChanged( () => ArchivePath );
+                OpenArchiveFolder.RaiseCanExecuteChanged();
+                CreateArchive.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string ArchiveLabel {
+            get => mArchiveLabel;
+            set {
+                mArchiveLabel = value;
+
+                RaisePropertyChanged( () => ArchiveLabel );
+                CreateArchive.RaiseCanExecuteChanged();
             }
         }
 
@@ -191,7 +226,7 @@ namespace TuneArchiver.ViewModels {
                 preferences.ArchiveMediaType = mSelectedMedia.Name;
                 mPreferences.Save( preferences );
 
-                RaiseCanExecuteChangedEvent( nameof( CanExecute_SelectSet ));
+                SelectSet.RaiseCanExecuteChanged();
             }
         }
 
@@ -203,16 +238,15 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
-        public void Execute_ScanDirectory() {
+        private void OnScanDirectory() {
             UpdateStagingDirectory();
         }
 
-        [DependsUpon( "StagingPath" )]
-        public bool CanExecute_ScanDirectory() {
+        public bool CanScanDirectory() {
             return !string.IsNullOrWhiteSpace( StagingPath ) && Directory.Exists( StagingPath );
         }
 
-        public async void Execute_SelectSet() {
+        private async void OnSelectSet() {
             ClearSelectedSet();
 
             var progressReporter = new Progress<SetCreatorProgress>();
@@ -222,7 +256,6 @@ namespace TuneArchiver.ViewModels {
 
             CreatingSet = true;
             RaisePropertyChanged( () => CreatingSet );
-            RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
 
             var selectedList = await mSetCreator.GetBestAlbumSet( StagingList, progressReporter, mSetCreationCancellation );
 
@@ -237,11 +270,15 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => SelectedSize);
             RaisePropertyChanged( () => SelectionLevelLow );
             RaisePropertyChanged( () => SelectionLevelAdequate );
-            RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
-            RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
+            SelectSet.RaiseCanExecuteChanged();
+            CreateArchive.RaiseCanExecuteChanged();
         }
 
-        public void Execute_CancelSetCreation() {
+        private bool CanSelectSet() {
+            return StagingList.Any() && !CreatingSet && ( mSelectedMedia != null );
+        }
+
+        private void OnCancelSetCreation() {
             mSetCreationCancellation?.Cancel();
         }
 
@@ -255,11 +292,7 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => SelectionLevelAdequate );
         }
 
-        public bool CanExecute_SelectSet() {
-            return StagingList.Any() && !CreatingSet && ( mSelectedMedia != null );
-        }
-
-        public async void Execute_CreateArchive() {
+        private async void OnCreateArchive() {
             CreatingArchive = true;
             RaisePropertyChanged( () => CreatingArchive );
 
@@ -279,6 +312,10 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => CreatingArchive );
         }
 
+        private bool CanCreateArchive() {
+            return !string.IsNullOrWhiteSpace( ArchivePath ) && !String.IsNullOrWhiteSpace( ArchiveLabel ) && SelectedList.Any();
+        }
+
         private void OnArchiveBuilderProgress( object sender, ArchiveBuilderProgress progress ) {
             ArchiveAlbumCount = progress.AlbumCount;
             ArchiveAlbumsCompleted = Math.Min( ArchiveAlbumsCompleted, ArchiveAlbumCount );
@@ -287,17 +324,11 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => ArchiveAlbumsCompleted );
         }
 
-        public void Execute_CancelArchiveBuilding() {
+        private void OnCancelArchiveBuilding() {
             mArchiveBuilderCancellation?.Cancel();
         }
 
-        [DependsUpon( "ArchivePath" )]
-        [DependsUpon( "ArchiveLabel" )]
-        public bool CanExecute_CreateArchive() {
-            return !string.IsNullOrWhiteSpace( ArchivePath ) && !String.IsNullOrWhiteSpace( ArchiveLabel ) && SelectedList.Any();
-        }
-
-        public void Execute_BrowseForStagingDirectory() {
+        private void OnBrowseForStagingDirectory() {
             var path = StagingPath;
 
             if( mDialogService.SelectFolderDialog( "Select Staging Directory", ref path ).GetValueOrDefault( false )) {
@@ -305,7 +336,7 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
-        public void Execute_BrowseForBurnDirectory() {
+        private void OnBrowseForBurnDirectory() {
             var path = ArchivePath;
 
             if( mDialogService.SelectFolderDialog( "Select Archive Directory", ref path ).GetValueOrDefault( false )) {
@@ -313,7 +344,7 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
-        public void Execute_OpenStagingFolder() {
+        private void OnOpenStagingFolder() {
             if( Directory.Exists( StagingPath )) {
                 try {
                     System.Diagnostics.Process.Start( StagingPath );
@@ -324,12 +355,11 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
-        [DependsUpon( "StagingPath" )]
-        public bool CanExecute_OpenStagingFolder() {
+        private bool CanOpenStagingFolder() {
             return !String.IsNullOrWhiteSpace( StagingPath ) && Directory.Exists( StagingPath );
         }
 
-        public void Execute_OpenArchiveFolder() {
+        private void OnOpenArchiveFolder() {
             if( Directory.Exists( ArchivePath )) {
                 try {
                     System.Diagnostics.Process.Start( ArchivePath );
@@ -340,8 +370,7 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
-        [DependsUpon( "ArchivePath")]
-        public bool CanExecute_OpenArchiveFolder() {
+        private bool CanOpenArchiveFolder() {
             return !String.IsNullOrWhiteSpace( ArchivePath ) && Directory.Exists( ArchivePath );
         }
     }
