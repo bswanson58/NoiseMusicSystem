@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
+using Prism.Commands;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
@@ -10,11 +11,13 @@ using ReusableBits.Ui.Controls;
 using TuneRenamer.Dto;
 
 namespace TuneRenamer.ViewModels {
-    class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent>, IDisposable {
+    class StatusViewModel : AutomaticPropertyBase, IHandle<Events.StatusEvent>, IDisposable {
 		private IEventAggregator		        mEventAggregator;
         private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
 		private bool							mViewAttached;
+
+		public	DelegateCommand					ViewAttached { get; }
 
 		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}";
 
@@ -23,6 +26,8 @@ namespace TuneRenamer.ViewModels {
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
+
+			ViewAttached = new DelegateCommand( OnViewAttached );
 
             mVersionFormatter.SetVersion( VersionInformation.Version );
             mVersionFormatter.DisplayLevel = VersionLevel.Build;
@@ -40,7 +45,7 @@ namespace TuneRenamer.ViewModels {
 			set{ Set( () => StatusMessage, value ); }
 		}
 
-		public void Execute_ViewAttached() {
+		private void OnViewAttached() {
 			StatusMessage = new StatusMessage( string.Empty ); // delay a few seconds before initial message.
 
 			StatusMessage = new StatusMessage( VersionInformation.Description );

@@ -3,13 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Mvvm="http://prismlibrary.com/"
-             xmlns:Dto="clr-namespace:TuneRenamer.Dto"
-             xmlns:Views="clr-namespace:TuneRenamer.Views"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:Behaviors="clr-namespace:TuneRenamer.Behaviors"
-             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:dto="clr-namespace:TuneRenamer.Dto"
+             xmlns:views="clr-namespace:TuneRenamer.Views"
+             xmlns:behaviors="clr-namespace:TuneRenamer.Behaviors"
+             xmlns:viewModels="clr-namespace:TuneRenamer.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:RenamerWorkshopViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -23,7 +25,7 @@
             <Setter Property="Focusable" Value="False"/>
         </Style>
         
-        <DataTemplate x:Key="RenameFileTemplate" DataType="Dto:SourceFile">
+        <DataTemplate x:Key="RenameFileTemplate" DataType="dto:SourceFile">
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Name="ProposedName" Style="{StaticResource ListViewTextStyle}" Text="{Binding ProposedName}"/>
                 <TextBlock x:Name="OriginalName" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Name}"/>
@@ -39,7 +41,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
+        <DataTemplate x:Key="SourceFileTemplate" DataType="dto:SourceFile">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -81,7 +83,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder" ItemsSource="{Binding Children}">
+        <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="dto:SourceFolder" ItemsSource="{Binding Children}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -106,7 +108,7 @@
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
 
-        <Views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
+        <views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
 
 
     </UserControl.Resources>
@@ -143,9 +145,9 @@
 
             <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ItemContainerStyle="{StaticResource IsExpandedBindingStyle}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}">
-                <i:Interaction.Behaviors>
-                    <Behaviors:TreeViewSelection SelectedItem="{Binding SelectedSourceItem, Mode=TwoWay}" />
-                </i:Interaction.Behaviors>
+                <b:Interaction.Behaviors>
+                    <behaviors:TreeViewSelection SelectedItem="{Binding SelectedSourceItem, Mode=TwoWay}" />
+                </b:Interaction.Behaviors>
             </TreeView>
 
         </Grid>
@@ -163,9 +165,9 @@
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Name Source:"/>
 
             <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" FontSize="14" Text="{Binding SourceText, UpdateSourceTrigger=PropertyChanged}">
-                <i:Interaction.Behaviors>
-                    <Behaviors:TextBoxSelectionHelper TextSelection="{Binding SelectedText}"/>
-                </i:Interaction.Behaviors>
+                <b:Interaction.Behaviors>
+                    <behaviors:TextBoxSelectionHelper TextSelection="{Binding SelectedText}"/>
+                </b:Interaction.Behaviors>
             </TextBox>
 
             <Grid Grid.Row="2" Margin="0,3">

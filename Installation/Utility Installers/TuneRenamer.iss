@@ -44,12 +44,7 @@ Source: "..\..\TuneRenamer\bin\{#Platform}\Release\CommonServiceLocator.dll"; De
 Source: "..\..\TuneRenamer\bin\{#Platform}\Release\ControlzEx.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneRenamer\bin\{#Platform}\Release\CuttingEdge.Conditions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneRenamer\bin\{#Platform}\Release\MahApps.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Practices.Prism.Composition.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Practices.Prism.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Practices.Prism.PubSubEvents.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Practices.Prism.SharedInterfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Practices.ServiceLocation.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Practices.Unity.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Microsoft.Xaml.Behaviors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Noise.UI.Style.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\TuneRenamer\bin\{#Platform}\Release\Prism.dll"; DestDir: "{app}"; Flags: ignoreversion

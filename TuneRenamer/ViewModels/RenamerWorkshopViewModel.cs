@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using Caliburn.Micro;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
 
 namespace TuneRenamer.ViewModels {
-    class RenamerWorkshopViewModel : AutomaticCommandBase, IHandle<Events.WindowStateEvent>, IDisposable {
+    class RenamerWorkshopViewModel : PropertyChangeBase, IHandle<Events.WindowStateEvent>, IDisposable {
         private readonly IEventAggregator                   mEventAggregator;
         private readonly IPreferences                       mPreferences;
         private readonly IPlatformDialogService             mDialogService;
@@ -24,16 +25,31 @@ namespace TuneRenamer.ViewModels {
         private string                                      mSourceText;
         private string                                      mSelectedText;
         private string                                      mCommonText;
+        private CharacterPair                               mSelectedCharacterPair;
         private string                                      CurrentText => !String.IsNullOrWhiteSpace( SelectedText ) ? SelectedText : !String.IsNullOrWhiteSpace( SourceText ) ? SourceText : String.Empty;
 
         public  ObservableCollection<SourceItem>            SourceList { get; }
         public  ObservableCollection<SourceFile>            RenameList { get; }
         public  ObservableCollection<string>                CommonTextList { get; }
         public  ObservableCollection<CharacterPair>         CharacterPairs { get; }
-        public  CharacterPair                               SelectedCharacterPair { get; set; }
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
         public  bool                                        CountsMatch {get; private set; }
+
+        public  DelegateCommand                             BrowseSourceFolder { get; }
+        public  DelegateCommand                             OpenSourceFolder { get; }
+        public  DelegateCommand                             RefreshSourceFolder { get; }
+
+        public  DelegateCommand                             IsolateText { get; }
+        public  DelegateCommand                             ClearText { get; }
+        public  DelegateCommand                             CleanText { get; }
+        public  DelegateCommand                             RestoreText { get; }
+        public  DelegateCommand                             FindCommonText { get; }
+        public  DelegateCommand                             DeleteCommonText { get; }
+        public  DelegateCommand                             DeleteCharacterPair { get; }
+        public  DelegateCommand                             RemoveTrailingDigits { get; }
+        public  DelegateCommand                             Renumber { get; }
+        public  DelegateCommand                             RenameFiles { get; }
 
         public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner,
                                          ITextHelpers textHelpers, IFileRenamer fileRenamer, IEventAggregator eventAggregator ) {
@@ -44,6 +60,20 @@ namespace TuneRenamer.ViewModels {
             mFileRenamer = fileRenamer;
             mEventAggregator = eventAggregator;
             mLog = log;
+
+            BrowseSourceFolder = new DelegateCommand( OnBrowseSourceFolder );
+            OpenSourceFolder = new DelegateCommand( OnOpenSourceFolder );
+            RefreshSourceFolder = new DelegateCommand( OnRefreshSourceFolder );
+            IsolateText = new DelegateCommand( OnIsolateText, CanIsolateText );
+            ClearText = new DelegateCommand( OnClearText, CanClearText );
+            CleanText = new DelegateCommand( OnCleanText, CanCleanText );
+            RestoreText = new DelegateCommand( OnRestoreText, CanRestoreText );
+            FindCommonText = new DelegateCommand( OnFindCommonText, CanFindCommonText );
+            DeleteCommonText = new DelegateCommand( OnDeleteCommonText, CanDeleteCommonText );
+            DeleteCharacterPair = new DelegateCommand( OnDeleteCharacterPair, CanDeleteCharacterPair );
+            RemoveTrailingDigits = new DelegateCommand( OnRemoveTrailingDigits, CanRemoveTrailingDigits );
+            Renumber = new DelegateCommand( OnRenumber, CanRenumber );
+            RenameFiles = new DelegateCommand( OnRenameFiles, CanRenameFiles );
 
             SourceList = new ObservableCollection<SourceItem>();
             RenameList = new ObservableCollection<SourceFile>();
@@ -85,7 +115,14 @@ namespace TuneRenamer.ViewModels {
 
                 SetLineCount();
                 ClearCommonText();
+
                 RaisePropertyChanged( () => SourceText );
+                CleanText.RaiseCanExecuteChanged();
+                ClearText.RaiseCanExecuteChanged();
+                DeleteCharacterPair.RaiseCanExecuteChanged();
+                FindCommonText.RaiseCanExecuteChanged();
+                Renumber.RaiseCanExecuteChanged();
+                RemoveTrailingDigits.RaiseCanExecuteChanged();
             }
         }
 
@@ -104,6 +141,16 @@ namespace TuneRenamer.ViewModels {
                 mCommonText = value;
 
                 RaisePropertyChanged( () => CommonText );
+                DeleteCommonText.RaiseCanExecuteChanged();
+            }
+        }
+
+        public CharacterPair SelectedCharacterPair {
+            get => mSelectedCharacterPair;
+            set {
+                mSelectedCharacterPair = value;
+
+                DeleteCharacterPair.RaiseCanExecuteChanged();
             }
         }
 
@@ -147,11 +194,11 @@ namespace TuneRenamer.ViewModels {
         private void OnSelectedTextChanged() {
             SetLineCount();
 
-            RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
-            RaiseCanExecuteChangedEvent( "CanExecute_RemoveTrailingDigits" );
+            IsolateText.RaiseCanExecuteChanged();
+            RemoveTrailingDigits.RaiseCanExecuteChanged();
         }
 
-        public void Execute_BrowseSourceFolder() {
+        private void OnBrowseSourceFolder() {
             var directory = SourceDirectory;
 
             if( mDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
@@ -165,7 +212,7 @@ namespace TuneRenamer.ViewModels {
             }
         }
 
-        public void Execute_OpenSourceFolder() {
+        private void OnOpenSourceFolder() {
             if( Directory.Exists( SourceDirectory )) {
                 try {
                     System.Diagnostics.Process.Start( SourceDirectory );
@@ -176,7 +223,7 @@ namespace TuneRenamer.ViewModels {
             }
         }
 
-        public void Execute_RefreshSourceFolder() {
+        private void OnRefreshSourceFolder() {
             CollectSource();
         }
 
@@ -241,47 +288,46 @@ namespace TuneRenamer.ViewModels {
             return retValue;
         }
 
-        public void Execute_IsolateText() {
+        private void OnIsolateText() {
             SourceText = SelectedText;
 
-            RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
-            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+            IsolateText.RaiseCanExecuteChanged();
+            RestoreText.RaiseCanExecuteChanged();
         }
 
-        public void Execute_ClearText() {
+        private bool CanIsolateText() {
+            return !String.IsNullOrWhiteSpace( SelectedText );
+        }
+
+        private void OnClearText() {
             SourceText = String.Empty;
             SetLineCount();
         }
 
-        [DependsUpon(nameof( SourceText ))]
-        public bool CanExecute_ClearText() {
+        private bool CanClearText() {
             return !String.IsNullOrWhiteSpace( SourceText );
         }
 
-        public bool CanExecute_IsolateText() {
-            return !String.IsNullOrWhiteSpace( SelectedText );
-        }
-
-        public void Execute_RestoreText() {
+        private void OnRestoreText() {
             SourceText = mInitialText;
 
-            RaiseCanExecuteChangedEvent( "CanExecute_IsolateText" );
+            IsolateText.RaiseCanExecuteChanged();
+            RestoreText.RaiseCanExecuteChanged();
         }
 
-        public bool CanExecute_RestoreText() {
+        private bool CanRestoreText() {
             return !String.IsNullOrWhiteSpace( mInitialText );
         }
 
-        public void Execute_CleanText() {
-            CleanText();
+        private void OnCleanText() {
+            CleanSourceText();
         }
 
-        [DependsUpon(nameof( SourceText ))]
-        public bool CanExecute_CleanText() {
+        private bool CanCleanText() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
 
-        public void Execute_FindCommonText() {
+        private void OnFindCommonText() {
             if(!String.IsNullOrWhiteSpace( SourceText )) {
                 CommonTextList.Clear();
                 CommonTextList.AddRange( mTextHelpers.GetCommonSubstring( SourceText, 5 ));
@@ -290,8 +336,7 @@ namespace TuneRenamer.ViewModels {
             }
         }
 
-        [DependsUpon( nameof( SourceText ))]
-        public bool CanExecute_FindCommonText() {
+        private bool CanFindCommonText() {
             return !String.IsNullOrWhiteSpace( SourceText );
         }
 
@@ -300,26 +345,23 @@ namespace TuneRenamer.ViewModels {
             CommonText = String.Empty;
         }
 
-        public void Execute_DeleteCommonText() {
+        private void OnDeleteCommonText() {
             SourceText = mTextHelpers.DeleteText( SourceText, CommonText );
         }
 
-        [DependsUpon( nameof( CommonText ))]
-        public bool CanExecute_DeleteCommonText() {
+        private bool CanDeleteCommonText() {
             return !String.IsNullOrWhiteSpace( CommonText );
         }
 
-        public void Execute_DeleteCharacterPair() {
+        private void OnDeleteCharacterPair() {
             SourceText = mTextHelpers.DeleteText( SourceText, SelectedCharacterPair.StartCharacter, SelectedCharacterPair.EndCharacter );
         }
 
-        [DependsUpon( nameof( SourceText ))]
-        [DependsUpon( nameof( SelectedCharacterPair ))]
-        public bool CanExecute_DeleteCharacterPair() {
+        private bool CanDeleteCharacterPair() {
             return SelectedCharacterPair != null && !String.IsNullOrWhiteSpace( SourceText );
         }
 
-        private void CleanText() {
+        private void CleanSourceText() {
             var result = new StringBuilder();
             var lines = mTextHelpers.Lines( CurrentText );
             var defaultIndex = 1;
@@ -331,10 +373,10 @@ namespace TuneRenamer.ViewModels {
             }
 
             SourceText = result.ToString();
-            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+            RestoreText.RaiseCanExecuteChanged();
         }
 
-        public void Execute_RemoveTrailingDigits() {
+        private void OnRemoveTrailingDigits() {
             var result = new StringBuilder();
             var lines = mTextHelpers.Lines( CurrentText );
 
@@ -343,15 +385,14 @@ namespace TuneRenamer.ViewModels {
             }
 
             SourceText = result.ToString();
-            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+            RestoreText.RaiseCanExecuteChanged();
         }
 
-        [DependsUpon( nameof( SourceText ))]
-        public bool CanExecute_RemoveTrailingDigits() {
+        private bool CanRemoveTrailingDigits() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
 
-        public void Execute_Renumber() {
+        private void OnRenumber() {
             var result = new StringBuilder();
             var lines = mTextHelpers.Lines( CurrentText );
             var index = 1;
@@ -363,11 +404,10 @@ namespace TuneRenamer.ViewModels {
             }
 
             SourceText = result.ToString();
-            RaiseCanExecuteChangedEvent( "CanExecute_RestoreText" );
+            RestoreText.RaiseCanExecuteChanged();
         }
 
-        [DependsUpon( nameof( SourceText ))]
-        public bool CanExecute_Renumber() {
+        private bool CanRenumber() {
             return !String.IsNullOrWhiteSpace( CurrentText );
         }
 
@@ -397,10 +437,10 @@ namespace TuneRenamer.ViewModels {
                 }
             }
 
-            RaiseCanExecuteChangedEvent( "CanExecute_RenameFiles" );
+            RenameFiles.RaiseCanExecuteChanged();
         }
 
-        public async void Execute_RenameFiles() {
+        private async void OnRenameFiles() {
             if( await mFileRenamer.RenameFiles( from file in RenameList where file.WillBeRenamed select file )) {
                 RenameList.Clear();
                 FileCount = 0;
@@ -408,11 +448,11 @@ namespace TuneRenamer.ViewModels {
                 CountsMatch = LineCount == FileCount;
                 RaisePropertyChanged( () => CountsMatch );
 
-                RaiseCanExecuteChangedEvent( "CanExecute_RenameFiles" );
+                RenameFiles.RaiseCanExecuteChanged();
             }
         }
 
-        public bool CanExecute_RenameFiles() {
+        private bool CanRenameFiles() {
             return( LineCount == FileCount ) &&
                   ( FileCount > 0 ) &&
                   ( RenameList.Any( f => f.WillBeRenamed ));

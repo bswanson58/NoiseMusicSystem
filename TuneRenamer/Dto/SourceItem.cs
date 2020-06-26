@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using Caliburn.Micro;
+using Prism.Commands;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace TuneRenamer.Dto {
-    public class SourceItem : AutomaticCommandBase {
+    public class SourceItem : PropertyChangeBase {
         private bool                        mIsExpanded;
 
         public  string  Name { get; }
@@ -30,22 +31,26 @@ namespace TuneRenamer.Dto {
     [DebuggerDisplay("SourceFile = {" + nameof( Name ) + "}")]
     public class SourceFile : SourceItem {
         private readonly Action<SourceFile> mInspectAction;
-        private bool        mIsBeingRenamed;
-        private string      mProposedName;
+        private bool            mIsBeingRenamed;
+        private string          mProposedName;
 
-        public  string      TagArtist { get; private set; }
-        public  string      TagAlbum { get; private set; }
-        public  int         TagIndex { get; private set; }
-        public  string      TagTitle { get; private set; }
-        public  string      TagName { get; private set; }
-        public  bool        HasTagName => !String.IsNullOrWhiteSpace( TagName );
-        public  bool        UseTagNameAsTarget { get; set; }
-        public  bool        IsRenamable { get; }
-        public  bool        IsInspectable { get; }
-        public  bool        WillBeRenamed { get; private set; }
+        public  string          TagArtist { get; private set; }
+        public  string          TagAlbum { get; private set; }
+        public  int             TagIndex { get; private set; }
+        public  string          TagTitle { get; private set; }
+        public  string          TagName { get; private set; }
+        public  bool            HasTagName => !String.IsNullOrWhiteSpace( TagName );
+        public  bool            UseTagNameAsTarget { get; set; }
+        public  bool            IsRenamable { get; }
+        public  bool            IsInspectable { get; }
+        public  bool            WillBeRenamed { get; private set; }
+
+        public  DelegateCommand InspectItem { get; }
 
         public SourceFile( string fileName, bool isRenamable, bool isInspectable, Action<SourceFile> inspectAction ) :
             base( Path.GetFileName( fileName ), fileName ) {
+            InspectItem = new DelegateCommand( OnInspectItem );
+
             IsRenamable = isRenamable;
             IsInspectable = isInspectable;
             mInspectAction = inspectAction;
@@ -106,7 +111,7 @@ namespace TuneRenamer.Dto {
             }
         }
 
-        public void Execute_InspectItem() {
+        private void OnInspectItem() {
             mInspectAction?.Invoke( this );
         }
     }
@@ -117,21 +122,26 @@ namespace TuneRenamer.Dto {
         private readonly Action<SourceFolder>   mCopyTags;
 
         public  BindableCollection<SourceItem>  Children { get; }
+        public  DelegateCommand                 CopyNames { get; }
+        public  DelegateCommand                 CopyTags { get; }
 
         public SourceFolder( string fileName, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags ) :
             base( Path.GetFileName( fileName ), fileName ) {
             mCopyNames = copyNames;
             mCopyTags = copyTags;
 
+            CopyNames = new DelegateCommand( OnCopyNames );
+            CopyTags = new DelegateCommand( OnCopyTags );
+
             IsSelectable = true;
             Children = new BindableCollection<SourceItem>();
         }
 
-        public void Execute_CopyNames() {
+        private void OnCopyNames() {
             mCopyNames?.Invoke( this );
         }
 
-        public void Execute_CopyTags() {
+        private void OnCopyTags() {
             mCopyTags?.Invoke( this );
         }
     }
