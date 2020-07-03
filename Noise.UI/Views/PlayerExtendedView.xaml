@@ -269,7 +269,7 @@
 					</Grid.RowDefinitions>
 
 					<StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Play}" Foreground="{StaticResource PlayingBrush}" Command="{Binding Play}" ToolTip="Play"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Play}" Foreground="{StaticResource PlayingBrush}" Padding="7,5,3,5" Command="{Binding Play}" ToolTip="Play"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Pause}" Padding="8" Command="{Binding Pause}" ToolTip="Pause"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Stop}" Padding="8" Command="{Binding Stop}" ToolTip="Stop"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_StopAtEnd}" Padding="6" Command="{Binding StopAtEndOfTrack}" ToolTip="Stop At End Of Track"/>
