@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 
 namespace Noise.Infrastructure {
 	public class Constants {
@@ -10,7 +9,7 @@ namespace Noise.Infrastructure {
 		public	const Int32				cUnknownYear = 0;
 		public	const Int32				cVariousYears = 1;
 
-		public	static DateTime			cNoExpirationDate { get; private set; }
+		public	static DateTime			cNoExpirationDate { get; }
 
 		public	static string			NewInstance = "NewInstance";
 
@@ -25,7 +24,8 @@ namespace Noise.Infrastructure {
 
 		public	const string			LogFileDirectory = "Logs";
 
-		public const string				ApplicationName = "Noise Music System";
+        public const string				EcosystemName = "Noise Music System";
+        public const string				ApplicationName = "Noise Music System";
 		public const string				CompanyName = "Secret Squirrel Software";
 		public const string				LibraryConfigurationDirectory = "Libraries";
 		public const string				LibraryBackupDirectory = "Backups";

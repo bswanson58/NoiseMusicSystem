@@ -3,8 +3,9 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 			 mc:Ignorable="d"
 			 DataContext="{Binding PlayHistoryViewModel, Source={StaticResource ViewModelLocator}}"
 			 Tag="History"
@@ -40,7 +41,7 @@
 							   Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}"/>
 				</Grid>
 
-				<TextBlock Grid.Row="1" Grid.Column="1" Margin="5,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}"
+				<TextBlock Grid.Row="1" Grid.Column="1" Margin="5,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}" Foreground="Gray"
 						   ReusableBehaviours:FadeTrimming.IsEnabled="True"
 						   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 			</Grid>
@@ -55,5 +56,8 @@
 				 ItemTemplate="{StaticResource HistoryListItem}"
 				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        <i:Interaction.Behaviors>
+            <ReusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

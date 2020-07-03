@@ -1,21 +1,21 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-					xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters">
+					xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+					xmlns:valueConverters="clr-namespace:Noise.UI.ValueConverters">
 
-	<ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
-    <ValueConverters:LevelConverter x:Key="LevelConverter" />
-    <ValueConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter" />
-    <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter" />
-    <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter" />
-    <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
-    <ValueConverters:TimeSpanVisibilityConverter x:Key="TimeSpanVisibilityConverter" />
-    <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter" />
+	<valueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
+    <valueConverters:LevelConverter x:Key="LevelConverter" />
+    <valueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter" />
+    <valueConverters:StringTruncateConverter x:Key="StringTruncateConverter" />
+    <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
+    <valueConverters:TimeSpanVisibilityConverter x:Key="TimeSpanVisibilityConverter" />
+    <valueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter" />
 
-    <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" />
-    <ReusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
-    <ReusableConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
-    <ReusableConverters:ByteImageConverter x:Key="ByteImageConverter" />
-    <ReusableConverters:TimeFormatter x:Key="TimeFormatter" />
+    <reusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" />
+    <reusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
+    <reusableConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
+    <reusableConverters:ByteImageConverter x:Key="ByteImageConverter" />
+    <reusableConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter" />
+    <reusableConverters:TimeFormatter x:Key="TimeFormatter" />
 
 </ResourceDictionary>

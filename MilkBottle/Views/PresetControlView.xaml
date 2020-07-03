@@ -1,0 +1,156 @@
+﻿<UserControl x:Class="MilkBottle.Views.PresetControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:PresetControlViewModel, IsDesignTimeCreatable=False}"
+             Height="34" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <DataTemplate x:Key="LibrarySet" DataType="dto:PresetList">
+            <TextBlock Style="{StaticResource GeneralTitleStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HorizontalSeparator">
+            <Grid Margin="5,2">
+                <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FavoriteTemplate">
+            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center" Margin="0,0,3,3"
+                      Opacity="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource FavoriteCheckBoxStyle}" ToolTip="Set Favorite Status"/>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DoNotPlayTemplate">
+            <CheckBox x:Name="DoNotPlay"  HorizontalAlignment="Center" Margin="3"
+                      Opacity="{Binding Path=DoNotPlay, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=DoNotPlay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource DoNotPlayCheckBoxStyle}" ToolTip="Set Do Not Play Status"/>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="DoNotPlay" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="DoNotPlay" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Tags Template -->
+        <DataTemplate x:Key="TagsTemplate">
+            <ContentControl x:Name="TagContainer" Margin="3,0,0,0">
+                <Button x:Name="TagButton" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.15" BorderThickness="0" Padding="0,1,0,0" Background="Transparent"
+                        Command="{Binding Path=EditTags}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="TagContainer" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="0.8"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasTags}" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PresetNameTemplate" DataType="viewModels:PresetControlViewModel">
+            <TextBlock x:Name="PresetName" Tag="dimmed" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Text="{Binding PresetName, NotifyOnTargetUpdated=True}" ToolTip="{Binding PresetHistory}"
+                       behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+
+            <DataTemplate.Resources>
+                <Storyboard x:Key="HighlightPresetName" TargetName="PresetName" TargetProperty="Opacity">
+                    <DoubleAnimationUsingKeyFrames>
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.3" Value="1.0"/>
+                        <LinearDoubleKeyFrame KeyTime="0:0:5" Value="0.3"/>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </DataTemplate.Resources>
+
+            <DataTemplate.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard Storyboard="{StaticResource HighlightPresetName}" />
+                </EventTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid Background="Black">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Tag="dimmed" Grid.Column="0" Margin="3,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Margin="5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
+            <ComboBox Margin="0,0,5,0" Width="180" VerticalAlignment="Center" ItemTemplate="{StaticResource LibrarySet}" ItemsSource="{Binding Libraries}" 
+                      SelectedItem="{Binding CurrentLibrary}" ToolTip="{Binding CurrentLibraryTooltip}"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}"
+                    ToolTip="Select An Individual Preset"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Opacity="0.3" Text="Now Playing:"/>
+            <ContentControl Margin="3,0" Content="{Binding}" ContentTemplate="{StaticResource PresetNameTemplate}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding PlaybackTitle}"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DoNotPlayTemplate}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
+        </StackPanel>
+
+        <StackPanel Tag="dimmed" Grid.Column="3" Margin="0,0,3,0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
+            <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Duration:"/>
+            <Slider Width="120" VerticalAlignment="Center" Minimum="{Binding PresetDurationMinimum}" Maximum="{Binding PresetDurationMaximum}" Value="{Binding PresetDuration}" ToolTip="Preset Play Duration"/>
+            <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" MinWidth="18" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PresetDuration}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="seconds"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
+            <CheckBox Margin="3,0" VerticalAlignment="Center" Content="Lock" IsChecked="{Binding IsLocked}" ToolTip="Keep This Preset"/>
+            <CheckBox Margin="7,0,3,0" VerticalAlignment="Center" Content="Overlap" IsChecked="{Binding IsBlended}" ToolTip="Overlap Preset Transition"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="4" Command="{Binding Start}" ToolTip="Start"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="&lt;" Command="{Binding Stop}" ToolTip="Stop"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content="9" Command="{Binding PreviousPreset}" ToolTip="Previous Preset"/>
+            <Button Margin="3,0" Style="{StaticResource ControllerButtonStyle}" Content=":" Command="{Binding NextPreset}" ToolTip="Next Preset"/>
+        </StackPanel>
+    </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+    </i:Interaction.Behaviors>
+</UserControl>

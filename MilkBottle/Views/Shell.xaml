@@ -1,0 +1,113 @@
+﻿<mah:MetroWindow x:Class="MilkBottle.Views.Shell"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:mvvm="http://prismlibrary.com/"
+                 xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+                 xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                 xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
+                 xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
+                 xmlns:dto="clr-namespace:MilkBottle.Dto"
+                 xmlns:views="clr-namespace:MilkBottle.Views"
+                 mvvm:ViewModelLocator.AutoWireViewModel="True"
+                 ResizeMode="CanResizeWithGrip"
+                 IgnoreTaskbarOnMaximize="True"
+                 Title="Milk Bottle"
+                 mc:Ignorable="d" 
+                 d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}">
+
+    <Window.Resources>
+        <reusableConverters:BooleanVisibilityConverter x:Key="CollapseOnFalse" IsHidden="False" TriggerValue="False" />
+        <reusableConverters:BooleanVisibilityConverter x:Key="HideOnFalse" IsHidden="True" TriggerValue="False" />
+        <reusableConverters:DefaultValueOpacityConverter x:Key="OpacityConverter" DefaultOpacity="0.5" StandardOpacity="1.0"/>
+
+        <Style x:Key="WindowButtonStyle" TargetType="{x:Type mah:WindowButtonCommands}" BasedOn="{StaticResource {x:Type mah:WindowButtonCommands}}">
+            <Setter Property="Opacity" Value="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
+        </Style>
+
+        <DataTemplate x:Key="CompanionAppTemplate" DataType="dto:UiCompanionApp">
+            <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ManualView">
+            <views:ManualControlView/>
+        </DataTemplate>
+        <DataTemplate x:Key="ReviewView">
+            <views:ReviewView/>
+        </DataTemplate>
+        <DataTemplate x:Key="SyncView">
+            <views:SyncView/>
+        </DataTemplate>
+
+        <views:ShellViewSelector x:Key="ShellViewSelector" ManualView="{StaticResource ManualView}" ReviewView="{StaticResource ReviewView}" SyncView="{StaticResource SyncView}"/>
+
+    </Window.Resources>
+
+    <mah:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0,6,-5,6" Background="Transparent"
+                  Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"
+                  RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality">
+                <Image Source="pack://application:,,,/MilkBottle;component/Resources/Milk Bottle.ico"/>
+            </Grid>
+        </DataTemplate>
+    </mah:MetroWindow.IconTemplate>
+
+    <mah:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Converter={converters:ToUpperConverter}}"
+                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,-1,0,0" FontWeight="Light"
+                       Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"
+                       FontSize="{DynamicResource WindowTitleFontSize}" FontFamily="{DynamicResource HeaderFontFamily}" />
+        </DataTemplate>
+    </mah:MetroWindow.TitleTemplate>
+
+    <mah:MetroWindow.WindowButtonCommands>
+        <mah:WindowButtonCommands Style="{StaticResource WindowButtonStyle}" />
+    </mah:MetroWindow.WindowButtonCommands>
+
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button Command="{Binding DisplaySyncView}" Content="sync"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
+            <Button Command="{Binding DisplayReviewer}" Content="review"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
+            <Button Command="{Binding DisplayManualController}" Content="revel"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
+
+            <Button Command="{Binding Configuration}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Configuration"
+                    Visibility="{Binding DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
+
+            <ItemsControl ItemsSource="{Binding CompanionApplications}" ItemTemplate="{StaticResource CompanionAppTemplate}"
+                          Visibility="{Binding HaveCompanionApplications, Converter={StaticResource HideOnFalse}}"
+                          Opacity="{Binding DisplayStatus, Converter={StaticResource OpacityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ContentControl Grid.Row="0" Content="{Binding ShellViewDisplayed}" ContentTemplateSelector="{StaticResource ShellViewSelector}"/>
+
+        <views:StatusView Grid.Row="1" 
+                          Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
+    </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviors:MetroWindowTitleColor NormalBrush="{DynamicResource AccentColorBrush}" MaximizedBrush="Black"/>
+    </i:Interaction.Behaviors>
+
+</mah:MetroWindow>
+

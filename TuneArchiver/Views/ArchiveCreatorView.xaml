@@ -1,0 +1,238 @@
+﻿<UserControl x:Class="TuneArchiver.Views.ArchiveCreatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Models="clr-namespace:TuneArchiver.Models"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ValueConverters:NumericTextMultitudeConverter x:Key="MultitudeConverter"/>
+        <ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" IsHidden="True" TriggerValue="False"/>
+        <DataTemplate x:Key="AlbumEntry" DataType="Models:Album">
+            <TextBlock Text="{Binding DisplayName}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ArchiveEntry">
+            <TextBlock Text="{Binding}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ColoredSize">
+            <TextBlock x:Name="_selectionSize" Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedSize, Converter={StaticResource MultitudeConverter}}"/>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding SelectionLevelLow}" Value="True">
+                        <Setter TargetName="_selectionSize" Property="Foreground" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding SelectionLevelAdequate}" Value="True">
+                        <Setter TargetName="_selectionSize" Property="Foreground" Value="LimeGreen"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="0,0,20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="75"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="105"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Staging List"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Staging Directory:"/>
+                <TextBox Grid.Column="0" Grid.Row="2" Margin="0,3,5,0" Text="{Binding StagingPath, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource GeneralButtonStyle}" Content="..." Height="25" VerticalAlignment="Bottom" Command="{Binding BrowseForStagingDirectory}"/>
+                    <Button Style="{StaticResource PathButtonStyle}" Margin="5,0,0,0" Height="25" VerticalAlignment="Bottom" Command="{Binding Path=OpenStagingFolder}" 
+                            Content="{StaticResource Path_Folder}" ToolTip="Open Staging Folder" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Staged Albums:"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding StagingList}" ItemTemplate="{StaticResource AlbumEntry}"/>
+            </Grid>
+            
+            <Grid Grid.Row="2" Margin="0,0,10,0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Album Count: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding StagingCount}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Total Size: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding StagingSize, Converter={StaticResource MultitudeConverter}}"/>
+                </StackPanel>
+                
+                <Button Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Rescan" Style="{StaticResource GeneralButtonStyle}" Command="{Binding ScanDirectory}"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="0,0,20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="75"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="105"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Selected Set"/>
+                <TextBlock Grid.Row="1" Text=""/>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Archive Size: "/>
+                    <ComboBox Width="110" ItemsSource="{Binding MediaList}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedMedia}"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Selected Albums:"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding SelectedList}" ItemTemplate="{StaticResource AlbumEntry}"/>
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Set Count: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedCount}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Set Size: "/>
+                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ColoredSize}"/>
+                </StackPanel>
+
+                <Grid Grid.Row="2" Visibility="{Binding CreatingSet, Converter={StaticResource VisibleIfTrue}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Good Enough" Command="{Binding CancelSetCreation}"/>
+                    <ProgressBar Grid.Column="1" VerticalAlignment="Center" Maximum="{Binding ArchiveSetSize}" Value="{Binding CurrentSetSize}"/>
+                </Grid>
+
+                <Button Grid.Row="4" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Select Set" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SelectSet}"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="75"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="105"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Archive List"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Archive Directory:"/>
+                <TextBox Grid.Column="0" Grid.Row="2" Margin="0,3,5,0" Text="{Binding ArchivePath, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource GeneralButtonStyle}" Height="25" VerticalAlignment="Bottom" Content="..." Command="{Binding BrowseForBurnDirectory}"/>
+                    <Button Style="{StaticResource PathButtonStyle}" Margin="5,0,0,0" Height="25" VerticalAlignment="Bottom" Command="{Binding Path=OpenArchiveFolder}" 
+                            Content="{StaticResource Path_Folder}" ToolTip="Open Archive Folder" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Archive List:"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding ArchiveList}" ItemTemplate="{StaticResource ArchiveEntry}"/>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Label Format: "/>
+                    <TextBox Width="100" Text="{Binding ArchiveLabelFormat, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Margin="15,0,0,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Number: "/>
+                    <TextBox Width="50" Text="{Binding ArchiveLabelIdentifier, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Margin="0,5,0,0" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Formatted Archive Label: "/>
+                    <TextBlock Text="{Binding ArchiveLabel}"/>
+                </StackPanel>
+                <Grid Grid.Row="2" Visibility="{Binding CreatingArchive, Converter={StaticResource VisibleIfTrue}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Cancel" Command="{Binding CancelArchiveBuilding}"/>
+                    <ProgressBar Grid.Column="1" VerticalAlignment="Center" Maximum="{Binding ArchiveAlbumCount}" Value="{Binding ArchiveAlbumsCompleted}"/>
+                </Grid>
+                
+                <Button Grid.Row="4" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Create Archive" Style="{StaticResource GeneralButtonStyle}" Command="{Binding CreateArchive}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

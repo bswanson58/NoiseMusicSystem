@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Dto {
         PlayGenre = 105,
         SeldomPlayedArtists = 106,
         PlayUserTags = 107,
+        RatedTracks = 108,
 
         // Disqualifiers
         ShortTracks = 201,

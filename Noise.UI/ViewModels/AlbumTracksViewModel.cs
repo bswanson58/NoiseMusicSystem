@@ -5,6 +5,7 @@ using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -27,7 +28,7 @@ namespace Noise.UI.ViewModels {
     }
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
-										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged> {
+										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged>, IHandle<Events.AlbumStructureChanged> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
@@ -45,6 +46,8 @@ namespace Noise.UI.ViewModels {
         public BindableCollection<UiTrack>              TrackList => mTracks;
         public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
         public InteractionRequest<PlayStrategyInfo>     StrategyEditRequest {  get; }
+        public DelegateCommand                          ClearTrackRatings { get; }
+		public UiTrack									PlayingTrack { get; private set; }
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
 									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
@@ -68,11 +71,23 @@ namespace Noise.UI.ViewModels {
             TagEditRequest = new InteractionRequest<TagEditInfo>();
             StrategyEditRequest = new InteractionRequest<PlayStrategyInfo>();
 
+            ClearTrackRatings = new DelegateCommand( OnClearRatings );
+
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mSelectionState.CurrentAlbumVolumeChanged.Subscribe( OnVolumeChanged );
 
-            mPlayingItemHandler.StartHandler( mTracks );
+            mPlayingItemHandler.StartHandler( mTracks, OnPlayingItemChanged );
 		}
+
+		private void OnPlayingItemChanged( IPlayingItem item ) {
+			if( item is UiTrack track ) {
+				if( track.IsPlaying ) {
+					PlayingTrack = track;
+
+					RaisePropertyChanged( () => PlayingTrack );
+                }
+            }
+        }
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearTrackList();
@@ -80,6 +95,15 @@ namespace Noise.UI.ViewModels {
 
 	    public void Handle( Events.UserTagsChanged message ) {
             mTracks.ForEach( SetTrackTags );
+        }
+
+		public void Handle( Events.AlbumStructureChanged message ) {
+			if( mCurrentAlbumId == message.AlbumId ) {
+                ClearTrackList();
+
+				mCurrentAlbumId = message.AlbumId;
+                RetrieveTracks( mCurrentAlbumId );
+            }
         }
 
 		private void OnAlbumChanged( DbAlbum album ) {
@@ -187,7 +211,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions  );
+			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions, OnFocusRequest );
 
 			if( dbTrack != null ) {
 				Mapper.Map( dbTrack, retValue );
@@ -212,7 +236,35 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			mPlayCommand.Play( mTrackProvider.GetTrack( trackId ));
+			var targetTrack = mTracks.FirstOrDefault( t => t.DbId.Equals( trackId ));
+			var previousTrack = targetTrack;
+            var previousTracks = new List<UiTrack>();
+			var playList = new List<DbTrack>();
+
+            while(( previousTrack != null ) && 
+                 (( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
+				  ( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ))) {
+				previousTrack = mTracks.TakeWhile( t => !t.DbId.Equals( previousTrack.DbId )).LastOrDefault();
+
+				if( previousTrack != null ) {
+					previousTracks.Insert( 0, previousTrack );
+                }
+            }
+			previousTracks.ForEach( t => playList.Add( mTrackProvider.GetTrack( t.DbId )));
+            
+            playList.Add( mTrackProvider.GetTrack( trackId ));
+
+			while(( targetTrack != null ) &&
+                 (( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ) ||
+				  ( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ))) {
+				targetTrack = mTracks.SkipWhile( t => !t.DbId.Equals( targetTrack.DbId )).Skip( 1 ).FirstOrDefault();
+
+				if( targetTrack != null ) {
+					playList.Add( mTrackProvider.GetTrack( targetTrack.DbId ));
+                }
+            }
+
+			mPlayCommand.Play( playList );
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -229,6 +281,10 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 		}
+
+        private void OnClearRatings() {
+            mTracks.ForEach( track => track.UiRating = 0 );
+        }
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
 			var track = ( from UiTrack node in mTracks where node.DbId == eventArgs.Track.DbId select node ).FirstOrDefault();
@@ -300,8 +356,18 @@ namespace Noise.UI.ViewModels {
                         track.UpdateTrackAndAlbum();
 
                         TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayAdjacentStrategy, track.Item.DoNotStrategyPlay );
+
+                        mEventAggregator.PublishOnCurrentThread( new Events.LibraryBackupPressure( 1, "TrackStrategyPlayEdited" ));
                     }
                 }
+            }
+        }
+
+		private void OnFocusRequest( long trackId ) {
+			var track = mTrackProvider.GetTrack( trackId );
+
+			if( track != null ) {
+				mSelectionState.RequestFocus( track );
             }
         }
 	}

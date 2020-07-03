@@ -4,12 +4,20 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.Dto {
-	[DebuggerDisplay("Artist = {Name}")]
+	[DebuggerDisplay("Artist = {" + nameof(Name) + "}")]
 	public class UiArtist : UiBase, IPlayingItem {
+        private readonly Action<UiArtist>   mOnGenreClicked;
+
 		public string			SortName { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
+
+        public UiArtist() { }
+
+        public UiArtist( Action<UiArtist> onGenreClicked ) {
+            mOnGenreClicked = onGenreClicked;
+        }
 
 		public string ActiveYears {
 			get{ return( Get( () => ActiveYears )); }
@@ -27,11 +35,9 @@ namespace Noise.UI.Dto {
 		}
 
 		[DependsUpon("DisplayGenre")]
-		public string Genre {
-			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
-		}
+		public string Genre => ( DisplayGenre != null ? DisplayGenre.Name : "" );
 
-		public bool	IsFavorite {
+        public bool	IsFavorite {
 			get { return( Get(() => IsFavorite )); }
 			set {  Set( () => IsFavorite, value ); }
 		}
@@ -56,8 +62,8 @@ namespace Noise.UI.Dto {
 
 				return( retValue );
 			}
-			set { UiIsFavorite = !UiIsFavorite; }
-		}
+			set => UiIsFavorite = !UiIsFavorite;
+        }
 
 		public Int16 CalculatedRating {
 			get { return( Get( () => CalculatedRating )); }
@@ -71,8 +77,8 @@ namespace Noise.UI.Dto {
 
 		[DependsUpon("CalculatedRating")]
 		public Int16 Rating {
-			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
-			set {
+			get => ( IsUserRating ? UserRating : CalculatedRating );
+            set {
 				UserRating = value;
 				
 				RaisePropertyChanged( () => IsUserRating );
@@ -115,6 +121,10 @@ namespace Noise.UI.Dto {
 
         public void SetPlayingStatus( PlayingItem item ) {
             IsPlaying = DbId.Equals( item.Artist );
+        }
+
+        public void Execute_GenreClicked() {
+            mOnGenreClicked?.Invoke( this );
         }
     }
 }

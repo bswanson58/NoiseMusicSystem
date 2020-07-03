@@ -18,8 +18,8 @@
 	}
 
 	public class CommandRequest {
-		public CommandRequestCategory	Category { get; private set; }
-		public CommandRequestItem		Command { get; private set; }
+		public CommandRequestCategory	Category { get; }
+		public CommandRequestItem		Command { get; }
 
 		public CommandRequest( CommandRequestCategory category, CommandRequestItem command ) {
 			Category = category;

@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="MilkBottle.Views.SelectPresetDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:behaviours="clr-namespace:MilkBottle.Behaviors" 
+             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:entities="clr-namespace:MilkBottle.Entities"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:SelectPresetDialogModel, IsDesignTimeCreatable=False}"
+             Height="450" Width="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="LibraryTemplate" DataType="entities:PresetLibrary">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PresetTemplate" DataType="entities:Preset">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <mvvm:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="CenterScreen" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </mvvm:Dialog.WindowStyle>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Margin="0,0,0,10" Text="Select a preset to display:"/>
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,10" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Library:"/>
+            <ComboBox Width="300" Margin="3,0" ItemsSource="{Binding Libraries}" ItemTemplate="{StaticResource LibraryTemplate}" SelectedItem="{Binding CurrentLibrary}"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2" Style="{StaticResource ControlTitleStyle}" Text="Presets:"/>
+
+        <ListBox Grid.Row="3" ItemsSource="{Binding PresetList}" SelectedItem="{Binding CurrentPreset}" ItemTemplate="{StaticResource PresetTemplate}"/>
+
+        <StackPanel Grid.Row="4" Margin="0,5" Orientation="Horizontal">
+            <TextBlock Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Filter:"/>
+            <TextBox Margin="0,3" Width="300" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                     behaviours:TextBoxHelper.Watermark="enter album filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

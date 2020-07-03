@@ -9,11 +9,13 @@ namespace Noise.Infrastructure.Configuration {
 		public	bool		EnableSortPrefixes { get; set; }
 		public	string		SortPrefixes { get; set; }
 		public	bool		MinimizeToTray { get; set; }
+		public	bool		MinimizeOnSwitchToCompanionApp { get; set; }
 		public	UInt16		NewAdditionsHorizonDays { get; set; }
 		public	UInt32		NewAdditionsHorizonCount { get; set; }
         public  string      ThemeName { get; set; }
         public  string      ThemeAccent { get; set; }
         public  string      ThemeSignature { get; set; }
+		public	bool		DisplayBuildDate { get; set; }
 
 		public UserInterfacePreferences() {
 			ArtistListSortOrder = string.Empty;
@@ -21,7 +23,10 @@ namespace Noise.Infrastructure.Configuration {
 
 			EnablePlaybackLibraryFocus = true;
 			NewAdditionsHorizonDays = 90;
-			NewAdditionsHorizonCount = 500;
+			NewAdditionsHorizonCount = 50;
+
+			MinimizeToTray = false;
+			MinimizeOnSwitchToCompanionApp = true;
 
 			SortPrefixes = string.Empty;
 

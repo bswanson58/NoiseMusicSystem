@@ -1,7 +1,10 @@
-﻿using Caliburn.Micro;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
 using Noise.UI.Support;
@@ -9,6 +12,9 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class DisabledWindowCommandsViewModel :AutomaticCommandBase {
+        public  ObservableCollection<UiCompanionApp>    CompanionApplications => null;
+        public  bool									HaveCompanionApplications => false;
+
         public DisabledWindowCommandsViewModel( IPreferences preferences ) {
             var interfacePreferences = preferences.Load<UserInterfacePreferences>();
 
@@ -47,15 +53,20 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class WindowCommandsViewModel : AutomaticCommandBase {
-		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;
+		private readonly INoiseWindowManager	mWindowManager;
+		private readonly IIpcManager			mIpcManager;
 		private readonly IPreferences			mPreferences;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly DelegateCommand		mImportCommand;
 
-		public WindowCommandsViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IPreferences preferences,
+        public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
+        public  bool									HaveCompanionApplications => CompanionApplications.Any();
+
+		public WindowCommandsViewModel( INoiseWindowManager windowManager, IIpcManager ipcManager, IDialogService dialogService, IPreferences preferences,
 										IDataExchangeManager dataExchangeManager ) {
-			mEventAggregator = eventAggregator;
+			mWindowManager = windowManager;
+			mIpcManager = ipcManager;
 			mDialogService = dialogService;
 			mPreferences = preferences;
 			mDataExchangeMgr = dataExchangeManager;
@@ -64,7 +75,13 @@ namespace Noise.UI.ViewModels {
 			GlobalCommands.ImportFavorites.RegisterCommand( mImportCommand );
 			GlobalCommands.ImportRadioStreams.RegisterCommand( mImportCommand );
             GlobalCommands.ImportUserTags.RegisterCommand( mImportCommand );
+
+			CompanionApplications.CollectionChanged += OnCollectionChanged;
 		}
+
+		private void OnCollectionChanged( object sender, NotifyCollectionChangedEventArgs args ) {
+			RaisePropertyChanged( () => HaveCompanionApplications );
+        }
 
 		public void Execute_Options() {
 			var dialogModel = new ConfigurationViewModel( mPreferences );
@@ -75,19 +92,19 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LibraryLayout() {
-			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mWindowManager.ChangeWindowLayout( Constants.ExploreLayout );
 		}
 
 		public void Execute_ListenLayout() {
-			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+			mWindowManager.ChangeWindowLayout( Constants.ListenLayout );
 		}
 
 		public void Execute_TimelineLayout() {
-			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
+			mWindowManager.ChangeWindowLayout( Constants.TimeExplorerLayout );
 		}
 
 		public void Execute_PlaybackLayout() {
-			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+			mWindowManager.ChangeWindowLayout( Constants.ListenLayout );
 		}
 
 		private void OnImport() {

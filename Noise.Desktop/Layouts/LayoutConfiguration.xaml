@@ -43,15 +43,16 @@
 				<Layout:View RegionName="LeftPanel" Type="{x:Type Views:FavoritesView}" />
 			    <Layout:View RegionName="LeftPanel" Type="{x:Type Views:TagsView}" />
                 <Layout:View RegionName="LeftPanel" Type="{x:Type Views:SearchView}" />
-				<Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryAdditionsView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:PlaybackRelatedView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryAdditionsView}" />
 				<Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
 				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistInfoView}" />
 				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
-				<Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:RatedTracksView}" />
 				<Layout:View RegionName="RightPanel" Type="{x:Type Views:PlayQueueView}" />
 				<Layout:View RegionName="RightPanel" Type="{x:Type Views:PlayHistoryView}" />
 				<Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
-				<Layout:View RegionName="SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
 				<Layout:View RegionName="SongLyrics" Type="{x:Type Views:SongLyricsView}" />
 				<Layout:View RegionName="Status" Type="{x:Type Views:StatusView}" />
 			</Layout:Layout.Views>
@@ -78,7 +79,6 @@
 				<Layout:View RegionName="Timeline:AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
 				<Layout:View RegionName="Timeline:PlayQueue" Type="{x:Type Views:PlayQueueView}" />
 				<Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
-				<Layout:View RegionName="Timeline:SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
 				<Layout:View RegionName="Timeline:SongLyrics" Type="{x:Type Views:SongLyricsView}" />
 				<Layout:View RegionName="Timeline:Status" Type="{x:Type Views:StatusView}" />
 			</Layout:Layout.Views>

@@ -56,5 +56,25 @@ namespace Noise.Core.PlaySupport {
 				mSidecarWriter.WriteSidecar( forTrack, scTrack );
 			}
 		}
-	}
+
+        public ScTrackPlayPoints GetTrackPlayPoints( DbTrack forTrack ) {
+            var retValue = new ScTrackPlayPoints();
+            var scTrack = mSidecarWriter.ReadSidecar( forTrack );
+
+            if(scTrack?.PlayPoints != null) {
+                retValue = scTrack.PlayPoints;
+            }
+
+            return( retValue );
+        }
+
+        public void SaveTrackPlayPoints( DbTrack forTrack, ScTrackPlayPoints playPoints ) {
+            var scTrack = mSidecarWriter.ReadSidecar( forTrack );
+
+            if( scTrack != null ) {
+                scTrack.PlayPoints = playPoints;
+                mSidecarWriter.WriteSidecar( forTrack, scTrack );
+            }
+        }
+    }
 }

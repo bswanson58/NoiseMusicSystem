@@ -3,14 +3,17 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
-			 xmlns:Controls="clr-namespace:Noise.UI.Controls"
-			 ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours" 
+			 xmlns:controls="clr-namespace:Noise.UI.Controls"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:AlbumListViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300">
 
 	<UserControl.DataContext>
@@ -21,13 +24,7 @@
 		<valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
 		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
 
-		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
-			<Grid Margin="5,15,5,0">
-                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Select an artist!" />
-			</Grid>
-		</ControlTemplate>
-
-		<DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
+		<DataTemplate x:Key="AlbumTemplate" DataType="dto:UiAlbum">
 			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3" Margin="3">
 				<Grid>
 					<Grid.RowDefinitions>
@@ -41,10 +38,14 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}" Content="4" />
+						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}"/>
 
 						<Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-                            <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                            <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}">
+                                <i:Interaction.Behaviors>
+                                    <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding DisplayName}" />
+                                </i:Interaction.Behaviors>
+                            </TextBlock>
 						</Viewbox>
 					</Grid>
 
@@ -77,7 +78,7 @@
 										Opacity="{Binding Path=FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
 										IsChecked="{Binding FavoriteValue, Mode=TwoWay}"
 										Style="{DynamicResource FavoriteCheckBoxStyle}" />
-							<Controls:RatingControl x:Name="AlbumRating"
+							<controls:RatingControl x:Name="AlbumRating"
 													Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
 													Rating="{Binding Path=UiRating, Mode=TwoWay}"
 													UseAlternate="{Binding UseAlternateRating}"
@@ -119,10 +120,10 @@
 				<VisualState x:Name="_normal" />
 				<VisualState x:Name="_displaySortDescriptions">
 					<Storyboard>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(UIElement.Opacity)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(UIElement.Opacity)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="140" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
@@ -149,12 +150,11 @@
 					 VirtualizingPanel.ScrollUnit="Pixel"
 					 >
 				<i:Interaction.Behaviors>
-					<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
-					<ReusableBehaviours:ListBoxSelectionVisible />
+					<reusableBehaviours:ListBoxSelectionVisible />
 				</i:Interaction.Behaviors>
 			</ListBox>
 
-			<Controls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
+			<controls:SortDescriptionList x:Name="SortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
 
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
@@ -162,14 +162,19 @@
 					<ColumnDefinition Width="2*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+				<Button Grid.Column="0" Tag="dimmed" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
 						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Album Sort Order" />
 
-				<TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
-						 Behaviours:TextBoxHelper.Watermark="enter album filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+				<TextBox Grid.Column="1" Tag="dimOnClear" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+						 behaviours:TextBoxHelper.Watermark="enter album filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
 						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</Grid>
-	</GroupBox>
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
+</GroupBox>
 </UserControl>

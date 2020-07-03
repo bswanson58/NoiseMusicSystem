@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="Album4Matter.Views.FinalStructureView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Dto="clr-namespace:Album4Matter.Dto"
+             xmlns:Views="clr-namespace:Album4Matter.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style x:Key="TreeViewItemStyleExpanded" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsExpanded" Value="True"/>
+        </Style>
+
+        <HierarchicalDataTemplate x:Key="TargetFolderTemplate" DataType="Dto:TargetFolder" ItemsSource="{Binding Children}">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate x:Key="TargetFileTemplate" DataType="Dto:TargetFile">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <Button x:Name="TargetDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding RemoveItem}" Content="{StaticResource Path_Remove}" ToolTip="Remove File" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TargetDelete" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+
+        <Views:TargetItemTemplateSelector x:Key="TargetItemTemplateSelector" FileTemplate="{StaticResource TargetFileTemplate}" FolderTemplate="{StaticResource TargetFolderTemplate}"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Target:"/>
+
+        <TreeView Grid.Row="2" Margin="0,5" ItemsSource="{Binding TargetList}" ItemTemplateSelector="{StaticResource TargetItemTemplateSelector}"
+                  ItemContainerStyle="{StaticResource TreeViewItemStyleExpanded}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+
+        <Grid Grid.Row="1" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" Text="{Binding TargetDirectory}"/>
+            <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetFolder}" ToolTip="Browse For Directory"/>
+            <Button Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}" ToolTip="Open Directory"/>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Noise.Infrastructure</RootNamespace>
     <AssemblyName>Noise.Infrastructure</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\Noise\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -99,6 +99,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicData, Version=6.14.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicData.6.14.1\lib\net461\DynamicData.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
@@ -149,11 +152,25 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Reactive, Version=4.3.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.4.3.1\lib\net46\System.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
@@ -170,6 +187,7 @@
     <Compile Include="Dto\BasePlayStrategyParameters.cs" />
     <Compile Include="Dto\CommandRequest.cs" />
     <Compile Include="Dto\ExhaustedStrategySpecification.cs" />
+    <Compile Include="Dto\LibrarianProgressReport.cs" />
     <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\PlayingItem.cs" />
     <Compile Include="Dto\PlayStrategyOptions.cs" />
@@ -217,6 +235,7 @@
     <Compile Include="Dto\ScArtist.cs" />
     <Compile Include="Dto\ScPlayContext.cs" />
     <Compile Include="Dto\ScTrack.cs" />
+    <Compile Include="Dto\ScTrackPlayPoints.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
     <Compile Include="Dto\SetFavoriteCommandArgs.cs" />
@@ -225,6 +244,7 @@
     <Compile Include="Dto\StorageSidecar.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
     <Compile Include="Dto\TextInfo.cs" />
+    <Compile Include="Dto\UiCompanionApp.cs" />
     <Compile Include="Dto\UpdatePlayCountCommandArgs.cs" />
     <Compile Include="GlobalCommands.cs" />
     <Compile Include="Interfaces\IAlbumArtworkProvider.cs" />
@@ -248,6 +268,7 @@
     <Compile Include="Interfaces\IDataProviderList.cs" />
     <Compile Include="Interfaces\IDataUpdateShell.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
+    <Compile Include="Interfaces\IDirectoryArchiver.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
     <Compile Include="Interfaces\IExhaustedPlayHandler.cs" />
     <Compile Include="Interfaces\IExhaustedSelectionContext.cs" />
@@ -256,6 +277,9 @@
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
+    <Compile Include="Interfaces\IIpcManager.cs" />
+    <Compile Include="Interfaces\ILibrarian.cs" />
+    <Compile Include="Interfaces\ILibraryBackupManager.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\ILibraryConfiguration.cs" />
@@ -266,9 +290,11 @@
     <Compile Include="Interfaces\IMetadataManager.cs" />
     <Compile Include="Interfaces\INoiseEnvironment.cs" />
     <Compile Include="Interfaces\INoiseLog.cs" />
+    <Compile Include="Interfaces\INoiseWindowManager.cs" />
     <Compile Include="Interfaces\IPlatformLog.cs" />
     <Compile Include="Interfaces\IPlaybackContextManager.cs" />
     <Compile Include="Interfaces\IPlaybackContextWriter.cs" />
+    <Compile Include="Interfaces\IPlaybackPublisher.cs" />
     <Compile Include="Interfaces\IPlayCommand.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayingItem.cs" />

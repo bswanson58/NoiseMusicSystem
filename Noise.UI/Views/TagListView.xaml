@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
              DataContext="{Binding TagListViewModel, Source={StaticResource ViewModelLocator}}"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:TagListViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -18,7 +20,7 @@
             </Grid>
         </ControlTemplate>
 
-        <DataTemplate x:Key="TagItemTemplate" DataType="Dto:UiTag">
+        <DataTemplate x:Key="TagItemTemplate" DataType="dto:UiTag">
             <Grid Background="Transparent"> <!-- Background set for mouse over support -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -26,8 +28,8 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" ToolTip="Play random tracks from this tag"/>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
-                           ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                <TextBlock x:Name="TagName" Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                           reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
                 <Button x:Name="TrackEdit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
                         Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
                         Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tag Properties" />
@@ -36,15 +38,18 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="TrackEdit" Property="Opacity" Value="1"/>
                 </Trigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="TagName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="TagAddDialog"
+        <behaviours:InteractionRequestDialogBehavior DialogClass="TagAddDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=TagAddRequest}" />
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="TagEditDialog"
+        <behaviours:InteractionRequestDialogBehavior DialogClass="TagEditDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=TagEditRequest}" />
     </i:Interaction.Behaviors>
@@ -60,13 +65,13 @@
             <ListBox Grid.Row="0" Margin="0,3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding TagList}" SelectedItem="{Binding SelectedTag}" ItemTemplate="{StaticResource TagItemTemplate}">
                 <i:Interaction.Behaviors>
-                    <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                    <reusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
                 </i:Interaction.Behaviors>
             </ListBox>
 
             <Rectangle Grid.Row="1" Margin="3,0,3,5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="2" Tag="dimmed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -74,11 +79,16 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="New Tag..." Command="{Binding Path=AddTag}"/>
+                <Button Grid.Column="0" Margin="5" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="New Tag..." Command="{Binding Path=AddTag}"/>
 
-                <Button Grid.Column="2" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Export Tags" Command="{Binding Path=ExportTags}"/>
-                <Button Grid.Column="3" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Import Tags" Command="{Binding Path=ImportTags}"/>
+                <Button Grid.Column="2" Margin="5" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Export Tags" Command="{Binding Path=ExportTags}"/>
+                <Button Grid.Column="3" Margin="5" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Import Tags" Command="{Binding Path=ImportTags}"/>
             </Grid>
         </Grid>
+
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
     </GroupBox>
 </UserControl>

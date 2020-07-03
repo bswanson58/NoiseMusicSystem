@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Noise.UI</RootNamespace>
     <AssemblyName>Noise.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.20525.0</ExpressionBlendVersion>
@@ -121,6 +121,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CuttingEdge.Conditions.1.2.0.0\lib\NET35\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
+    <Reference Include="DynamicData, Version=6.14.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicData.6.14.1\lib\net461\DynamicData.dll</HintPath>
+    </Reference>
     <Reference Include="GongSolutions.Wpf.DragDrop">
       <HintPath>..\lib\GongSolutions.Wpf.DragDrop\v0.1.2\GongSolutions.Wpf.DragDrop.dll</HintPath>
     </Reference>
@@ -166,28 +169,40 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ReactiveUI, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReactiveUI.11.0.1\lib\net461\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat, Version=9.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Splat.9.2.11\lib\net461\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat.Drawing, Version=9.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Splat.Drawing.9.2.11\lib\net461\Splat.Drawing.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive.Core, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Rx-Core.2.2.4\lib\net45\System.Reactive.Core.dll</HintPath>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Primitives.4.3.0\lib\net45\System.Drawing.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Rx-Interfaces.2.2.4\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    <Reference Include="System.Reactive, Version=4.3.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.4.3.1\lib\net46\System.Reactive.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Linq, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Rx-Linq.2.2.4\lib\net45\System.Reactive.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Rx-PlatformServices.2.2.4\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -217,8 +232,12 @@
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
     <Compile Include="Behaviours\BindablePasswordBox.cs" />
     <Compile Include="Behaviours\CommandReference.cs" />
+    <Compile Include="Behaviours\DataGridItemVisible.cs" />
     <Compile Include="Behaviours\DialogResult.cs" />
     <Compile Include="Behaviours\DragAdorner.cs" />
+    <Compile Include="Behaviours\ElementMover\ElementMoverBehavior.cs" />
+    <Compile Include="Behaviours\ElementMover\ElementMoverSource.cs" />
+    <Compile Include="Behaviours\ElementMover\ElementMoverTarget.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandParameter.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandSource.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandTrigger.cs" />
@@ -230,6 +249,7 @@
     <Compile Include="Behaviours\ImageScrubber.cs" />
     <Compile Include="Behaviours\InteractionRequestData.cs" />
     <Compile Include="Behaviours\InteractionRequestDialogBehavior.cs" />
+    <Compile Include="Behaviours\ItemsControlAnimation.cs" />
     <Compile Include="Behaviours\ListViewDragDropManager.cs" />
     <Compile Include="Behaviours\ListViewEnsureVisible.cs" />
     <Compile Include="Behaviours\ListViewFirstItemVisible.cs" />
@@ -244,6 +264,9 @@
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />
     <Compile Include="Behaviours\TextBoxHelper.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
+    <Compile Include="Controls\EditableTextBlock.xaml.cs">
+      <DependentUpon>EditableTextBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HorizontalVuMeter.xaml.cs">
       <DependentUpon>HorizontalVuMeter.xaml</DependentUpon>
     </Compile>
@@ -273,6 +296,7 @@
     <Compile Include="Dto\CombinedPlayStrategy.cs" />
     <Compile Include="Dto\NameIdPair.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
+    <Compile Include="Dto\RelatedTrackNode.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiAlbumExtra.cs" />
     <Compile Include="Dto\UiArtist.cs" />
@@ -287,6 +311,7 @@
     <Compile Include="Dto\UiTagAssociation.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
     <Compile Include="Dto\UiTrack.cs" />
+    <Compile Include="Dto\UiTrackAlbum.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
     <Compile Include="Interfaces\IPrefixedNameHandler.cs" />
     <Compile Include="Interfaces\ISelectionState.cs" />
@@ -300,6 +325,9 @@
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ColorResources.cs" />
+    <Compile Include="Resources\DesignTimeResources.xaml.cs">
+      <DependentUpon>DesignTimeResources.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Resources\StringResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -326,7 +354,6 @@
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
     <Compile Include="ValueConverters\LevelConverter.cs" />
     <Compile Include="ValueConverters\NumberToWordsConverter.cs" />
-    <Compile Include="ValueConverters\NumericTextMultitudeConverter.cs" />
     <Compile Include="ValueConverters\PlayQueueTrackNameConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
@@ -342,6 +369,7 @@
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistArtworkViewModel.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModel.cs" />
+    <Compile Include="ViewModels\ArtistListViewFilters.cs" />
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
@@ -350,9 +378,11 @@
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
+    <Compile Include="ViewModels\LibraryBackupDialogModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
     <Compile Include="ViewModels\PlaybackContextDialogManager.cs" />
+    <Compile Include="ViewModels\PlaybackRelatedViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
     <Compile Include="ViewModels\PlayingAlbumViewModel.cs" />
@@ -362,9 +392,9 @@
     <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueStrategyViewModel.cs" />
     <Compile Include="ViewModels\PlayStrategyDialogModel.cs" />
+    <Compile Include="ViewModels\RatedTracksViewModel.cs" />
     <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
-    <Compile Include="ViewModels\SimilarSongViewModel.cs" />
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StartupLibraryCreationViewModel.cs" />
     <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
@@ -377,6 +407,7 @@
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
+    <Compile Include="ViewModels\TrackPlayPointsDialogModel.cs" />
     <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
     <Compile Include="ViewModels\TransportViewModel.cs" />
     <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
@@ -384,6 +415,7 @@
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AlbumEditTemplateSelector.cs" />
     <Compile Include="Views\AlbumInfoView.xaml.cs">
       <DependentUpon>AlbumInfoView.xaml</DependentUpon>
     </Compile>
@@ -438,6 +470,9 @@
     <Compile Include="Views\LibraryArtistView.xaml.cs">
       <DependentUpon>LibraryArtistView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LibraryBackupDialog.xaml.cs">
+      <DependentUpon>LibraryBackupDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
       <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
     </Compile>
@@ -462,6 +497,9 @@
     <Compile Include="Views\PlaybackControlView.xaml.cs">
       <DependentUpon>PlaybackControlView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PlaybackRelatedView.xaml.cs">
+      <DependentUpon>PlaybackRelatedView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlayerExtendedView.xaml.cs">
       <DependentUpon>PlayerExtendedView.xaml</DependentUpon>
     </Compile>
@@ -480,6 +518,9 @@
     <Compile Include="Views\PlayingTrackView.xaml.cs">
       <DependentUpon>PlayingTrackView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\RatedTracksView.xaml.cs">
+      <DependentUpon>RatedTracksView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TagAddDialog.xaml.cs">
       <DependentUpon>TagAddDialog.xaml</DependentUpon>
     </Compile>
@@ -497,6 +538,9 @@
     </Compile>
     <Compile Include="Views\TagsView.xaml.cs">
       <DependentUpon>TagsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TrackPlayPointsDialog.xaml.cs">
+      <DependentUpon>TrackPlayPointsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TrackStrategyOptionsDialog.xaml.cs">
       <DependentUpon>TrackStrategyOptionsDialog.xaml</DependentUpon>
@@ -530,9 +574,6 @@
     </Compile>
     <Compile Include="Views\ServerConfigurationDialog.xaml.cs">
       <DependentUpon>ServerConfigurationDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SimilarSongView.xaml.cs">
-      <DependentUpon>SimilarSongView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SmallPlayerView.xaml.cs">
       <DependentUpon>SmallPlayerView.xaml</DependentUpon>
@@ -573,6 +614,10 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
+      <Project>{da31563c-5b51-4072-af18-57e4fc5de957}</Project>
+      <Name>Noise.UI.Style</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
@@ -587,6 +632,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\EditableTextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\HorizontalVuMeter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -623,6 +672,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\DesignTimeResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\FavoriteCheckbox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -648,6 +701,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\PlayButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\StoryBoards.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -747,6 +804,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\LibraryBackupDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\LibraryConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -779,6 +840,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PlaybackRelatedView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PlayerExtendedView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -803,6 +868,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\RatedTracksView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TagAddDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -824,6 +893,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TagsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TrackPlayPointsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -868,10 +941,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ServerConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SimilarSongView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -933,12 +1002,6 @@
     <Resource Include="Resources\SearchCategory.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Unknown Album Image.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Select Album Image.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Text Document.png" />
   </ItemGroup>
   <ItemGroup>
@@ -957,6 +1020,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

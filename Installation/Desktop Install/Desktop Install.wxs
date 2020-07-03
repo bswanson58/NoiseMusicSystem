@@ -154,6 +154,7 @@
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
 				<ComponentGroupRef Id="ConfigurationFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
+        <ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
@@ -166,17 +167,18 @@
 				<ComponentGroupRef Id="ObservalFiles"/>
 				<ComponentGroupRef Id="PrismFiles"/>
 				<ComponentGroupRef Id="RavenDBFiles"/>
-				<ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="ReactiveUIFiles"/>
+        <ComponentGroupRef Id="ReclsFiles"/>
 				<ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="ReplayGainFiles"/>
 				<ComponentGroupRef Id="SeriLogFiles"/>
 				<ComponentGroupRef Id="StatelessFiles"/>
-				<ComponentGroupRef Id="TagLibSharpFiles"/>
+        <ComponentGroupRef Id="TagLibSharpFiles"/>
+        <ComponentGroupRef Id="TinyIpcFiles"/>
 			</Feature>
 		</Feature>
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
-			<ComponentGroupRef Id="DotNetZipFiles"/>
 		</Feature>
 
 		<UIRef Id="InstallUI" />

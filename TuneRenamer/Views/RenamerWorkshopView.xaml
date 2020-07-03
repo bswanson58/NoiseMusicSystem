@@ -1,0 +1,247 @@
+﻿<UserControl x:Class="TuneRenamer.Views.RenamerWorkshopView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Dto="clr-namespace:TuneRenamer.Dto"
+             xmlns:Views="clr-namespace:TuneRenamer.Views"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Behaviors="clr-namespace:TuneRenamer.Behaviors"
+             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+            <Setter Property="Focusable" Value="{Binding IsSelectable}"/>
+        </Style>
+        
+        <Style x:Key="RenameListItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        
+        <DataTemplate x:Key="RenameFileTemplate" DataType="Dto:SourceFile">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="ProposedName" Style="{StaticResource ListViewTextStyle}" Text="{Binding ProposedName}"/>
+                <TextBlock x:Name="OriginalName" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Name}"/>
+            </StackPanel>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding WillBeRenamed}" Value="True">
+                    <Setter TargetName="ProposedName" Property="Foreground" Value="Orange"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding WillBeRenamed}" Value="False">
+                    <Setter TargetName="ProposedName" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="Name" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <Button x:Name="InspectItem" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Padding="8,0"
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
+
+                <StackPanel x:Name="TagInfo" Grid.Row="1" Grid.Column="0" Margin="0,0,0,3" Orientation="Horizontal" Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Tag Name:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagName}"/>
+                </StackPanel>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="InspectItem" Property="Opacity" Value="1"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding IsInspectable}" Value="False">
+                    <Setter TargetName="InspectItem" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasTagName}" Value="True">
+                    <Setter TargetName="TagInfo" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsRenamable}" Value="True">
+                    <Setter TargetName="Name" Property="FontWeight" Value="Bold"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsBeingRenamed}" Value="True">
+                    <Setter TargetName="Name" Property="Foreground" Value="Orange"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder" ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <StackPanel x:Name="FolderCommands" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Opacity="0.2" Visibility="Collapsed">
+                    <Button x:Name="UseNames" Padding="8,0" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False" Content="Use Names" Command="{Binding CopyNames}"/>
+                    <Button x:Name="UseTags" Padding="8,0" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False" Content="Use Tags" Command="{Binding CopyTags}"/>
+                </StackPanel>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                    <Setter TargetName="FolderCommands" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="FolderCommands" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+
+        <Views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
+
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="400" MaxWidth="600"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
+
+            <Grid Grid.Row="1" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Text="{Binding SourceDirectory}"/>
+                <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseSourceFolder}" ToolTip="Browse For Directory"/>
+                <Button Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenSourceFolder}" ToolTip="Open Directory"/>
+                <Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Padding="2" Content="{StaticResource Path_Refresh}" Command="{Binding RefreshSourceFolder}" ToolTip="Refresh Directory"/>
+            </Grid>
+
+            <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ItemContainerStyle="{StaticResource IsExpandedBindingStyle}" ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}">
+                <i:Interaction.Behaviors>
+                    <Behaviors:TreeViewSelection SelectedItem="{Binding SelectedSourceItem, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+            </TreeView>
+
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="10,0" IsSharedSizeScope="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Name Source:"/>
+
+            <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" FontSize="14" Text="{Binding SourceText, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <Behaviors:TextBoxSelectionHelper TextSelection="{Binding SelectedText}"/>
+                </i:Interaction.Behaviors>
+            </TextBox>
+
+            <Grid Grid.Row="2" Margin="0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Stretch" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="{Binding FileCount}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="files selected. "/>
+                    <TextBlock Margin="0,0,3,0" Text="{Binding LineCount}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource ControlTitleStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CountsMatch}" Value="False">
+                                        <Setter Property="Foreground" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="lines selected."/>
+                    
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Margin="0,0,5,0" Content="Clear" Command="{Binding ClearText}"/>
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Margin="0,0,5,0" Content="Isolate" Command="{Binding IsolateText}"/>
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Restore" Command="{Binding RestoreText}"/>
+                </StackPanel>
+            </Grid>
+            
+            <StackPanel Grid.Row="3" Margin="0,3" Orientation="Horizontal">
+                <Button Style="{StaticResource GeneralButtonStyle}" Content="Clean Text" Command="{Binding CleanText}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Remove Trailing Digits" Command="{Binding RemoveTrailingDigits}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Renumber" Command="{Binding Renumber}"/>
+            </StackPanel>
+
+            <Grid Grid.Row="4" Margin="0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column0"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column2"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Find Common Text:" Command="{Binding FindCommonText}"/>
+                <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding CommonTextList}" SelectedItem="{Binding CommonText, Mode=TwoWay}"/>
+                <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Content="Delete" Command="{Binding DeleteCommonText}"/>
+            </Grid>
+            
+            <Grid Grid.Row="5" Margin="0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column0"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Column2"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Delete Text:" Command="{Binding DeleteCharacterPair}"/>
+                <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding CharacterPairs}" DisplayMemberPath="Description" SelectedItem="{Binding SelectedCharacterPair, Mode=TwoWay}"/>
+            </Grid>
+        </Grid>
+        
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Proposed Names:"/>
+            
+            <ListBox Grid.Row="1" Margin="5,0,0,0" ItemsSource="{Binding RenameList}" ItemContainerStyle="{StaticResource RenameListItemStyle}" ItemTemplate="{StaticResource RenameFileTemplate}"/>
+            
+            <Button Grid.Row="2" HorizontalAlignment="Right" Margin="0,5,0,0" Content="Rename Files" Command="{Binding RenameFiles}"/>
+        </Grid>
+    </Grid>
+
+</UserControl>

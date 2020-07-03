@@ -28,6 +28,7 @@ namespace Noise.Core {
 							 // components that just need to be referenced.
 							 // ReSharper disable UnusedParameter.Local
 							 IAudioController audioController,
+							 ILibraryBackupManager backupManager,
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,

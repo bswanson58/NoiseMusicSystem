@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
@@ -19,10 +20,10 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	internal class ArtistListViewModel : AutomaticCommandBase,
-										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
-										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+										 IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistListFocusRequested>, IHandle<Events.GenreFocusRequested>,
+                                         IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
+		private const string							cDisplaySortDescriptions = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
@@ -36,9 +37,13 @@ namespace Noise.UI.ViewModels {
         private readonly IPrefixedNameHandler           mPrefixedNameHandler;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiArtist>	mArtistList;
-		private ICollectionView							mArtistView;
+		private readonly ICollectionView				mArtistView;
 		private readonly List<ViewSortStrategy>			mArtistSorts;
 		private TaskHandler								mArtistRetrievalTaskHandler;
+
+        public	ICollectionView							ArtistList => mArtistView;
+		public	bool									IsListFiltered => ArtistFilter.IsFilterSet;
+        public	IEnumerable<ViewSortStrategy>			SortDescriptions => mArtistSorts;
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings, IPrefixedNameHandler nameHandler,
 									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IPlayingItemHandler playingItemHandler, IUiLog log ) {
@@ -53,6 +58,10 @@ namespace Noise.UI.ViewModels {
             mPrefixedNameHandler = nameHandler;
 
 			mArtistList = new BindableCollection<UiArtist>();
+            mArtistView = CollectionViewSource.GetDefaultView( mArtistList );
+            mArtistView.Filter += OnArtistFilter;
+			mArtistView.CollectionChanged += OnArtistListChange;
+
 			VisualStateName = cHideSortDescriptions;
 
 			mChangeObserver = new Observal.Observer();
@@ -86,13 +95,16 @@ namespace Noise.UI.ViewModels {
             mPlayingItemHandler.StartHandler( mArtistList );
 			mEventAggregator.Subscribe( this );
 
-			if( databaseInfo.IsOpen ) {
+            UpdateSorts();
+            SetArtistFilter( ArtistFilterType.FilterText );
+
+            if( databaseInfo.IsOpen ) {
 				BuildArtistList();
 			}
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
-			FilterText = string.Empty;
+			ArtistFilter.ClearFilter();
 			BuildArtistList();
 		}
 
@@ -100,7 +112,7 @@ namespace Noise.UI.ViewModels {
 			ClearArtistList();
 
 			VisualStateName = cHideSortDescriptions;
-			FilterText = string.Empty;
+			ArtistFilter.ClearFilter();
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
@@ -132,6 +144,20 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Handle( Events.ArtistListFocusRequested request ) {
+			SetArtistFilter( ArtistFilterType.FilterArtistList );
+
+			ArtistFilter.SetFilterList( request.ArtistList );
+            RaisePropertyChanged( () => IsListFiltered );
+		}
+
+		public void Handle( Events.GenreFocusRequested args ) {
+			SetArtistFilter( ArtistFilterType.FilterGenre );
+
+            ArtistFilter.FilterText = args.Genre;
+            RaisePropertyChanged( () => IsListFiltered );
+        }
+
 		private void OnArtistChanged( DbArtist artist ) {
 			Set( () => SelectedArtist, artist != null ? ( from uiArtist in mArtistList where artist.DbId == uiArtist.DbId select uiArtist ).FirstOrDefault() : null );
 		}
@@ -149,41 +175,22 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => ArtistCount );
 		}
 
-		public ICollectionView ArtistList {
-			get{ 
-				if( mArtistView == null ) {
-					mArtistView = CollectionViewSource.GetDefaultView( mArtistList );
-
-					UpdateSorts();
-					mArtistView.Filter += OnArtistFilter;
-				}
-
-				return( mArtistView );
-			}
-		}
-
 		[DependsUpon( "ArtistCount" )]
-		public string ArtistListTitle {
-			get {  return( string.Format( ArtistCount == 0 ? StringResources.ArtistTitle : StringResources.ArtistTitlePlural, ArtistCount )); }
-		}
+		public string ArtistListTitle => string.Format( ArtistCount == 0 ? StringResources.ArtistTitle : StringResources.ArtistTitlePlural, ArtistCount );
 
-		public int ArtistCount {
+        public int ArtistCount {
 			get {
 				var retValue = 0;
 
-				if( mArtistView is CollectionView ) {
-					retValue = (mArtistView as CollectionView).Count;
+				if( mArtistView is CollectionView view ) {
+					retValue = view.Count;
 				}
 
 				return( retValue );
 			}
 		}
 
-		public IEnumerable<ViewSortStrategy> SortDescriptions {
-			get { return ( mArtistSorts ); }
-		}
-
-		public ViewSortStrategy SelectedSortDescription {
+        public ViewSortStrategy SelectedSortDescription {
 			get { return ( Get( () => SelectedSortDescription ) ); }
 			set {
 				Set( () => SelectedSortDescription, value );
@@ -208,17 +215,47 @@ namespace Noise.UI.ViewModels {
 			set { Set( () => VisualStateName, value ); }
 		}
 
+		public IArtistFilter ArtistFilter {
+			get => Get(() => ArtistFilter );
+			set {
+				if( ArtistFilter != null ) {
+                    ArtistFilter.FilterCleared -= OnFilterCleared;
+					ArtistFilter.FilterUpdated -= OnFilterUpdated;
+                }
+
+			    Set(() => ArtistFilter, value );
+
+				if( ArtistFilter != null ) {
+					ArtistFilter.FilterCleared += OnFilterCleared;
+					ArtistFilter.FilterUpdated += OnFilterUpdated;
+                }
+			}
+		}
+
+		private void OnFilterCleared( object sender, EventArgs args ) {
+			if( ArtistFilter != null ) {
+				if(( ArtistFilter.FilterType == ArtistFilterType.FilterGenre ) ||
+				   ( ArtistFilter.FilterType == ArtistFilterType.FilterArtistList )) {
+					SetArtistFilter( ArtistFilterType.FilterText );
+                }
+
+                RaisePropertyChanged( () => IsListFiltered );
+			}
+        }
+
+		private void OnFilterUpdated( object sender, EventArgs args ) {
+			RaisePropertyChanged( () => IsListFiltered );
+        }
+
+		private void SetArtistFilter( ArtistFilterType ofType ) {
+			ArtistFilter = ArtistFilterFactory.CreateArtistFilter( ofType, mArtistView );
+        }
+
 		private bool OnArtistFilter( object node ) {
 			var retValue = true;
 
-			if(( node is UiArtist ) &&
-			   (!string.IsNullOrWhiteSpace( FilterText ))) {
-				var artistNode = node as UiArtist;
-
-				if(( artistNode.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
-				   ( artistNode.Genre.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 )) {
-					retValue = false;
-				}
+			if( node is UiArtist artistNode ) {
+				retValue = ArtistFilter.DoesArtistMatch( artistNode );
 			}
 
 			return ( retValue );
@@ -229,8 +266,8 @@ namespace Noise.UI.ViewModels {
 				Execute.OnUIThread( () => {
 					mArtistView.SortDescriptions.Clear();
 
-					foreach( var sortDescrition in SelectedSortDescription.SortDescriptions ) {
-						mArtistView.SortDescriptions.Add( sortDescrition );
+					foreach( var sortDescription in SelectedSortDescription.SortDescriptions ) {
+						mArtistView.SortDescriptions.Add( sortDescription );
 					}
 				} );
 			}
@@ -247,30 +284,17 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public string FilterText {
-			get { return( Get( () => FilterText )); }
-			set {
-				Execute.OnUIThread( () => {
-					Set( () => FilterText, value );
+		private void OnArtistListChange( object sender, NotifyCollectionChangedEventArgs args ) {
+            if(( mArtistView is CollectionView view ) &&
+               ( view.Count == 1 )) {
+                SelectedArtist = mArtistView.OfType<UiArtist>().FirstOrDefault();
+            }
 
-					if( mArtistView != null ) {
-						mArtistView.Refresh();
+            RaisePropertyChanged( () => ArtistCount );
+        }
 
-						// If we have filtered down to one artist, just select it.
-						if(( mArtistView is CollectionView ) &&
-						  (( mArtistView as CollectionView ).Count == 1 )) {
-							SelectedArtist = mArtistView.OfType<UiArtist>().FirstOrDefault();
-						}
-					}
-
-					RaisePropertyChanged( () => FilterText );
-					RaisePropertyChanged( () => ArtistCount );
-				});
-			}
-		}
-
-		public void Execute_ToggleSortDisplay() {
-			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
+        public void Execute_ToggleSortDisplay() {
+			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptions : cHideSortDescriptions;
 		}
 
 		internal TaskHandler ArtistsRetrievalTaskHandler {
@@ -281,21 +305,21 @@ namespace Noise.UI.ViewModels {
 
 				return ( mArtistRetrievalTaskHandler );
 			}
-			set { mArtistRetrievalTaskHandler = value; }
-		}
+			set => mArtistRetrievalTaskHandler = value;
+        }
 
 		private void RetrieveArtists() {
 			ArtistsRetrievalTaskHandler.StartTask( () => {
 				using( var artists = mArtistProvider.GetArtistList()) {
 					SetArtistList( artists.List );
 				}
-			},
-			() => { },
-			ex => mLog.LogException( "Retrieving Artists", ex ));
+            },
+            () => { },
+            ex => mLog.LogException( "Retrieving Artists", ex ));
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new UiArtist();
+			var retValue = new UiArtist( OnGenreClicked );
 
 			if( dbArtist != null ) {
 				Mapper.Map( dbArtist, retValue );
@@ -306,6 +330,12 @@ namespace Noise.UI.ViewModels {
 
 			return ( retValue );
 		}
+
+        private void OnGenreClicked( UiArtist artist ) {
+			SetArtistFilter( ArtistFilterType.FilterGenre );
+
+			ArtistFilter.FilterText = artist.Genre;
+        }
 
 		private void FormatSortPrefix( UiArtist artist ) {
             artist.DisplayName = mPrefixedNameHandler.FormatPrefixedName( artist.Name );
@@ -352,9 +382,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistChanged( PropertyChangeNotification propertyNotification ) {
-			var notifier = propertyNotification.Source as UiBase;
-
-			if( notifier != null ) {
+            if( propertyNotification.Source is UiBase notifier ) {
 				var artist = mArtistProvider.GetArtist( notifier.DbId );
 
 				if( artist != null ) {

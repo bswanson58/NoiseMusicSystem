@@ -28,7 +28,12 @@ namespace Noise.UI.Dto {
 
 		public string Name {
 			get{ return( Get( () => Name )); }
-			set{ Set( () => Name, value ); }
+			set {
+                Set( () => Name, value ); 
+
+				mDisplayName = CreateDisplayName( Name );
+				RaisePropertyChanged( () => DisplayName );
+            }
 		}
 
 	    public string DisplayName {
@@ -112,6 +117,9 @@ namespace Noise.UI.Dto {
 		}
 
 		public void Execute_PlayAlbum() {
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
 		    mOnPlay?.Invoke( DbId );
 		}
 

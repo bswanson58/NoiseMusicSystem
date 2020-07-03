@@ -116,7 +116,8 @@
 				<ComponentGroupRef Id="ObservalFiles"/>
 				<ComponentGroupRef Id="PrismFiles"/>
 				<ComponentGroupRef Id="RavenDBFiles"/>
-				<ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="ReactiveUIFiles"/>
 				<ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="ReplayGainFiles"/>
 				<ComponentGroupRef Id="SeriLogFiles"/>
@@ -127,7 +128,8 @@
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
 			<ComponentGroupRef Id="DotNetZipFiles"/>
-			<ComponentGroupRef Id="MahAppsMetroFiles"/>
+      <ComponentGroupRef Id="MahAppsMetroFiles"/>
+      <ComponentGroupRef Id="TinyIpcFiles"/>
 		</Feature>
 
 		<UIRef Id="InstallUI" />

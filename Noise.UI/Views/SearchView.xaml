@@ -3,69 +3,93 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:adapters="clr-namespace:Noise.UI.Adapters"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300"
 			 Tag="Search"
 			 DataContext="{Binding SearchViewModel, Source={StaticResource ViewModelLocator}}"
 			 >
+    <UserControl.Resources>
+        <!-- Header Styles -->
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <!-- Play -->
+        <DataTemplate x:Key="PlayTemplate" DataType="adapters:SearchViewNode">
+            <Button Margin="5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" 
+                    Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="NameTemplate" DataType="adapters:SearchViewNode">
+            <TextBlock Margin="5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}">
+                <i:Interaction.Behaviors>
+                    <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Title}" />
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </DataTemplate>
+    </UserControl.Resources>
+
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Search ">
-		<Grid>
+		<Grid IsSharedSizeScope="True">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
 					<ColumnDefinition Width="110"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 
-				<TextBlock Grid.Column="0" Margin="3" Text="Search:" VerticalAlignment="Center"/>
+				<TextBlock Grid.Column="0" Margin="3" Text="Search:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 				<ComboBox Grid.Column="1" Style="{StaticResource GeneralComboStyle}"
 						  ItemsSource="{Binding Path=SearchTypes}" SelectedItem="{Binding Path=CurrentSearchType}" DisplayMemberPath="DisplayName" Margin="0,3"/>
 				<TextBlock Grid.Column="2" Margin="3" Text="for:" VerticalAlignment="Center"/>
-				<TextBox Grid.Column="3" Margin="3" Text="{Binding Path=SearchText, Mode=TwoWay}" Style="{StaticResource WaterMarkTextBox}"
-						 Behaviours:TextBoxHelper.Watermark="enter phrase to search for..." Behaviours:TextBoxHelper.ClearTextButton="True"/>
-				<Button Grid.Column="4" Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=Search}">Search</Button>
-			</Grid>
+				<TextBox Grid.Column="3" Margin="3" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource WaterMarkTextBox}"
+						 behaviours:TextBoxHelper.Watermark="enter phrase to search for..." behaviours:TextBoxHelper.ClearTextButton="True"/>
+            </Grid>
 
-			<ListView Grid.Row="1" BorderThickness="0"
-					  ItemsSource="{Binding Path=SearchResults}"
-					  Behaviours:ListViewColumns.Stretch="true"
-					  Behaviours:GridViewSort.AutoSort="True">
-				<ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
-						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-						<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-					</Style>
-				</ListView.ItemContainerStyle>
-				<ListView.View>
-					<GridView>
-						<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-					</GridView>
-				</ListView.View>
-			</ListView>
+			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+					<ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Margin="3" HorizontalAlignment="Right" Text="Results:"/>
+            </Grid>
+
+		    <DataGrid Grid.Row="2" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
+		              ItemsSource="{Binding Path=SearchResults}" SelectedItem="{Binding SelectedSearchNode}">
+		        <DataGrid.Columns>
+		            <!-- Play -->
+		            <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}"
+		                                    HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
+		            <!-- Track Name -->
+		            <DataGridTemplateColumn Width="*" Header="Title" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
+		        </DataGrid.Columns>
+		    </DataGrid>
 			
-			<Grid Grid.Row="2" Margin="5,10,0,5">
+			<Grid Grid.Row="3" Tag="dimmed" Margin="5,10,0,5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
@@ -73,5 +97,10 @@
 				<Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
 			</Grid>
 		</Grid>
+
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

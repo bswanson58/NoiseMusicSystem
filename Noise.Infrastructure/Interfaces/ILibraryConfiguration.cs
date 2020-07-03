@@ -17,6 +17,8 @@ namespace Noise.Infrastructure.Interfaces {
 		void						UpdateLibrary( LibraryConfiguration configuration );
 		void						DeleteLibrary( LibraryConfiguration configuration );
 
+		void						UpdateConfiguration( LibraryConfiguration configuration );
+
 		string						GetLibraryFolder( LibraryConfiguration libraryConfiguration );
 
 		IEnumerable<LibraryBackup>	GetLibraryBackups( LibraryConfiguration forLibrary );

@@ -35,7 +35,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 					databaseName = mLibraryConfiguration.Current.DatabaseName;
 					databasePath = Path.Combine( databasePath, FormatDatabaseName( mLibraryConfiguration.Current.DatabaseName  ));
-					connectionString = string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databasePath );
+					connectionString = $@"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={databasePath}";
 
 				}
 				catch( Exception ex ) {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
@@ -43,11 +42,10 @@ namespace Noise.UI.ViewModels {
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagManager				mTagManager;
 		private readonly IPlayCommand				mPlayCommand;
+		private readonly IPlayingItemHandler		mPlayingItemHandler;
 		private readonly IRatings					mRatings;
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private UiAlbum								mCurrentAlbum;
-		private readonly BitmapImage				mUnknownImage;
-		private readonly BitmapImage				mSelectImage;
 		private ImageScrubberItem					mCurrentAlbumCover;
 		private string								mCategoryDisplay;
 		private readonly Observal.Observer			mChangeObserver;
@@ -60,11 +58,14 @@ namespace Noise.UI.ViewModels {
 		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
 
+        public	UiAlbum							Album => mCurrentAlbum;
+        public	bool							ArtworkValid { get; private set; }
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState, IRatings ratings,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IAlbumArtworkProvider albumArtworkProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IPlayCommand playCommand, IUiLog log ) {
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IPlayCommand playCommand, IPlayingItemHandler playingItemHandler,
+                               IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
@@ -78,6 +79,9 @@ namespace Noise.UI.ViewModels {
 			mTagManager = tagManager;
 			mRatings = ratings;
 			mPlayCommand = playCommand;
+			mPlayingItemHandler = playingItemHandler;
+
+			mPlayingItemHandler.StartHandler( () => Album );
 
 			mEventAggregator.Subscribe( this );
 
@@ -87,9 +91,6 @@ namespace Noise.UI.ViewModels {
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
-
-			mUnknownImage = mResourceProvider.RetrieveImage( "Unknown Album Image.png" );
-			mSelectImage = mResourceProvider.RetrieveImage( "Select Album Image.png" );
 
 			mAlbumEditRequest = new InteractionRequest<AlbumEditRequest>();
 			mAlbumArtworkDisplayRequest = new InteractionRequest<AlbumArtworkDisplayInfo>();
@@ -106,7 +107,7 @@ namespace Noise.UI.ViewModels {
 			SupportInfo = null;
 			mVolumeNames.Clear();
 			mCurrentVolumeName = string.Empty;
-			mCurrentAlbumCover = new ImageScrubberItem( 0, mUnknownImage, 0 );
+			mCurrentAlbumCover = null;
 
 			RaisePropertyChanged( () => Album );
 			RaisePropertyChanged( () => SupportInfo );
@@ -159,6 +160,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 			    mCurrentAlbum = TransformAlbum( album );
+				mPlayingItemHandler.UpdateItem();
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 			else {
@@ -178,12 +180,16 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private ImageScrubberItem SelectAlbumCover( DbAlbum forAlbum ) {
-			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
+			var	retValue = default( ImageScrubberItem );
 			var cover = mAlbumArtworkProvider.GetAlbumCover( forAlbum );
 
-			if( cover?.Image != null ) {
+			if(( cover?.Image != null ) &&
+			   ( cover.Image.Length > 0 )) {
 				retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
 			}
+
+			ArtworkValid = retValue != null;
+			RaisePropertyChanged( () => ArtworkValid );
 
 			return( retValue );
 		}
@@ -249,7 +255,7 @@ namespace Noise.UI.ViewModels {
 			set => mAlbumRetrievalTaskHandler = value;
         }
 
-		private CancellationToken GenerateCanellationToken() {
+		private CancellationToken GenerateCancelationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
 
 			return( mCancellationTokenSource.Token );
@@ -265,7 +271,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveAlbum( long albumId ) {
 			CancelRetrievalTask();
 
-			var cancellationToken = GenerateCanellationToken();
+			var cancellationToken = GenerateCancelationToken();
 
 			AlbumRetrievalTaskHandler.StartTask( () => {
 					if(!cancellationToken.IsCancellationRequested ) {
@@ -321,8 +327,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public UiAlbum Album => ( mCurrentAlbum );
-
         [DependsUpon( "Album" )]
 		public bool AlbumValid => ( mCurrentAlbum != null );
 
@@ -338,7 +342,7 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "SupportInfo" )]
 		public ImageScrubberItem AlbumCover {
-			get => ( mCurrentAlbumCover );
+			get => mCurrentAlbumCover;
             set {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
@@ -409,9 +413,9 @@ namespace Noise.UI.ViewModels {
 		public IInteractionRequest AlbumEditRequest => ( mAlbumEditRequest );
 
         public void Execute_EditAlbum() {
-			if( CanExecute_EditAlbum()) {
-				var album = new UiAlbum { DbId = mCurrentAlbum.DbId,  Name = mCurrentAlbum.Name, PublishedYear = mCurrentAlbum.PublishedYear };
-				var dialogModel = new AlbumEditDialogModel( album );
+			if(( CanExecute_EditAlbum()) &&
+			   ( mCurrentAlbum != null )) {
+				var dialogModel = new AlbumEditDialogModel( mAlbumProvider, mTrackProvider, mLog, mEventAggregator, mCurrentAlbum.DbId );
 
 				mAlbumEditRequest.Raise( new AlbumEditRequest( dialogModel ), OnAlbumEdited );
 			}
@@ -419,25 +423,17 @@ namespace Noise.UI.ViewModels {
 
 		private void OnAlbumEdited( AlbumEditRequest confirmation ) {
 			if( confirmation.Confirmed ) {
-				using( var updater = mAlbumProvider.GetAlbumForUpdate( confirmation.ViewModel.Album.DbId )) {
-					if(( updater != null ) &&
-					   ( updater.Item != null )) {
-						updater.Item.Name = confirmation.ViewModel.Album.Name;
-						updater.Item.PublishedYear = confirmation.ViewModel.Album.PublishedYear;
+				try {
+                    if( confirmation.ViewModel.UpdateData()) {
+                        ClearCurrentAlbum();
 
-						updater.Update();
-
-						if( confirmation.ViewModel.UpdateFileTags ) {
-							GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( updater.Item ) { PublishedYear = updater.Item.PublishedYear });
-						}
-					}
-				}
-
-				if(( mCurrentAlbum != null ) &&
-				   ( mCurrentAlbum.DbId == confirmation.ViewModel.Album.DbId )) {
-					mCurrentAlbum.Name = confirmation.ViewModel.Album.Name;
-					mCurrentAlbum.PublishedYear = confirmation.ViewModel.Album.PublishedYear;
-				}
+                        RetrieveAlbum( confirmation.ViewModel.Album.DbId );
+						mEventAggregator.PublishOnUIThread( new Events.AlbumStructureChanged( confirmation.ViewModel.Album.DbId ));
+                    }
+                }
+				catch( Exception ex ) {
+					mLog.LogException( "AlbumViewModel:EditAlbum", ex );
+                }
 			}
 		}
 

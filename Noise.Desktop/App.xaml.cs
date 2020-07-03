@@ -1,17 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
-using Noise.Infrastructure; // required for release builds.
+using Noise.Infrastructure;
+using ReusableBits.Platform;
 
 namespace Noise.Desktop {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
-	public partial class App {
+	public partial class App : ISingleInstanceApp {
 		private Bootstrapper	mBootstrapper;
 
-		protected override void OnStartup( StartupEventArgs e ) {
+		public App() {
+            if(!SingleInstance<App>.InitializeAsFirstInstance( Constants.ApplicationName )) {
+				Shutdown();
+            }
+        }
+
+        public bool SignalExternalCommandLineArgs( IList<string> args ) {
+            // Bring initial instance to foreground when a second instance is started.
+			mBootstrapper.ActivateInstance();
+
+            return true;
+        }
+
+        protected override void OnExit( ExitEventArgs e ) {
+            // Allow single instance code to perform cleanup operations
+            SingleInstance<App>.Cleanup();
+        }
+
+        protected override void OnStartup( StartupEventArgs e ) {
 			base.OnStartup( e );
 
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
@@ -50,6 +70,6 @@ namespace Noise.Desktop {
 		    mBootstrapper?.LogException( "Task Scheduler unobserved exception", e.Exception );
 
 		    e.SetObserved(); 
-		} 
-	}
+		}
+    }
 }

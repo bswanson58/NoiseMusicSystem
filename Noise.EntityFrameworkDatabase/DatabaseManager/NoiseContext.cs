@@ -8,21 +8,17 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class NoiseContext : DbContext, IDbContext {
 		public	IDbSet<DbArtist>	Artists { get; set; }
 		public	IDbSet<DbAlbum>		Albums { get; set; }
-		public	IDbSet<DbTrack>		Tracks { get; set; } 
-		private readonly bool		mIsValidContext;
+		public	IDbSet<DbTrack>		Tracks { get; set; }
+        public	bool				IsValidContext { get; }
 
-		public NoiseContext( string databaseName, string databaseConnectionString ) :
+        public NoiseContext( string databaseName, string databaseConnectionString ) :
 			base( databaseName ) {
-			mIsValidContext = !string.IsNullOrWhiteSpace( databaseConnectionString );
+			IsValidContext = !string.IsNullOrWhiteSpace( databaseConnectionString );
 	
 			Database.Connection.ConnectionString = databaseConnectionString;
 		}
 
-		public bool IsValidContext {
-			get { return( mIsValidContext ); }
-		}
-
-		protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
+        protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new ArtistConfiguration());
 			modelBuilder.Configurations.Add( new ArtworkConfiguration());

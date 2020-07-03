@@ -3,7 +3,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Librarian.Interfaces;
 using Noise.Librarian.Models;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -43,13 +42,11 @@ namespace Noise.Librarian.ViewModels {
 			CanEdit = mLibraries.Any();
 		}
 
-		public BindableCollection<LibraryConfiguration> LibraryList {
-			get {  return( mLibraries ); }
-		}
+		public BindableCollection<LibraryConfiguration> LibraryList => mLibraries;
 
-		public LibraryConfiguration CurrentLibrary {
-			get {  return( mCurrentLibrary ); }
-			set {
+        public LibraryConfiguration CurrentLibrary {
+			get => ( mCurrentLibrary );
+            set {
 				mCurrentLibrary = value;
 
 				RaisePropertyChanged( () => CurrentLibrary );
@@ -71,7 +68,7 @@ namespace Noise.Librarian.ViewModels {
 				   (!ProgressActive ));
 		}
 
-		private void OnBackupProgress( ProgressReport args ) {
+		private void OnBackupProgress( LibrarianProgressReport args ) {
 			ProgressPhase = args.CurrentPhase;
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;

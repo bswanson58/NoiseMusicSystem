@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
+using System.Text;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
@@ -37,7 +39,12 @@ namespace Noise.Infrastructure.Dto {
 		public	string				DatabasePassword { get; set; }
 		public	bool				IsDefaultLibrary { get; set; }
         public  bool                IsMetadataInPlace { get; set; }
+		public	uint				BackupPressure { get; set; }
 		public	List<MediaLocation>	MediaLocations { get; set; }
+
+        public	ePlayStrategy			        PlayStrategy { get; set; }
+        public	string					        PlayStrategyParameters { get; set; }
+        public  ExhaustedStrategySpecification  ExhaustedStrategySpecification { get; set; }
 
         public  string              BlobDatabasePath => !String.IsNullOrWhiteSpace( BlobDatabaseLocation ) ? BlobDatabaseLocation : 
                                                                                                             Path.Combine( mConfigurationPath, Constants.BlobDatabaseDirectory );
@@ -56,13 +63,22 @@ namespace Noise.Infrastructure.Dto {
 			DatabasePassword = string.Empty;
             BlobDatabaseLocation = string.Empty;
             IsMetadataInPlace = true;
+			BackupPressure = 0;
+            PlayStrategy = ePlayStrategy.Next;
+            PlayStrategyParameters = string.Empty;
+            ExhaustedStrategySpecification = new ExhaustedStrategySpecification();
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {
-			var stream = new FileStream( fromPath, FileMode.Open, FileAccess.Read );
-			var serializer = new DataContractJsonSerializer( typeof( LibraryConfiguration ));
-			var retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
-			stream.Close();
+			LibraryConfiguration	retValue;
+
+			using( var stream = new FileStream( fromPath, FileMode.Open, FileAccess.Read )) {
+                var serializer = new DataContractJsonSerializer( typeof( LibraryConfiguration ));
+                
+                retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
+
+                stream.Close();
+            }
 
             retValue?.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
 
@@ -74,13 +90,18 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public void Persist( string toPath ) {
-			var stream = new FileStream( toPath, FileMode.Create, FileAccess.Write );
-			var serializer = new DataContractJsonSerializer( GetType());
+			using( var stream = new FileStream( toPath, FileMode.Create, FileAccess.Write )) {
+                using( var writer = JsonReaderWriterFactory.CreateJsonWriter( stream, Encoding.UTF8, true, true )) {
+                    var serializer = new DataContractJsonSerializer( GetType());
 
-			serializer.WriteObject( stream, this );
-			stream.Close();
+                    serializer.WriteObject( writer, this );
 
-			SetConfigurationPath( Path.GetDirectoryName( toPath ));
+					writer.Flush();
+                }
+            }
+
+			// this would change the configuration path to a backup location during a database backup...
+//			SetConfigurationPath( Path.GetDirectoryName( toPath ));
 		}
 
         public override string ToString() {

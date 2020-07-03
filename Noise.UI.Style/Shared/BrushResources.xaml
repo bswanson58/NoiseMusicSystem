@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <LinearGradientBrush x:Key="TreeItemBackground" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Offset="0" Color="#FF588CE0" />
@@ -18,17 +17,4 @@
         <GradientStop Offset="0.9" Color="{DynamicResource BorderLineColor}" />
         <GradientStop Offset="1" Color="Transparent" />
     </LinearGradientBrush>
-
-    <Behaviours:NoiseGenerator x:Key="BackgroundNoise" Size="128">
-        <Behaviours:NoiseGenerator.Colors>
-            <Behaviours:ColorFrequency Frequency="90" Color="#197A9CE6" />
-            <Behaviours:ColorFrequency Frequency="30" Color="#26C9D8F4" />
-            <Behaviours:ColorFrequency Frequency="50" Color="#19DEE6F6" />
-        </Behaviours:NoiseGenerator.Colors>
-    </Behaviours:NoiseGenerator>
-
-    <ImageBrush x:Key="NoiseBrush"
-                ImageSource="{Binding Source={StaticResource BackgroundNoise}, Path=NoiseImage}"
-                TileMode="Tile" Viewport="0,0 128,128" ViewportUnits="Absolute" />
-
 </ResourceDictionary>

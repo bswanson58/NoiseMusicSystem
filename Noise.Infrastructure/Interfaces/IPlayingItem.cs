@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -8,9 +9,16 @@ namespace Noise.Infrastructure.Interfaces {
     }
 
     public interface IPlayingItemHandler {
+        void    StartHandler();
         void    StartHandler( IEnumerable<IPlayingItem> list );
+        void    StartHandler( IEnumerable<IPlayingItem> list, Action<IPlayingItem> onItemPlaying );
+        void    StartHandler( Func<IPlayingItem> forItem );
+
         void    StopHandler();
 
         void    UpdateList();
+        void    UpdateList( IEnumerable<IPlayingItem> list );
+        void    UpdateItem();
+        void    UpdateItem( IPlayingItem item );
     }
 }

@@ -19,6 +19,8 @@ using Un4seen.Bass.Misc;
 
 namespace Noise.AudioSupport.Player {
 	public class AudioPlayer : IAudioPlayer {
+		private const double							ComparisonEpsilon = 0.1;
+
 		private readonly ILogAudioPlay					mLog;
 		private int										mMixerChannel;
 		private	float									mMixerSampleRate;
@@ -49,7 +51,7 @@ namespace Noise.AudioSupport.Player {
 		private readonly bool							mRecord;	// recording is currently not implemented.
 		private int										mTrackOverlapMs;
 		private int										mQueuedChannel;
-		private readonly Visuals						mSpectumVisual;
+		private readonly Visuals						mSpectrumVisual;
 		private readonly List<AudioDevice>				mDeviceList;
 		private int										mCurrentDevice;
 
@@ -66,15 +68,15 @@ namespace Noise.AudioSupport.Player {
 
 
 		private readonly Subject<AudioChannelStatus>	mChannelStatusSubject;
-		public	IObservable<AudioChannelStatus>			ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
+		public	IObservable<AudioChannelStatus>			ChannelStatusChange => mChannelStatusSubject.AsObservable();
 
-		private readonly Subject<AudioLevels>			mAudioLevelsSubject;
-		public	IObservable<AudioLevels>				AudioLevelsChange { get { return( mAudioLevelsSubject.AsObservable()); }}
+        private readonly Subject<AudioLevels>			mAudioLevelsSubject;
+		public	IObservable<AudioLevels>				AudioLevelsChange => mAudioLevelsSubject.AsObservable();
 
-		private readonly Subject<StreamInfo>			mAudioStreamInfoSubject;
-		public	IObservable<StreamInfo>					AudioStreamInfoChange { get { return( mAudioStreamInfoSubject.AsObservable()); }}
+        private readonly Subject<StreamInfo>			mAudioStreamInfoSubject;
+		public	IObservable<StreamInfo>					AudioStreamInfoChange => mAudioStreamInfoSubject.AsObservable();
 
-		public	bool									TrackOverlapEnable { get; set; }
+        public	bool									TrackOverlapEnable { get; set; }
 
 		public AudioPlayer( ILicenseManager licenseManager, ILogAudioPlay log ) {
 			mLog = log;
@@ -87,7 +89,7 @@ namespace Noise.AudioSupport.Player {
 			mQueuedTrackPlaySync = PlayQueuedTrackSyncProc;
 			mSlideSyncProc = SlideSyncProc;
 			mDownloadProc = RecordProc;
-			mSpectumVisual = new Visuals();
+			mSpectrumVisual = new Visuals();
 			mDeviceList = new List<AudioDevice>();
 			mCurrentDevice = -1;
 
@@ -133,7 +135,7 @@ namespace Noise.AudioSupport.Player {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Could not load plugin \"{0}\"", plugin ), ex );
+				mLog.LogException( $"Could not load plugin \"{plugin}\"", ex );
 			}
 		}
 
@@ -261,7 +263,11 @@ namespace Noise.AudioSupport.Player {
 			return( OpenFile( filePath, 0.0f ));
 		}
 
-		public int OpenFile( string  filePath, float gainAdjustment ) {
+        public int OpenFile( string  filePath, float gainAdjustment ) {
+			return OpenFile( filePath, gainAdjustment, 0, 0  );
+        }
+
+        public int OpenFile( string  filePath, float gainAdjustment, long playStart, long playEnd ) {
 			var retValue = 0;
 
 			if( File.Exists( filePath )) {
@@ -280,10 +286,10 @@ namespace Noise.AudioSupport.Player {
 						if( Math.Abs( gainAdjustment - 0.0f ) > 0.01f ) {
 							stream.ReplayGainFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );
 							if( stream.ReplayGainFx != 0 ) {
-								 // convert the replaygain dB gain to a linear value
-								var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL,
+								 // convert the replay gain dB gain to a linear value
+								var volParam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL,
 																	 fVolume = (float)Math.Pow( 10, gainAdjustment / 20 )};
-								if(!Bass.BASS_FXSetParameters( stream.ReplayGainFx, volparam )) {
+								if(!Bass.BASS_FXSetParameters( stream.ReplayGainFx, volParam )) {
 									mLog.LogErrorCode( "Could not set replay gain volume", (int)Bass.BASS_ErrorGetCode());
 								}
 							}
@@ -292,45 +298,69 @@ namespace Noise.AudioSupport.Player {
 							}
 						}
 
-						stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_END, 0L, mPlayEndSyncProc, IntPtr.Zero );
-						if( stream.SyncEnd == 0 ) {
-							mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
-						}
-
-						stream.SyncStalled = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_STALL, 0L, mPlayStalledSyncProc, IntPtr.Zero );
-						if( stream.SyncStalled == 0 ) {
-							mLog.LogErrorCode( "Could not set stall sync", (int)Bass.BASS_ErrorGetCode());
-						}
-
-						if( TrackOverlapEnable ) {
+						if(( TrackOverlapEnable ) ||
+						   ( playEnd > 0 )) {
 							var trackLength = Bass.BASS_ChannelGetLength( stream.Channel );
-							var position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, 3 );
+							var trackPlayLength = trackLength;
 
-							if( position > 0 ) {
-								stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
-																					 position, mPlayRequestSyncProc, IntPtr.Zero );
-								if( stream.SyncNext == 0 ) {
-									mLog.LogErrorCode( "Could not set request sync", (int)Bass.BASS_ErrorGetCode());
-								}
+							if( playEnd > 0 ) {
+								trackPlayLength = Math.Min( Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playEnd ), trackLength );
+                            }
 
-								position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
-								stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
-																					   position, mQueuedTrackPlaySync, IntPtr.Zero );
-								if( stream.SyncQueued == 0 ) {
-									mLog.LogErrorCode( "Could not set queued track sync", (int)Bass.BASS_ErrorGetCode());
-								}
+                            // set a marker where play should stop
+                            stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS, trackPlayLength, mPlayEndSyncProc, IntPtr.Zero );
+                            if( stream.SyncEnd == 0 ) {
+                                mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
+                            }
+
+							// set a marker where the next track should be requested
+                            var position = trackPlayLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, 3 );
+							stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
+																				 position, mPlayRequestSyncProc, IntPtr.Zero );
+							if( stream.SyncNext == 0 ) {
+								mLog.LogErrorCode( "Could not set request sync", (int)Bass.BASS_ErrorGetCode());
 							}
+
+							if( TrackOverlapEnable ) {
+								// set a marker where the next track should start if it's overlapped
+                                position = trackPlayLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
+                                stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
+                                                                                       position, mQueuedTrackPlaySync, IntPtr.Zero );
+                                if( stream.SyncQueued == 0 ) {
+                                    mLog.LogErrorCode( "Could not set queued track sync", (int)Bass.BASS_ErrorGetCode());
+                                }
+                            }
 						}
+						else {
+                            stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_END, 0L, mPlayEndSyncProc, IntPtr.Zero );
+                            if( stream.SyncEnd == 0 ) {
+                                mLog.LogErrorCode( "Could not set end sync", (int)Bass.BASS_ErrorGetCode());
+                            }
+                        }
+
+                        stream.SyncStalled = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_STALL, 0L, mPlayStalledSyncProc, IntPtr.Zero );
+                        if( stream.SyncStalled == 0 ) {
+                            mLog.LogErrorCode( "Could not set stall sync", (int)Bass.BASS_ErrorGetCode());
+                        }
+
+                        if( playStart > 0 ) {
+							var position = Bass.BASS_ChannelSeconds2Bytes( stream.Channel, playStart );
+
+							// move up in the stream to the desired start position
+							if(!Bass.BASS_ChannelSetPosition( stream.Channel, position )) {
+								mLog.LogErrorCode( "Could not set the channel position to the fade in point.", (int)Bass.BASS_ErrorGetCode());
+                            }
+                        }
 
 						retValue = channel;
 						mLog.LogChannelOpen( channel, filePath );
 					}
 					else {
-						mLog.LogErrorCode( string.Format( "Channel could not be created for \"{0}\"", filePath ), (int)Bass.BASS_ErrorGetCode());
+						mLog.LogErrorCode( $"Channel could not be created for \"{filePath}\"", (int)Bass.BASS_ErrorGetCode());
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( string.Format( "Opening \"{0}\"", filePath ), ex );
+					mLog.LogException( $"Opening \"{filePath}\"", ex );
 				}
 			}
 
@@ -343,7 +373,7 @@ namespace Noise.AudioSupport.Player {
 			if(!String.IsNullOrWhiteSpace( stream.Url )) {
 				try {
 					if(!Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_NET_PLAYLIST, stream.IsPlaylistWrapped ? 1 : 0 )) {
-						mLog.LogErrorCode( string.Format( "Stream configuration could not be set \"{0}\"", stream.Url ), (int)Bass.BASS_ErrorGetCode());
+						mLog.LogErrorCode( $"Stream configuration could not be set \"{stream.Url}\"", (int)Bass.BASS_ErrorGetCode());
 					}
 
 					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_PRESCAN,
@@ -351,7 +381,7 @@ namespace Noise.AudioSupport.Player {
 					if( channel != 0 ) {
 						if(!BassMix.BASS_Mixer_StreamAddChannel( mMixerChannel, channel,
 																 BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_PAUSE | BASSFlag.BASS_MIXER_DOWNMIX | BASSFlag.BASS_STREAM_AUTOFREE )) {
-							mLog.LogErrorCode( string.Format( "Stream could not be added to mixer \"{0}\"", stream.Url ), (int)Bass.BASS_ErrorGetCode());
+							mLog.LogErrorCode( $"Stream could not be added to mixer \"{stream.Url}\"", (int)Bass.BASS_ErrorGetCode());
 						}
 
 						var audioStream = new AudioStream( stream.Url, channel ) {
@@ -362,11 +392,11 @@ namespace Noise.AudioSupport.Player {
 						mLog.LogChannelOpen( channel, stream.Url );
 					}
 					else {
-						mLog.LogErrorCode( string.Format( "Open stream failed \"{0}\"", stream.Url ), (int)Bass.BASS_ErrorGetCode());
+						mLog.LogErrorCode( $"Open stream failed \"{stream.Url}\"", (int)Bass.BASS_ErrorGetCode());
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( string.Format( "Open stream failed \"{0}\"", stream.Url ), ex );
+					mLog.LogException( $"Open stream failed \"{stream.Url}\"", ex );
 				}
 			}
 
@@ -604,8 +634,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public int TrackOverlapMilliseconds {
-			get{ return( mTrackOverlapMs ); }
-			set {
+			get => mTrackOverlapMs;
+            set {
 				if(( value >= 50 ) &&
 				   ( value <= 2000 )) {
 					mTrackOverlapMs = value;
@@ -614,8 +644,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public ParametricEqualizer ParametricEq {
-			get{ return( mEq ); }
-			set{
+			get => mEq;
+            set{
 				mEq = value;
 
 				if( mEq != null ) {
@@ -631,8 +661,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public bool EqEnabled {
-			get{ return( mEqEnabled ); }
-			set {
+			get => mEqEnabled;
+            set {
 				if( mEq != null ) {
 					mEqEnabled = value;
 
@@ -737,7 +767,7 @@ namespace Noise.AudioSupport.Player {
 
 					var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
 					var barWidth = ( width - ( bars * lineGap )) / bars;
-					var bitmap = mSpectumVisual.CreateSpectrumLinePeak( mMixerChannel, width, height,
+					var bitmap = mSpectrumVisual.CreateSpectrumLinePeak( mMixerChannel, width, height,
 																		System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B ),
 																		System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ),
 																		System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ),
@@ -773,8 +803,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public float PreampVolume {
-			get{ return( mPreampVolume ); }
-			set {
+			get => mPreampVolume;
+            set {
 				if(( value > 0.0 ) &&
 				   ( value < 2.0 )) {
 					mPreampVolume = value;
@@ -795,16 +825,16 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		private void AdjustPreamp( float value ) {
-			var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value };
+			var volParam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value };
 
-			if(!Bass.BASS_FXSetParameters( mPreampFx, volparam )) {
+			if(!Bass.BASS_FXSetParameters( mPreampFx, volParam )) {
 				mLog.LogErrorCode( "Could not set preamp volume", (int)Bass.BASS_ErrorGetCode());
 			}
 		}
 
 		public float Pan {
-			get { return( mPan ); }
-			set {
+			get => mPan;
+            set {
 				mPan = value;
 
 				SetPan();
@@ -816,8 +846,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public float PlaySpeed {
-			get{ return( mPlaySpeed ); }
-			set{
+			get => mPlaySpeed;
+            set{
 				mPlaySpeed = value; 
 				SetPlaySpeed();
 			}
@@ -888,16 +918,16 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public float Volume {
-			get { return( Bass.BASS_GetVolume()); }
-			set{ Bass.BASS_SetVolume( value ); }
-		}
+			get => Bass.BASS_GetVolume();
+            set => Bass.BASS_SetVolume( value );
+        }
 
 		public bool Mute {
-			get { return( mMuted ); }
-			set {
-				var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value ? 0.0f : 1.0f };
+			get => mMuted;
+            set {
+				var volParam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value ? 0.0f : 1.0f };
 
-				if( Bass.BASS_FXSetParameters( mMuteFx, volparam )) {
+				if( Bass.BASS_FXSetParameters( mMuteFx, volParam )) {
 					mMuted = value;
 				}
 				else {
@@ -907,19 +937,17 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public bool StereoEnhancerEnable {
-			get{ return( mStereoEnhancerEnable ); }
-			set {
+			get => mStereoEnhancerEnable;
+            set {
 				mStereoEnhancerEnable = value;
 
-				if( mStereoEnhancer != null ) {
-					mStereoEnhancer.SetBypass(!value );
-				}
-			}
+                mStereoEnhancer?.SetBypass(!value );
+            }
 		}
 
 		public double StereoEnhancerWidth {
-			get{ return( mStereoEnhancerWidth ); }
-			set {
+			get => mStereoEnhancerWidth;
+            set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 1.0 )) {
 					mStereoEnhancerWidth = value * 10.0;
@@ -932,8 +960,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public double StereoEnhancerWetDry {
-			get{ return( mStereoEnhancerWetDry ); }
-			set {
+			get => mStereoEnhancerWetDry;
+            set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 1.0 )) {
 					mStereoEnhancerWetDry = value;
@@ -946,19 +974,17 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public bool SoftSaturationEnable {
-			get{ return( mSoftSaturationEnable ); }
-			set {
+			get => mSoftSaturationEnable;
+            set {
 				mSoftSaturationEnable = value;
 
-				if( mSoftSaturation != null ) {
-					mSoftSaturation.SetBypass(!mSoftSaturationEnable );
-				}
-			}
+                mSoftSaturation?.SetBypass(!mSoftSaturationEnable );
+            }
 		}
 
 		public double SoftSaturationDepth {
-			get{ return( mSoftSaturationDepth ); }
-			set {
+			get => mSoftSaturationDepth;
+            set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 1.0 )) {
 					mSoftSaturationDepth = value;
@@ -971,8 +997,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public double SoftSaturationFactor {
-			get{ return( mSoftSaturationFactor ); }
-			set {
+			get => mSoftSaturationFactor;
+            set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 0.999 )) {
 					mSoftSaturationFactor = value;
@@ -985,8 +1011,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public bool ReverbEnable {
-			get{ return( mReverbEnable ); }
-			set {
+			get => mReverbEnable;
+            set {
 				mReverbEnable = value;
 
 				if( value ) {

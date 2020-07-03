@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="ArchiveLoader.Views.ProcessView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Dto="clr-namespace:ArchiveLoader.Dto"
+             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <DataTemplate x:Key="ProcessItemTemplate" DataType="Dto:DisplayedProcessItem">
+            <Grid Margin="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+                    <TextBlock Grid.Column="2" x:Name="HandlerName" Margin="0,0,15,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding CurrentHandler}"/>
+                </Grid>
+
+                <TextBlock Grid.Row="1" Margin="10,0,0,0" Opacity=".6" Text="{Binding FileName}"/>
+
+                <Grid Grid.Row="2" Visibility="Collapsed" x:Name="ErrorStatus">
+                    <TextBlock Margin="10,0,0,0" Style="{StaticResource ListViewTextStyle}" Foreground="OrangeRed" Text="{Binding ProcessOutput}"/>
+                    
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0" Orientation="Horizontal">
+                        <Button Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_Folder}" Height="25" Padding="5" Command="{Binding OpenFolder}"/>
+                        <Button x:Name="ContinueButton" Style="{StaticResource GeneralButtonStyle}" Margin="6,0" Content="Continue" Command="{Binding OnContinue}"/>
+                        <Button x:Name="AbortButton" Style="{StaticResource GeneralButtonStyle}" Content="Abort" Command="{Binding OnAbort}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="LawnGreen"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPending}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="Yellow"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsAborted}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="DarkRed"/>
+                    <Setter TargetName="AbortButton" Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasCompleted}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="Green"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasError}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="OrangeRed"/>
+                    <Setter TargetName="ErrorStatus" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding OutputFilePresent}" Value="False">
+                    <Setter TargetName="ContinueButton" Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="15,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Items Being Processed:"/>
+        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" ItemsSource="{Binding ProcessItems}" ItemTemplate="{StaticResource ProcessItemTemplate}"/>
+        
+        <StackPanel Grid.Row="2" Margin="0,10,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Style="{StaticResource GeneralButtonStyle}" Content="Continue All" Margin="6,0" Command="{Binding ContinueAll}"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Content="Abort All" Command="{Binding AbortAll}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

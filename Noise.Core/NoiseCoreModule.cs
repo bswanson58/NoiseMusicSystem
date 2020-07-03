@@ -5,12 +5,14 @@ using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Configuration;
 using Noise.Core.Database;
+using Noise.Core.Database.LuceneSearch;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
 using Noise.Core.DataProviders;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.Logging;
+using Noise.Core.Platform;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
@@ -25,6 +27,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using ReusableBits.Platform;
 using ReusableBits.Threading;
 
 namespace Noise.Core {
@@ -54,6 +57,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<INoiseManager, NoiseManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryConfiguration, LibraryConfigurationManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILibraryBackupManager, LibraryBackupManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayCommand, PlayCommand>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>( new HierarchicalLifetimeManager());
@@ -70,8 +74,10 @@ namespace Noise.Core {
             mContainer.RegisterType<IUserTagManager, UserTagManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRatings, RatingsUpdater>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
+            mContainer.RegisterType<ILibrarian, LibrarianModel>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
+            mContainer.RegisterType<IDirectoryArchiver, DirectoryArchiver>();
 
 			mContainer.RegisterType<IPipelineStep, FileTypePipelineStep>( "FileTypePipelineStep" );
 			mContainer.RegisterType<IPipelineStep, CompletedPipelineStep>( "CompletedPipelineStep" );
@@ -132,6 +138,7 @@ namespace Noise.Core {
             mContainer.RegisterType<IExhaustedPlayHandler, PlayGenre>( eTrackPlayHandlers.PlayGenre.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, ReplayQueue>( eTrackPlayHandlers.Replay.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, UserTaggedTracks>( eTrackPlayHandlers.PlayUserTags.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, RatedTracks>( eTrackPlayHandlers.RatedTracks.ToString());
 
             mContainer.RegisterType<IExhaustedPlayHandler, AlreadyQueuedTracks>( eTrackPlayHandlers.AlreadyQueuedTracks.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, BadRatingTracks>( eTrackPlayHandlers.BadRatingTracks.ToString());
@@ -148,6 +155,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();
 
 			mContainer.RegisterType<ILogBackgroundTasks, LogBackgroundTasks>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogBackup, LogBackup>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryBuilding, LogLibraryBuilding>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>( new HierarchicalLifetimeManager());

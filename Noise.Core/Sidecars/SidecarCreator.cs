@@ -56,7 +56,25 @@ namespace Noise.Core.Sidecars {
             sidecar.Tags.AddRange( from t in mTagManager.GetAssociatedTags( forTrack.DbId ) select t.Name );
         }
 
-		public void Update( DbArtist artist, ScArtist sidecar ) {
+		public void UpdateSidecar( ScAlbum sidecar, DbAlbum album ) {
+			sidecar.UpdateFrom( album );
+
+			var trackList = mTrackProvider.GetTrackList( album );
+
+			foreach( var track in trackList.List ) {
+				var trackSidecar = LocateTrackSidecar( track, sidecar ) ?? new ScTrack( track );
+
+				trackSidecar.UpdateFrom( track );
+            }
+		}
+
+        private ScTrack LocateTrackSidecar( DbTrack forTrack, ScAlbum scAlbum ) {
+            return scAlbum.TrackList.FirstOrDefault( scTrack => forTrack.Name.Equals( scTrack.TrackName, StringComparison.CurrentCultureIgnoreCase ) &&
+                                                                forTrack.TrackNumber == scTrack.TrackNumber &&
+                                                                forTrack.VolumeName.Equals( scTrack.VolumeName, StringComparison.CurrentCultureIgnoreCase ));
+        }
+
+        public void Update( DbArtist artist, ScArtist sidecar ) {
 			using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 				if( updater.Item != null ) {
 					sidecar.UpdateArtist( updater.Item );

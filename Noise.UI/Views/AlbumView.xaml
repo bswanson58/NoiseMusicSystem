@@ -1,14 +1,17 @@
 ﻿<UserControl x:Class="Noise.UI.Views.AlbumView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-			 xmlns:Controls="clr-namespace:Noise.UI.Controls"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
 			 Height="200"
 			 d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance viewModels:AlbumViewModel, IsDesignTimeCreatable=False}"
 			 mc:Ignorable="d">
 
 	<UserControl.DataContext>
@@ -16,30 +19,40 @@
 	</UserControl.DataContext>
 
 	<UserControl.Resources>
-		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
-		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
-		<ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
-		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
-		<ValueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
+		<valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
+		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
+		<valueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
+        <valueConverters:BooleanVisibilityConverter x:Key="DisplayIfFalse" TriggerValue="True" IsHidden="True"/>
+		<valueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
+
+        <Style x:Key="PlayingItemBorder" TargetType="GroupBox" BasedOn="{StaticResource SectionBorderStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Album.IsPlaying}" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource PlayingBrush}"/>
+					<Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 	</UserControl.Resources>
 	
 	<i:Interaction.Behaviors>
-		<Behaviours:InteractionRequestDialogBehavior DialogClass="AlbumEdit"
+		<behaviours:InteractionRequestDialogBehavior DialogClass="AlbumEdit"
 													 DialogService="{Binding Source={StaticResource DialogService}}"
 													 InteractionRequest="{Binding Path=AlbumEditRequest}" />
-		<Behaviours:InteractionRequestDialogBehavior DialogClass="AlbumArtworkDisplay"
+		<behaviours:InteractionRequestDialogBehavior DialogClass="AlbumArtworkDisplay"
 													 DialogService="{Binding Source={StaticResource DialogService}}"
 													 InteractionRequest="{Binding Path=AlbumArtworkDisplayRequest}" />
 	</i:Interaction.Behaviors>
 
-	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
-		<Border BorderThickness="0" CornerRadius="5"
-				Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
-			<Grid Background="{StaticResource NoiseBrush}" 
-				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
+	<GroupBox Style="{StaticResource PlayingItemBorder}" Header=" Album ">
+        <Border BorderThickness="0" CornerRadius="5" Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Grid Background="{StaticResource NoiseBrush}" 
+				  behaviours:GridUtils.ColumnDefinitions="Auto,*">
 				<!--  Album cover image  -->
-				<Viewbox Grid.Column="0" Margin="7" MaxWidth="300" MaxHeight="200" StretchDirection="DownOnly" Stretch="Uniform">
-					<Image RenderTransformOrigin="0.5,0.5">
+				<Viewbox Grid.Column="0" Margin="3" MaxWidth="300" MaxHeight="180" Stretch="Uniform" Visibility="{Binding ArtworkValid, Converter={StaticResource CollapseIfFalse}}">
+                    <Image RenderTransformOrigin="0.5,0.5" Cursor="SizeWE">
 						<Image.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform />
@@ -49,48 +62,58 @@
 							</TransformGroup>
 						</Image.RenderTransform>
 						<i:Interaction.Behaviors>
-							<Behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
+							<behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
 						</i:Interaction.Behaviors>
 					</Image>
 				</Viewbox>
-				
-				<Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,11,5"
-					  Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
 
-					<!--  Album name -->
-					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
+                <ContentPresenter Grid.Column="0" Margin="5,7,0,5" Opacity="0.5" HorizontalAlignment="Left" Content="{StaticResource Path_UnknownAlbum}"
+                                  Visibility="{Binding ArtworkValid, Converter={StaticResource DisplayIfFalse}}"/>
+
+                <Grid x:Name="GridParent" Grid.Column="1" Margin="3,7,5,3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--  Album name -->
+					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=GridParent, Path=ActualWidth}">
 						<TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->
-					<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
-						<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
+					<StackPanel x:Name="RatingPanel" Grid.Row="1" Margin="0,11,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+						<CheckBox x:Name="FavoriteControl" Margin="0,0,7,1" Style="{StaticResource FavoriteCheckBoxStyle}"
 								  Opacity="{Binding Path=Album.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
 								  IsChecked="{Binding Path=Album.FavoriteValue, Mode=TwoWay}" />
-						<Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}" 
+						<controls:RatingControl x:Name="RatingControl" Style="{StaticResource NoiseRatingStyle}" 
 												Opacity="{Binding Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
 												Rating="{Binding Album.UiRating, Mode=TwoWay}" UseAlternate="{Binding Album.UseAlternateRating}"/>
 						
 						<StackPanel.Triggers>
-							<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
+							<EventTrigger SourceName="RatingPanel" RoutedEvent="StackPanel.MouseEnter">
 								<BeginStoryboard>
-									<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="FavoriteControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
 										</DoubleAnimationUsingKeyFrames>
 									</Storyboard>
 								</BeginStoryboard>
 								<BeginStoryboard>
-									<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="RatingControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
 										</DoubleAnimationUsingKeyFrames>
 									</Storyboard>
 								</BeginStoryboard>
 							</EventTrigger>
-							<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseLeave">
+							<EventTrigger SourceName="RatingPanel" RoutedEvent="StackPanel.MouseLeave">
 								<BeginStoryboard >
-									<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="FavoriteControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="{Binding Path=Album.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}" 
 																  KeyTime="0:0:0.7" />
@@ -98,7 +121,7 @@
 									</Storyboard>
 								</BeginStoryboard>
 								<BeginStoryboard >
-									<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+									<Storyboard Storyboard.TargetName="RatingControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 											<LinearDoubleKeyFrame Value="{Binding Path=Album.UiRating, Converter={StaticResource DefaultValueOpacityConverter}}" 
 																  KeyTime="0:0:0.7" />
@@ -110,7 +133,7 @@
 					</StackPanel>
 
 					<!-- Published Year -->
-					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0"
+					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,7,0,0"
 								Visibility="{Binding Album.PublishedYear, Converter={StaticResource HideIfZero}}">
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Published: "/>
 						<TextBlock Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right"
@@ -118,13 +141,13 @@
 					</StackPanel>
 
 					<!--  Playing time  -->
-					<StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,7,0,0">
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Playing time: " />
 						<TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
 					</StackPanel>
 
 					<!--  Album commands  -->
-					<StackPanel Grid.Row="5" Height="28" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="5" Height="28" Margin="0,0,0,3" HorizontalAlignment="Right" Orientation="Horizontal">
 
 						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
@@ -137,16 +160,19 @@
 							<Button Margin="0,0,5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayVolume}"/>
 							<ComboBox MinWidth="97" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
 						</StackPanel>
-						
-						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
+
+                        <Button Margin="0,0,5,0" Tag="dimmed" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
-						<Button Margin="0,0,8,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
+                        <Button Margin="0,0,5,0" Tag="dimmed" Padding="4,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
-						<Button Style="{StaticResource PathButtonStyle}"
-								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Properties" />
+                        <Button Tag="dimmed" Style="{StaticResource PathButtonStyle}"
+                                Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Structure" />
 					</StackPanel>
 				</Grid>
 			</Grid>
+            <i:Interaction.Behaviors>
+                <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+            </i:Interaction.Behaviors>
 		</Border>
 	</GroupBox>
 </UserControl>

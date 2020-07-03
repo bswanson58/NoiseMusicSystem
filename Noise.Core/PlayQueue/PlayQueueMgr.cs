@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
+using DynamicData;
+using Microsoft.Practices.ObjectBuilder2;
 using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -11,16 +14,47 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
+	internal class QueueItemState {
+        public	long			TrackId { get; }
+		public	eStrategySource	Strategy { get; }
+		public	bool			HasPlayed { get; }
+
+		public QueueItemState( PlayQueueTrack fromTrack ) {
+			if( fromTrack.IsTrack ) {
+				TrackId = fromTrack.Track.DbId;
+				Strategy = fromTrack.StrategySource;
+				HasPlayed = fromTrack.HasPlayed;
+            }
+        }
+    }
+
+    internal class PlayQueueState {
+		public	List<QueueItemState>	QueueList { get; }
+
+		public PlayQueueState( IEnumerable<PlayQueueTrack> queueList ) {
+			QueueList = new List<QueueItemState>();
+
+			queueList.ForEach( t => {
+				if( t.IsTrack ) {
+					QueueList.Add( new QueueItemState( t ));
+                }
+            });
+        }
+    }
+
 	internal class PlayQueueMgr : IPlayQueue, IRequireInitialization,
-								  IHandle<Events.TrackUserUpdate>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+								  IHandle<Events.TrackUserUpdate>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState> {
+        private const int								cStrategyAddTrackCount = 3;
+
 		private readonly IEventAggregator			    mEventAggregator;
+		private readonly ILibraryConfiguration			mLibraryConfiguration;
 		private readonly ILogPlayQueue				    mLog;
 		private readonly IArtistProvider			    mArtistProvider;
 		private readonly IAlbumProvider				    mAlbumProvider;
 		private readonly ITrackProvider				    mTrackProvider;
 		private readonly IStorageFileProvider		    mStorageFileProvider;
 		private readonly IStorageFolderSupport		    mStorageFolderSupport;
-		private readonly List<PlayQueueTrack>		    mPlayQueue;
+		private readonly SourceList<PlayQueueTrack>		mPlayList;
 		private readonly List<PlayQueueTrack>		    mPlayHistory;
 		private readonly List<IPlayQueueSupport>	    mPlayQueueSupporters; 
 		private readonly IPlayStrategyFactory		    mPlayStrategyFactory;
@@ -34,13 +68,15 @@ namespace Noise.Core.PlayQueue {
 		private bool								    mDeleteUnplayedTracks;
 		private int									    mMaximumPlayedTracks;
 
-        public  IEnumerable<PlayQueueTrack>             PlayList => mPlayQueue;
-        public  bool                                    IsQueueEmpty => mPlayQueue.Count == 0;
-        public  int                                     UnplayedTrackCount => ( from PlayQueueTrack track in mPlayQueue where !track.HasPlayed select track ).Count();
+        public	IObservable<IChangeSet<PlayQueueTrack>>	PlayQueue { get; }
+        public  IEnumerable<PlayQueueTrack>             PlayList => mPlayList.Items;
+		public	ISourceList<PlayQueueTrack>				PlaySource => mPlayList;
+        public  bool                                    IsQueueEmpty => mPlayList.Count == 0;
+        public  int                                     UnplayedTrackCount => ( from PlayQueueTrack track in PlayList where !track.HasPlayed select track ).Count();
         public  int                                     PlayedTrackCount => GetPlayedTrackList().Count();
-        public  bool                                    StrategyRequestsQueued => ( from PlayQueueTrack track in mPlayQueue where track.IsStrategyQueued select track ).Any();
+        public  bool                                    StrategyRequestsQueued => ( from PlayQueueTrack track in PlayList where track.IsStrategyQueued select track ).Any();
 
-		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, ILibraryConfiguration libraryConfiguration,
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							 IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory,
@@ -48,6 +84,7 @@ namespace Noise.Core.PlayQueue {
 							 IEnumerable<IPlayQueueSupport> playQueueSupporters, IPreferences preferences, ILogPlayQueue log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
+			mLibraryConfiguration = libraryConfiguration;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -57,7 +94,9 @@ namespace Noise.Core.PlayQueue {
             mExhaustedStrategyPlay = exhaustedStrategyPlay;
 			mPreferences = preferences;
 
-			mPlayQueue = new List<PlayQueueTrack>();
+            mPlayList = new SourceList<PlayQueueTrack>();
+			PlayQueue = mPlayList.Connect();
+
 			mPlayHistory = new List<PlayQueueTrack>();
 			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
@@ -83,12 +122,31 @@ namespace Noise.Core.PlayQueue {
 			mEventAggregator.Subscribe( this );
 		}
 
+		public void Handle( Events.LibraryUserState state ) {
+			if( state.IsRestoring ) {
+                if( state.State.ContainsKey( nameof( PlayQueueMgr ))) {
+                    if( state.State[nameof( PlayQueueMgr)] is PlayQueueState playState ) {
+                        playState.QueueList.ForEach( t => {
+                            mPlayList.Add( CreateTrack( t.TrackId, t.Strategy, t.HasPlayed ));
+                        });
+
+						FirePlayQueueChanged( true );
+                    }
+                }
+            }
+			else {
+                state.State.Add( nameof( PlayQueueMgr ), new PlayQueueState( PlayList ));
+            }
+        }
+
 		public void Handle( Events.DatabaseOpened args ) {
 			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
 			try {
-                SetExhaustedStrategy( preferences.ExhaustedStrategySpecification );
-				SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
+				if( mLibraryConfiguration.Current != null ) {
+                    SetExhaustedStrategy( mLibraryConfiguration.Current.ExhaustedStrategySpecification );
+                    SetPlayStrategy( mLibraryConfiguration.Current.PlayStrategy, PlayStrategyParametersFactory.FromString( mLibraryConfiguration.Current.PlayStrategyParameters ), false );
+                }
 
 				mDeleteUnplayedTracks = preferences.DeletePlayedTracks;
 				mMaximumPlayedTracks = preferences.MaximumPlayedTracks;
@@ -101,6 +159,20 @@ namespace Noise.Core.PlayQueue {
 		public void Shutdown() {
 			mEventAggregator.Unsubscribe( this );
 		}
+
+        public int IndexOfNextInsert {
+            get {
+                var retValue = 0;
+
+                if( PlayList.Any()) {
+                    var	firstStrategyTrack = PlayList.FirstOrDefault( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
+
+                    retValue = firstStrategyTrack != null ? PlayList.IndexOf( firstStrategyTrack ) : PlayList.Count();
+                }
+
+                return retValue;
+            }
+        }
 
 		public void Add( DbTrack track ) {
 			AddTrack( track, eStrategySource.User );
@@ -116,6 +188,12 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
+		private void StrategyAdd( IEnumerable<PlayQueueTrack> trackList ) {
+			trackList.ForEach( AddTrack );
+
+            FirePlayQueueChanged();
+        }
+
 		public void StrategyAdd( DbTrack track ) {
 			AddTrack( track, eStrategySource.ExhaustedStrategy );
 
@@ -123,59 +201,75 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private string ResolvePath( StorageFile file ) {
-			return ( mStorageFolderSupport.GetPath( file ));
+			return( mStorageFolderSupport.GetPath( file ));
 		}
 
 		private StorageFile ResolveStorageFile( DbTrack track ) {
 			return( mStorageFileProvider.GetPhysicalFile( track ));
 		}
 
-		private void AddTrack( DbTrack track, eStrategySource strategySource ) {
-			var album = mAlbumProvider.GetAlbumForTrack( track );
+        private void AddTrack( DbTrack track, eStrategySource strategySource ) {
+            AddTrack( CreateTrack( track, strategySource ));
+        }
 
-			if( album != null ) {
-				var artist = mArtistProvider.GetArtistForAlbum( album );
+		private void AddTrack( PlayQueueTrack track ) {
+            // Place any user selected tracks before any unplayed strategy queued tracks.
+            if( track.StrategySource == eStrategySource.User ) {
+                var	firstStrategyTrack = PlayList.FirstOrDefault( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
 
-				if( artist != null ) {
-					var newTrack = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, strategySource );
+                if( firstStrategyTrack != null ) {
+                    mPlayList.Insert( PlayList.IndexOf( firstStrategyTrack ), track );
+                }
+                else {
+                    mPlayList.Add( track );
+                }
+            }
+            else {
+                mPlayList.Add( track );
+            }
 
-					// Place any user selected tracks before any unplayed strategy queued tracks.
-					if( strategySource == eStrategySource.User ) {
-						var	firstStrategyTrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
-						if( firstStrategyTrack != null ) {
-							mPlayQueue.Insert( mPlayQueue.IndexOf( firstStrategyTrack ), newTrack );
-						}
-						else {
-							mPlayQueue.Add( newTrack );
-						}
-					}
-					else {
-						mPlayQueue.Add( newTrack );
-					}
+            mLog.AddedTrack( track );
+        }
 
-					mLog.AddedTrack( newTrack );
-				}
-			}
-		}
+		private IEnumerable<PlayQueueTrack> CreateTrackList( IEnumerable<DbTrack> trackList, eStrategySource strategy ) {
+			var retValue = new List<PlayQueueTrack>();
+
+			foreach( var track in trackList ) {
+				retValue.Add( CreateTrack( track, strategy ));
+            }
+			return retValue;
+        }
+
+        private PlayQueueTrack CreateTrack( long trackId, eStrategySource strategy, bool hasPlayed = false ) {
+            return CreateTrack( mTrackProvider.GetTrack( trackId ), strategy, hasPlayed );
+        }
+
+		private PlayQueueTrack CreateTrack( DbTrack track, eStrategySource strategy, bool hasPlayed = false ) {
+			var retValue = default( PlayQueueTrack );
+
+			if( track != null ) {
+				var album = mAlbumProvider.GetAlbum( track.Album );
+				var artist = mArtistProvider.GetArtist( track.Artist );
+
+				if(( album != null ) &&
+                   ( artist != null )) {
+					retValue = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, strategy ) {  HasPlayed = hasPlayed };
+                }
+            }
+
+			return retValue;
+        }
 
 		public void StrategyAdd( DbTrack track, PlayQueueTrack afterTrack ) {
 			if(( track != null ) &&
 			   ( afterTrack != null )) { 
-				var album = mAlbumProvider.GetAlbumForTrack( track );
+				var newTrack = CreateTrack( track, eStrategySource.PlayStrategy );
+				var trackIndex = PlayList.IndexOf( afterTrack );
 
-				if( album != null ) {
-					var artist = mArtistProvider.GetArtistForAlbum( album );
+				mPlayList.Insert( trackIndex + 1, newTrack );
 
-					if( artist != null ) {
-						var newTrack = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, eStrategySource.PlayStrategy );
-						var trackIndex = mPlayQueue.IndexOf( afterTrack );
-
-						mPlayQueue.Insert( trackIndex + 1, newTrack );
-
-						FirePlayQueueChanged();
-						mLog.AddedTrack( newTrack );
-					}
-				}
+				FirePlayQueueChanged();
+				mLog.AddedTrack( newTrack );
 			}
 		}
 
@@ -186,48 +280,71 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddAlbum( DbAlbum album ) {
-			using( var tracks = mTrackProvider.GetTrackList( album )) {
-				var firstTrack = true;
-				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List orderby track.VolumeName, track.TrackNumber select track ).ToList();
-
-				mAddingMoreTracks = sortedList.Count > 2;
-
-				foreach( var track in sortedList ) {
-					AddTrack( track, eStrategySource.User );
-
-					if( firstTrack ) {
-						FirePlayQueueChanged();
-
-						firstTrack = false;
-					}
+			var task = Task.Run( () => {
+                using( var tracks = mTrackProvider.GetTrackList( album )) {
+                    var sortedList = new List<DbTrack>( from DbTrack track in tracks.List orderby track.VolumeName, track.TrackNumber select track ).ToList();
+                    
+					return CreateTrackList( sortedList, eStrategySource.User );
 				}
+            });
 
-				mAddingMoreTracks = false;
-			}
+			try {
+				var	trackList = task.Result.ToList();
+                var firstTrack = true;
+
+                mAddingMoreTracks = trackList.Count > 2;
+
+                foreach( var track in trackList ) {
+                    AddTrack( track );
+
+                    if( firstTrack ) {
+                        FirePlayQueueChanged();
+
+                        firstTrack = false;
+                    }
+                }
+
+                mAddingMoreTracks = false;
+                FirePlayQueueChanged();
+            }
+			catch( Exception ex ) {
+				mLog.LogQueueException( "Adding Album", ex );
+            }
 		}
 
 		public void Add( DbAlbum album, string volumeName ) {
-			using( var tracks = mTrackProvider.GetTrackList( album )) {
-				var firstTrack = true;
-				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
-													where string.Equals( track.VolumeName, volumeName )
-													orderby track.VolumeName, track.TrackNumber select track ).ToList();
+            var task = Task.Run( () => {
+                using( var tracks = mTrackProvider.GetTrackList( album )) {
+                    var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
+                                                        where string.Equals( track.VolumeName, volumeName )
+                                                        orderby track.VolumeName, track.TrackNumber select track ).ToList();
+                    
+                    return CreateTrackList( sortedList, eStrategySource.User );
+                }
+            });
 
-				mAddingMoreTracks = sortedList.Count > 2;
+            try {
+                var	trackList = task.Result.ToList();
+                var firstTrack = true;
 
-				foreach( var track in sortedList ) {
-					AddTrack( track, eStrategySource.User );
+                mAddingMoreTracks = trackList.Count > 2;
 
-					if( firstTrack ) {
-						FirePlayQueueChanged();
+                foreach( var track in trackList ) {
+                    AddTrack( track );
 
-						firstTrack = false;
-					}
-				}
+                    if( firstTrack ) {
+                        FirePlayQueueChanged();
 
-				mAddingMoreTracks = false;
-				FirePlayQueueChanged();
-			}
+                        firstTrack = false;
+                    }
+                }
+
+                mAddingMoreTracks = false;
+                FirePlayQueueChanged();
+            }
+            catch( Exception ex ) {
+                mLog.LogQueueException( "Adding Volume of Album", ex );
+            }
 		}
 
 		public void Add( DbArtist artist ) {
@@ -241,15 +358,15 @@ namespace Noise.Core.PlayQueue {
 		public void Add( DbInternetStream stream ) {
 			var newTrack = new PlayQueueTrack( stream );
 
-			mPlayQueue.Add( newTrack );
+			mPlayList.Add( newTrack );
 			mLog.AddedTrack( newTrack );
 
 			FirePlayQueueChanged();
 		}
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
-			foreach( var queueTrack in mPlayQueue.Where( queueTrack => ( queueTrack.Track != null ) &&
-																	   ( queueTrack.Track.DbId == eventArgs.Track.DbId ))) {
+			foreach( var queueTrack in PlayList.Where( queueTrack => ( queueTrack.Track != null ) && 
+                                                                     ( queueTrack.Track.DbId == eventArgs.Track.DbId ))) {
 				queueTrack.UpdateTrack( eventArgs.Track );
 
 				mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackUpdated( queueTrack ));
@@ -261,7 +378,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void ClearQueue() {
-			mPlayQueue.Clear();
+			mPlayList.Clear();
 			mPlayHistory.Clear();
 			PlayingTrackReplayCount = 0;
 			mLog.ClearedQueue();
@@ -270,11 +387,11 @@ namespace Noise.Core.PlayQueue {
 		}
 
         public bool IsTrackQueued( DbTrack track ) {
-			return( mPlayQueue.Exists( item => item.Track.DbId == track.DbId ));
+			return( PlayList.Any( item => item.Track.DbId == track.DbId ));
 		}
 
 		public void ReplayQueue() {
-			foreach( var track in mPlayQueue ) {
+			foreach( var track in PlayList ) {
 				if(!track.IsPlaying ) {
 					track.HasPlayed = false;
 
@@ -287,7 +404,7 @@ namespace Noise.Core.PlayQueue {
 
 		public bool ReplayTrack( long itemId ) {
 			var retValue = false;
-			var	track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+			var	track = PlayList.FirstOrDefault( item => item.Uid == itemId );
 
 			if( track != null ) {
 				track.HasPlayed = false;
@@ -302,7 +419,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 	    public void PromoteTrackFromStrategy( PlayQueueTrack track ) {
-            var queuedTrack = mPlayQueue.FirstOrDefault( t => t.Uid.Equals( track.Uid ));
+            var queuedTrack = PlayList.FirstOrDefault( t => t.Uid.Equals( track.Uid ));
 
             queuedTrack?.PromoteStrategy();
             FirePlayQueueChanged();
@@ -310,7 +427,7 @@ namespace Noise.Core.PlayQueue {
 
 	    public bool RemoveTrack( long itemId ) {
 			var retValue = false;
-			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+			var track = PlayList.FirstOrDefault( item => item.Uid == itemId );
 
 			if( track != null ) {
 				RemoveTrack( track );
@@ -323,10 +440,10 @@ namespace Noise.Core.PlayQueue {
 
 		public void RemoveTrack( PlayQueueTrack track ) {
 			if( track != null ) {
-				var	queuedTrack= mPlayQueue.Find( item => item.Uid.Equals( track.Uid ));
+				var	queuedTrack= PlayList.FirstOrDefault( item => item.Uid.Equals( track.Uid ));
 
 				if( queuedTrack != null ) {
-					mPlayQueue.Remove(  queuedTrack );
+					mPlayList.Remove(  queuedTrack );
 					mLog.RemovedTrack( queuedTrack );
 				}
 
@@ -341,10 +458,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void RemovePlayedTracks() {
-			var removeList = ( from track in mPlayQueue where track.HasPlayed && !track.IsPlaying select  track ).ToList();
+			var removeList = ( from track in PlayList where track.HasPlayed && !track.IsPlaying select  track ).ToList();
 
 			foreach( var track in removeList ) {
-				mPlayQueue.Remove( track );
+				mPlayList.Remove( track );
 				mLog.RemovedTrack( track );
 			}
 
@@ -354,16 +471,16 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void	ReorderQueueItem( int fromIndex, int toIndex ) {
-			if(( fromIndex < mPlayQueue.Count ) &&
-			   ( toIndex < mPlayQueue.Count )) {
-				var track = mPlayQueue[fromIndex];
+			if(( fromIndex < mPlayList.Count ) &&
+			   ( toIndex < mPlayList.Count )) {
+				var track = PlayList.ElementAt( fromIndex );
 
-				mPlayQueue.Remove( track );
-				mPlayQueue.Insert( toIndex, track );
+				mPlayList.Remove( track );
+				mPlayList.Insert( toIndex, track );
 
 				var playingTrack = PlayingTrack;
 				if( playingTrack != null ) {
-					var playingIndex = mPlayQueue.IndexOf( playingTrack );
+					var playingIndex = PlayList.IndexOf( playingTrack );
 
 					if( playingIndex > toIndex ) {
 						if(!track.HasPlayed ) {
@@ -380,8 +497,8 @@ namespace Noise.Core.PlayQueue {
 						}
 					}
 					if( playingIndex == toIndex ) {
-						foreach( var queuedTrack in mPlayQueue ) {
-							queuedTrack.HasPlayed = mPlayQueue.IndexOf( queuedTrack ) < playingIndex;
+						foreach( var queuedTrack in PlayList ) {
+							queuedTrack.HasPlayed = PlayList.IndexOf( queuedTrack ) < playingIndex;
 						}
 					}
 				}
@@ -391,7 +508,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
         private IEnumerable<PlayQueueTrack> GetPlayedTrackList() {
-			return( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track );
+			return( from PlayQueueTrack track in PlayList where track.HasPlayed && !track.IsPlaying select track );
 		}
 
         public int PlayingTrackReplayCount {
@@ -419,7 +536,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public bool CanStartPlayStrategy =>
-            (!mPlayQueue.Any()) &&
+            (!PlayList.Any()) &&
             ( mExhaustedStrategyPlay.CanQueueTracks());
 
         public PlayQueueTrack PlayNextTrack() {
@@ -520,7 +637,7 @@ namespace Noise.Core.PlayQueue {
 
 						if(( retValue == null ) &&
 						   (!mAddingMoreTracks ) &&
-						   ( mPlayQueue.Count > 0 )) {
+						   ( mPlayList.Count > 0 )) {
 							if( SelectExhaustedTracks()) {
 								retValue = mPlayStrategy.NextTrack();
 							}
@@ -533,26 +650,33 @@ namespace Noise.Core.PlayQueue {
 		}
 
         private bool SelectExhaustedTracks() {
-            const int suggestionCount = 3;
-            var retValue = false;
+			var retValue = false;
 
-            if( UnplayedTrackCount < suggestionCount ) {
-                var tracks = mExhaustedStrategyPlay.SelectTracks( this, suggestionCount - UnplayedTrackCount );
+			if( UnplayedTrackCount < cStrategyAddTrackCount ) {
+                var task = Task.Run( 
+                    () => CreateTrackList( mExhaustedStrategyPlay.SelectTracks( this, cStrategyAddTrackCount - UnplayedTrackCount ), eStrategySource.ExhaustedStrategy ));
 
-                foreach( var track in tracks ) {
-                    StrategyAdd( track );
+                try {
+                    var trackList = task.Result.ToList();
 
-                    retValue = true;
+                    if( trackList.Any()) {
+                        StrategyAdd( trackList );
+
+                        retValue = true;
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogQueueException( "Selecting exhausted strategy tracks", ex );
                 }
             }
 
-            return retValue;
+			return retValue;
         }
 
 		public bool CanPlayNextTrack() {
 			return(!mStopAtEndOfTrack && 
-	              ( mPlayQueue.FirstOrDefault( track => (!track.IsPlaying ) && 
-    		                                            (!track.HasPlayed )) != null ));
+	              ( PlayList.FirstOrDefault( track => (!track.IsPlaying ) && 
+                                                      (!track.HasPlayed )) != null ));
 		}
 
 		public PlayQueueTrack PlayPreviousTrack() {
@@ -579,7 +703,7 @@ namespace Noise.Core.PlayQueue {
 
 		public bool ContinuePlayFromTrack( long itemId ) {
 			var retValue = false;
-			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+			var track = PlayList.FirstOrDefault( item => item.Uid == itemId );
 
 			if( track != null ) {
 				ContinuePlayFromTrack( track );
@@ -593,10 +717,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void ContinuePlayFromTrack( PlayQueueTrack track ) {
-			if( mPlayQueue.Contains( track )) {
+			if( PlayList.Contains( track )) {
 				bool	hasPlayedSetting = true;
 
-				foreach( var t in mPlayQueue ) {
+				foreach( var t in PlayList ) {
 					if( t == track ) {
 						hasPlayedSetting = false;
 					}
@@ -629,13 +753,13 @@ namespace Noise.Core.PlayQueue {
 		}
 			
 		public PlayQueueTrack PlayingTrack {
-			get { return( mPlayQueue.FirstOrDefault( track => ( track.IsPlaying ))); }
+			get { return( PlayList.FirstOrDefault( track => ( track.IsPlaying ))); }
 			set {
-				var currentTrack = mPlayQueue.FirstOrDefault( track => track.IsPlaying );
+				var currentTrack = PlayList.FirstOrDefault( track => track.IsPlaying );
 
 				if(( currentTrack != value ) &&
 				   ( value != null ) &&
-				   ( mPlayQueue.IndexOf( value ) != -1 )) {
+				   ( PlayList.IndexOf( value ) != -1 )) {
 					if( currentTrack != null ) {
 						currentTrack.IsPlaying = false;
 						currentTrack.HasPlayed = true;
@@ -654,16 +778,23 @@ namespace Noise.Core.PlayQueue {
 		public IPlayStrategy PlayStrategy => ( mPlayStrategy );
 
         public void SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters ) {
+			SetPlayStrategy( strategyId, parameters, true );
+        }
+
+        private void SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters, bool updateConfiguration ) {
 			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( strategyId );
 
             mPlayStrategy?.Initialize( this, parameters );
 
-            var preferences = mPreferences.Load<NoiseCorePreferences>();
+			if(( updateConfiguration ) &&
+               ( mLibraryConfiguration.Current != null )) {
+                mLibraryConfiguration.Current.PlayStrategy = strategyId;
+                mLibraryConfiguration.Current.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
 
-			preferences.PlayStrategy = strategyId;
-			preferences.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
-			mPreferences.Save( preferences );
+				mLibraryConfiguration.UpdateConfiguration( mLibraryConfiguration.Current );
+            }
 
+            mEventAggregator.PublishOnUIThread( new Events.PlayStrategyChanged());
 			mLog.StrategySet( strategyId, parameters );
 
 			Condition.Requires( mPlayStrategy ).IsNotNull();
@@ -676,10 +807,13 @@ namespace Noise.Core.PlayQueue {
             set {
                 SetExhaustedStrategy( value );
 
-                var preferences = mPreferences.Load<NoiseCorePreferences>();
+				if( mLibraryConfiguration.Current != null ) {
+                    mLibraryConfiguration.Current.ExhaustedStrategySpecification = mExhaustedStrategyPlay.StrategySpecification;
 
-                preferences.ExhaustedStrategySpecification = mExhaustedStrategyPlay.StrategySpecification;
-                mPreferences.Save( preferences );
+					mLibraryConfiguration.UpdateConfiguration( mLibraryConfiguration.Current );
+                }
+
+				mEventAggregator.PublishOnUIThread( new Events.PlayStrategyChanged());
             }
         }
 
@@ -687,8 +821,8 @@ namespace Noise.Core.PlayQueue {
             mExhaustedStrategyPlay.StrategySpecification = strategy;
         }
 
-        private void FirePlayQueueChanged() {
-			mEventAggregator.PublishOnUIThread( new Events.PlayQueueChanged( this ));
+        private void FirePlayQueueChanged( bool queueRestored = false ) {
+			mEventAggregator.PublishOnUIThread( new Events.PlayQueueChanged( this, queueRestored ));
 		}
 	}
 }

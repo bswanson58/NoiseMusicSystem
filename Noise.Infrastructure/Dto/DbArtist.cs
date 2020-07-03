@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("Artist = {Name}")]
+	[DebuggerDisplay("Artist = {" + nameof(Name) + "}")]
 	public class DbArtist : DbBase, IUserSettings, IVersionable {
 		public string			Name { get; set; }
 		public long				CalculatedGenre { get; set; }
@@ -33,24 +33,20 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public long Genre {
-			get{ return( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
-			set{ UserGenre = value; }
-		}
+			get => ( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre );
+            set => UserGenre = value;
+        }
 
 		public Int16 Rating {
-			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
-			set{ UserRating = value; }
-		}
+			get => ( IsUserRating ? UserRating : CalculatedRating );
+            set => UserRating = value;
+        }
 
-		public bool IsUserRating {
-			get{ return( UserRating != 0 ); }
-		}
+		public bool IsUserRating => ( UserRating != 0 );
 
-		public DateTime DateAdded {
-			get{ return( new DateTime( DateAddedTicks )); }
-		}
+        public DateTime DateAdded => ( new DateTime( DateAddedTicks ));
 
-		public void UpdateLastChange() {
+        public void UpdateLastChange() {
 			LastChangeTicks = DateTime.Now.Ticks;
 		}
 
@@ -73,7 +69,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "Artist \"{0}\", Id:{1}", Name, DbId ));
+			return( $"Artist \"{Name}\", Id:{DbId}" );
 		}
 	}
 }

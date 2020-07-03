@@ -25,7 +25,9 @@ namespace Noise.Core.BackgroundTasks {
 		private List<long>								mArtistList;
 		private IEnumerator<long>						mArtistEnum;
 
-		public SearchBuilder( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
+        public  string                                  TaskId => "Task_SearchBuilder";
+
+        public SearchBuilder( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
 							  ITrackProvider trackProvider, ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider,
 							  IMetadataManager metadataManager, ISearchProvider searchProvider,
 							  ILogBackgroundTasks log, ILogUserStatus userStatus ) {
@@ -43,19 +45,13 @@ namespace Noise.Core.BackgroundTasks {
 			mEventAggregator.Subscribe( this );
 		}
 
-		public string TaskId {
-			get { return( "Task_SearchBuilder" ); }
-		}
-
-		public void Handle( Events.DatabaseOpened args ) {
+        public void Handle( Events.DatabaseOpened args ) {
 			InitializeLists();
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			if( mArtistList != null ) {
-				mArtistList.Clear();
-			}
-		}
+            mArtistList?.Clear();
+        }
 
 		private void InitializeLists() {
 			using( var artistList = mArtistProvider.GetArtistList()) {

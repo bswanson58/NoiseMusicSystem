@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Album4Matter.Views.StructureWorkshopView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Views="clr-namespace:Album4Matter.Views"
+             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MaxWidth="500"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Views:ItemInputView Grid.Row="0" Margin="0,0,5,0"/>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Views:StructureBuilderView Grid.Row="0" Margin="0,0,5,0"/>
+            <Views:ItemInspectionView Grid.Row="1" DataContext="{Binding InspectionViewModel}"/>
+        </Grid>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Views:FinalStructureView Grid.Row="0" DataContext="{Binding FinalStructureViewModel}"/>
+            <Button Grid.Row="1" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Left" Margin="10,0" Content="Clear" Command="{Binding ClearMetadata}"/>
+            <Button Grid.Row="1" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Margin="0,0,15,0" Content="Create Album" Command="{Binding BuildAlbum}"/>
+        </Grid>
+    </Grid>
+</UserControl>

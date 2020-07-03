@@ -1,12 +1,16 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ArtistTracksView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:dto="clr-namespace:Noise.UI.Dto"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
-			 d:DesignHeight="300"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+			 xmlns:elementMover="clr-namespace:Noise.UI.Behaviours.ElementMover"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+			 d:DataContext="{d:DesignInstance viewModels:ArtistTracksViewModel, IsDesignTimeCreatable=False}"
+			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
 
@@ -15,46 +19,78 @@
 	</UserControl.DataContext>
 
 	<UserControl.Resources>
-		<sys:Int32 x:Key="valueOfOne">1</sys:Int32>
+        <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+		
+        <DataTemplate x:Key="AlbumTrackTemplate" DataType="dto:UiAlbumTrack">
+			<Grid Margin="15,0,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="33"/>
+					<ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-		<Style x:Key="NonScrollingTreeView" TargetType="{x:Type TreeView}">
-			<Setter Property="BorderThickness" Value="1" />
-			<Setter Property="Padding" Value="1" />
-			<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-			<Setter Property="ScrollViewer.PanningMode" Value="Both" />
-			<Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-			<Setter Property="VerticalContentAlignment" Value="Center" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type TreeView}">
-						<Border x:Name="Bd"
-								BorderBrush="{TemplateBinding BorderBrush}"
-								BorderThickness="{TemplateBinding BorderThickness}"
-								SnapsToDevicePixels="true">
-							<ItemsPresenter />
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsEnabled" Value="false">
-								<Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-			<Style.Triggers>
-				<Trigger Property="VirtualizingStackPanel.IsVirtualizing" Value="true">
-					<Setter Property="ItemsPanel">
-						<Setter.Value>
-							<ItemsPanelTemplate>
-								<VirtualizingStackPanel />
-							</ItemsPanelTemplate>
-						</Setter.Value>
-					</Setter>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
-	</UserControl.Resources>
+                <Button Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
+                <TextBlock Grid.Column="1" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Album.Name}"
+                           reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+                <ContentPresenter x:Name="Rating" Grid.Column="2" Content="{Binding Track}" Opacity="0.7" ContentTemplate="{StaticResource ReadOnlyRating}"/>
+                <TextBlock Grid.Column="3" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" 
+                           TextAlignment="Right" Margin="3,0,8,0"/>
+            </Grid>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Key="ArtistTrackTemplate" DataType="dto:UiArtistTrackNode" 
+                                  ItemsSource="{Binding Children}" ItemTemplate="{StaticResource AlbumTrackTemplate}">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+				<Grid Grid.Row="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="33"/>
+						<ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="PlayButton" Grid.Column="0" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" Visibility="Hidden"/>
+                    <TextBlock Grid.Column="1" Style="{StaticResource ExplorerTitleStyle}" Text="{Binding TrackName}"
+                               reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                        <i:Interaction.Behaviors>
+                            <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding TrackName}" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
+                </Grid>
+
+				<Grid Grid.Row="1" Margin="60,0,0,3">
+					<Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Opacity="0.7" Text="{Binding AlbumName}"
+                               reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                    <ContentPresenter x:Name="FirstRating" Grid.Column="1" Opacity="0.7" Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
+                    <TextBlock x:Name="FirstDuration" Grid.Column="2" Style="{StaticResource ListViewTextStyle}" Opacity="0.7"
+                               Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="3,0,8,0"/>
+                </Grid>
+            </Grid>
+
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsPlayable}" Value="True">
+					<Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+				<DataTrigger Binding="{Binding MultipleAlbums}" Value="True">
+                    <Setter TargetName="FirstRating" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="FirstDuration" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
 
 	<GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" All Artist Tracks ">
 		<Grid>
@@ -64,141 +100,35 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Grid Grid.Row="0" Grid.IsSharedSizeScope="True"
-				  Visibility="{Binding Path=TracksValid, Converter={StaticResource BooleanVisibilityConverter}}">
-				<Grid.RowDefinitions>
-					<!--  Header row  -->
-					<RowDefinition Height="Auto" />
-					<!--  Row for data  -->
-					<RowDefinition />
-				</Grid.RowDefinitions>
+			<TreeView Grid.Row="0" ItemsSource="{Binding TrackList}" ItemTemplate="{StaticResource ArtistTrackTemplate}" ItemContainerStyle="{StaticResource IsExpandedBindingStyle}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
 
-				<Grid.Resources>
-					<!--  Template for information at all levels  -->
-					<HierarchicalDataTemplate DataType="{x:Type Dto:UiArtistTrackNode}" ItemsSource="{Binding Path=Children}">
-						<Grid>
-							<!--  All column widths are shared except for column 2 which is sized to compensate for different indentation at each level  -->
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition SharedSizeGroup="playColumn" />
-								<ColumnDefinition SharedSizeGroup="trackNameColumn" />
-								<ColumnDefinition />
-								<ColumnDefinition SharedSizeGroup="albumNameColumn" />
-							</Grid.ColumnDefinitions>
+            <Rectangle Grid.Row="1" Margin="5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
-							<Button Grid.Column="0"
-									Margin="0,2"
-									Command="{Binding Path=Play}"
-									Style="{StaticResource PlayButtonStyle}"
-									Visibility="{Binding Path=IsPlayable,
-														 Converter={StaticResource BooleanVisibilityConverter}}" />
+            <Grid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="1"
-									   VerticalAlignment="Center"
-									   Text="{Binding Path=Track.Name}" />
+                <StackPanel Grid.Column="0" Margin="5" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" unique of " />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" tracks from " />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" albums." />
+                </StackPanel>
 
-							<Rectangle Grid.Column="2">
-								<Rectangle.Width>
-									<MultiBinding Converter="{StaticResource LevelConverter}">
-										<Binding Path="Level" />
-										<Binding ElementName="treeViewItemToMeasure" Path="ActualWidth" />
-									</MultiBinding>
-								</Rectangle.Width>
-							</Rectangle>
-
-							<TextBlock Grid.Column="3"
-									   VerticalAlignment="Center"
-									   Text="{Binding Path=AlbumName}" />
-						</Grid>
-					</HierarchicalDataTemplate>
-				</Grid.Resources>
-
-				<!--  Tree view with one item for the header row  -->
-				<TreeView Grid.Row="0"
-						  BorderThickness="0"
-						  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-					<TreeViewItem>
-						<TreeViewItem.Header>
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="27" SharedSizeGroup="playColumn" />
-									<ColumnDefinition MinWidth="300" SharedSizeGroup="trackNameColumn" />
-									<ColumnDefinition />
-									<ColumnDefinition MinWidth="300" SharedSizeGroup="albumNameColumn" />
-								</Grid.ColumnDefinitions>
-
-								<Border Grid.Column="0"
-										BorderThickness="1">
-									<TextBlock HorizontalAlignment="Center"
-											   VerticalAlignment="Center"
-											   FontFamily="WebDings"
-											   Text="4" />
-								</Border>
-
-								<Border Grid.Column="1"
-										Grid.ColumnSpan="2"
-										Margin="-1,0,0,0"
-										BorderThickness="1">
-									<TextBlock HorizontalAlignment="Center"
-											   VerticalAlignment="Center"
-											   Text="Track Name" />
-								</Border>
-
-								<TreeViewItem Grid.Column="2">
-									<TreeViewItem.Header>
-										<TreeViewItem Name="treeViewItemToMeasure" Padding="0" />
-									</TreeViewItem.Header>
-
-									<!--  Set the width of Column 2 to the same width as the top level in the data  -->
-									<TreeViewItem.Width>
-										<MultiBinding Converter="{StaticResource LevelConverter}">
-											<Binding Source="{StaticResource valueOfOne}" />
-											<Binding ElementName="treeViewItemToMeasure" Path="ActualWidth" />
-										</MultiBinding>
-									</TreeViewItem.Width>
-								</TreeViewItem>
-
-								<Border Grid.Column="3"
-										Margin="-1,0,0,0"
-										BorderThickness="1">
-									<TextBlock HorizontalAlignment="Center"
-											   VerticalAlignment="Center"
-											   Text="Album Name" />
-								</Border>
-							</Grid>
-						</TreeViewItem.Header>
-					</TreeViewItem>
-				</TreeView>
-
-				<!--  Tree view that will display hierarchical data rows  -->
-				<ScrollViewer Grid.Row="1"
-							  Behaviours:ScrollViewerFirstItemVisible.ChangeTrigger="{Binding Path=TracksValid,
-																							  Mode=OneWay}"
-							  HorizontalScrollBarVisibility="Auto"
-							  VerticalScrollBarVisibility="Auto">
-					<TreeView BorderThickness="0"
-							  ItemsSource="{Binding Path=TrackList}"
-							  Style="{DynamicResource NonScrollingTreeView}"/>
-				</ScrollViewer>
-			</Grid>
-
-			<StackPanel Grid.Row="1"
-						Margin="5,5,5,3"
-						Orientation="Vertical">
-				<Rectangle Height="1" StrokeThickness="0" />
-				<Rectangle Height="1" Fill="LightGray" StrokeThickness="0" />
-			</StackPanel>
-
-			<StackPanel Grid.Row="2"
-						Margin="0,0,23,0"
-						HorizontalAlignment="Right"
-						Orientation="Horizontal">
-				<TextBlock Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
-				<TextBlock Text=" unique of " />
-				<TextBlock Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
-				<TextBlock Text=" tracks from " />
-				<TextBlock Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
-				<TextBlock Text=" albums." />
-			</StackPanel>
+                <TextBox Grid.Column="2" Tag="dimOnClear" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         behaviours:TextBoxHelper.Watermark="enter track filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
 		</Grid>
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>

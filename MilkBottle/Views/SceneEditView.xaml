@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="MilkBottle.Views.SceneEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:SceneEditViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="800" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" IsHidden="False" TriggerValue="False"/>
+
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <DataTemplate x:Key="PresetListTemplate" DataType="dto:PresetList">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SceneTemplate" DataType="dto:UiScene">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="(default)"
+                               Visibility="{Binding IsDefault, Converter={StaticResource CollapseIfFalse}}"/>
+                </StackPanel>
+
+                <Button x:Name="Edit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
+                        Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Scene Name" />
+                <Button x:Name="Delete" Grid.Column="2" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Delete}" Content="{StaticResource Path_Delete}" ToolTip="Delete Scene" />
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Delete" Property="Opacity" Value="1"/>
+                    <Setter TargetName="Edit" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Header=" Scene List ">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListBox Grid.Row="0" ItemsSource="{Binding Scenes}" ItemTemplate="{StaticResource SceneTemplate}" SelectedItem="{Binding CurrentScene}"/>
+
+                <CheckBox Grid.Row="1" Margin="10,0,0,0" VerticalAlignment="Bottom" Content="Is Default Scene" IsChecked="{Binding IsDefaultScene}"/>
+
+                <StackPanel Grid.Row="1" Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="New Scene..." Command="{Binding NewScene}"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="0,5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Scene Properties">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Source -->
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,5" Orientation="Horizontal">
+                        <TextBlock MinWidth="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
+                        <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding SceneSources}" DisplayMemberPath="Title" SelectedItem="{Binding SelectedSource}"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Visibility="{Binding IsPresetSource, Converter={StaticResource CollapseIfFalse}}">
+                        <TextBlock Margin="55,0,30,0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding CurrentPresetName}"/>
+                        <Button HorizontalAlignment="Right" Style="{StaticResource ControllerButtonStyle}" Padding="4"
+                                Content="{StaticResource Path_Select}" Command="{Binding SelectPreset}" ToolTip="Select An Individual Preset"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Visibility="{Binding IsListSource, Converter={StaticResource CollapseIfFalse}}">
+                        <ComboBox Margin="55,0,0,0" Width="250" HorizontalAlignment="Left" ItemsSource="{Binding PresetLists}" 
+                                  SelectedItem="{Binding SelectedList}" ItemTemplate="{StaticResource PresetListTemplate}"/>
+                    </Grid>
+                </Grid>
+
+                <!-- Cycling / Duration -->
+                <Grid Grid.Row="1" Margin="0,10,0,0" IsEnabled="{Binding CanCycle}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock MinWidth="50" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Cycling:"/>
+                        <ComboBox Width="150" ItemsSource="{Binding PresetCycling}" DisplayMemberPath="Title" SelectedItem="{Binding CurrentCycling}"/>
+                        <Slider Margin="10,0,0,0" VerticalAlignment="Center" Width="150" 
+                                Minimum="{Binding MinimumCycleDuration}" Maximum="{Binding MaximumCycleDuration}" Value="{Binding CurrentCycleDuration}"/>
+                        <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding CycleDurationLegend}"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Preset Overlap -->
+                <StackPanel Grid.Row="2" Margin="0,15,0,0" Orientation="Horizontal" IsEnabled="{Binding CanOverlap}">
+                    <TextBlock MinWidth="50" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="0,0,5,0" Text="Overlap:"/>
+                    <Slider Width="150" Minimum="{Binding MinimumPresetOverlap}" Maximum="{Binding MaximumPresetOverlap}" Value="{Binding CurrentPresetOverlap}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding PresetOverlapLegend}"/>
+                </StackPanel>
+
+                <!-- Scene Selection -->
+                <Grid Grid.Row="3" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,10,0,5" Style="{StaticResource ControlTitleStyle}"
+                               Text="Scene Selection: (separate multiple values with pipe (|))"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Artist Names:"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding ArtistNames, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Album Names:"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding AlbumNames, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Track Names:"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding TrackNames, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Genres:"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding Genres, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Tags:"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Years:"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding Years, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Hours:"/>
+                    <TextBox Grid.Row="7" Grid.Column="1" Margin="5" TextWrapping="WrapWithOverflow" Text="{Binding Hours, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" Margin="0,4" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Favorite:"/>
+                    <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <CheckBox Margin="5,0,0,0" Content="Artist" IsChecked="{Binding IsFavoriteArtist}"/>
+                        <CheckBox Margin="15,0,0,0" Content="Album" IsChecked="{Binding IsFavoriteAlbum}"/>
+                        <CheckBox Margin="15,0,0,0" Content="Track" IsChecked="{Binding IsFavoriteTrack}"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="9" Grid.Column="0" Margin="0,4" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Moods:"/>
+                    <Grid Grid.Row="9" Grid.Column="1" Margin="5,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="{Binding SceneMoods}"/>
+                        <Button Grid.Column="1" Style="{StaticResource GeneralButtonStyle}" Margin="20,0,0,0" Padding="8,0" Command="{Binding SelectMoods}" Content="..." ToolTip="Select Moods"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

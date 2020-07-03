@@ -18,6 +18,7 @@ namespace Noise.Infrastructure.Dto {
 		public ScPlayContext	        PlaybackContext {  get; set; }
         public ePlayAdjacentStrategy    PlayAdjacentStrategy { get; set; }
         public bool                     DoNotStrategyPlay { get; set; }
+		public ScTrackPlayPoints		PlayPoints {  get; set; }
 
 		public ScTrack() {
 			TrackName = string.Empty;
@@ -28,20 +29,24 @@ namespace Noise.Infrastructure.Dto {
 
 		public ScTrack( DbTrack track ) :
 			this() {
-			TrackName = track.Name;
-			TrackNumber = track.TrackNumber;
-			VolumeName = track.VolumeName;
+			UpdateFrom( track );
+		}
 
-			IsFavorite = track.IsFavorite;
-			Rating = track.Rating;
-			ReplayGainAlbumGain = track.ReplayGainAlbumGain;
-			ReplayGainAlbumPeak = track.ReplayGainAlbumPeak;
-			ReplayGainTrackGain = track.ReplayGainTrackGain;
-			ReplayGainTrackPeak = track.ReplayGainTrackPeak;
+		public void UpdateFrom( DbTrack track ) {
+            TrackName = track.Name;
+            TrackNumber = track.TrackNumber;
+            VolumeName = track.VolumeName;
+
+            IsFavorite = track.IsFavorite;
+            Rating = track.Rating;
+            ReplayGainAlbumGain = track.ReplayGainAlbumGain;
+            ReplayGainAlbumPeak = track.ReplayGainAlbumPeak;
+            ReplayGainTrackGain = track.ReplayGainTrackGain;
+            ReplayGainTrackPeak = track.ReplayGainTrackPeak;
 
             PlayAdjacentStrategy = track.PlayAdjacentStrategy;
             DoNotStrategyPlay = track.DoNotStrategyPlay;
-		}
+        }
 
 		public void UpdateTrack( DbTrack track ) {
 			track.IsFavorite = IsFavorite;

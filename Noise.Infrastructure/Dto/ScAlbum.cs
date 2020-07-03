@@ -24,15 +24,19 @@ namespace Noise.Infrastructure.Dto {
 
 		public ScAlbum( DbAlbum album ) :
 			this() {
-			AlbumName = album.Name;
-
-			IsFavorite = album.IsFavorite;
-			Rating = album.Rating;
-			PublishedYear = album.PublishedYear;
-			ReplayGainAlbumGain = album.ReplayGainAlbumGain;
-			ReplayGainAlbumPeak = album.ReplayGainAlbumPeak;
-			Version = album.Version;
+			UpdateFrom( album );
 		}
+
+		public void UpdateFrom( DbAlbum album ) {
+            AlbumName = album.Name;
+
+            IsFavorite = album.IsFavorite;
+            Rating = album.Rating;
+            PublishedYear = album.PublishedYear;
+            ReplayGainAlbumGain = album.ReplayGainAlbumGain;
+            ReplayGainAlbumPeak = album.ReplayGainAlbumPeak;
+            Version = album.Version;
+        }
 
 		public void UpdateAlbum( DbAlbum album ) {
 			album.IsFavorite = IsFavorite;

@@ -1,34 +1,72 @@
-﻿using Noise.Infrastructure.Support;
+﻿using System.ComponentModel;
+using System.Linq;
+using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Dto {
-	public class UiArtistTrackNode : ViewModelBase {
-		public	UiAlbum		Album { get; private set; }
-		public	UiTrack		Track { get; private set; }
-		public	int			Level { get; set; }
+	public class UiAlbumTrack : ViewModelBase {
+        public	DbAlbum		Album { get; }
+        public	UiTrack		Track { get; }
+		public	bool		IsExpanded { get; set; }
 
-		public	ObservableCollectionEx<UiArtistTrackNode>	Children { get; private set; }
-
-		public UiArtistTrackNode( UiTrack track, UiAlbum album ) {
-			Track = track;
+		public UiAlbumTrack( DbAlbum album, UiTrack track ) {
 			Album = album;
+			Track = track;
+        }
 
-			Children = new ObservableCollectionEx<UiArtistTrackNode>();
+        public void Execute_Play() {
+            Track.Execute_Play();
+        }
+    }
+
+	public class UiArtistTrackNode : ViewModelBase {
+		private bool		mIsExpanded;
+
+        public	DbAlbum		Album { get; }
+        public	UiTrack		Track { get; }
+		public	string		TrackName => Track.Name;
+        public	string		AlbumName => MultipleAlbums ? IsExpanded ? "Album List:" : $" (on {Children.Count} albums - expand to view list)" : Album.Name;
+        public	bool		IsPlayable => Children.Count == 0;
+		public	bool		MultipleAlbums => Children.Count > 0;
+
+		public	ObservableCollectionEx<UiAlbumTrack>	Children { get; }
+
+		public UiArtistTrackNode( DbAlbum album, UiTrack track ) {
+			Album = album;
+			Track = track;
+			Children = new ObservableCollectionEx<UiAlbumTrack>();
+
+			mIsExpanded = false;
 		}
 
-		public string AlbumName {
-			get { return( Children.Count > 0 ? " (multiple albums - expand to select)" : Album.Name ); }
-		}
+		public void AddAlbum( DbAlbum album, UiTrack track ) {
+			if(!Children.Any()) {
+				Children.Add( new UiAlbumTrack( Album, Track ));
+            }
 
-		public void Execute_Play() {
+			Children.Add( new UiAlbumTrack( album, track ));
+
+			Children.Sort( a => a.Album.Name, ListSortDirection.Ascending );
+        }
+
+        public bool IsExpanded {
+            get => mIsExpanded;
+            set {
+				mIsExpanded = value;
+
+				RaisePropertyChanged( () => AlbumName );
+            }
+        }
+
+        public void Execute_Play() {
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
 			Track.Execute_Play();
 		}
 
 		public bool CanExecute_Play() {
-			return( IsPlayable );
+			return IsPlayable;
 		}
-
-		public bool IsPlayable {
-			get{ return( Children.Count == 0 ); }
-		}
-	}
+    }
 }

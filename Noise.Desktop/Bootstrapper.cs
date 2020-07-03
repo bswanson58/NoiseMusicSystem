@@ -6,6 +6,7 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.AudioSupport;
+using Noise.Desktop.Models;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata;
@@ -16,7 +17,7 @@ namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
 		private INoiseManager		mNoiseManager;
 		private StartupManager		mStartupManager;
-		private WindowManager		mWindowManager;
+		private INoiseWindowManager	mWindowManager;
 		private Window				mShell;
 		private	ApplicationSupport	mAppSupport;
 		private IApplicationLog		mLog;
@@ -38,10 +39,16 @@ namespace Noise.Desktop {
 			StopNoise();
 		}
 
+		public void ActivateInstance() {
+			mWindowManager.ActivateShell();
+        }
+
 		protected override IModuleCatalog CreateModuleCatalog() {
 			var catalog = new ModuleCatalog();
 
-			catalog.AddModule( typeof( Core.NoiseCoreModule ))
+			catalog
+                .AddModule( typeof( DesktopModule ))
+                .AddModule( typeof( Core.NoiseCoreModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
 				.AddModule( typeof( AudioSupportModule ))
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
@@ -69,7 +76,7 @@ namespace Noise.Desktop {
 		protected override void InitializeModules() {
 			base.InitializeModules();
 
-			mWindowManager = new WindowManager( Container, Container.Resolve<IEventAggregator>(), Container.Resolve<IPreferences>());
+			mWindowManager = Container.Resolve<INoiseWindowManager>();
 			mWindowManager.Initialize( mShell );
 
 			var instanceContainer = Container.CreateChildContainer();
@@ -115,9 +122,7 @@ namespace Noise.Desktop {
 		}
 
 		public void LogException( string reason, Exception exception ) {
-			if( mLog != null ) {
-				mLog.LogException( reason, exception );
-			}
-		}
+            mLog?.LogException( reason, exception );
+        }
 	}
 }

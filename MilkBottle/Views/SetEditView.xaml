@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="MilkBottle.Views.SetEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:entities="clr-namespace:MilkBottle.Entities"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:SetEditViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="SetTemplate" DataType="dto:UiSet">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <Button x:Name="Edit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
+                        Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Set" />
+                <Button x:Name="Delete" Grid.Column="2" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Delete}" Content="{StaticResource Path_Delete}" ToolTip="Delete Set" />
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Delete" Property="Opacity" Value="1"/>
+                    <Setter TargetName="Edit" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TagTemplate" DataType="dto:UiTag">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding IsSelected}"/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Tag.Name}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PresetTemplate" DataType="dto:UiPreset">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                           behaviours:FadeTrimming.IsEnabled="True" behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+
+                <Button x:Name="Edit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
+                        Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tags" />
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Edit" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Header=" Sets ">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListBox Grid.Row="0" ItemsSource="{Binding Sets}" SelectedItem="{Binding CurrentSet}" ItemTemplate="{StaticResource SetTemplate}"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Style="{StaticResource GeneralButtonStyle}" Content="New Set..." Command="{Binding CreateSet}"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="0,10,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Set Properties " IsEnabled="{Binding IsSetSelected}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Margin="5" Grid.Row="0" Content="Favorites" IsChecked="{Binding UseFavoriteQualifier}"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                    <CheckBox VerticalAlignment="Center" Margin="0,0,5,0" Content="Name Contains:" IsChecked="{Binding UseNameQualifier}"/>
+                    <TextBox Width="200" Text="{Binding NameQualifier, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <Grid Grid.Row="2" Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Grid.Row="0" Content="Tagged With:" IsChecked="{Binding UseTagQualifier}"/>
+                    <ListBox Grid.Row="1" Margin="25,3,0,0" ItemsSource="{Binding Tags}" ItemTemplate="{StaticResource TagTemplate}"/>
+                </Grid>
+
+                <TextBlock Grid.Row="3" Margin="60,3,0,0" VerticalAlignment="Top" Style="{StaticResource ControlTitleStyle}" Text="Note: Presets must be tagged with all selected tags."/>
+                <Button Grid.Row="3" Margin="0,5,0,0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="New Tag..." Command="{Binding CreateTag}"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" Margin="0,10,0,0" Style="{StaticResource SectionBorderStyle}" Header="{Binding PresetListTitle}">
+            <ListBox ItemsSource="{Binding Presets}" SelectedItem="{Binding CurrentPreset}" ItemTemplate="{StaticResource PresetTemplate}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        </GroupBox>
+    </Grid>
+</UserControl>

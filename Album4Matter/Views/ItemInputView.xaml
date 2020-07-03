@@ -1,0 +1,135 @@
+﻿<UserControl x:Class="Album4Matter.Views.ItemInputView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Dto="clr-namespace:Album4Matter.Dto"
+             xmlns:Views="clr-namespace:Album4Matter.Views"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Behaviors="clr-namespace:Album4Matter.Behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="VolumeItemTemplate" DataType="Dto:VolumeItem">
+            <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="{Binding Name}" Command="{Binding CollectVolume}"/>
+        </DataTemplate>
+
+        <Style x:Key="TreeViewItemStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+            <Style.Triggers>
+                <Trigger 
+                    Property="Behaviors:TreeViewMultipleSelectionBehavior.IsItemSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource HighlightBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="SourceFileTemplate" DataType="Dto:SourceFile">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <Button x:Name="InspectItem" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
+
+                <StackPanel x:Name="TagInfo" Grid.Row="1" Grid.Column="0" Margin="0,0,0,3" Orientation="Horizontal" Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Tags - Artist:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagArtist}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Album:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagAlbum}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Name:" Margin="10,0,3,0"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource BorderColor}" Text="{Binding TagName}"/>
+                </StackPanel>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasTagName}" Value="True">
+                    <Setter TargetName="TagInfo" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Key="SourceFolderTemplate" DataType="Dto:SourceFolder" ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
+
+                <Button x:Name="InspectItem" Grid.Column="1" HorizontalAlignment="Right" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
+                        Command="{Binding InspectItem}" Content="Inspect" ToolTip="Inspect Item" />
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="InspectItem" Property="Opacity" Value=".8"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+
+        <Views:SourceItemTemplateSelector x:Key="SourceItemTemplateSelector" FileTemplate="{StaticResource SourceFileTemplate}" FolderTemplate="{StaticResource SourceFolderTemplate}"/>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
+
+        <Grid Grid.Row="1" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" Text="{Binding SourceDirectory}"/>
+            <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource GeneralButtonStyle}" VerticalAlignment="Center" Content="..." Command="{Binding BrowseSourceFolder}" ToolTip="Browse For Directory"/>
+            <Button Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenSourceDirectory}" ToolTip="Open Directory"/>
+            <Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource PathButtonStyle}" Height="16" Padding="2" Content="{StaticResource Path_Refresh}" Command="{Binding RefreshSourceFolder}" ToolTip="Refresh Directory"/>
+        </Grid>
+
+        <TreeView Grid.Row="2" ItemsSource="{Binding SourceList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ItemTemplateSelector="{StaticResource SourceItemTemplateSelector}" ItemContainerStyle="{StaticResource TreeViewItemStyle}">
+            <i:Interaction.Behaviors>
+                <Behaviors:TreeViewMultipleSelectionBehavior SelectedItems="{Binding SelectedSourceItems}"/>
+            </i:Interaction.Behaviors>
+        </TreeView>
+
+        <TextBlock Grid.Row="3" Margin="5,5,0,0" Style="{StaticResource ControlTitleStyle}" Text="Add Selected Items To:"/>
+        <CheckBox Grid.Row="3" HorizontalAlignment="Right" Margin="0,0,10,0" Foreground="{StaticResource BorderTextColor}" Content="Use Tag Names As Target File Names." IsChecked="{Binding UseSourceTags}"/>
+        <StackPanel Grid.Row="4" Margin="3" Orientation="Horizontal">
+            <Button Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Album" Command="{Binding CopyToAlbum}"/>
+
+            <ItemsControl ItemsSource="{Binding VolumeList}" ItemTemplate="{StaticResource VolumeItemTemplate}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

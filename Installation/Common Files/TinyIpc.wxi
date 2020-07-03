@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+		<Component Id="TinyIpc.dll" Guid="1E415005-6327-48FF-8C00-DD623005F2F5">
+			<File Id="TinyIpc.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)TinyIpc.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+    <Component Id="protobuf.net.dll" Guid="092316A8-B58E-44F0-8F9D-15AA0DE5B412">
+      <File Id="protobuf.net.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)protobuf-net.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+	</DirectoryRef>
+
+	<ComponentGroup Id="TinyIpcFiles">
+    <ComponentRef Id="TinyIpc.dll" />
+    <ComponentRef Id="protobuf.net.dll" />
+	</ComponentGroup>
+</Include>

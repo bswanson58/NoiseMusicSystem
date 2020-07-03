@@ -1,9 +1,9 @@
 ﻿namespace Noise.Infrastructure.Dto {
 	public class DatabaseFileInfo {
-		public	string		LogicalName { get; private set; }
-		public	string		PhysicalName { get; private set; }
-		public	string		FileType { get; private set; }
-		public	long		FileSize { get; private set; }
+		public	string		LogicalName { get; }
+		public	string		PhysicalName { get; }
+		public	string		FileType { get; }
+		public	long		FileSize { get; }
 
 		public DatabaseFileInfo( string logicalName, string physicalName, string fileType, long fileSize ) {
 			LogicalName = logicalName;

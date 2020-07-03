@@ -34,7 +34,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 			using( var connection = CreateConnection()) {
 				connection.Open();
-				var cmdText = string.Format( "SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE name = '{0}';", databaseName );
+				var cmdText = $"SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE name = '{databaseName}';";
 
 				using( var command = new SqlCommand( cmdText, connection )) {
 					using( var reader = command.ExecuteReader()) {
@@ -43,6 +43,8 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 						}
 					}
 				}
+
+				connection.Close();
 			}
 
 			return( retValue );
@@ -53,7 +55,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 			using( var connection = CreateConnection()) {
 				connection.Open();
-				var cmdText = string.Format( "SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE name = '{0}';", databaseName );
+				var cmdText = $"SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE name = '{databaseName}';";
 
 				using( var command = new SqlCommand( cmdText, connection )) {
 					using( var reader = command.ExecuteReader()) {
@@ -67,10 +69,9 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 			return( retValue );
 		}
 
-
 		public void AttachDatabase( string databaseName, string databaseFile ) {
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "exec sys.sp_attach_db {0} '{1}'", databaseName, databaseFile );
+				string	commandText = $"exec sys.sp_attach_db {databaseName} '{databaseFile}'";
 
 				connection.Open();
 
@@ -82,7 +83,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 		public void DetachDatabase( DatabaseInfo database ) {
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "exec sys.sp_detach_db {0}", database.DatabaseName );
+				string	commandText = $"exec sys.sp_detach_db {database.DatabaseName}";
 
 				connection.Open();
 
@@ -97,24 +98,25 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 				string	commandText = string.Format( "BACKUP DATABASE [{0}] TO DISK='{1}' WITH FORMAT, MEDIANAME='NoiseBackup', MEDIADESCRIPTION='Media set for {0} database';",
 													databaseName, backupLocation );
 
-				connection.Open();
-
 				using( var command = new SqlCommand( commandText, connection )) {
+                    connection.Open();
 					command.ExecuteNonQuery();
 				}
+
+				connection.Close();
 			}
 		}
 
 		public void RestoreDatabase( string databaseName, string restoreLocation ) {
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "RESTORE DATABASE [{0}] FROM DISK='{1}' WITH REPLACE, RECOVERY;",
-													databaseName, restoreLocation );
-
-				connection.Open();
+				string	commandText = $"RESTORE DATABASE [{databaseName}] FROM DISK='{restoreLocation}' WITH REPLACE, RECOVERY;";
 
 				using( var command = new SqlCommand( commandText, connection )) {
+                    connection.Open();
 					command.ExecuteNonQuery();
 				}
+
+				connection.Close();
 			}
 		}
 
@@ -127,8 +129,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 				}
 
 				var		moveText = moveList.JoinStrings( ", " );
-				string	commandText = string.Format( "RESTORE DATABASE [{0}] FROM DISK='{1}' WITH REPLACE, RECOVERY, {2}",
-													databaseName, restoreLocation, moveText );
+				string	commandText = $"RESTORE DATABASE [{databaseName}] FROM DISK='{restoreLocation}' WITH REPLACE, RECOVERY, {moveText}";
 
 				connection.Open();
 
@@ -142,7 +143,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 			var retValue = new List<DatabaseFileInfo>();
 
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "RESTORE FILELISTONLY FROM DISK='{0}'", backupFile );
+				string	commandText = $"RESTORE FILELISTONLY FROM DISK='{backupFile}'";
 
 				connection.Open();
 

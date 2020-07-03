@@ -2,7 +2,7 @@
 <Include>
   <!-- To upgrade: Update the ProductVersion below to the next release -->
   <!--   Also update the version in GlobalAssemblyInfo.cs -->
-  <?define ProductVersion=0.9.6?>
+  <?define ProductVersion=0.9.8?>
 
   <!-- Product Upgrade ID: do not change -->
   <?define ProductUpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"?>
@@ -10,6 +10,6 @@
   <!-- Common definitions -->
   <?define Manufacturer="Secret Squirrel Software"?>
   <?define BaseRegistryKey="Software\Secret Squirrel Software"?>
-  <?define Copyright="Copyright© 2019, Secret Squirrel Software"?>
+  <?define Copyright="Copyright© 2020, Secret Squirrel Software"?>
   <?define CompanyUrl="http://www.surroundedbybraces.com"?>
 </Include>

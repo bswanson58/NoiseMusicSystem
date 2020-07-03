@@ -1,0 +1,175 @@
+﻿<UserControl x:Class="MilkBottle.Views.SyncStatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:SyncStatusViewModel, IsDesignTimeCreatable=False}"
+             Height="34" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <valueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <DataTemplate x:Key="FavoriteTemplate">
+            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center" Margin="0,0,3,3"
+                      Opacity="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource FavoriteCheckBoxStyle}" ToolTip="Set Favorite Status"/>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Tags Template -->
+        <DataTemplate x:Key="TagsTemplate">
+            <ContentControl x:Name="TagContainer" Margin="3,0,0,0">
+                <Button x:Name="TagButton" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.15" BorderThickness="0" Padding="0,1,0,0" Background="Transparent"
+                        Command="{Binding Path=EditTags}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="TagContainer" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="0.8"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasTags}" Value="True">
+                    <Setter TargetName="TagButton" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TagButton" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HorizontalSeparator">
+            <Grid Margin="5,2">
+                <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CelestialTemplate">
+            <Grid ToolTip="{Binding CelestialInfo}" Opacity="0.6">
+                <ContentControl x:Name="Day" Margin="6" Content="{StaticResource Path_Sun}"/>
+                <ContentControl x:Name="Night" Margin="7" Content="{StaticResource Path_Moon}"/>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsDay}" Value="True">
+                    <Setter TargetName="Night" Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsDay}" Value="False">
+                    <Setter TargetName="Day" Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TrackNameTemplate" DataType="viewModels:SyncStatusViewModel">
+            <TextBlock x:Name="TrackName" Tag="dimmed" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" TextAlignment="Right"
+                       Text="{Binding TrackName, NotifyOnTargetUpdated=True}">
+                <TextBlock.ToolTip>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Text="Artist:"/>
+                        <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding CurrentTrack.ArtistName}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Text="Album:"/>
+                        <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding CurrentTrack.AlbumName}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Text="Track:"/>
+                        <TextBlock Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Text="{Binding CurrentTrack.TrackName}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" Text="Genre:"/>
+                        <TextBlock Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left" Text="{Binding CurrentTrack.ArtistGenre}"/>
+                    </Grid>
+                </TextBlock.ToolTip>
+            </TextBlock>
+
+            <DataTemplate.Resources>
+                <Storyboard x:Key="HighlightTrackName" TargetName="TrackName" TargetProperty="Opacity">
+                    <DoubleAnimationUsingKeyFrames>
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.3" Value="1.0"/>
+                        <LinearDoubleKeyFrame KeyTime="0:0:9" Value="0.3"/>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </DataTemplate.Resources>
+
+            <DataTemplate.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard Storyboard="{StaticResource HighlightTrackName}" />
+                </EventTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PresetNameTemplate" DataType="viewModels:SyncStatusViewModel">
+            <TextBlock x:Name="PresetName" Tag="dimmed" Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Text="{Binding PresetName, NotifyOnTargetUpdated=True}" ToolTip="{Binding PresetHistory}"/>
+
+            <DataTemplate.Resources>
+                <Storyboard x:Key="HighlightPresetName" TargetName="PresetName" TargetProperty="Opacity">
+                    <DoubleAnimationUsingKeyFrames>
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.3" Value="1.0"/>
+                        <LinearDoubleKeyFrame KeyTime="0:0:5" Value="0.3"/>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </DataTemplate.Resources>
+
+            <DataTemplate.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard Storyboard="{StaticResource HighlightPresetName}" />
+                </EventTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Background="Black">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Tag="dimmed" Grid.Column="0" Orientation="Horizontal">
+            <Button Margin="10,0,5,0" Style="{StaticResource ControllerButtonStyle}" Padding="4" Content="{StaticResource Path_SceneWizard}" Command="{Binding SceneWizard}"
+                    ToolTip="Scene Wizard"/>
+            <Button Tag="SelectMoodPlacement" Margin="5,0" Style="{StaticResource ControllerButtonStyle}" Padding="3" Content="{StaticResource Path_Mood}" Command="{Binding MoodSelection}"
+                    ToolTip="{Binding CurrentMood}"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource TagsTemplate}"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+
+            <TextBlock Style="{StaticResource ControlTitleStyle}" FontSize="16" VerticalAlignment="Center" Text="{Binding SceneName}" ToolTip="{Binding SceneTooltip}"/>
+        </StackPanel>
+
+        <ContentControl Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding}" ContentTemplate="{StaticResource PresetNameTemplate}"/>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <ContentControl Content="{Binding}" Margin="5,0,0,0" ContentTemplate="{StaticResource TrackNameTemplate}"/>
+            <ContentControl Tag="dimmed" Content="{Binding}" Margin="5,0,0,0" ContentTemplate="{StaticResource CelestialTemplate}"/>
+        </StackPanel>
+    </Grid>
+
+    <i:Interaction.Behaviors>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+    </i:Interaction.Behaviors>
+</UserControl>

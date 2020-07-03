@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Platform;
@@ -14,18 +16,30 @@ namespace Noise.UI.ViewModels {
 		private const string	cGeneralStatusTemplate = "GeneralStatusTemplate";
 		private const string	cSpeechStatusTemplate  = "SpeechStatusTemplate";
 
-		private IEventAggregator		        mEventAggregator;
+		private readonly INoiseEnvironment		mNoiseEnvironment;
+        private IEventAggregator		        mEventAggregator;
         private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
+        private readonly string					mCompileDate;
 		private bool							mViewAttached;
+		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}{mCompileDate}";
 
-		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}";
-
-		public StatusViewModel( IEventAggregator eventAggregator, IVersionFormatter versionFormatter ) {
+		public StatusViewModel( IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment, IVersionFormatter versionFormatter, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
+			mNoiseEnvironment = noiseEnvironment;
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
+
+			var pref = preferences.Load<UserInterfacePreferences>();
+			if( pref.DisplayBuildDate ) {
+                var compileDate = ApplicationInformation.CompileDate;
+
+                mCompileDate = $" - {compileDate.Month:D2}/{compileDate.Day:D2}/{compileDate.Year % 100:D2}";
+            }
+			else {
+				mCompileDate = String.Empty;
+            }
 
             mVersionFormatter.SetVersion( VersionInformation.Version );
             mVersionFormatter.DisplayLevel = VersionLevel.Build;
@@ -81,6 +95,10 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
+
+		public void Execute_OpenDataFolder() {
+            mEventAggregator.PublishOnUIThread( new Events.LaunchRequest( mNoiseEnvironment.ApplicationDirectory()));
+        }
 
         public void Dispose() {
             mEventAggregator?.Unsubscribe( this );

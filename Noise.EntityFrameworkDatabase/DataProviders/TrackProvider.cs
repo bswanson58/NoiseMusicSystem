@@ -59,7 +59,19 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() where track.IsFavorite select track ));
 		}
 
-		public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
+        public IDataProviderList<DbTrack> GetRatedTracks( int ratedAtLeast ) {
+            var context = CreateContext();
+
+            return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() where track.Rating >= ratedAtLeast select track ));
+        }
+
+        public IDataProviderList<DbTrack> GetRatedTracks( DbArtist forArtist ) {
+            var context = CreateContext();
+
+            return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() where track.Artist == forArtist.DbId && ( track.IsFavorite || track.Rating > 0 ) select track ));
+        }
+
+        public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
 			var context = CreateContext();
 			var firstScanCompleted = mRootFolderProvider.FirstScanCompleted();
 

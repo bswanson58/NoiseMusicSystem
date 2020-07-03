@@ -21,12 +21,14 @@
 		<?include NLog.wxi ?>
 		<?include Observal.wxi ?>
 		<?include Prism.wxi ?>
-		<?include RavenDB.wxi ?>
+    <?include RavenDB.wxi ?>
+    <?include ReactiveUI.wxi ?>
 		<?include recls.wxi ?>
 		<?include Refit.wxi ?>
 		<?include ReplayGain.wxi ?>
 		<?include SeriLog.wxi ?>
 		<?include Stateless.wxi ?>
-		<?include TagLibSharp.wxi ?>
+    <?include TagLibSharp.wxi ?>
+    <?include TinyIpc.wxi ?>
 	</Fragment>
 </Wix>

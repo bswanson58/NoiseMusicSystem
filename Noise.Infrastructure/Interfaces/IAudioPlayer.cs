@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
 	public interface IAudioPlayer {
 		int					OpenFile( string filePath );
 		int					OpenFile( string filePath, float gainAdjustment );
+        int					OpenFile( string  filePath, float gainAdjustment, long playStart, long playEnd );
 		int					OpenStream( DbInternetStream stream );
 		void				CloseChannel( int channel );
 

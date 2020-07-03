@@ -9,18 +9,33 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Interfaces;
 
 namespace Noise.UI.Models {
+	internal class SelectionUserState {
+		public	long	ArtistId { get; }
+		public	long	AlbumId { get; }
+		public	long	TagId { get; }
+
+		public SelectionUserState( DbArtist artist, DbAlbum album, DbTag tag ) {
+			ArtistId = artist?.DbId ?? Constants.cDatabaseNullOid;
+			AlbumId = album?.DbId ?? Constants.cDatabaseNullOid;
+			TagId = tag?.DbId ?? Constants.cDatabaseNullOid;
+        }
+    }
+
 	public class SelectionStateModel : ISelectionState,
-									   IHandle<Events.WindowLayoutRequest>,
+									   IHandle<Events.WindowLayoutRequest>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUserState>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TagFocusRequested>,
+									   IHandle<Events.ViewDisplayRequest>, IHandle<Events.TrackQueued>, IHandle<Events.AlbumQueued>,
                                        IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackStopped> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITagProvider			mTagProvider;
 		private readonly Subject<DbArtist>		mArtistSubject;
 		private readonly Subject<DbAlbum>		mAlbumSubject;
         private readonly Subject<DbTag>         mTagSubject;
         private readonly Subject<string>        mVolumeSubject;
         private readonly Subject<PlayingItem>   mPlayingSubject;
+		private readonly Subject<DbTrack>		mFocusSubject;
 		private TimeSpan						mPlayTrackDelay;
 		private bool							mPlaybackTrackFocusEnabled;
 		private DateTime						mLastFocusRequest;
@@ -28,23 +43,28 @@ namespace Noise.UI.Models {
 		public	DbArtist						CurrentArtist { get; private set; }
 		public	DbAlbum							CurrentAlbum { get; private set; }
         public  DbTag                           CurrentTag { get; private set; }
+		public	PlayingItem						CurrentlyPlayingItem { get; private set; }
+		public	DbTrack							CurrentFocus { get; private set; }
 
         public	IObservable<DbArtist>			CurrentArtistChanged => ( mArtistSubject.AsObservable());
         public	IObservable<DbAlbum>			CurrentAlbumChanged => ( mAlbumSubject.AsObservable());
         public  IObservable<string>             CurrentAlbumVolumeChanged => mVolumeSubject.AsObservable();
         public  IObservable<DbTag>              CurrentTagChanged => mTagSubject.AsObservable();
         public  IObservable<PlayingItem>        PlayingTrackChanged => mPlayingSubject.AsObservable();
+		public	IObservable<DbTrack>			FocusChanged => mFocusSubject.AsObservable();
 
-        public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
+        public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagProvider tagProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
+			mTagProvider = tagProvider;
 
 			mArtistSubject = new Subject<DbArtist>();
 			mAlbumSubject = new Subject<DbAlbum>();
             mTagSubject = new Subject<DbTag>();
             mVolumeSubject = new Subject<string>();
             mPlayingSubject = new Subject<PlayingItem>();
+			mFocusSubject = new Subject<DbTrack>();
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastFocusRequest = DateTime.Now - mPlayTrackDelay;
@@ -62,12 +82,60 @@ namespace Noise.UI.Models {
 			mPlayTrackDelay = delay;
 		}
 
+		public void RequestFocus( DbTrack track ) {
+			CurrentFocus = track;
+
+			mFocusSubject.OnNext( CurrentFocus );
+
+            mEventAggregator.PublishOnUIThread( new Events.ViewDisplayRequest( ViewNames.RelatedTracksView ));
+        }
+
 		public void Handle( Events.WindowLayoutRequest args ) {
 			ClearArtist();
 			ClearAlbum();
 		}
 
-		public void Handle( Events.ArtistFocusRequested args ) {
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearArtist();
+			ClearAlbum();
+
+			CurrentTag = new DbTag( eTagGroup.User, String.Empty );
+			CurrentlyPlayingItem = new PlayingItem();
+        }
+
+		public void Handle( Events.LibraryUserState state ) {
+            if( state.IsRestoring ) {
+    			if( state.State.ContainsKey( nameof( SelectionStateModel ))) {
+	    			var objectState = state.State[nameof( SelectionStateModel )];
+
+		    		if( objectState is SelectionUserState selectionState ) {
+                            ChangeToArtist( selectionState.ArtistId, false );
+							ChangeToAlbum( selectionState.AlbumId );
+							ChangeToTag( selectionState.TagId );
+				    }
+                }
+            }
+            else {
+                state.State.Add( nameof( SelectionStateModel ), new SelectionUserState( CurrentArtist, CurrentAlbum, CurrentTag ));
+            }
+        }
+
+		public void Handle( Events.ViewDisplayRequest args ) {
+			if(( args.ViewName.Equals( ViewNames.ArtistTracksView )) ||
+			   ( args.ViewName.Equals( ViewNames.RatedTracksView ))) {
+				mLastFocusRequest = DateTime.Now;
+            }
+        }
+
+		public void Handle( Events.AlbumQueued _ ) {
+			mLastFocusRequest = DateTime.Now;
+        }
+
+        public void Handle( Events.TrackQueued _ ) {
+            mLastFocusRequest = DateTime.Now;
+        }
+
+        public void Handle( Events.ArtistFocusRequested args ) {
 			ChangeToArtist( args.ArtistId, true );
 
 			mLastFocusRequest = DateTime.Now;
@@ -77,7 +145,12 @@ namespace Noise.UI.Models {
 			ChangeToArtist( args.ArtistId, true );
 			ChangeToAlbum( args.AlbumId );
 
-			mLastFocusRequest = DateTime.Now;
+			if( args.CancelFocusDelay ) {
+				mLastFocusRequest = DateTime.Now - mPlayTrackDelay;
+            }
+			else {
+                mLastFocusRequest = DateTime.Now;
+            }
 		}
 
         public void Handle( Events.TagFocusRequested args ) {
@@ -96,10 +169,21 @@ namespace Noise.UI.Models {
 				}
 			}
 
-            mPlayingSubject.OnNext( new PlayingItem( args.Track.Artist, args.Track.Album, args.Track.Track ));
+			CurrentlyPlayingItem = new PlayingItem( args.Track.Artist, args.Track.Album, args.Track.Track );
+            mPlayingSubject.OnNext( CurrentlyPlayingItem );
+
+			if( args.Track.IsTrack ) {
+				CurrentFocus = args.Track.Track;
+
+                mFocusSubject.OnNext( CurrentFocus );
+            }
 		}
 
-        public void Handle( Events.PlaybackStopped args ) => mPlayingSubject.OnNext( new PlayingItem());
+        public void Handle( Events.PlaybackStopped args ) {
+			CurrentlyPlayingItem = new PlayingItem();
+
+            mPlayingSubject.OnNext( CurrentlyPlayingItem );
+		}
 
         private void ChangeToArtist( long artistId, bool notifyViewed ) {
 			if( artistId == Constants.cDatabaseNullOid ) {
@@ -184,6 +268,10 @@ namespace Noise.UI.Models {
 
             ClearCurrentVolume();
 		}
+
+		private void ChangeToTag( long tagId ) {
+			ChangeToTag( mTagProvider.GetTag( tagId ));
+        }
 
         private void ChangeToTag( DbTag tag ) {
             CurrentTag = tag;

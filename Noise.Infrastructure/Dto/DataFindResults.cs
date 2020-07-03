@@ -1,10 +1,10 @@
 ﻿namespace Noise.Infrastructure.Dto {
 	public class DataFindResults {
-		public	long			DatabaseId { get; private set; }
-		public	DbArtist		Artist { get; private set; }
-		public	DbAlbum			Album { get; private set; }
-		public	DbTrack			Track { get; private set; }
-		public	bool			WasSuccessful { get; private set; }
+		public	long			DatabaseId { get; }
+		public	DbArtist		Artist { get; }
+		public	DbAlbum			Album { get; }
+		public	DbTrack			Track { get; }
+		public	bool			WasSuccessful { get; }
 
 		public DataFindResults( long databaseId, DbArtist artist, bool success ) {
 			DatabaseId = databaseId;

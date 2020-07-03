@@ -2,20 +2,29 @@
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-             Height="85"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+			 xmlns:noiseControls="clr-namespace:Noise.UI.Controls"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:reusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:system="clr-namespace:System;assembly=mscorlib"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+			 Height="85"
 			 d:DesignHeight="100"
 			 d:DesignWidth="1200"
+             d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}"
 			 mc:Ignorable="d">
-	<UserControl.Resources>
-		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
-		<ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
-	    <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
+
+    <UserControl.Resources>
+		<reusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+	    <reusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
+        <reusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfEmptyString" HideOnEmpty="False" IsHidden="True"/>
+        <reusableConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
+
+        <!-- MahApps Slider thumb dimensions -->
+        <system:Double x:Key="HorizontalThumbHeight">13</system:Double>
+        <system:Double x:Key="HorizontalThumbWidth">25</system:Double>
 	</UserControl.Resources>
 
 	<UserControl.DataContext>
@@ -23,7 +32,7 @@
 	</UserControl.DataContext>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
-		<Grid>
+		<Grid Background="Transparent">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
@@ -56,7 +65,7 @@
 							</Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5" Style="{StaticResource MediumTitleStyle}" Foreground="{StaticResource BorderTextColor}"
-                                       Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
+                                       Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}" />
 
 							<Grid Grid.Column="1" Margin="5,-1,0,5" VerticalAlignment="Center">
 								<Grid.ColumnDefinitions>
@@ -66,22 +75,26 @@
 
 								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}" Foreground="{DynamicResource SignatureBrush}" Text="{Binding TrackName}" />
 								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
-                                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                           ReusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
+                                           reusableBehaviours:FadeTrimming.IsEnabled="True"
+                                           reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                           reusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
                                            Text="{Binding ArtistAlbumName}" />
 							</Grid>
+
+                            <TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30,0,0,0" Style="{StaticResource EmptyListTextStyle}"
+                                       Text="I exist to play music... Press a play button to queue music and get me started!"
+                                       Visibility="{Binding TrackName, Converter={StaticResource DisplayIfEmptyString}}"/>
 						</Grid>
 					</Grid>
 
 					<!-- Transport Controls -->
 					<StackPanel Grid.Column="1" Margin="7,0" HorizontalAlignment="Center" Orientation="Horizontal">
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}" ToolTip="Play"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}" ToolTip="Pause"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}" ToolTip="Stop"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" ToolTip="Start Previous Track"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}" ToolTip="Start Next Track"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" ToolTip="Replay Track"/>
 					</StackPanel>
 				</Grid>
 
@@ -97,12 +110,12 @@
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" />
+					<Button Grid.Column="0" Tag="dimmed" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" ToolTip="Mute. Why Would You??"/>
 
-					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
+					<noiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
-					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" />
+					<Button Grid.Column="2" Tag="dimmed" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" ToolTip="Expand Player"/>
 				</Grid>
 			</Grid>
 
@@ -119,38 +132,38 @@
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
 
-					<!-- Ravorite, Rating, Support Commands -->
+					<!-- Favorite, Rating, Support Commands -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<!--  Favorites and ratings  -->
-						<StackPanel x:Name="_ratingPanel" Orientation="Horizontal">
-							<CheckBox x:Name="_favoriteControl" Margin="3,0,5,0" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
+						<StackPanel x:Name="RatingPanel" Orientation="Horizontal">
+							<CheckBox x:Name="FavoriteControl" Margin="3,0,5,0" Style="{StaticResource FavoriteCheckBoxStyle}"
                                       Opacity="{Binding Path=IsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}" 
                                       IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"/>
 
-							<NoiseControls:RatingControl x:Name="_ratingControl" VerticalAlignment="Center" Style="{StaticResource NoiseRatingStyle}"
+							<noiseControls:RatingControl x:Name="RatingControl" VerticalAlignment="Center" Style="{StaticResource NoiseRatingStyle}"
 										   Opacity="{Binding Path=Rating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"
 										   Rating="{Binding Path=Rating, Mode=TwoWay}" />
 
 							<StackPanel.Triggers>
-								<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
+								<EventTrigger SourceName="RatingPanel" RoutedEvent="StackPanel.MouseEnter">
 									<BeginStoryboard>
-										<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+										<Storyboard Storyboard.TargetName="FavoriteControl" Storyboard.TargetProperty="Opacity">
 											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 												<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
 											</DoubleAnimationUsingKeyFrames>
 										</Storyboard>
 									</BeginStoryboard>
 									<BeginStoryboard>
-										<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+										<Storyboard Storyboard.TargetName="RatingControl" Storyboard.TargetProperty="Opacity">
 											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 												<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
 											</DoubleAnimationUsingKeyFrames>
 										</Storyboard>
 									</BeginStoryboard>
 								</EventTrigger>
-								<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseLeave">
+								<EventTrigger SourceName="RatingPanel" RoutedEvent="StackPanel.MouseLeave">
 									<BeginStoryboard >
-										<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+										<Storyboard Storyboard.TargetName="FavoriteControl" Storyboard.TargetProperty="Opacity">
 											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 												<LinearDoubleKeyFrame Value="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
 												  KeyTime="0:0:0.7" />
@@ -158,7 +171,7 @@
 										</Storyboard>
 									</BeginStoryboard>
 									<BeginStoryboard >
-										<Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+										<Storyboard Storyboard.TargetName="RatingControl" Storyboard.TargetProperty="Opacity">
 											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
 												<LinearDoubleKeyFrame Value="{Binding Path=Rating, Converter={StaticResource DefaultValueOpacityConverter}}"
 												  KeyTime="0:0:0.7" />
@@ -170,36 +183,45 @@
 						</StackPanel>
 
 						<!--  Track related commands  -->
-						<Button Margin="9,0,0,0" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
+						<Button Margin="9,0,0,0" Tag="dimmed" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
 						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
-						<Button Margin="5,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding RequestSimilarSongSearch}" 
-						        Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
 					</StackPanel>
 
 					<!--  Playing Position  -->
                     <Grid Grid.Column="1" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<!-- Textual Play Position -->
-                        <StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
-							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Position:" />
-							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold"
-                                       Foreground="{DynamicResource SignatureBrush}"
-									   ToolTip="Click to change the display format of the position time"
-									   Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
-								<EventCommandTriggers:CommandSource.Trigger>
-									<EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
-								</EventCommandTriggers:CommandSource.Trigger>
+						<!-- Left Textual Play Position -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding IsLeftTrackTimeActive, Converter={StaticResource CollapseIfFalse}}">
+                            <TextBlock Margin="0,0,3,0" Style="{StaticResource SmallTitleStyle}" Foreground="{StaticResource BorderTextColor}" VerticalAlignment="Center" Text="Position:" />
+							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource SmallTitleStyle}" FontWeight="Bold" Cursor="Hand"
+                                       Foreground="{DynamicResource SignatureBrush}" ToolTip="Click to change the display format of the playback time"
+									   Text="{Binding Path=LeftTrackTime, Converter={StaticResource TimeSpanConverter}}">
+								<eventCommandTriggers:CommandSource.Trigger>
+									<eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+								</eventCommandTriggers:CommandSource.Trigger>
 							</TextBlock>
 						</StackPanel>
 
-						<!-- Play Postion indicator -->
-						<Slider Grid.Column="1" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+						<!-- Play Position indicator -->
+						<Slider Grid.Column="2" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
 						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
 						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
+
+                        <!-- Right Textual Play Position -->
+                        <TextBlock Grid.Column="3" Margin="5,0,10,0" VerticalAlignment="Center" Style="{StaticResource SmallTitleStyle}" FontWeight="Bold" Cursor="Hand"
+                                   Foreground="{DynamicResource SignatureBrush}" ToolTip="Click to change the display format of the playback time"
+                                   Text="{Binding Path=RightTrackTime, Converter={StaticResource TimeSpanConverter}}"
+                                   Visibility="{Binding IsRightTrackTimeActive, Converter={StaticResource CollapseIfFalse}}">
+                            <eventCommandTriggers:CommandSource.Trigger>
+                                <eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+                            </eventCommandTriggers:CommandSource.Trigger>
+                        </TextBlock>
 					</Grid>
 				</Grid>
 
@@ -221,4 +243,7 @@
 			</Grid>
 		</Grid>
 	</GroupBox>
+    <i:Interaction.Behaviors>
+        <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+    </i:Interaction.Behaviors>
 </UserControl>

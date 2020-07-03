@@ -25,8 +25,7 @@ namespace Noise.UI.Dto {
             mPromoteSuggestion = onPromoteSuggestion;
 
             if( track?.Track != null ) {
-                UiIsFavorite = track.Track.IsFavorite;
-                UiRating = track.Track.Rating;
+				SetRatings( track.Track.IsFavorite, track.Track.Rating );
 
                 mTrack.PropertyChanged += ( sender, args ) => {
                     if(( args.PropertyName.Equals( "HasPlayed" )) ||

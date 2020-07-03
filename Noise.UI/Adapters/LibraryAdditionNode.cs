@@ -5,8 +5,8 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
 	public class LibraryAdditionNode : ViewModelBase, IPlayingItem {
-		public	DbArtist		Artist { get; private set; }
-		public	DbAlbum			Album { get; private set; }
+		public	DbArtist		Artist { get; }
+		public	DbAlbum			Album { get; }
 		public	double			RelativeAge { get; set; }
 		private readonly Action<LibraryAdditionNode>	mAlbumPlayAction;
 
@@ -27,7 +27,10 @@ namespace Noise.UI.Adapters {
         }
 
         public void Execute_Play( object sender ) {
-			mAlbumPlayAction( this );
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
+            mAlbumPlayAction( this );
 		}
 	}
 }

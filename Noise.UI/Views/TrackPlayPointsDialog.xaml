@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Noise.UI.Views.TrackPlayPointsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:TrackPlayPointsDialogModel, IsDesignTimeCreatable=False}"
+             Tag="Track Play Points"
+             Height="195" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="The track play points can be used to set the starting and ending"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="3,0" Text="positions for the playback of a track."></TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Start Playing At:"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding PlayStartTime}" />
+            <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="0,0,55,0" Content="Clear" Command="{Binding ClearStartTime}"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="End Play At:"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding PlayStopTime}"/>
+            <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Margin="0,0,55,0" Content="Clear" Command="{Binding ClearEndTime}"/>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Current Position:"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource GeneralTitleStyle}" Margin="5,0,0,0" Text="{Binding CurrentTime}"/>
+
+            <StackPanel Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="5,0,0,0" Content="Set As Play Start" Command="{Binding SetStartTime}"/>
+                <Button Style="{StaticResource GeneralButtonStyle}" Margin="15,0,0,0" Content="Set As Play End" Command="{Binding SetEndTime}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

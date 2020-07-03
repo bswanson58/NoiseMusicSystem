@@ -53,12 +53,14 @@
     <Content Include="Observal.wxi" />
     <Content Include="Prism.wxi" />
     <Content Include="RavenDB.wxi" />
+    <Content Include="ReactiveUI.wxi" />
     <Content Include="recls.wxi" />
     <Content Include="ReFit.wxi" />
     <Content Include="ReplayGain.wxi" />
     <Content Include="SeriLog.wxi" />
     <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
+    <Content Include="TinyIpc.wxi" />
     <Content Include="Version.wxi" />
   </ItemGroup>
   <ItemGroup>

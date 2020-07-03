@@ -3,7 +3,7 @@ using System.IO;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Librarian.Interfaces;
+using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Models;
 using Noise.UI.Logging;
 using Noise.UI.Support;
@@ -40,7 +40,7 @@ namespace Noise.Librarian.ViewModels {
 						}
 				   }
 				   catch( Exception exception ) {
-					   mLog.LogException( string.Format( "Loading configuration from \"{0}\"", ImportPath ), exception );
+					   mLog.LogException( $"Loading configuration from \"{ImportPath}\"", exception );
 				   }
 				}
 			}
@@ -51,7 +51,7 @@ namespace Noise.Librarian.ViewModels {
 			set {  Set( () => LibraryName, value ); }
 		}
 
-		private void OnImportProgress( ProgressReport args ) {
+		private void OnImportProgress( LibrarianProgressReport args ) {
 			ProgressPhase = args.CurrentPhase;
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;
@@ -103,7 +103,7 @@ namespace Noise.Librarian.ViewModels {
 					}
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Loading configuration from \"{0}\"", ImportPath ), exception );
+					mLog.LogException( $"Loading configuration from \"{ImportPath}\"", exception );
 				}
 			}
 		}

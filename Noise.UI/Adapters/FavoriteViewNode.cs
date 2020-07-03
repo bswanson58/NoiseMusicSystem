@@ -53,6 +53,9 @@ namespace Noise.UI.Adapters {
         }
 
 		public void Execute_PlayFavorite( object sender ) {
+            // trigger the track queue animation
+            RaisePropertyChanged( "AnimateQueueTrack" );
+
 			mPlayAction( this );
 		}
 

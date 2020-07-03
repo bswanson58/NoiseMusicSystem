@@ -3,14 +3,17 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-			 xmlns:Dto="clr-namespace:Noise.UI.Dto"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:noiseControls="clr-namespace:Noise.UI.Controls"
+			 xmlns:dto="clr-namespace:Noise.UI.Dto"
+			 xmlns:behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+			 xmlns:reusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+			 xmlns:eventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+			 reusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 			 mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:ArtistListViewModel, IsDesignTimeCreatable=False}"
 			 d:DesignHeight="300" d:DesignWidth="300">
 	
 	<UserControl.DataContext>
@@ -18,27 +21,9 @@
 	</UserControl.DataContext>
 	
 	<UserControl.Resources>
-		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
+		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
 
-		<Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
-			<Setter Property="Padding" Value="1"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-			<Setter Property="VerticalContentAlignment" Value="Top"/>
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type ListBoxItem}">
-						<ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
-										  Content="{TemplateBinding Content}" 
-										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-										  Margin="{TemplateBinding Padding}"/>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<DataTemplate x:Key="ArtistTemplate" DataType="{x:Type Dto:UiArtist}">
+        <DataTemplate x:Key="ArtistTemplate" DataType="{x:Type dto:UiArtist}">
 			<Border x:Name="ArtistPanel" Background="Transparent" CornerRadius="3" Padding="3">
 				<Grid>
 					<Grid.RowDefinitions>
@@ -60,7 +45,7 @@
 							  Opacity="{Binding Path=FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
 							  IsChecked="{Binding FavoriteValue, Mode=TwoWay}"
 							  Style="{DynamicResource FavoriteCheckBoxStyle}" />
-						<NoiseControls:RatingControl x:Name="ArtistRating" Margin="0,5,3,0"
+						<noiseControls:RatingControl x:Name="ArtistRating" Margin="0,5,3,0"
 												 Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
 												 Rating="{Binding Path=UiRating, Mode=TwoWay}"
 													 UseAlternate="{Binding UseAlternateRating}"
@@ -72,8 +57,12 @@
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
-					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,-3,3,0" Opacity="0.75"
-                               Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}" />
+                    <noiseControls:LinkLabel x:Name="Genre" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,-3,3,0" Opacity="0.75" 
+                                             FontSize="12" FontFamily="Segoe UI" Content="{Binding Genre}" LinkLabelBehavior="HoverUnderline">
+                        <eventCommandTriggers:CommandSource.Trigger>
+                            <eventCommandTriggers:EventCommandTrigger Command="{Binding GenreClicked}" RoutedEvent="noiseControls:LinkLabel.Click" />
+                        </eventCommandTriggers:CommandSource.Trigger>
+                    </noiseControls:LinkLabel>
 				</Grid>
 			</Border>
 
@@ -91,6 +80,54 @@
                 </DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
+
+		<DataTemplate x:Key="ArtistFilterText" DataType="viewModels:IArtistFilter">
+            <TextBox Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                     behaviours:TextBoxHelper.Watermark="enter artist filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ArtistFilterGenre" DataType="viewModels:IArtistFilter">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="1" BorderThickness="0" CornerRadius="3" Background="{StaticResource TrimColor}" Margin="25,7,0,1" Padding="3">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+						<ContentPresenter VerticalAlignment="Center" Height="15" Margin="7,0" Content="{StaticResource Path_Filter}"/>
+                        <TextBlock FontSize="14" Margin="0,0,3,0" VerticalAlignment="Center" Text="Genre:"/>
+                        <TextBlock FontSize="14" Margin="0,0,3,0" VerticalAlignment="Center" Text="{Binding FilterText}"/>
+                        <Button Margin="3,0" Width="25" Height="25" Padding="3" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False"
+                                Command="{Binding Clear}" Content="{StaticResource Path_Unlink}" ToolTip="Clear Filter" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ArtistFilterList" DataType="viewModels:IArtistFilter">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="1" BorderThickness="0" CornerRadius="3" Background="{StaticResource TrimColor}" Margin="25,7,0,1" Padding="3">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ContentPresenter VerticalAlignment="Center" Height="15" Margin="7,0" Content="{StaticResource Path_Filter}"/>
+                        <TextBlock FontSize="14" Margin="0,0,3,0" VerticalAlignment="Center" Text="Similar Artists"/>
+                        <Button Margin="3,0" Width="25" Height="25" Padding="3" BorderThickness="0" Background="Transparent" Cursor="Hand" Focusable="False"
+                                Command="{Binding Clear}" Content="{StaticResource Path_Unlink}" ToolTip="Clear Filter" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+		
+        <viewModels:ArtistFilterTemplateSelector x:Key="ArtistFilterTemplateSelector" 
+                                                 TextTemplate="{StaticResource ArtistFilterText}" 
+                                                 GenreTemplate="{StaticResource ArtistFilterGenre}"
+                                                 ArtistListTemplate="{StaticResource ArtistFilterList}"/>
 	</UserControl.Resources>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}">
@@ -110,10 +147,10 @@
 				<VisualState x:Name="_normal" />
 				<VisualState x:Name="_displaySortDescriptions">
 					<Storyboard>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(UIElement.Opacity)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(UIElement.Opacity)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="SortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
 							<EasingDoubleKeyFrame KeyTime="0" Value="160" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
@@ -132,11 +169,11 @@
 					 ItemTemplate="{StaticResource ArtistTemplate}"
 					 SelectedItem="{Binding SelectedArtist}">
 				<i:Interaction.Behaviors>
-					<ReusableBehaviours:ListBoxSelectionVisible />
+					<reusableBehaviours:ListBoxSelectionVisible />
 				</i:Interaction.Behaviors>
 			</ListBox>
 
-			<NoiseControls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
+			<noiseControls:SortDescriptionList x:Name="SortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
 			
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
@@ -144,14 +181,18 @@
 					<ColumnDefinition Width="2*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+				<Button Grid.Column="0" Tag="dimmed" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
 						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Artist Sort Order" />
 
-				<TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
-						 Behaviours:TextBoxHelper.Watermark="enter artist filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
-						 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+				<ContentControl Grid.Column="1" Tag="dimOnClear" ContentTemplateSelector="{StaticResource ArtistFilterTemplateSelector}" Content="{Binding ArtistFilter}"/>
 			</Grid>
 		</Grid>
+
+        <i:Interaction.Behaviors>
+            <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        </i:Interaction.Behaviors>
 	</GroupBox>
 </UserControl>
