@@ -16,10 +16,10 @@ namespace ReusableBits.Ui.Behaviours {
 		private const double cFadeHeight = 20.0;
 
 		public static readonly DependencyProperty IsEnabledProperty =
-            DependencyProperty.RegisterAttached( "IsEnabled", typeof( bool ), typeof( FadeTrimming ), new PropertyMetadata( false, HandleIsEnabledChanged ) );
+            DependencyProperty.RegisterAttached( "IsEnabled", typeof( bool ), typeof( FadeTrimming ), new PropertyMetadata( false, HandleIsEnabledChanged ));
 
 		public static readonly DependencyProperty ForegroundColorProperty =
-            DependencyProperty.RegisterAttached( "ForegroundColor", typeof( Color ), typeof( FadeTrimming ), new PropertyMetadata( Colors.Transparent ) );
+            DependencyProperty.RegisterAttached( "ForegroundColor", typeof( Color ), typeof( FadeTrimming ), new PropertyMetadata( Colors.Transparent, HandleForegroundChanged ));
 
 		public static readonly DependencyProperty ShowTextInToolTipWhenTrimmedProperty =
             DependencyProperty.RegisterAttached( "ShowTextInToolTipWhenTrimmed", typeof( bool ), typeof( FadeTrimming ), new PropertyMetadata( false ) );
@@ -86,6 +86,14 @@ namespace ReusableBits.Ui.Behaviours {
 			}
 		}
 
+        private static void HandleForegroundChanged( DependencyObject source, DependencyPropertyChangedEventArgs e ) {
+			if( source is TextBlock textBlock ) {
+                var fader = GetFader( textBlock );
+
+				fader.Update();
+            }
+        }
+
 		private static void HandleTextBlockUnloaded( object sender, RoutedEventArgs e ) {
 			var fader = GetFader( sender as DependencyObject );
 			fader.Detach();
@@ -116,11 +124,16 @@ namespace ReusableBits.Ui.Behaviours {
 				parent.SizeChanged += UpdateForegroundBrush;
 				mTextBlock.SizeChanged += UpdateForegroundBrush;
 
-				mForegroundColor = DetermineForegroundColor( mTextBlock );
-				UpdateForegroundBrush( mTextBlock, EventArgs.Empty );
+				Update();
 
 				mIsAttached = true;
 			}
+
+			public void Update() {
+                mForegroundColor = DetermineForegroundColor( mTextBlock );
+
+                UpdateForegroundBrush( mTextBlock, EventArgs.Empty );
+            }
 
 			public void Detach() {
 				mTextBlock.SizeChanged -= UpdateForegroundBrush;

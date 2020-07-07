@@ -83,7 +83,8 @@
         <!-- Track Name -->
         <DataTemplate x:Key="TrackNameTemplate" DataType="dto:UiTrack">
             <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Cursor="Hand" Text="{Binding Name}"
-                       reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True">
+                       reusableBehaviours:FadeTrimming.IsEnabled="True" reusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                       reusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource MahApps.Colors.IdealForeground}">
                 <b:Interaction.Behaviors>
                     <elementMover:ElementMoverSource FireEventName="AnimateQueueTrack" MoveText="{Binding Name}" />
                 </b:Interaction.Behaviors>
@@ -100,6 +101,7 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                     <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                    <Setter TargetName="TrackName" Property="reusableBehaviours:FadeTrimming.ForegroundColor" Value="{StaticResource PlayButtonNormalFill}"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
