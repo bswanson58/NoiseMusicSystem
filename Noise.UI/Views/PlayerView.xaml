@@ -117,6 +117,31 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="AnimatedExpandButtonStyle" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Duration="0:0:0.7" Storyboard.TargetProperty="Padding" To="1,1,1,10"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Padding" To="1">
+                                <ThicknessAnimation.EasingFunction>
+                                    <BounceEase EasingMode="EaseOut" Bounces="5" Bounciness="1.5"/>
+                                </ThicknessAnimation.EasingFunction>
+                            </ThicknessAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="ReplayButtonTemplate">
             <Grid Background="Transparent" RenderTransformOrigin="0.5, 0.5">
                 <ContentPresenter Margin="5" Content="{StaticResource Path_ReplayTrack}"/>
@@ -231,7 +256,7 @@
 					<noiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
-					<Button Grid.Column="2" Tag="dimmed" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" ToolTip="Expand Player"/>
+					<Button Grid.Column="2" Tag="dimmed" Margin="3" Style="{StaticResource AnimatedExpandButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" ToolTip="Expand Player"/>
 				</Grid>
 			</Grid>
 
