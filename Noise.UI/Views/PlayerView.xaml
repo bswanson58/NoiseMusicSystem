@@ -116,6 +116,34 @@
                 </EventTrigger>
             </Style.Triggers>
         </Style>
+
+        <DataTemplate x:Key="ReplayButtonTemplate">
+            <Grid Background="Transparent" RenderTransformOrigin="0.5, 0.5">
+                <ContentPresenter Margin="5" Content="{StaticResource Path_ReplayTrack}"/>
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="-1.0"/>
+                        <RotateTransform x:Name="_rotateTransform" Angle="0"/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Button.MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="_rotateTransform" Storyboard.TargetProperty="Angle" By="-360" Duration="0:0:0.2" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="Button.MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="_rotateTransform" Storyboard.TargetProperty="Angle" To="0" Duration="0:0:0.01" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
@@ -182,7 +210,7 @@
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_StopAtEnd}" Padding="6" Command="{Binding StopAtEndOfTrack}" ToolTip="Stop At End Of Track"/>
 						<Button Margin="3" Style="{StaticResource AnimatedPreviousButtonStyle}" Content="{StaticResource Path_PreviousTrack}" Padding="7" Command="{Binding PreviousTrack}" ToolTip="Start Previous Track"/>
 						<Button Margin="3" Style="{StaticResource AnimatedNextButtonStyle}" Content="{StaticResource Path_NextTrack}" Padding="7" Command="{Binding NextTrack}" ToolTip="Start Next Track"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Padding="6"  Command="{Binding ReplayTrack}" ToolTip="Replay Track"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" ContentTemplate="{StaticResource ReplayButtonTemplate}" Padding="0" Command="{Binding ReplayTrack}" ToolTip="Replay Track"/>
 					</StackPanel>
 				</Grid>
 
