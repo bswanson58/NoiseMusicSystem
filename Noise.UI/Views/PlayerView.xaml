@@ -36,7 +36,7 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="AnimatedButtonStyle" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
+        <Style x:Key="AnimatedPlayButtonStyle" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
             <Style.Triggers>
                 <EventTrigger RoutedEvent="MouseEnter">
                     <EventTrigger.Actions>
@@ -64,7 +64,59 @@
                 </EventTrigger>
             </Style.Triggers>
         </Style>
-	</UserControl.Resources>
+
+        <Style x:Key="AnimatedNextButtonStyle" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Duration="0:0:0.2" Storyboard.TargetProperty="Padding" To="10,7,4,7">
+                                    <ThicknessAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseInOut" Amplitude="3.0"/>
+                                    </ThicknessAnimation.EasingFunction>
+                                </ThicknessAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Padding" To="7">
+                            </ThicknessAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AnimatedPreviousButtonStyle" TargetType="Button" BasedOn="{StaticResource TransportButtonStyle}">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Duration="0:0:0.2" Storyboard.TargetProperty="Padding" To="4,7,10,7">
+                                    <ThicknessAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseInOut" Amplitude="3.0"/>
+                                    </ThicknessAnimation.EasingFunction>
+                                </ThicknessAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Padding" To="7">
+                            </ThicknessAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
 	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid Background="Transparent">
@@ -124,12 +176,12 @@
 
 					<!-- Transport Controls -->
 					<StackPanel Grid.Column="1" Margin="7,0" HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="3" Style="{StaticResource AnimatedButtonStyle}" Content="{StaticResource Path_Play}" Foreground="{StaticResource PlayingBrush}" Padding="6,5,4,5" Command="{Binding Play}" ToolTip="Play"/>
+                        <Button Margin="3" Style="{StaticResource AnimatedPlayButtonStyle}" Content="{StaticResource Path_Play}" Foreground="{StaticResource PlayingBrush}" Padding="6,5,4,5" Command="{Binding Play}" ToolTip="Play"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Pause}" Padding="8" Command="{Binding Pause}" ToolTip="Pause"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_Stop}" Padding="8" Command="{Binding Stop}" ToolTip="Stop"/>
                         <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_StopAtEnd}" Padding="6" Command="{Binding StopAtEndOfTrack}" ToolTip="Stop At End Of Track"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_PreviousTrack}" Padding="7" Command="{Binding PreviousTrack}" ToolTip="Start Previous Track"/>
-						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_NextTrack}" Padding="7" Command="{Binding NextTrack}" ToolTip="Start Next Track"/>
+						<Button Margin="3" Style="{StaticResource AnimatedPreviousButtonStyle}" Content="{StaticResource Path_PreviousTrack}" Padding="7" Command="{Binding PreviousTrack}" ToolTip="Start Previous Track"/>
+						<Button Margin="3" Style="{StaticResource AnimatedNextButtonStyle}" Content="{StaticResource Path_NextTrack}" Padding="7" Command="{Binding NextTrack}" ToolTip="Start Next Track"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Padding="6"  Command="{Binding ReplayTrack}" ToolTip="Replay Track"/>
 					</StackPanel>
 				</Grid>
