@@ -134,7 +134,8 @@ namespace Noise.Core.DataProviders {
 						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
 						if( frames != null ) {
 							foreach( var fr in frames ) {
-								if( fr.Description.IndexOf( "replaygain", StringComparison.InvariantCultureIgnoreCase ) != -1 ) {
+								if((!String.IsNullOrWhiteSpace( fr.Description )) &&
+                                   ( fr.Description.IndexOf( "replaygain", StringComparison.InvariantCultureIgnoreCase ) != -1 )) {
 									var		desc = fr.Description.ToUpper();
 									float	gain;
 
