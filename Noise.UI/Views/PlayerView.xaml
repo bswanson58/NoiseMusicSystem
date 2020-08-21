@@ -76,17 +76,10 @@
                                         <BackEase EasingMode="EaseInOut" Amplitude="3.0"/>
                                     </ThicknessAnimation.EasingFunction>
                                 </ThicknessAnimation>
+                                <ThicknessAnimation Duration="0:0:1" Storyboard.TargetProperty="Padding" To="7"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger.Actions>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="MouseLeave">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Padding" To="7">
-                            </ThicknessAnimation>
-                        </Storyboard>
-                    </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
@@ -102,17 +95,10 @@
                                         <BackEase EasingMode="EaseInOut" Amplitude="3.0"/>
                                     </ThicknessAnimation.EasingFunction>
                                 </ThicknessAnimation>
+                                <ThicknessAnimation Duration="0:0:1" Storyboard.TargetProperty="Padding" To="7"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger.Actions>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="MouseLeave">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Padding" To="7">
-                            </ThicknessAnimation>
-                        </Storyboard>
-                    </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
