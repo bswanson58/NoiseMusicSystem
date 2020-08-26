@@ -593,6 +593,10 @@
       <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
       <Name>ReusableBits</Name>
     </ProjectReference>
+    <ProjectReference Include="LightPipe\LightPipe.csproj">
+      <Project>{b00f4a9f-1e5e-499b-b3f8-5a1a31b854ca}</Project>
+      <Name>LightPipe</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Milk Bottle.ico" />

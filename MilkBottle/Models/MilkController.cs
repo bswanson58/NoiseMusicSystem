@@ -121,7 +121,11 @@ namespace MilkBottle.Models {
         private void UpdateVisualization() {
             mProjectM.renderFrame();
 
-            mGlControl?.SwapBuffers();
+            if( mGlControl != null ) {
+                mGlControl.SwapBuffers();
+
+                mEventAggregator.PublishOnUIThread( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+            }
         }
 
         private void OnAudioData( byte[] audioData, int samples, int channels ) {

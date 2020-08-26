@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using MilkBottle.ViewModels;
-using ReusableBits.Platform;
 
 namespace MilkBottle.Events {
     public class ApplicationClosing { }
