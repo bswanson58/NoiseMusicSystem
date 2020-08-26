@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 
 namespace MilkBottle.Platform {

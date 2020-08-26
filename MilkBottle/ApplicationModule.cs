@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using MilkBottle.Database;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
 using MilkBottle.Models;
@@ -40,6 +41,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<ISceneProvider, SceneProvider>();
             containerRegistry.RegisterSingleton<ITagProvider, TagProvider>();
 
+            containerRegistry.Register<IApplicationConstants, ApplicationConstants>();
             containerRegistry.Register<ICelestialCalculator, CelestialCalculator>();
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();

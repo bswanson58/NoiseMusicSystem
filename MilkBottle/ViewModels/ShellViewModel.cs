@@ -7,8 +7,8 @@ using System.Windows.Forms;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
-using MilkBottle.Properties;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -45,7 +45,8 @@ namespace MilkBottle.ViewModels {
         public  bool                            DisplayStatus { get; private set; }
         public  bool                            DisplayController { get; private set; }
 
-        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager, IEventAggregator eventAggregator ) {
+        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager,
+                               IEventAggregator eventAggregator, IApplicationConstants applicationConstants ) {
             mStateManager = stateManager;
             mIpcManager = ipcManager;
             mPreferences = preferences;
@@ -58,7 +59,7 @@ namespace MilkBottle.ViewModels {
             DisplaySyncView = new DelegateCommand( OnDisplaySyncView );
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
-            mNotifyIcon = new NotifyIcon { BalloonTipTitle = ApplicationConstants.ApplicationName, Text = ApplicationConstants.ApplicationName }; 
+            mNotifyIcon = new NotifyIcon { BalloonTipTitle = applicationConstants.ApplicationName, Text = applicationConstants.ApplicationName }; 
             mNotifyIcon.Click += OnNotifyIconClick;
 
             var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/MilkBottle;component/Resources/Milk Bottle.ico" ));

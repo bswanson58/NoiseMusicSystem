@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
 using MoreLinq;

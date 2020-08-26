@@ -1,6 +1,7 @@
-﻿namespace MilkBottle.Interfaces {
+﻿namespace MilkBottle.Infrastructure.Interfaces {
     public interface IEnvironment {
         string		ApplicationName();
+        string      EnvironmentName();
 
         string		ApplicationDirectory();
         string      DatabaseDirectory();

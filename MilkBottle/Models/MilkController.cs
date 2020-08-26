@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;

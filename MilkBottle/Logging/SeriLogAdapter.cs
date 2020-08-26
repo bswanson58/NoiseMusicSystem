@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using Serilog;
 using Serilog.Core;

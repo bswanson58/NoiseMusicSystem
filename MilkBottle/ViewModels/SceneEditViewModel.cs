@@ -6,6 +6,7 @@ using Caliburn.Micro;
 using LiteDB;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Types;
 using MilkBottle.Views;

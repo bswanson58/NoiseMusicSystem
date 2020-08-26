@@ -1,9 +1,9 @@
 ﻿using MilkBottle.Dto;
-using MilkBottle.Interfaces;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using System;
+using MilkBottle.Infrastructure.Interfaces;
 
 namespace MilkBottle.ViewModels {
     class ConfigurationDialogModel : PropertyChangeBase, IDialogAware {
