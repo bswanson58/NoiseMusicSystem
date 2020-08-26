@@ -74,7 +74,7 @@ namespace HueLighting.Models {
                     mPreferences.Save( userPreferences );
 
                 }
-                catch( Exception ex ) {
+                catch( Exception ) {
                     retValue = false;
                 }
             }
@@ -82,12 +82,8 @@ namespace HueLighting.Models {
             return retValue;
         }
 
-        private async Task<IEnumerable<LocatedBridge>> LocateHubs() {
-            IBridgeLocator locator = new HttpBridgeLocator();
-
-            //For Windows 8 and .NET45 projects you can use the SSDPBridgeLocator which actually scans your network. 
-            //See the included BridgeDiscoveryTests and the specific .NET and .WinRT projects
-            return await locator.LocateBridgesAsync( TimeSpan.FromSeconds( 5 ));
+        public async Task<IEnumerable<LocatedBridge>> LocateHubs() {
+            return await HueBridgeDiscovery.FastDiscoveryWithNetworkScanFallbackAsync( TimeSpan.FromSeconds( 5 ), TimeSpan.FromSeconds( 30 ));
         }
 
         private async Task<String> RegisterApp( string bridgeIp ) {

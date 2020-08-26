@@ -1,15 +1,15 @@
-﻿<UserControl x:Class="MilkBottle.Views.LightPipeDialog"
+﻿<UserControl x:Class="HueLighting.Views.HubSelectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:HueLighting.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
-             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
-             xmlns:views="clr-namespace:HueLighting.Views;assembly=HueLighting"
+             xmlns:bridge="clr-namespace:Q42.HueApi.Models.Bridge;assembly=Q42.HueApi"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance viewModels:LightPipeDialogModel, IsDesignTimeCreatable=False}"
-             Height="450" Width="800">
+             d:DataContext="{d:DesignInstance viewModels:HubSelectionViewModel, IsDesignTimeCreatable=False}"
+             Height="250" Width="400">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -20,6 +20,17 @@
         </Style>
     </mvvm:Dialog.WindowStyle>
 
+    <UserControl.Resources>
+        <DataTemplate x:Key="BridgeTemplate" DataType="bridge:LocatedBridge">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding BridgeId}"/>
+                <TextBlock Text="(" Margin="5,0,0,0"/>
+                <TextBlock Text="{Binding IpAddress}"/>
+                <TextBlock Text=")"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid Margin="15,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -27,7 +38,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <views:HubConfigurationView Grid.Row="0"/>
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Located Hubs:"/>
+
+        <ListBox Grid.Row="1" Margin="0,5" ItemsSource="{Binding BridgeList}" ItemTemplate="{StaticResource BridgeTemplate}"/>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
