@@ -78,6 +78,8 @@
             <Button Command="{Binding DisplayManualController}" Content="revel"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
+            <Button Command="{Binding LightPipe}" Content="{StaticResource Path_LightPipe}" Padding="8" ToolTip="LightPipe"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
             <Button Command="{Binding Configuration}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Configuration"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 

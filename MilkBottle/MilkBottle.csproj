@@ -326,6 +326,7 @@
     <Compile Include="Types\ValidationException.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
+    <Compile Include="ViewModels\LightPipeDialogModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\MoodManagementDialogModel.cs" />
     <Compile Include="ViewModels\MoodSelectionDialogModel.cs" />
@@ -351,6 +352,9 @@
     </Compile>
     <Compile Include="Views\ConfirmDeleteDialog.xaml.cs">
       <DependentUpon>ConfirmDeleteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LightPipeDialog.xaml.cs">
+      <DependentUpon>LightPipeDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ManualControlView.xaml.cs">
       <DependentUpon>ManualControlView.xaml</DependentUpon>
@@ -436,6 +440,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ConfirmDeleteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LightPipeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

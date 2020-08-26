@@ -9,6 +9,7 @@ using MilkBottle.Dto;
 using MilkBottle.Entities;
 using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
+using MilkBottle.Views;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -35,6 +36,7 @@ namespace MilkBottle.ViewModels {
 
         public  ShellView                       ShellViewDisplayed { get; private set; }
         public  DelegateCommand                 Configuration { get; }
+        public  DelegateCommand                 LightPipe { get; }
         public  DelegateCommand                 DisplayManualController { get; }
         public  DelegateCommand                 DisplayReviewer { get; }
         public  DelegateCommand                 DisplaySyncView { get; }
@@ -54,6 +56,7 @@ namespace MilkBottle.ViewModels {
             mEventAggregator = eventAggregator;
 
             Configuration = new DelegateCommand( OnConfiguration );
+            LightPipe = new DelegateCommand( OnLightPipe );
             DisplayManualController = new DelegateCommand( OnDisplayManualController );
             DisplayReviewer = new DelegateCommand( OnDisplayReviewer );
             DisplaySyncView = new DelegateCommand( OnDisplaySyncView );
@@ -193,13 +196,17 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnConfiguration() {
-            mDialogService.ShowDialog( "ConfigurationDialog", null, OnConfigurationCompleted );
+            mDialogService.ShowDialog( nameof( ConfigurationDialog ), null, OnConfigurationCompleted );
         }
 
         private void OnConfigurationCompleted( IDialogResult result ) {
             if( result.Result == ButtonResult.OK ) {
                 mEventAggregator.PublishOnUIThread( new Events.MilkConfigurationUpdated());
             }
+        }
+
+        public void OnLightPipe() {
+            mDialogService.ShowDialog( nameof( LightPipeDialog ), new DialogParameters(), result => { });
         }
 
         private void OnDisplayManualController() {
