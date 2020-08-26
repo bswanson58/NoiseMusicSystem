@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
+using HueLighting;
 using LightPipe;
 using Prism.Ioc;
 using MilkBottle.Interfaces;
@@ -56,6 +57,7 @@ namespace MilkBottle {
         protected override void RegisterTypes( IContainerRegistry containerRegistry ) {
             new ApplicationModule().RegisterTypes( containerRegistry );
             new LightPipeModule().RegisterTypes( containerRegistry );
+            new HueLightingModule().RegisterTypes( containerRegistry );
 
             // Caliburn Micro dispatcher initialize.
             PlatformProvider.Current = new XamlPlatformProvider();

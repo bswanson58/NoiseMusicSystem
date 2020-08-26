@@ -597,6 +597,10 @@
       <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
       <Name>ReusableBits</Name>
     </ProjectReference>
+    <ProjectReference Include="HueLighting\HueLighting.csproj">
+      <Project>{811d89d6-43db-464f-bef9-621ea6632e05}</Project>
+      <Name>HueLighting</Name>
+    </ProjectReference>
     <ProjectReference Include="LightPipe\LightPipe.csproj">
       <Project>{b00f4a9f-1e5e-499b-b3f8-5a1a31b854ca}</Project>
       <Name>LightPipe</Name>

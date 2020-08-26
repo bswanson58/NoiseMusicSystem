@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.UI.Style", "Noise.UI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightPipe", "MilkBottle\LightPipe\LightPipe.csproj", "{B00F4A9F-1E5E-499B-B3F8-5A1A31B854CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLighting", "MilkBottle\HueLighting\HueLighting.csproj", "{811D89D6-43DB-464F-BEF9-621EA6632E05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{B00F4A9F-1E5E-499B-B3F8-5A1A31B854CA}.Release|x64.Build.0 = Release|x64
 		{B00F4A9F-1E5E-499B-B3F8-5A1A31B854CA}.Release|x86.ActiveCfg = Release|x86
 		{B00F4A9F-1E5E-499B-B3F8-5A1A31B854CA}.Release|x86.Build.0 = Release|x86
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Debug|x64.ActiveCfg = Debug|x64
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Debug|x64.Build.0 = Debug|x64
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Debug|x86.ActiveCfg = Debug|x86
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Debug|x86.Build.0 = Debug|x86
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Release|x64.ActiveCfg = Release|x64
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Release|x64.Build.0 = Release|x64
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Release|x86.ActiveCfg = Release|x86
+		{811D89D6-43DB-464F-BEF9-621EA6632E05}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
