@@ -8,8 +8,6 @@ using HueLighting.Interfaces;
 using JetBrains.Annotations;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi;
-using Q42.HueApi.Interfaces;
-using Q42.HueApi.Models.Bridge;
 
 namespace HueLighting.Models {
     public class HubManager : IHubManager {
@@ -28,25 +26,24 @@ namespace HueLighting.Models {
             mEmulating = false;
         }
 
-        public async Task<bool> InitializeHub() {
+        public async Task<bool> InitializeConfiguredHub() {
             var retValue = false;
             var installationInfo = mPreferences.Load<InstallationInfo>();
 
-            if( String.IsNullOrWhiteSpace( installationInfo.BridgeIp )) {
-                if( await LocateAndRegisterHub()) {
-                    installationInfo = mPreferences.Load<InstallationInfo>();
-                }
-            }
-
             if(!String.IsNullOrWhiteSpace( installationInfo.BridgeIp )) {
-                mClient = new LocalHueClient( installationInfo.BridgeIp );
+                try {
+                    mClient = new LocalHueClient( installationInfo.BridgeIp, installationInfo.BridgeAppKey );
 
-                mClient.Initialize(installationInfo.BridgeUserName);
+                    retValue = await mClient.CheckConnection();
 
-                retValue = await mClient.CheckConnection();
-
-                if(!retValue ) {
+                    if(!retValue ) {
+                        mClient = null;
+                    }
+                }
+                catch( Exception ) {
                     mClient = null;
+
+                    retValue = false;
                 }
             }
 
@@ -57,39 +54,60 @@ namespace HueLighting.Models {
             mEmulating = true;
         }
 
-        public async Task<bool> LocateAndRegisterHub() {
-            var retValue = true;
-            var hubs = await LocateHubs();
-            var myHub = hubs.FirstOrDefault();
+        public async Task<IEnumerable<HubInformation>> LocateHubs() { 
+            var retValue = new List<HubInformation>();
+            var installationInfo = mPreferences.Load<InstallationInfo>();
+            var bridges = await HueBridgeDiscovery.FastDiscoveryWithNetworkScanFallbackAsync( TimeSpan.FromSeconds( 5 ), TimeSpan.FromSeconds( 30 ));
 
-            if( myHub != null ) {
+            foreach( var bridge in bridges ) {
                 try {
-                    var appKey = await RegisterApp(myHub.IpAddress);
-                    var userPreferences = mPreferences.Load<InstallationInfo>();
+                    var client = new LocalHueClient( bridge.IpAddress , installationInfo.BridgeAppKey );
 
-                    userPreferences.BridgeIp = myHub.IpAddress;
-                    userPreferences.BridgeId = myHub.BridgeId;
-                    userPreferences.BridgeUserName = appKey;
+                    try {
+                        var bridgeInfo = await client.GetBridgeAsync();
 
-                    mPreferences.Save( userPreferences );
+                        if( bridgeInfo?.Config != null ) {
+                            retValue.Add( new HubInformation( bridge, bridgeInfo, installationInfo.BridgeAppKey, bridge.BridgeId.Equals( installationInfo.BridgeId )));
+                        }
+                    }
+                    catch( Exception ) {
+                        retValue.Add( new HubInformation( bridge ));
+                    }
 
                 }
-                catch( Exception ) {
-                    retValue = false;
-                }
+                catch( Exception ) { }
             }
 
             return retValue;
         }
 
-        public async Task<IEnumerable<LocatedBridge>> LocateHubs() {
-            return await HueBridgeDiscovery.FastDiscoveryWithNetworkScanFallbackAsync( TimeSpan.FromSeconds( 5 ), TimeSpan.FromSeconds( 30 ));
+        public async Task<String> RegisterApp( HubInformation hub, bool setAsConfiguredHub ) {
+            string retValue;
+
+            try {
+                var client = new LocalHueClient( hub.IpAddress );
+
+                retValue = await client.RegisterAsync( mApplicationConstants.ApplicationName, mEnvironment.EnvironmentName());
+
+                if( setAsConfiguredHub ) {
+                    SetConfiguredHub( new HubInformation( hub, retValue ));
+                }
+            }
+            catch( Exception ex ) {
+                retValue = ex.Message;
+            }
+
+            return retValue;
         }
 
-        private async Task<String> RegisterApp( string bridgeIp ) {
-            ILocalHueClient client = new LocalHueClient( bridgeIp );
+        public void SetConfiguredHub( HubInformation hub ) {
+            var userPreferences = mPreferences.Load<InstallationInfo>();
 
-            return await client.RegisterAsync( mApplicationConstants.ApplicationName, mEnvironment.EnvironmentName());
+            userPreferences.BridgeIp = hub.IpAddress;
+            userPreferences.BridgeId = hub.BridgeId;
+            userPreferences.BridgeAppKey = hub.BridgeAppKey;
+
+            mPreferences.Save( userPreferences );
         }
 
         public async Task<IEnumerable<Bulb>> BulbList() {

@@ -4,12 +4,12 @@ namespace HueLighting.Dto {
     public class InstallationInfo {
         public  String  BridgeIp;
         public  String  BridgeId;
-        public  String  BridgeUserName;
+        public  String  BridgeAppKey;
 
         public InstallationInfo() {
             BridgeIp = String.Empty;
             BridgeId = String.Empty;
-            BridgeUserName = String.Empty;
+            BridgeAppKey = String.Empty;
         }
     }
 }

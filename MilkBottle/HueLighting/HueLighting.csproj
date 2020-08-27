@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dto\Bulb.cs" />
+    <Compile Include="Dto\HubInformation.cs" />
     <Compile Include="Dto\InstallationInfo.cs" />
     <Compile Include="HueLightingModule.cs" />
     <Compile Include="Interfaces\IHubManager.cs" />
@@ -170,6 +171,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +182,10 @@
     <ProjectReference Include="..\..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138b-f96a-4a56-84cf-d660730989c9}</Project>
       <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
+      <Name>ReusableBits.Ui</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ReusableBits\ReusableBits.csproj">
       <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>

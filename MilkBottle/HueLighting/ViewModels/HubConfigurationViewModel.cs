@@ -27,13 +27,17 @@ namespace HueLighting.ViewModels {
         }
 
         private void OnConfigureBridge() {
-            mDialogService.ShowDialog( nameof( HubSelectionView ), new DialogParameters(), result => { });
+            mDialogService.ShowDialog( nameof( HubSelectionView ), new DialogParameters(), result => {
+                if( result.Result == ButtonResult.OK ) {
+                    LoadHubInfo();
+                }
+            });
         }
 
         private void LoadHubInfo() {
             var configuration = mPreferences.Load<InstallationInfo>();
 
-            BridgeName = configuration.BridgeUserName;
+            BridgeName = configuration.BridgeId + " (" + configuration.BridgeIp + ")";
             RaisePropertyChanged( () => BridgeName );
         }
     }

@@ -31,7 +31,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0" Text="Hub:"/>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0" Text="Configured Hue Hub:"/>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="{Binding BridgeName}"/>
             <Button Grid.Column="2" Style="{StaticResource GeneralButtonStyle}" Content="Select Hub" Command="{Binding ConfigureBridge}"/>
         </Grid>

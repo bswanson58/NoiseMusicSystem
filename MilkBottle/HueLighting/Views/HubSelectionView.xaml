@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModels="clr-namespace:HueLighting.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
-             xmlns:bridge="clr-namespace:Q42.HueApi.Models.Bridge;assembly=Q42.HueApi"
+             xmlns:dto="clr-namespace:HueLighting.Dto"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:HubSelectionViewModel, IsDesignTimeCreatable=False}"
@@ -21,13 +22,25 @@
     </mvvm:Dialog.WindowStyle>
 
     <UserControl.Resources>
-        <DataTemplate x:Key="BridgeTemplate" DataType="bridge:LocatedBridge">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding BridgeId}"/>
-                <TextBlock Text="(" Margin="5,0,0,0"/>
-                <TextBlock Text="{Binding IpAddress}"/>
-                <TextBlock Text=")"/>
-            </StackPanel>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
+
+        <DataTemplate x:Key="BridgeTemplate" DataType="dto:HubInformation">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="{Binding BridgeId}"/>
+                    <TextBlock Text="(" Margin="5,0,0,0"/>
+                    <TextBlock Text="{Binding IpAddress}"/>
+                    <TextBlock Text=")"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="2" Margin="0,0,5,0" Text="Configured Hub" Visibility="{Binding IsConfiguredHub, Converter={StaticResource HideIfFalse}}"/>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -36,15 +49,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Located Hubs:"/>
 
-        <ListBox Grid.Row="1" Margin="0,5" ItemsSource="{Binding BridgeList}" ItemTemplate="{StaticResource BridgeTemplate}"/>
+        <ListBox Grid.Row="1" Margin="0,5" ItemsSource="{Binding HubList}" ItemTemplate="{StaticResource BridgeTemplate}" SelectedItem="{Binding SelectedHub}"/>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
+        <Button Grid.Row="2" HorizontalAlignment="Left" Margin="5" Content="Configure Hub" Style="{StaticResource GeneralButtonStyle}" Command="{Binding ConfigureHub}"/>
+
+        <StackPanel Grid.Row="3" Margin="5" Orientation="Horizontal">
+            <Button Style="{StaticResource GeneralButtonStyle}" Content="Register Hub" Command="{Binding RegisterHub}"/>
+            <TextBlock Margin="15,0,0,0" Text="Press Link button on this hub first!" VerticalAlignment="Center" Foreground="Red" FontSize="14"
+                       Visibility="{Binding CanRegister, Converter={StaticResource HideIfFalse}}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Ok}"/>
         </StackPanel>
     </Grid>
 </UserControl>

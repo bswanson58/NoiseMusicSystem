@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using HueLighting.Dto;
 using HueLighting.Interfaces;
 using Prism.Commands;
 using Prism.Services.Dialogs;
-using Q42.HueApi.Models.Bridge;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace HueLighting.ViewModels {
-    class HubSelectionViewModel : IDialogAware {
+    class HubSelectionViewModel : PropertyChangeBase, IDialogAware {
         private readonly IHubManager                mHubManager;
+        private HubInformation                           mSelectedHub;
 
-        public  ObservableCollection<LocatedBridge> BridgeList { get; }
+        public  ObservableCollection<HubInformation>     HubList { get; }
 
         public  string                              Title { get; }
+        public  bool                                CanRegister => CanRegisterHub();
+
+        public  DelegateCommand                     ConfigureHub { get; }
+        public  DelegateCommand                     RegisterHub { get; }
+
         public  DelegateCommand                     Ok { get; }
         public  DelegateCommand                     Cancel { get; }
 
@@ -21,7 +28,10 @@ namespace HueLighting.ViewModels {
         public HubSelectionViewModel( IHubManager hubManager ) {
             mHubManager = hubManager;
 
-            BridgeList = new ObservableCollection<LocatedBridge>();
+            HubList = new ObservableCollection<HubInformation>();
+
+            ConfigureHub = new DelegateCommand( OnConfigureHub, CanConfigureHub );
+            RegisterHub = new DelegateCommand( OnRegisterHub, CanRegisterHub );
 
             Title = "Hub Selection";
 
@@ -34,10 +44,45 @@ namespace HueLighting.ViewModels {
         }
 
         private async Task ScanForHubs() {
-            BridgeList.AddRange( await mHubManager.LocateHubs());
+            HubList.Clear();
+            HubList.AddRange( await mHubManager.LocateHubs());
         }
 
-        private void OnOk() { }
+        public HubInformation SelectedHub {
+            get => mSelectedHub;
+            set {
+                mSelectedHub = value;
+
+                RaisePropertyChanged( () => SelectedHub );
+                RegisterHub.RaiseCanExecuteChanged();
+            }
+        }
+
+        private void OnConfigureHub() {
+            if( SelectedHub != null ) {
+                mHubManager.SetConfiguredHub( SelectedHub );
+            }
+        }
+
+        private bool CanConfigureHub() {
+            return SelectedHub?.IsAppRegistered == true && SelectedHub?.IsConfiguredHub == false;
+        }
+
+        private async void OnRegisterHub() {
+            if( SelectedHub != null ) {
+                await mHubManager.RegisterApp( SelectedHub );
+
+                await ScanForHubs();
+            }
+        }
+
+        private bool CanRegisterHub() {
+            return SelectedHub?.IsAppRegistered == false;
+        }
+
+        private void OnOk() {
+            RaiseRequestClose( new DialogResult( ButtonResult.OK ));
+        }
 
         private void OnCancel() {
             RaiseRequestClose( new DialogResult( ButtonResult.Cancel ));

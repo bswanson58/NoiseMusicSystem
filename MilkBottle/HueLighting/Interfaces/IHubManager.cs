@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using HueLighting.Dto;
-using Q42.HueApi.Models.Bridge;
 
 namespace HueLighting.Interfaces {
     public interface IHubManager {
-        Task<bool>                          InitializeHub();
-        Task<IEnumerable<LocatedBridge>>    LocateHubs();
+        Task<bool>                          InitializeConfiguredHub();
+
+        Task<IEnumerable<HubInformation>>   LocateHubs();
+        Task<String>                        RegisterApp( HubInformation hub, bool setAsConfiguredHub = false );
+        void                                SetConfiguredHub( HubInformation hub );
+        
         void                                EmulateHub();
 
         Task<IEnumerable<Bulb>>             BulbList();
