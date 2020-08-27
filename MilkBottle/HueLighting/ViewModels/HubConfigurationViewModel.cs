@@ -35,7 +35,7 @@ namespace HueLighting.ViewModels {
         }
 
         private void LoadHubInfo() {
-            var configuration = mPreferences.Load<InstallationInfo>();
+            var configuration = mPreferences.Load<HueConfiguration>();
 
             BridgeName = configuration.BridgeId + " (" + configuration.BridgeIp + ")";
             RaisePropertyChanged( () => BridgeName );

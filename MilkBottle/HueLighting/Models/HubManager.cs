@@ -28,7 +28,7 @@ namespace HueLighting.Models {
 
         public async Task<bool> InitializeConfiguredHub() {
             var retValue = false;
-            var installationInfo = mPreferences.Load<InstallationInfo>();
+            var installationInfo = mPreferences.Load<HueConfiguration>();
 
             if(!String.IsNullOrWhiteSpace( installationInfo.BridgeIp )) {
                 try {
@@ -56,7 +56,7 @@ namespace HueLighting.Models {
 
         public async Task<IEnumerable<HubInformation>> LocateHubs() { 
             var retValue = new List<HubInformation>();
-            var installationInfo = mPreferences.Load<InstallationInfo>();
+            var installationInfo = mPreferences.Load<HueConfiguration>();
             var bridges = await HueBridgeDiscovery.FastDiscoveryWithNetworkScanFallbackAsync( TimeSpan.FromSeconds( 5 ), TimeSpan.FromSeconds( 30 ));
 
             foreach( var bridge in bridges ) {
@@ -101,7 +101,7 @@ namespace HueLighting.Models {
         }
 
         public void SetConfiguredHub( HubInformation hub ) {
-            var userPreferences = mPreferences.Load<InstallationInfo>();
+            var userPreferences = mPreferences.Load<HueConfiguration>();
 
             userPreferences.BridgeIp = hub.IpAddress;
             userPreferences.BridgeId = hub.BridgeId;

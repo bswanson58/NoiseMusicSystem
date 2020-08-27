@@ -156,7 +156,7 @@
   <ItemGroup>
     <Compile Include="Dto\Bulb.cs" />
     <Compile Include="Dto\HubInformation.cs" />
-    <Compile Include="Dto\InstallationInfo.cs" />
+    <Compile Include="Dto\HueConfiguration.cs" />
     <Compile Include="HueLightingModule.cs" />
     <Compile Include="Interfaces\IHubManager.cs" />
     <Compile Include="Models\HubManager.cs" />

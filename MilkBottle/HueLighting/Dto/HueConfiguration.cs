@@ -1,12 +1,12 @@
 ﻿using System;
 
 namespace HueLighting.Dto {
-    public class InstallationInfo {
+    public class HueConfiguration {
         public  String  BridgeIp;
         public  String  BridgeId;
         public  String  BridgeAppKey;
 
-        public InstallationInfo() {
+        public HueConfiguration() {
             BridgeIp = String.Empty;
             BridgeId = String.Empty;
             BridgeAppKey = String.Empty;
