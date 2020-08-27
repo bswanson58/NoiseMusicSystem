@@ -9,6 +9,7 @@ namespace HueLighting.Dto {
         public  string  IpAddress { get; }
         public  string  BridgeName { get; }
         public  string  BridgeAppKey {  get; }
+        public  string  StreamingKey {  get; }
         public  bool    IsConfiguredHub { get; }
         public  bool    IsAppRegistered { get; }
         public  bool    IsStreamingActive { get; }
@@ -24,10 +25,11 @@ namespace HueLighting.Dto {
             IsAppRegistered = false;
         }
 
-        public HubInformation( LocatedBridge bridge, Bridge bridgeInfo, string bridgeAppKey, bool isConfiguredHub ) {
+        public HubInformation( LocatedBridge bridge, Bridge bridgeInfo, string bridgeAppKey, string streamingKey, bool isConfiguredHub ) {
             IpAddress = bridge.IpAddress;
             BridgeId = bridge.BridgeId;
             BridgeAppKey = bridgeAppKey;
+            StreamingKey = streamingKey;
 
             BridgeName = bridgeInfo.Config.Name;
             IsStreamingActive = bridgeInfo.IsStreamingActive;
@@ -38,12 +40,13 @@ namespace HueLighting.Dto {
             IsAppRegistered = true;
         }
 
-        public HubInformation( HubInformation fromHub, string appKey ) {
+        public HubInformation( HubInformation fromHub, string appKey, string streamingClientKey ) {
             BridgeId = fromHub.BridgeId;
             IpAddress = fromHub.IpAddress;
             BridgeName = fromHub.BridgeName;
 
             BridgeAppKey = appKey;
+            StreamingKey = streamingClientKey;
 
             IsConfiguredHub = fromHub.IsConfiguredHub;
             IsAppRegistered = fromHub.IsAppRegistered;

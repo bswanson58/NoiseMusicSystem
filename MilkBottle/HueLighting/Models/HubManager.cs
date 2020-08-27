@@ -8,14 +8,20 @@ using HueLighting.Interfaces;
 using JetBrains.Annotations;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi;
+using Q42.HueApi.Interfaces;
+using Q42.HueApi.Models.Groups;
+using Q42.HueApi.Streaming;
+using Q42.HueApi.Streaming.Models;
 
 namespace HueLighting.Models {
     public class HubManager : IHubManager {
         private readonly IApplicationConstants  mApplicationConstants;
         private readonly IEnvironment           mEnvironment;
         private readonly IPreferences           mPreferences;
-        private LocalHueClient                  mClient;
+        private ILocalHueClient                 mClient;
         private bool                            mEmulating;
+
+        public  bool                            IsInitialized => mClient != null;
 
         [UsedImplicitly]
         public HubManager( IEnvironment environment, IPreferences preferences, IApplicationConstants constants ) {
@@ -61,13 +67,14 @@ namespace HueLighting.Models {
 
             foreach( var bridge in bridges ) {
                 try {
-                    var client = new LocalHueClient( bridge.IpAddress , installationInfo.BridgeAppKey );
+                    var client = new LocalHueClient( bridge.IpAddress , installationInfo.BridgeAppKey, installationInfo.BridgeStreamingKey );
 
                     try {
                         var bridgeInfo = await client.GetBridgeAsync();
 
                         if( bridgeInfo?.Config != null ) {
-                            retValue.Add( new HubInformation( bridge, bridgeInfo, installationInfo.BridgeAppKey, bridge.BridgeId.Equals( installationInfo.BridgeId )));
+                            retValue.Add( new HubInformation( bridge, bridgeInfo, installationInfo.BridgeAppKey, installationInfo.BridgeStreamingKey,
+                                                              bridge.BridgeId.Equals( installationInfo.BridgeId )));
                         }
                     }
                     catch( Exception ) {
@@ -82,15 +89,14 @@ namespace HueLighting.Models {
         }
 
         public async Task<String> RegisterApp( HubInformation hub, bool setAsConfiguredHub ) {
-            string retValue;
+            var retValue = String.Empty;
 
             try {
                 var client = new LocalHueClient( hub.IpAddress );
-
-                retValue = await client.RegisterAsync( mApplicationConstants.ApplicationName, mEnvironment.EnvironmentName());
+                var clientKey = await client.RegisterAsync( mApplicationConstants.ApplicationName, mEnvironment.EnvironmentName(), true );
 
                 if( setAsConfiguredHub ) {
-                    SetConfiguredHub( new HubInformation( hub, retValue ));
+                    SetConfiguredHub( new HubInformation( hub, clientKey?.Username, clientKey?.StreamingClientKey ));
                 }
             }
             catch( Exception ex ) {
@@ -106,8 +112,47 @@ namespace HueLighting.Models {
             userPreferences.BridgeIp = hub.IpAddress;
             userPreferences.BridgeId = hub.BridgeId;
             userPreferences.BridgeAppKey = hub.BridgeAppKey;
+            userPreferences.BridgeStreamingKey = hub.StreamingKey;
 
             mPreferences.Save( userPreferences );
+        }
+
+        public async Task<IEnumerable<Group>> GetEntertainmentGroups() {
+            var retValue = default( IEnumerable<Group>);
+
+            if( mClient != null ) {
+                retValue = await mClient.GetEntertainmentGroups();
+            }
+
+            return retValue;
+        }
+
+        public async Task<EntertainmentGroup> GetEntertainmentGroupLayout( Group forGroup ) {
+            var retValue = default( EntertainmentGroup );
+
+            try {
+                var configuration = mPreferences.Load<HueConfiguration>();
+                var streamingClient = new StreamingHueClient( configuration.BridgeIp, configuration.BridgeAppKey, configuration.BridgeStreamingKey );
+
+                await streamingClient.Connect( forGroup.Id );
+
+                var streamingGroup = new StreamingGroup( forGroup.Locations );
+                var baseLayer = streamingGroup.GetNewLayer( true );
+                var hubInfo = await mClient.GetBridgeAsync();
+                
+                retValue = new EntertainmentGroup( baseLayer, hubInfo?.Lights.ToList());
+            }
+            catch( Exception ) { }
+
+            return retValue;
+        }
+
+        public async Task<IEntertainmentGroupManager> StartEntertainmentGroup( Group forGroup ) {
+            var retValue = new EntertainmentGroupManager( mPreferences, forGroup );
+
+            await retValue.StartStreamingGroup();
+
+            return retValue;
         }
 
         public async Task<IEnumerable<Bulb>> BulbList() {

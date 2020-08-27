@@ -23,13 +23,15 @@
     <Grid Margin="15,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <views:HubConfigurationView Grid.Row="0"/>
+        <views:EntertainmentGroupView Grid.Row="1"/>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
         </StackPanel>
