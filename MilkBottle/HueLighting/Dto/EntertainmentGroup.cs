@@ -65,8 +65,8 @@ namespace HueLighting.Dto {
         private IEnumerable<Bulb> FindBulbs( IEnumerable<EntertainmentLight> groupLights, IList<Light> lights ) {
             var retValue = new List<Bulb>();
 
-            foreach( var light in groupLights ) {
-                var bulb = lights.FirstOrDefault( l => l.Id.Equals( light.Id.ToString()));
+            foreach( var groupLight in groupLights ) {
+                var bulb = lights.FirstOrDefault( l => l.Id.Equals( groupLight.Id.ToString()));
 
                 if( bulb != null ) {
                     retValue.Add( new Bulb( bulb.Id, bulb.Name, true ));

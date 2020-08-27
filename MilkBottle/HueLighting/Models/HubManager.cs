@@ -132,15 +132,15 @@ namespace HueLighting.Models {
 
             try {
                 var configuration = mPreferences.Load<HueConfiguration>();
-                var streamingClient = new StreamingHueClient( configuration.BridgeIp, configuration.BridgeAppKey, configuration.BridgeStreamingKey );
+                using( var streamingClient = new StreamingHueClient( configuration.BridgeIp, configuration.BridgeAppKey, configuration.BridgeStreamingKey )) {
+                    await streamingClient.Connect( forGroup.Id );
 
-                await streamingClient.Connect( forGroup.Id );
-
-                var streamingGroup = new StreamingGroup( forGroup.Locations );
-                var baseLayer = streamingGroup.GetNewLayer( true );
-                var hubInfo = await mClient.GetBridgeAsync();
+                    var streamingGroup = new StreamingGroup( forGroup.Locations );
+                    var baseLayer = streamingGroup.GetNewLayer( true );
+                    var hubInfo = await mClient.GetBridgeAsync();
                 
-                retValue = new EntertainmentGroup( baseLayer, hubInfo?.Lights.ToList());
+                    retValue = new EntertainmentGroup( baseLayer, hubInfo?.Lights.ToList());
+                }
             }
             catch( Exception ) { }
 
