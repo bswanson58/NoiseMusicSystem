@@ -6,7 +6,6 @@ using Prism.Modularity;
 namespace LightPipe {
     public class LightPipeModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
-            containerRegistry.RegisterSingleton<ILightPipeController, LightPipeController>();
             containerRegistry.RegisterSingleton<IImageProcessor, ImageProcessor>();
             containerRegistry.RegisterSingleton<IZoneManager, ZoneManager>();
         }

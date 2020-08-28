@@ -74,5 +74,14 @@ namespace HueLighting.Models {
         public void UpdateLights() {
             mStreamingClient.ManualUpdate( mStreamingGroup, true );
         }
+
+        public void Dispose() {
+            mStreamingClient?.Close();
+            mStreamingClient?.Dispose();
+            mStreamingClient = null;
+
+            mStreamingGroup = null;
+            mBaseLayer = null;
+        }
     }
 }

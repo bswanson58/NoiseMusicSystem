@@ -149,8 +149,6 @@
     <Compile Include="LightPipeModule.cs" />
     <Compile Include="Models\ImageProcessor.cs" />
     <Compile Include="Interfaces\IImageProcessor.cs" />
-    <Compile Include="Interfaces\ILightPipeController.cs" />
-    <Compile Include="Models\LightPipeController.cs" />
     <Compile Include="Dto\PixelData.cs" />
     <Compile Include="Dto\ZoneDefinition.cs" />
     <Compile Include="Dto\ZoneSummary.cs" />
