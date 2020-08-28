@@ -9,6 +9,9 @@ namespace HueLighting.Interfaces {
 
         Task<EntertainmentGroup>    GetGroupLayout();
 
+        void                        SetOverallBrightness( double brightness );
+
         void                        SetLightColor( string lightId, Color toColor );
+        void                        UpdateLights();
     }
 }

@@ -50,6 +50,8 @@ namespace MilkBottle.Models {
                             colorIndex = 0;
                         }
                     }
+
+                    mEntertainmentGroupManager.UpdateLights();
                 }
             }
         }

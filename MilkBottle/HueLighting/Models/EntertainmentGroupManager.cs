@@ -18,12 +18,15 @@ namespace HueLighting.Models {
         private StreamingHueClient              mStreamingClient;
         private StreamingGroup                  mStreamingGroup;
         private EntertainmentLayer              mBaseLayer;
+        private double                          mBrightness;
 
         public  Group                           EntertainmentGroup { get; }
 
         public EntertainmentGroupManager( IPreferences preferences, Group forGroup ) {
             mPreferences = preferences;
             EntertainmentGroup = forGroup;
+
+            SetOverallBrightness( 0.5 );
         }
 
         public async Task<bool> StartStreamingGroup() {
@@ -37,9 +40,9 @@ namespace HueLighting.Models {
                 await mStreamingClient.Connect( EntertainmentGroup.Id );
                 mBaseLayer = mStreamingGroup.GetNewLayer( true );
 
-                mStreamingClient.AutoUpdate( mStreamingGroup, CancellationToken.None );
+                var bridgeInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
 
-                retValue = mBaseLayer != null;
+                retValue = mBaseLayer != null && bridgeInfo?.IsStreamingActive == true;
             }
             catch( Exception ) {
                 retValue = false;
@@ -54,18 +57,22 @@ namespace HueLighting.Models {
             return new EntertainmentGroup( mBaseLayer, hubInfo?.Lights.ToList());
         }
 
+        public void SetOverallBrightness( double brightness ) {
+            mBrightness = Math.Min( 1.0, Math.Max( 0.0, brightness ));
+        }
+
         public void SetLightColor( string lightId, Color toColor ) {
             var light = mBaseLayer.FirstOrDefault( l => l.Id.ToString().Equals( lightId ));
 
             if( light != null ) {
                 var color = new RGBColor( toColor.R, toColor.G, toColor.B );
 
-                if( light.State.Brightness < 0.1 ) {
-                    light.SetBrightness( CancellationToken.None, 1 );
-                }
-
-                light.SetColor( CancellationToken.None, color );
+                light.SetState( CancellationToken.None, color, mBrightness );
             }
+        }
+
+        public void UpdateLights() {
+            mStreamingClient.ManualUpdate( mStreamingGroup, true );
         }
     }
 }
