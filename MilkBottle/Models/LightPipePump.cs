@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Forms;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
 using LightPipe.Dto;
@@ -40,18 +41,22 @@ namespace MilkBottle.Models {
                 var lightGroup = mEntertainmentGroup.GetLights( zoneGroup.LightLocation );
 
                 if( lightGroup != null ) {
-                    var colorIndex = 0;
+                    var colors = zone.FindMeanColors( lightGroup.Lights.Count );
 
-                    foreach( var light in lightGroup.Lights ) {
-                        mEntertainmentGroupManager.SetLightColor( light.Id, zone.Colors[colorIndex].Color );
+                    if( colors.Any()) {
+                        var colorIndex = 0;
 
-                        colorIndex++;
-                        if( colorIndex >= zone.Colors.Count ) {
-                            colorIndex = 0;
+                        foreach( var light in lightGroup.Lights ) {
+                            mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex]);
+
+                            colorIndex++;
+                            if( colorIndex >= colors.Count ) {
+                                colorIndex = 0;
+                            }
                         }
-                    }
 
-                    mEntertainmentGroupManager.UpdateLights();
+                        mEntertainmentGroupManager.UpdateLights();
+                    }
                 }
             }
         }
