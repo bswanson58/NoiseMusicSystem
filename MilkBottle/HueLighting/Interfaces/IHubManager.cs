@@ -16,6 +16,7 @@ namespace HueLighting.Interfaces {
 
         Task<IEnumerable<Group>>            GetEntertainmentGroups();
         Task<EntertainmentGroup>            GetEntertainmentGroupLayout( Group forGroup );
+        Task<IEntertainmentGroupManager>    StartEntertainmentGroup();
         Task<IEntertainmentGroupManager>    StartEntertainmentGroup( Group forGroup );
         
         void                                EmulateHub();

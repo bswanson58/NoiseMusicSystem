@@ -25,6 +25,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IDatabaseProvider, DatabaseProvider>();
             containerRegistry.RegisterSingleton<IInitializationController, InitializationController>();
             containerRegistry.RegisterSingleton<IIpcManager, IpcManager>();
+            containerRegistry.RegisterSingleton<ILightPipePump, LightPipePump>();
             containerRegistry.RegisterSingleton<IMilkController, MilkController>();
             containerRegistry.RegisterSingleton<ProjectMWrapper, ProjectMWrapper>();
             containerRegistry.RegisterSingleton<IPresetController, PresetController>();

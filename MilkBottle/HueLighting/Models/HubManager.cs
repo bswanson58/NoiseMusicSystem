@@ -120,6 +120,10 @@ namespace HueLighting.Models {
         public async Task<IEnumerable<Group>> GetEntertainmentGroups() {
             var retValue = default( IEnumerable<Group>);
 
+            if( mClient == null ) {
+                await InitializeConfiguredHub();
+            }
+
             if( mClient != null ) {
                 retValue = await mClient.GetEntertainmentGroups();
             }
@@ -143,6 +147,19 @@ namespace HueLighting.Models {
                 }
             }
             catch( Exception ) { }
+
+            return retValue;
+        }
+
+        public async Task<IEntertainmentGroupManager> StartEntertainmentGroup() {
+            var retValue = default( IEntertainmentGroupManager );
+            var preferences = mPreferences.Load<HueConfiguration>();
+            var groups = await GetEntertainmentGroups();
+            var group = groups.FirstOrDefault( g => g.Id.Equals( preferences.EntertainmentGroupId ));
+
+            if( group != null ) {
+                retValue = await StartEntertainmentGroup( group );
+            }
 
             return retValue;
         }

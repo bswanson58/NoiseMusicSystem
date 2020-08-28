@@ -34,7 +34,7 @@ namespace LightPipe.Models {
                 var zoneGroup = new ZoneGroup( "Debug 1" );
 
                 zoneGroup.Zones.Add( new ZoneDefinition( "Left", new RectangleF( 5, 20, 20, 50 ), GroupLightLocation.Left ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Center ));
+//                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Center ));
                 zoneGroup.Zones.Add( new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 ), GroupLightLocation.Right ));
                 zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 20, 80, 60, 15 ), GroupLightLocation.Back ));
 

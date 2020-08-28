@@ -270,6 +270,7 @@
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IInitializationController.cs" />
     <Compile Include="Interfaces\IIpcManager.cs" />
+    <Compile Include="Interfaces\ILightPipePump.cs" />
     <Compile Include="Interfaces\IMilkController.cs" />
     <Compile Include="Interfaces\IMoodProvider.cs" />
     <Compile Include="Interfaces\IPresetController.cs" />
@@ -290,6 +291,7 @@
     <Compile Include="Models\DatabaseBuilder.cs" />
     <Compile Include="Models\InitializationController.cs" />
     <Compile Include="Models\IpcManager.cs" />
+    <Compile Include="Models\LightPipePump.cs" />
     <Compile Include="Models\MilkController.cs" />
     <Compile Include="Models\PresetController.cs" />
     <Compile Include="Models\PresetListProvider.cs" />

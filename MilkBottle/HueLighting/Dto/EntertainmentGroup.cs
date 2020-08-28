@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using MilkBottle.Infrastructure.Dto;
 using Q42.HueApi;
 using Q42.HueApi.Streaming.Models;
 
 namespace HueLighting.Dto {
+    [DebuggerDisplay("GroupLights: {" + nameof( Location ) + "}")]
     public class GroupLights {
         public  GroupLightLocation  Location { get; }
         public  List<Bulb>          Lights { get; }
@@ -100,7 +102,7 @@ namespace HueLighting.Dto {
             return retValue;
         }
 
-        GroupLights GetLights( GroupLightLocation forLocation ) {
+        public GroupLights GetLights( GroupLightLocation forLocation ) {
             return Lights.FirstOrDefault( g => g.Location.Equals( forLocation ));
         }
     }
