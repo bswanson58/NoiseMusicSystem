@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:hueViews="clr-namespace:HueLighting.Views;assembly=HueLighting"
@@ -10,7 +11,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeDialogModel, IsDesignTimeCreatable=False}"
-             Height="450" Width="800">
+             Height="475" Width="800">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -34,9 +35,10 @@
         <hueViews:EntertainmentGroupView Grid.Row="1"/>
         <lightPipeViews:ZoneSelectionView Grid.Row="2"/>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
-            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
+        <mah:ToggleSwitch Grid.Row="4" HorizontalAlignment="Center" OnContent="Enabled" OffContent="Disabled" IsOn="{Binding LightPipeState}"/>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Ok}"/>
         </StackPanel>
     </Grid>
 </UserControl>

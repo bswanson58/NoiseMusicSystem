@@ -20,10 +20,11 @@ namespace MilkBottle.Models {
         private IEntertainmentGroupManager      mEntertainmentGroupManager;
         private EntertainmentGroup              mEntertainmentGroup;
         private ZoneGroup                       mZoneGroup;
-        private bool                            mEnabled;
         private int                             mCaptureFrequency;
         private DateTime                        mLastCaptureTime;
         private IDisposable                     mZoneUpdateSubscription;
+
+        public  bool                            IsEnabled { get; private set; }
 
         public LightPipePump( IImageProcessor imageProcessor, IHubManager hubManager, IZoneManager zoneManager, IEventAggregator eventAggregator, IPreferences preferences ) {
             mImageProcessor = imageProcessor;
@@ -33,16 +34,31 @@ namespace MilkBottle.Models {
             mPreferences = preferences;
         }
 
+        public void EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
+            var preferences = mPreferences.Load<MilkPreferences>();
+
+            preferences.LightPipeEnabled = state;
+
+            mPreferences.Save( preferences );
+
+            if(!state ) {
+                SetLightPipeState( false );
+            }
+            else if( startLightPipeIfDesired ) {
+                SetLightPipeState( true );
+            }
+        }
+
         public void Initialize() {
             var preferences = mPreferences.Load<MilkPreferences>();
 
-            EnableLightPipe( preferences.LightPipeEnabled );
+            SetLightPipeState( preferences.LightPipeEnabled );
         }
 
-        public async void EnableLightPipe( bool state ) {
-            mEnabled = state;
+        private async void SetLightPipeState( bool state ) {
+            IsEnabled = state;
 
-            if( mEnabled ) {
+            if( IsEnabled ) {
                 mEntertainmentGroupManager = await mHubManager.StartEntertainmentGroup();
                 mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
                 mZoneGroup = mZoneManager.GetCurrentGroup();
@@ -68,7 +84,7 @@ namespace MilkBottle.Models {
         }
 
         public void Handle( LightPipe.Events.FrameRendered args ) {
-            if(( mEnabled ) &&
+            if(( IsEnabled ) &&
                ( mLastCaptureTime + TimeSpan.FromMilliseconds( mCaptureFrequency ) < DateTime.Now )) {
 
                 CaptureFrame( args.WindowPtr );
@@ -113,7 +129,7 @@ namespace MilkBottle.Models {
         }
 
         public void Dispose() {
-            EnableLightPipe( false );
+            SetLightPipeState( false );
         }
     }
 }
