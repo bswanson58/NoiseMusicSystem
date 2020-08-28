@@ -9,6 +9,10 @@ using MilkBottle.Infrastructure.Interfaces;
 namespace LightPipe.Models {
     internal class ZoneDefinitions {
         public  List<ZoneGroup> ZoneGroups { get; set; }
+
+        public ZoneDefinitions() {
+            ZoneGroups = new List<ZoneGroup>();
+        }
     }
 
     class ZoneManager : IZoneManager {
@@ -34,6 +38,7 @@ namespace LightPipe.Models {
                 zoneGroup.Zones.Add( new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 ), GroupLightLocation.Right ));
                 zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 20, 80, 60, 15 ), GroupLightLocation.Back ));
 
+                mZones.Add( zoneGroup );
                 SaveZoneDefinitions();
                 SetCurrentGroup( zoneGroup.GroupId );
             }
@@ -116,7 +121,7 @@ namespace LightPipe.Models {
 
             mZones.Clear();
 
-            if( definitions != null ) {
+            if( definitions?.ZoneGroups != null ) {
                 mZones.AddRange( definitions.ZoneGroups );
             }
         }
