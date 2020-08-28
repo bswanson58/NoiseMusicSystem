@@ -49,12 +49,12 @@ namespace LightPipe.Models {
 //                new ZoneDefinition( "Middle", new RectangleF( 40, 40, 20, 20 )),
 //                new ZoneDefinition( "Right", new RectangleF( 75, 25, 20, 50 ))
 //            };
-            mZones = new List<ZoneDefinition> {
-                new ZoneDefinition( "Left", new RectangleF( 5, 20, 20, 50 )),
-                new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 )),
-                new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 )),
-                new ZoneDefinition( "Bottom", new RectangleF( 20, 80, 60, 15 ))
-            };
+//            mZones = new List<ZoneDefinition> {
+//                new ZoneDefinition( "Left", new RectangleF( 5, 20, 20, 50 )),
+//                new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 )),
+//                new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 )),
+//                new ZoneDefinition( "Bottom", new RectangleF( 20, 80, 60, 15 ))
+//            };
 
             mZoneSummaries = new Dictionary<string, List<ZoneSummary>>();
 

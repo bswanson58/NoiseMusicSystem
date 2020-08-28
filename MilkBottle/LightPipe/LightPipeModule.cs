@@ -8,6 +8,7 @@ namespace LightPipe {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
             containerRegistry.RegisterSingleton<ILightPipeController, LightPipeController>();
             containerRegistry.RegisterSingleton<IImageProcessor, ImageProcessor>();
+            containerRegistry.RegisterSingleton<IZoneManager, ZoneManager>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {
