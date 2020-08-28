@@ -26,8 +26,8 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="LightGroupTemplate" DataType="dto:GroupLights">
-            <Grid>
+        <DataTemplate x:Key="LightGroupTemplate" DataType="viewModels:UiGroupLights">
+            <Grid x:Name="Group">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" MinWidth="90"/>
                     <ColumnDefinition Width="*"/>
@@ -46,6 +46,11 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsUtilized}" Value="False">
+                    <Setter TargetName="Group" Property="Opacity" Value="0.5"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 

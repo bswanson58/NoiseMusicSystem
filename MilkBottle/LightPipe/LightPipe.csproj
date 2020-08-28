@@ -145,12 +145,10 @@
   <ItemGroup>
     <Compile Include="Dto\LightPipeConfiguration.cs" />
     <Compile Include="Events\Events.cs" />
-    <Compile Include="Interfaces\IZoneManager.cs" />
     <Compile Include="LightPipeModule.cs" />
     <Compile Include="Models\ImageProcessor.cs" />
     <Compile Include="Interfaces\IImageProcessor.cs" />
     <Compile Include="Dto\PixelData.cs" />
-    <Compile Include="Dto\ZoneDefinition.cs" />
     <Compile Include="Dto\ZoneSummary.cs" />
     <Compile Include="Models\ZoneManager.cs" />
     <Compile Include="Platform\Win32API.cs" />

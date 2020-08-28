@@ -3,25 +3,47 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
+using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi.Models.Groups;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace HueLighting.ViewModels {
+    internal class UiGroupLights : PropertyChangeBase {
+        private readonly GroupLights    mLights;
+
+        public  GroupLightLocation      Location => mLights.Location;
+        public  List<Bulb>              Lights => mLights.Lights;
+        public  bool                    IsUtilized { get; private set; }
+
+        public UiGroupLights( GroupLights lights ) {
+            mLights = lights;
+        }
+
+        public void SetUtilization( bool state ) {
+            IsUtilized = state;
+
+            RaisePropertyChanged( () => IsUtilized );
+        }
+    }
+
     class EntertainmentGroupViewModel : PropertyChangeBase {
         private readonly IHubManager    mHubManager;
         private readonly IPreferences   mPreferences;
+        private readonly IZoneManager   mZoneManager;
         private Group                   mSelectedGroup;
         private EntertainmentGroup      mEntertainmentGroup;
 
-        public  ObservableCollection<Group> Groups { get; }
-        public  IEnumerable<GroupLights>    GroupLights => mEntertainmentGroup?.Lights;
+        public  ObservableCollection<Group>         Groups { get; }
+        public  ObservableCollection<UiGroupLights> GroupLights { get; }
 
-        public EntertainmentGroupViewModel( IHubManager hubManager, IPreferences preferences ) {
+        public EntertainmentGroupViewModel( IHubManager hubManager, IZoneManager zoneManager, IPreferences preferences ) {
             mHubManager = hubManager;
+            mZoneManager = zoneManager;
             mPreferences = preferences;
 
             Groups = new ObservableCollection<Group>();
+            GroupLights = new ObservableCollection<UiGroupLights>();
 
             LoadGroups();
         }
@@ -46,7 +68,19 @@ namespace HueLighting.ViewModels {
                 mPreferences.Save( preferences );
 
                 mEntertainmentGroup = await mHubManager.GetEntertainmentGroupLayout( mSelectedGroup );
-                RaisePropertyChanged( () => GroupLights );
+
+                GroupLights.Clear();
+                GroupLights.AddRange( from light in mEntertainmentGroup.Lights select new UiGroupLights( light ));
+
+                IndicateZones();
+            }
+        }
+
+        private void IndicateZones() {
+            var group = mZoneManager.GetCurrentGroup();
+
+            foreach( var zone in GroupLights ) {
+                zone.SetUtilization( group.Zones.FirstOrDefault( z => z.LightLocation.Equals( zone.Location )) != null );
             }
         }
 

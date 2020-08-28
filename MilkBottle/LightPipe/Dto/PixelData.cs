@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
+using MilkBottle.Infrastructure.Dto;
 
 namespace LightPipe.Dto {
     public class PixelData {

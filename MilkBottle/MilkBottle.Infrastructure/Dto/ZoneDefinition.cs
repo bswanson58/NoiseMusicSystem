@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using MilkBottle.Infrastructure.Dto;
 
-namespace LightPipe.Dto {
+namespace MilkBottle.Infrastructure.Dto {
     public class ZoneDefinition {
         public  string              ZoneName { get; set; }
         public  RectangleF          ZoneArea { get; set; }

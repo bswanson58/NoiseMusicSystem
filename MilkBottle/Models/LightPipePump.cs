@@ -7,6 +7,7 @@ using LightPipe.Dto;
 using LightPipe.Interfaces;
 using LightPipe.Utility;
 using MilkBottle.Dto;
+using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 

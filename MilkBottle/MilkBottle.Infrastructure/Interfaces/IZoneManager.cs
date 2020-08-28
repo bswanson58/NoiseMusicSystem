@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using LightPipe.Dto;
+using MilkBottle.Infrastructure.Dto;
 
-namespace LightPipe.Interfaces {
+namespace MilkBottle.Infrastructure.Interfaces {
     public interface IZoneManager {
         IEnumerable<ZoneGroup>  GetZones();
         ZoneGroup               GetZone( string groupId );

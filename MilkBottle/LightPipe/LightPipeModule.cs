@@ -1,5 +1,6 @@
 ﻿using LightPipe.Interfaces;
 using LightPipe.Models;
+using MilkBottle.Infrastructure.Interfaces;
 using Prism.Ioc;
 using Prism.Modularity;
 

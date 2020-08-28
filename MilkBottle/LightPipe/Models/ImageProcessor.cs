@@ -7,6 +7,8 @@ using System.Reactive.Subjects;
 using LightPipe.Dto;
 using LightPipe.Interfaces;
 using LightPipe.Utility;
+using MilkBottle.Infrastructure.Dto;
+using MilkBottle.Infrastructure.Interfaces;
 using MoreLinq;
 
 namespace LightPipe.Models {

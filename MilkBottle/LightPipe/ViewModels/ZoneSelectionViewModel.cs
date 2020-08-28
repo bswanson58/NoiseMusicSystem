@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using LightPipe.Dto;
-using LightPipe.Interfaces;
+using MilkBottle.Infrastructure.Dto;
+using MilkBottle.Infrastructure.Interfaces;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace LightPipe.ViewModels {

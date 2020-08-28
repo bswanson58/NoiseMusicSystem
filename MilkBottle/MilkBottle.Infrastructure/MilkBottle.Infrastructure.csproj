@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,9 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dto\GroupLightLocation.cs" />
+    <Compile Include="Dto\ZoneDefinition.cs" />
     <Compile Include="Interfaces\IApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Interfaces\IZoneManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
