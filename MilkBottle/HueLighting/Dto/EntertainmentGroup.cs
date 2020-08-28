@@ -1,27 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Q42.HueApi;
-using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 
 namespace HueLighting.Dto {
     public enum GroupLightLocation {
-        Front,
-        Back,
-        Left,
-        Right,
-        Bottom,
-        Center,
-        Top
+        Front = 1,
+        Back = 2,
+        Left = 3,
+        Right = 4,
+        Center = 5,
+        Ceiling = 6,
+        Ground = 7,
+        Television = 8
     }
 
     public class GroupLights {
-        public  GroupLightLocation              Location { get; }
-        public  IEnumerable<Bulb> Lights { get; }
+        public  GroupLightLocation  Location { get; }
+        public  List<Bulb>          Lights { get; }
+
+        public GroupLights( GroupLightLocation location ) {
+            Location = location;
+            Lights = new List<Bulb>();
+        }
 
         public GroupLights( GroupLightLocation location, IEnumerable<Bulb> lights ) {
             Location = location;
-            Lights = lights;
+            Lights = new List<Bulb>( lights );
         }
     }
 
@@ -29,37 +34,77 @@ namespace HueLighting.Dto {
         public  List<GroupLights>   Lights { get; }
 
         public EntertainmentGroup( EntertainmentLayer fromLayer, IList<Light> lightList  ) {
-            Lights = new List<GroupLights>();
+            Lights = new List<GroupLights>( from g in BuildLightGroups( fromLayer, lightList ) orderby g.Location select g );
+        }
 
-            var lights = new List<EntertainmentLight>( fromLayer.GetFront());
-            if( lights.Any()) {
-                Lights.Add( new GroupLights( GroupLightLocation.Front, FindBulbs( lights, lightList )));
+        private IEnumerable<GroupLights> BuildLightGroups( EntertainmentLayer layer, IList<Light> lightList ) {
+            var retValue = new List<GroupLights>();
+            var lowerThird = -0.5;
+            var upperThird = 0.5;
+
+            foreach( var groupLight in layer ) {
+                if( groupLight.LightLocation.X < lowerThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Right, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.X > upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Left, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.Y < lowerThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Front, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.Y > upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Back, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.Z < lowerThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Ground, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.Z > upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Ceiling, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.Z > lowerThird && groupLight.LightLocation.Z < upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Television, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird &&
+                    groupLight.LightLocation.Y > lowerThird && groupLight.LightLocation.Y < upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Center, groupLight, lightList );
+                }
             }
 
-            lights = new List<EntertainmentLight>( fromLayer.GetBack());
-            if( lights.Any()) {
-                Lights.Add( new GroupLights( GroupLightLocation.Back, FindBulbs( lights, lightList )));
+            return retValue;
+        }
+
+        private void AddLightToGroup( IList<GroupLights> groupLights, GroupLightLocation location, EntertainmentLight light, IList<Light> lightList ) {
+            var group = groupLights.FirstOrDefault( g => g.Location.Equals( location ));
+
+            if( group == null ) {
+                group = new GroupLights( location );
+
+                groupLights.Add( group );
             }
 
-            lights = new List<EntertainmentLight>( fromLayer.GetLeft());
-            if( lights.Any()) {
-                Lights.Add( new GroupLights( GroupLightLocation.Left, FindBulbs( lights, lightList )));
-            }
-            
-            lights = new List<EntertainmentLight>( fromLayer.GetRight());
-            if( lights.Any()) {
-                Lights.Add( new GroupLights( GroupLightLocation.Right, FindBulbs( lights, lightList )));
+            group.Lights.Add( MakeBulb( light, lightList ));
+
+            var sortedList = new List<Bulb>( group.Lights );
+            group.Lights.Clear();
+            group.Lights.AddRange( from bulb in sortedList orderby bulb.Name select bulb );
+        }
+
+        private Bulb MakeBulb( EntertainmentLight light, IList<Light> lightList ) {
+            var retValue = default( Bulb );
+            var bulb = lightList.FirstOrDefault( l => l.Id.Equals( light.Id.ToString()));
+
+            if( bulb != null ) {
+                retValue = new Bulb( bulb.Id, bulb.Name, true );
             }
 
-            lights = new List<EntertainmentLight>( fromLayer.GetBottom());
-            if( lights.Any()) {
-                Lights.Add( new GroupLights( GroupLightLocation.Bottom, FindBulbs( lights, lightList )));
-            }
-
-            lights = new List<EntertainmentLight>( fromLayer.GetCenter());
-            if( lights.Any()) {
-                Lights.Add( new GroupLights( GroupLightLocation.Center, FindBulbs( lights, lightList )));
-            }
+            return retValue;
         }
 
         private IEnumerable<Bulb> FindBulbs( IEnumerable<EntertainmentLight> groupLights, IList<Light> lights ) {
