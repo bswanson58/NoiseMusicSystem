@@ -10,9 +10,11 @@ namespace HueLighting.Dto {
         Left = 3,
         Right = 4,
         Center = 5,
-        Ceiling = 6,
-        Ground = 7,
-        Television = 8
+        CenterLeftRight = 6,
+        CenterFrontBack = 7,
+        Ceiling = 8,
+        Ground = 9,
+        Television = 10
     }
 
     public class GroupLights {
@@ -64,6 +66,14 @@ namespace HueLighting.Dto {
 
                 if( groupLight.LightLocation.Z > lowerThird && groupLight.LightLocation.Z < upperThird ) {
                     AddLightToGroup( retValue, GroupLightLocation.Television, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.Y > lowerThird && groupLight.LightLocation.Y < upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.CenterLeftRight, groupLight, lightList );
+                }
+
+                if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.CenterFrontBack, groupLight, lightList );
                 }
 
                 if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird &&

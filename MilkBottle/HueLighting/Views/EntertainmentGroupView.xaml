@@ -29,16 +29,16 @@
         <DataTemplate x:Key="LightGroupTemplate" DataType="dto:GroupLights">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="60"/>
+                    <ColumnDefinition Width="Auto" MinWidth="90"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
-                    <TextBlock Text=":" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <ItemsControl Grid.Column="1" ItemsSource="{Binding Lights}" ItemTemplate="{StaticResource LightTemplate}">
+                <ItemsControl Grid.Column="1" Margin="10,0,0,0" ItemsSource="{Binding Lights}" ItemTemplate="{StaticResource LightTemplate}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" IsItemsHost="True" />
