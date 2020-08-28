@@ -76,7 +76,6 @@ namespace HueLighting.Models {
         }
 
         public void Dispose() {
-            mStreamingClient?.Close();
             mStreamingClient?.Dispose();
             mStreamingClient = null;
 
