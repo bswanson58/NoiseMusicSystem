@@ -23,11 +23,6 @@ namespace HueLighting.Dto {
             Location = location;
             Lights = new List<Bulb>();
         }
-
-        public GroupLights( GroupLightLocation location, IEnumerable<Bulb> lights ) {
-            Location = location;
-            Lights = new List<Bulb>( lights );
-        }
     }
 
     public class EntertainmentGroup {
@@ -107,22 +102,8 @@ namespace HueLighting.Dto {
             return retValue;
         }
 
-        private IEnumerable<Bulb> FindBulbs( IEnumerable<EntertainmentLight> groupLights, IList<Light> lights ) {
-            var retValue = new List<Bulb>();
-
-            foreach( var groupLight in groupLights ) {
-                var bulb = lights.FirstOrDefault( l => l.Id.Equals( groupLight.Id.ToString()));
-
-                if( bulb != null ) {
-                    retValue.Add( new Bulb( bulb.Id, bulb.Name, true ));
-                }
-            }
-
-            return retValue;
-        }
-
         GroupLights GetLights( GroupLightLocation forLocation ) {
-            return Lights.FirstOrDefault( g => g.Location == forLocation );
+            return Lights.FirstOrDefault( g => g.Location.Equals( forLocation ));
         }
     }
 }
