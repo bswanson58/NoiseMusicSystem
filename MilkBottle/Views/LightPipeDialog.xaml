@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
-             xmlns:views="clr-namespace:HueLighting.Views;assembly=HueLighting"
+             xmlns:hueViews="clr-namespace:HueLighting.Views;assembly=HueLighting"
+             xmlns:lightPipeViews="clr-namespace:LightPipe.Views;assembly=LightPipe"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeDialogModel, IsDesignTimeCreatable=False}"
@@ -24,14 +25,16 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <views:HubConfigurationView Grid.Row="0"/>
-        <views:EntertainmentGroupView Grid.Row="1"/>
+        <hueViews:HubConfigurationView Grid.Row="0"/>
+        <hueViews:EntertainmentGroupView Grid.Row="1"/>
+        <lightPipeViews:ZoneSelectionView Grid.Row="2"/>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
         </StackPanel>

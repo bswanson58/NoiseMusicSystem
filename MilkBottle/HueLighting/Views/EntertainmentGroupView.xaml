@@ -56,9 +56,9 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" Text="Entertainment Group:"/>
+            <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" MinWidth="120" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="Entertainment Group:"/>
             <ComboBox Width="250" VerticalAlignment="Center" HorizontalAlignment="Left" ItemsSource="{Binding Groups}" SelectedItem="{Binding SelectedGroup}" ItemTemplate="{StaticResource GroupTemplate}"/>
-            <TextBlock VerticalAlignment="Center" Margin="25,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="Use the Hue app to create and configure Entertainment groups."/>
+            <TextBlock VerticalAlignment="Center" Margin="25,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="(Use the Hue app to create and configure Entertainment groups.)"/>
         </StackPanel>
 
         <ItemsControl Grid.Row="1" Margin="130,5,0,0" ItemsSource="{Binding GroupLights}" ItemTemplate="{StaticResource LightGroupTemplate}"/>

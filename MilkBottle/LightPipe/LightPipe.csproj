@@ -161,8 +161,12 @@
     <Compile Include="Utility\ColorSpace.cs" />
     <Compile Include="Utility\DirectAccessBitmap.cs" />
     <Compile Include="ViewModels\LightPipeStatusViewModel.cs" />
+    <Compile Include="ViewModels\ZoneSelectionViewModel.cs" />
     <Compile Include="Views\LightPipeStatusView.xaml.cs">
       <DependentUpon>LightPipeStatusView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ZoneSelectionView.xaml.cs">
+      <DependentUpon>ZoneSelectionView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +185,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\LightPipeStatusView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ZoneSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
