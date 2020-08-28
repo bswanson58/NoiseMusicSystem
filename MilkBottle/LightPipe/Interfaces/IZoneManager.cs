@@ -9,5 +9,8 @@ namespace LightPipe.Interfaces {
         ZoneGroup               CreateZone( string zoneName );
         void                    UpdateZone( ZoneGroup zone );
         void                    DeleteZone( string groupId );
+
+        void                    SetCurrentGroup( string groupId );
+        ZoneGroup               GetCurrentGroup();
     }
 }

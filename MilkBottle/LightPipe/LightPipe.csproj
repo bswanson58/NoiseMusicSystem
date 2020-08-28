@@ -143,6 +143,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\LightPipeConfiguration.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IZoneManager.cs" />
     <Compile Include="LightPipeModule.cs" />

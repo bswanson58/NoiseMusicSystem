@@ -28,63 +28,50 @@ namespace LightPipe.Models {
         private const byte      cBinMask = 0b11100000;
         private const int       cSourceSampleFrequency = 8;
 
-        private readonly List<ZoneDefinition>   mZones;
+        private readonly IZoneManager           mZoneManager;
         private readonly Dictionary<string, List<ZoneSummary>>  mZoneSummaries;
         private readonly Subject<ZoneSummary>   mZoneUpdated;
+        private readonly ZoneGroup              mZoneGroup;
 
         public  IObservable<ZoneSummary>        ZoneUpdate => mZoneUpdated;
 
         public  long                            ElapsedTime { get; private set; }
 
-        public ImageProcessor() {
-//            mZones = new List<ZoneDefinition> {
-//                new ZoneDefinition( "Top Left", new RectangleF( 20, 20, 20, 20 )),
-//                new ZoneDefinition( "Bottom Left", new RectangleF( 20, 65, 20, 20 )),
-//                new ZoneDefinition( "Top Right", new RectangleF( 70, 20, 20, 20 )),
-//                new ZoneDefinition( "Bottom Right", new RectangleF( 70, 70, 20, 20 ))
-//            };
-//            mZones = new List<ZoneDefinition>{ new ZoneDefinition( "Center", new RectangleF( 20, 20, 60, 60 )) };
-//            mZones = new List<ZoneDefinition> {
-//                new ZoneDefinition( "Corner", new RectangleF( 1, 1, 20, 20 )),
-//                new ZoneDefinition( "Middle", new RectangleF( 40, 40, 20, 20 )),
-//                new ZoneDefinition( "Right", new RectangleF( 75, 25, 20, 50 ))
-//            };
-//            mZones = new List<ZoneDefinition> {
-//                new ZoneDefinition( "Left", new RectangleF( 5, 20, 20, 50 )),
-//                new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 )),
-//                new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 )),
-//                new ZoneDefinition( "Bottom", new RectangleF( 20, 80, 60, 15 ))
-//            };
-
+        public ImageProcessor( IZoneManager zoneManager ) {
+            mZoneManager = zoneManager;
             mZoneSummaries = new Dictionary<string, List<ZoneSummary>>();
+
+            mZoneGroup = mZoneManager.GetCurrentGroup();
 
             mZoneUpdated = new Subject<ZoneSummary>();
         }
 
         public void ProcessImage( Bitmap image ) {
-            var stopWatch = Stopwatch.StartNew();
-            var context = new ProcessContext( image );
-            var zoneData = new Dictionary<string, IEnumerable<PixelData>>();
+            if( mZoneGroup != null ) {
+                var stopWatch = Stopwatch.StartNew();
+                var context = new ProcessContext( image );
+                var zoneData = new Dictionary<string, IEnumerable<PixelData>>();
 
-            mZones.ForEach( zone => {
-                var zoneArea = ZoneToContext( zone, context );
+                mZoneGroup.Zones.ForEach( zone => {
+                    var zoneArea = ZoneToContext( zone, context );
 
-                using( var bitmapAccess = new DirectAccessBitmap( image, zoneArea.X, zoneArea.Y, zoneArea.Width, zoneArea.Height )) {
-                    zoneData.Add( zone.ZoneName, bitmapAccess.SamplePixels( cSourceSampleFrequency ));
-                }
-            });
+                    using( var bitmapAccess = new DirectAccessBitmap( image, zoneArea.X, zoneArea.Y, zoneArea.Width, zoneArea.Height )) {
+                        zoneData.Add( zone.ZoneName, bitmapAccess.SamplePixels( cSourceSampleFrequency ));
+                    }
+                });
 
-            zoneData.ForEach( zonePair => {
-                var zoneList = 
-                    from pixel in zonePair.Value
-                    where IsUsableColor( pixel ) 
-                    select AssignZoneAndBin( pixel, zonePair.Key );
+                zoneData.ForEach( zonePair => {
+                    var zoneList = 
+                        from pixel in zonePair.Value
+                        where IsUsableColor( pixel ) 
+                        select AssignZoneAndBin( pixel, zonePair.Key );
 
-                UpdateZoneQueue( ProcessZone( zonePair.Key, zoneList ));
-            });
+                    UpdateZoneQueue( ProcessZone( zonePair.Key, zoneList ));
+                });
 
-            ElapsedTime = stopWatch.ElapsedMilliseconds;
-            stopWatch.Stop();
+                ElapsedTime = stopWatch.ElapsedMilliseconds;
+                stopWatch.Stop();
+            }
         }
 
         private ZoneSummary ProcessZone( string zoneId, IEnumerable<PixelData> zoneData ) {
