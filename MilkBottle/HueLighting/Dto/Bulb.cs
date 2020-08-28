@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace HueLighting.Dto {
+    [DebuggerDisplay("Bulb: {" + nameof( DebugString ) + "}")]
     public class Bulb {
         public  String      Id { get; set; }
         public  String      Name { get; set; }
         public  bool        Available { get; set; }
+
+        public  string      DebugString => $"{Name} ({Id})";
 
         public Bulb() {
             Id = String.Empty;
