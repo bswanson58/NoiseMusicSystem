@@ -6,7 +6,6 @@ using Prism.Services.Dialogs;
 namespace MilkBottle.ViewModels {
     class LightPipeDialogModel : IDialogAware {
         private readonly ILightPipePump     mLightPipe;
-        private bool                        mLightPipeState;
 
         public  string                      Title { get; }
         public  DelegateCommand             Ok { get; }
@@ -21,17 +20,7 @@ namespace MilkBottle.ViewModels {
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
 
-            mLightPipeState = mLightPipe.IsEnabled;
             mLightPipe.EnableLightPipe( false );
-        }
-
-        public bool LightPipeState {
-            get => mLightPipeState;
-            set {
-                mLightPipeState = value;
-
-                mLightPipe.EnableLightPipe( mLightPipeState );
-            }
         }
 
         public bool CanCloseDialog() {

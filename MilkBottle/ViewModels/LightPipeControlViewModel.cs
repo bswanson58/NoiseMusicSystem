@@ -10,6 +10,7 @@ namespace MilkBottle.ViewModels {
         private readonly ILightPipePump     mLightPipePump;
         private readonly IDialogService     mDialogService;
         private readonly IEventAggregator   mEventAggregator;
+        private bool                        mLightPipeState;
 
         public  DelegateCommand             Configuration { get; }
         public  DelegateCommand             Close { get; }
@@ -21,7 +22,19 @@ namespace MilkBottle.ViewModels {
 
             Close = new DelegateCommand( OnClose );
             Configuration = new DelegateCommand( OnConfiguration );
+
+            mLightPipeState = mLightPipePump.IsEnabled;
         }
+
+        public bool LightPipeState {
+            get => mLightPipeState;
+            set {
+                mLightPipeState = value;
+
+                mLightPipePump.EnableLightPipe( mLightPipeState, true );
+            }
+        }
+
 
         private void OnConfiguration() {
             mDialogService.ShowDialog( nameof( LightPipeDialog ), new DialogParameters(), result => { });
