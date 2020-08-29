@@ -9,7 +9,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeStatusViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="300" Width="160">
+             Height="40" d:DesignWidth="600">
 
     <UserControl.Resources>
         <DataTemplate x:Key="ZoneColorTemplate" DataType="dto:ColorBin">
@@ -30,15 +30,14 @@
 
         <DataTemplate x:Key="ZoneSummaryTemplate" DataType="viewModels:ZoneInfo">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <TextBlock Margin="3,0" Text="Zone:"/>
-                    <TextBlock Text="{Binding ZoneId}"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding ZoneId}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 <!--
                 <ListBox Grid.Row="1" Margin="0,2,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Colors}" ItemTemplate="{StaticResource ZoneColorTemplate}">
@@ -49,7 +48,8 @@
                     </ListBox.ItemsPanel>
                 </ListBox>
 -->
-                <ListBox Grid.Row="2" Margin="0,2,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding MeanColors}" ItemTemplate="{StaticResource MeanColorTemplate}">
+                <ListBox Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" MinWidth="100"
+                         ItemsSource="{Binding MeanColors}" ItemTemplate="{StaticResource MeanColorTemplate}">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" IsItemsHost="True" />
@@ -61,18 +61,23 @@
     </UserControl.Resources>
 
     <Grid Margin="5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Zone Summaries"/>
+        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Zones:"/>
 
-        <ListBox Grid.Row="1" ItemsSource="{Binding ZoneSummaries}" ItemTemplate="{StaticResource ZoneSummaryTemplate}"/>
+        <ListBox Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding ZoneSummaries}" ItemTemplate="{StaticResource ZoneSummaryTemplate}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal">
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Margin="3,0" Text="Processing Time:"/>
             <TextBlock Text="{Binding ElapsedTime}"/>
         </StackPanel>
