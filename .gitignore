@@ -150,5 +150,6 @@ pip-log.txt
 .DS_Store
 
 Installation/_latest installers
+Installation/Utility Installers/Output
 Noise.Desktop/RefitStubs.cs
 Noise.Headless/RefitStubs.cs
