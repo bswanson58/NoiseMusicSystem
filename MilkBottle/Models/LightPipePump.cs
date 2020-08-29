@@ -125,7 +125,7 @@ namespace MilkBottle.Models {
         }
 
         private void OnZoneUpdate( ZoneSummary zone ) {
-            var zoneGroup = mZoneGroup.Zones.FirstOrDefault( z => z.ZoneName.Equals( zone.ZoneId ));
+            var zoneGroup = mZoneGroup?.Zones.FirstOrDefault( z => z.ZoneName.Equals( zone.ZoneId ));
 
             if( zoneGroup != null ) {
                 var lightGroup = mEntertainmentGroup.GetLights( zoneGroup.LightLocation );

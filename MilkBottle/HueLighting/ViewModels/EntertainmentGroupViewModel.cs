@@ -89,8 +89,10 @@ namespace HueLighting.ViewModels {
         private void IndicateZones() {
             var group = mZoneManager.GetCurrentGroup();
 
-            foreach( var zone in GroupLights ) {
-                zone.SetUtilization( group.Zones.FirstOrDefault( z => z.LightLocation.Equals( zone.Location )) != null );
+            if( group != null ) {
+                foreach( var zone in GroupLights ) {
+                    zone.SetUtilization( group.Zones.FirstOrDefault( z => z.LightLocation.Equals( zone.Location )) != null );
+                }
             }
         }
 

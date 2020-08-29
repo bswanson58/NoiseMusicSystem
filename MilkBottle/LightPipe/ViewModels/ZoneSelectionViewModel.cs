@@ -38,7 +38,7 @@ namespace LightPipe.ViewModels {
 
             var currentGroup = mZoneManager.GetCurrentGroup();
 
-            CurrentZone = Zones.FirstOrDefault( z => z.GroupId.Equals( currentGroup.GroupId )) ??
+            CurrentZone = Zones.FirstOrDefault( z => z.GroupId.Equals( currentGroup?.GroupId )) ??
                           Zones.FirstOrDefault();
         }
     }
