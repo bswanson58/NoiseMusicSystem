@@ -6,17 +6,38 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:views="clr-namespace:LightPipe.Views;assembly=LightPipe"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeControlViewModel, IsDesignTimeCreatable=False}"
-             Height="34" d:DesignWidth="800">
-    <Grid>
+             Height="34" d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="5,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <views:LightPipeStatusView Grid.Column="0"/>
+        <views:LightPipeStatusView Grid.Column="0" VerticalAlignment="Center"/>
+
+        <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent">
+            <Button Style="{StaticResource ControllerButtonStyle}" Margin="0,0,5,0" Padding="2" Content="{StaticResource Path_Configure}" Command="{Binding Configuration}"/>
+            <Button Style="{StaticResource ControllerButtonStyle}" Padding="5" Content="{StaticResource Path_Close}" VerticalAlignment="Center" Command="{Binding Close}"/>
+        </StackPanel>
     </Grid>
+
+    <b:Interaction.Behaviors>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+    </b:Interaction.Behaviors>
 </UserControl>

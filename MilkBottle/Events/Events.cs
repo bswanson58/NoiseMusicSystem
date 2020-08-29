@@ -48,4 +48,6 @@ namespace MilkBottle.Events {
             CurrentState = toState;
         }
     }
+
+    public class CloseLightPipeController { }
 }

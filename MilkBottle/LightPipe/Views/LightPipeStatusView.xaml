@@ -9,7 +9,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeStatusViewModel, IsDesignTimeCreatable=False}"
-             Height="40" d:DesignWidth="600">
+             Height="34" d:DesignWidth="600">
 
     <UserControl.Resources>
         <DataTemplate x:Key="ZoneColorTemplate" DataType="dto:ColorBin">
@@ -60,7 +60,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="5">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>

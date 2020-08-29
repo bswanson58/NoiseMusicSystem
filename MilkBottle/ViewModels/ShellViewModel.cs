@@ -22,7 +22,7 @@ namespace MilkBottle.ViewModels {
         Sync
     }
 
-    class ShellViewModel : PropertyChangeBase {
+    class ShellViewModel : PropertyChangeBase, IHandle<Events.CloseLightPipeController> {
         private readonly IStateManager          mStateManager;
         private readonly IIpcManager            mIpcManager;
         private readonly IEventAggregator       mEventAggregator;
@@ -46,6 +46,7 @@ namespace MilkBottle.ViewModels {
 
         public  bool                            DisplayStatus { get; private set; }
         public  bool                            DisplayController { get; private set; }
+        public  bool                            DisplayLightPipeController { get; private set; }
 
         public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager,
                                IEventAggregator eventAggregator, IApplicationConstants applicationConstants ) {
@@ -74,8 +75,12 @@ namespace MilkBottle.ViewModels {
             DisplayController = true;
             ShellViewDisplayed = ShellView.Manual;
 
+            DisplayLightPipeController = false;
+
             mCompanionAppsSubscription = mIpcManager.CompanionAppsUpdate.Subscribe( OnCompanionAppsUpdate );
             mActivationSubscription = mIpcManager.OnActivationRequest.Subscribe( OnActivationRequest );
+
+            mEventAggregator.Subscribe( this );
         }
 
         private void OnCompanionAppsUpdate( IEnumerable<ActiveCompanionApp> apps ) {
@@ -206,7 +211,15 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnLightPipe() {
-            mDialogService.ShowDialog( nameof( LightPipeDialog ), new DialogParameters(), result => { });
+            DisplayLightPipeController = true;
+
+            RaisePropertyChanged( () => DisplayLightPipeController );
+        }
+
+        public void Handle( Events.CloseLightPipeController args ) {
+            DisplayLightPipeController = false;
+
+            RaisePropertyChanged( () => DisplayLightPipeController );
         }
 
         private void OnDisplayManualController() {
