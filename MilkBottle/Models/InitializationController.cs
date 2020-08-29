@@ -34,7 +34,7 @@ namespace MilkBottle.Models {
 
             if( await mDatabaseBuildTask ) {
                 mPresetController.Initialize();
-                mLightPipePump.Initialize();
+                await mLightPipePump.Initialize();
                 
                 mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
             }
