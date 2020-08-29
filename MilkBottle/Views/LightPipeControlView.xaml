@@ -33,10 +33,13 @@
         <views:LightPipeStatusView Grid.Column="0" VerticalAlignment="Center"/>
 
         <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent">
-            <mah:ToggleSwitch VerticalAlignment="Center" OnContent="On" OffContent="Off" MinWidth="40" IsOn="{Binding LightPipeState}"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="0,0,5,0" Style="{DynamicResource MahApps.Styles.Slider}" IsEnabled="{Binding LightPipeState}"
+                    Maximum="{Binding OverallBrightnessMaximum}" Minimum="{Binding OverallBrightnessMinimum}" Value="{Binding OverallBrightness}" ToolTip="Overall Light Brightness"/>
 
-            <Button Style="{StaticResource ControllerButtonStyle}" Margin="0,0,5,0" Padding="2" Content="{StaticResource Path_Configure}" Command="{Binding Configuration}"/>
-            <Button Style="{StaticResource ControllerButtonStyle}" Padding="5" Content="{StaticResource Path_Close}" VerticalAlignment="Center" Command="{Binding Close}"/>
+            <mah:ToggleSwitch VerticalAlignment="Center" OnContent="On" OffContent="Off" MinWidth="30" IsOn="{Binding LightPipeState}" ToolTip="Enable/Disable LightPipe"/>
+
+            <Button Style="{StaticResource ControllerButtonStyle}" Margin="0,0,5,0" Padding="2" Content="{StaticResource Path_Configure}" Command="{Binding Configuration}" ToolTip="Configure LightPipe"/>
+            <Button Style="{StaticResource ControllerButtonStyle}" Padding="5" Content="{StaticResource Path_Close}" VerticalAlignment="Center" Command="{Binding Close}" ToolTip="Close Control View"/>
         </StackPanel>
     </Grid>
 

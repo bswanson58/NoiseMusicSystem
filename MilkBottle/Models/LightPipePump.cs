@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
@@ -35,7 +36,7 @@ namespace MilkBottle.Models {
             mPreferences = preferences;
         }
 
-        public void EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
+        public async Task<bool> EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
             var preferences = mPreferences.Load<MilkPreferences>();
 
             preferences.LightPipeEnabled = state;
@@ -43,20 +44,39 @@ namespace MilkBottle.Models {
             mPreferences.Save( preferences );
 
             if(!state ) {
-                SetLightPipeState( false );
+                await SetLightPipeState( false );
             }
             else if( startLightPipeIfDesired ) {
-                SetLightPipeState( true );
+                await SetLightPipeState( true );
+            }
+
+            return IsEnabled;
+        }
+
+        public async Task<bool> Initialize() {
+            var preferences = mPreferences.Load<MilkPreferences>();
+
+            return await SetLightPipeState( preferences.LightPipeEnabled );
+        }
+
+        public double OverallBrightness {
+            get {
+                var retValue = 0.0;
+
+                if( mEntertainmentGroupManager != null ) {
+                    retValue = mEntertainmentGroupManager.OverallBrightness;
+                }
+
+                return retValue;
+            } 
+            set {
+                if( mEntertainmentGroupManager != null ) {
+                    mEntertainmentGroupManager.OverallBrightness = value;
+                }
             }
         }
 
-        public void Initialize() {
-            var preferences = mPreferences.Load<MilkPreferences>();
-
-            SetLightPipeState( preferences.LightPipeEnabled );
-        }
-
-        private async void SetLightPipeState( bool state ) {
+        private async Task<bool> SetLightPipeState( bool state ) {
             IsEnabled = state;
 
             if( IsEnabled ) {
@@ -78,6 +98,8 @@ namespace MilkBottle.Models {
                 mEntertainmentGroup = null;
                 mZoneGroup = null;
             }
+
+            return IsEnabled;
         }
 
         public void SetCaptureFrequency( int milliseconds ) {
@@ -129,8 +151,8 @@ namespace MilkBottle.Models {
             }
         }
 
-        public void Dispose() {
-            SetLightPipeState( false );
+        public async void Dispose() {
+            await SetLightPipeState( false );
         }
     }
 }

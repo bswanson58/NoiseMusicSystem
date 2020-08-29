@@ -26,15 +26,28 @@ namespace MilkBottle.ViewModels {
             mLightPipeState = mLightPipePump.IsEnabled;
         }
 
+        public int OverallBrightnessMinimum => 0;
+        public int OverallBrightnessMaximum => 100;
+        public int OverallBrightness {
+            get => (int)( mLightPipePump.OverallBrightness * 100.0 );
+            set => mLightPipePump.OverallBrightness = value / 100.0;
+        }
+
         public bool LightPipeState {
             get => mLightPipeState;
             set {
                 mLightPipeState = value;
 
-                mLightPipePump.EnableLightPipe( mLightPipeState, true );
+                OnLightPipeStateChanged();
             }
         }
 
+        private async void OnLightPipeStateChanged() {
+            await mLightPipePump.EnableLightPipe( mLightPipeState, true );
+
+            RaisePropertyChanged( () => LightPipeState );
+            RaisePropertyChanged( () => OverallBrightness );
+        }
 
         private void OnConfiguration() {
             mDialogService.ShowDialog( nameof( LightPipeDialog ), new DialogParameters(), result => { });
