@@ -9,7 +9,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeStatusViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="200" Width="180">
+             d:DesignHeight="300" Width="160">
 
     <UserControl.Resources>
         <DataTemplate x:Key="ZoneColorTemplate" DataType="dto:ColorBin">
