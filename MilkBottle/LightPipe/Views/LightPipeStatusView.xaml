@@ -37,7 +37,7 @@
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="{Binding ZoneId}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
-                    <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="-" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 <!--
                 <ListBox Grid.Row="1" Margin="0,2,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Colors}" ItemTemplate="{StaticResource ZoneColorTemplate}">
@@ -67,7 +67,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Zones:"/>
+        <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Zones:"/>
 
         <ListBox Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding ZoneSummaries}" ItemTemplate="{StaticResource ZoneSummaryTemplate}">
             <ListBox.ItemsPanel>
@@ -78,8 +78,8 @@
         </ListBox>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Margin="3,0" Text="Processing Time:"/>
-            <TextBlock Text="{Binding ElapsedTime}"/>
+            <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" Text="Processing Time:"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ElapsedTime}"/>
         </StackPanel>
     </Grid>
 </UserControl>
