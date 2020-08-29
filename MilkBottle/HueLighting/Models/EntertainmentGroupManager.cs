@@ -26,7 +26,9 @@ namespace HueLighting.Models {
             mPreferences = preferences;
             EntertainmentGroup = forGroup;
 
-            SetOverallBrightness( 0.5 );
+            var huePreferences = mPreferences.Load<HueConfiguration>();
+
+            SetOverallBrightness( huePreferences.OverallBrightness );
         }
 
         public async Task<bool> StartStreamingGroup() {

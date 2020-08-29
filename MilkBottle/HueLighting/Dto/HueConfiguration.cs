@@ -7,6 +7,7 @@ namespace HueLighting.Dto {
         public  String  BridgeAppKey;
         public  String  BridgeStreamingKey;
         public  String  EntertainmentGroupId;
+        public  double  OverallBrightness;
 
         public HueConfiguration() {
             BridgeIp = String.Empty;
@@ -14,6 +15,8 @@ namespace HueLighting.Dto {
             BridgeAppKey = String.Empty;
             BridgeStreamingKey = String.Empty;
             EntertainmentGroupId = String.Empty;
+
+            OverallBrightness = 0.8;
         }
     }
 }
