@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Dto\GroupLightLocation.cs" />
     <Compile Include="Dto\ZoneDefinition.cs" />
+    <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />

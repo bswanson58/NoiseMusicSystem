@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Caliburn.Micro;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
 using MilkBottle.Infrastructure.Dto;
@@ -10,7 +12,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace HueLighting.ViewModels {
     internal class UiGroupLights : PropertyChangeBase {
-        private readonly GroupLights    mLights;
+        private readonly GroupLights        mLights;
 
         public  GroupLightLocation      Location => mLights.Location;
         public  List<Bulb>              Lights => mLights.Lights;
@@ -27,25 +29,33 @@ namespace HueLighting.ViewModels {
         }
     }
 
-    class EntertainmentGroupViewModel : PropertyChangeBase {
-        private readonly IHubManager    mHubManager;
-        private readonly IPreferences   mPreferences;
-        private readonly IZoneManager   mZoneManager;
-        private Group                   mSelectedGroup;
-        private EntertainmentGroup      mEntertainmentGroup;
+    class EntertainmentGroupViewModel : PropertyChangeBase, IDisposable, IHandle<MilkBottle.Infrastructure.Events.CurrentZoneChanged> {
+        private readonly IEventAggregator   mEventAggregator;
+        private readonly IHubManager        mHubManager;
+        private readonly IPreferences       mPreferences;
+        private readonly IZoneManager       mZoneManager;
+        private Group                       mSelectedGroup;
+        private EntertainmentGroup          mEntertainmentGroup;
 
         public  ObservableCollection<Group>         Groups { get; }
         public  ObservableCollection<UiGroupLights> GroupLights { get; }
 
-        public EntertainmentGroupViewModel( IHubManager hubManager, IZoneManager zoneManager, IPreferences preferences ) {
+        public EntertainmentGroupViewModel( IHubManager hubManager, IZoneManager zoneManager, IPreferences preferences, IEventAggregator eventAggregator ) {
             mHubManager = hubManager;
             mZoneManager = zoneManager;
             mPreferences = preferences;
+            mEventAggregator = eventAggregator;
 
             Groups = new ObservableCollection<Group>();
             GroupLights = new ObservableCollection<UiGroupLights>();
 
             LoadGroups();
+
+            mEventAggregator.Subscribe( this );
+        }
+
+        public void Handle( MilkBottle.Infrastructure.Events.CurrentZoneChanged args ) {
+            IndicateZones();
         }
 
         public Group SelectedGroup {
@@ -101,6 +111,10 @@ namespace HueLighting.ViewModels {
                 SelectedGroup = Groups.FirstOrDefault( g => g.Id.Equals( preferences.EntertainmentGroupId )) ?? 
                                 Groups.FirstOrDefault();
             }
+        }
+
+        public void Dispose() {
+            mEventAggregator.Unsubscribe( this );
         }
     }
 }

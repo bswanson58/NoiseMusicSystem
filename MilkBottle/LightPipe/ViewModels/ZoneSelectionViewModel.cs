@@ -25,8 +25,10 @@ namespace LightPipe.ViewModels {
             get => mCurrentZone;
             set {
                 mCurrentZone = value;
+                mZoneManager.SetCurrentGroup( CurrentZone.GroupId );
 
                 RaisePropertyChanged( () => CurrentZone );
+                RaisePropertyChanged( () => ZoneList );
             }
         }
 
