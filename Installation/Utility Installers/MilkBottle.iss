@@ -37,16 +37,20 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MilkBottle.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\BouncyCastle.Crypto.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.Platform.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\ControlzEx.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\CuttingEdge.Conditions.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\HueLighting.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\LanguageExt.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\LightPipe.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\LiteDB.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MahApps.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Microsoft.Xaml.Behaviors.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\MilkBottle.Infrastructure.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MilkBottle.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MoreLinq.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -58,6 +62,9 @@ Source: "..\..\MilkBottle\bin\{#Platform}\Release\Prism.dll"; DestDir: "{app}"; 
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Prism.Unity.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Prism.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\protobuf-net.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\Q42.HueApi.ColorConverters.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\Q42.HueAPi.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\Q42.HueApi.Streaming.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\ReusableBits.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\ReusableBits.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\ReusableBits.Ui.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -69,6 +76,7 @@ Source: "..\..\MilkBottle\bin\{#Platform}\Release\Serilog.Sinks.RollingFile.dll"
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Buffers.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Numerics.Vectors.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Reactive.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Reactive.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Reactive.Interfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\System.Reactive.Linq.dll"; DestDir: "{app}"; Flags: ignoreversion
