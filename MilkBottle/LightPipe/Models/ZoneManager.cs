@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Caliburn.Micro;
 using LightPipe.Dto;
-using LightPipe.Interfaces;
 using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 
@@ -16,11 +16,13 @@ namespace LightPipe.Models {
     }
 
     class ZoneManager : IZoneManager {
+        private readonly IEventAggregator   mEventAggregator;
         private readonly IPreferences       mPreferences;
         private readonly List<ZoneGroup>    mZones;
 
-        public ZoneManager( IPreferences preferences ) {
+        public ZoneManager( IPreferences preferences, IEventAggregator  eventAggregator ) {
             mPreferences = preferences;
+            mEventAggregator = eventAggregator;
 
             mZones = new List<ZoneGroup>();
 
@@ -31,14 +33,25 @@ namespace LightPipe.Models {
             UpdateZones();
 
             if(!mZones.Any()) {
-                var zoneGroup = new ZoneGroup( "Debug 1" );
+                var zoneGroup = new ZoneGroup( "Bar Room L/R/Front" );
 
                 zoneGroup.Zones.Add( new ZoneDefinition( "Left", new RectangleF( 5, 20, 20, 50 ), GroupLightLocation.Left ));
-//                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Center ));
+                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Front ));
                 zoneGroup.Zones.Add( new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 ), GroupLightLocation.Right ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 20, 80, 60, 15 ), GroupLightLocation.Back ));
-
                 mZones.Add( zoneGroup );
+
+                zoneGroup = new ZoneGroup( "Bar Front/Ground" );
+                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Front ));
+                zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 30, 85, 40, 15 ), GroupLightLocation.Ground ));
+                mZones.Add( zoneGroup );
+
+                zoneGroup = new ZoneGroup( "Bar L/TV/R/G" );
+                zoneGroup.Zones.Add( new ZoneDefinition( "Left", new RectangleF( 1, 1, 30, 30 ), GroupLightLocation.Left ));
+                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Television ));
+                zoneGroup.Zones.Add( new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 ), GroupLightLocation.Right ));
+                zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 30, 85, 40, 15 ), GroupLightLocation.Ground ));
+                mZones.Add( zoneGroup );
+
                 SaveZoneDefinitions();
                 SetCurrentGroup( zoneGroup.GroupId );
             }
@@ -100,6 +113,8 @@ namespace LightPipe.Models {
             preferences.ZoneGroupId = groupId;
 
             mPreferences.Save( preferences );
+
+            mEventAggregator.PublishOnUIThread( new MilkBottle.Infrastructure.Events.CurrentZoneChanged());
         }
 
         public ZoneGroup GetCurrentGroup() {

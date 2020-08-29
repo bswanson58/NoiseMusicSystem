@@ -31,19 +31,19 @@ namespace HueLighting.Dto {
 
             foreach( var groupLight in layer ) {
                 if( groupLight.LightLocation.X < lowerThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Right, groupLight, lightList );
-                }
-
-                if( groupLight.LightLocation.X > upperThird ) {
                     AddLightToGroup( retValue, GroupLightLocation.Left, groupLight, lightList );
                 }
 
+                if( groupLight.LightLocation.X > upperThird ) {
+                    AddLightToGroup( retValue, GroupLightLocation.Right, groupLight, lightList );
+                }
+
                 if( groupLight.LightLocation.Y < lowerThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Front, groupLight, lightList );
+                    AddLightToGroup( retValue, GroupLightLocation.Back, groupLight, lightList );
                 }
 
                 if( groupLight.LightLocation.Y > upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Back, groupLight, lightList );
+                    AddLightToGroup( retValue, GroupLightLocation.Front, groupLight, lightList );
                 }
 
                 if( groupLight.LightLocation.Z < lowerThird ) {
