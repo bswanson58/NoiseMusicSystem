@@ -43,7 +43,7 @@ namespace LightPipe.ViewModels {
                 ZoneSummaries.Remove( existing );
             }
 
-            ZoneSummaries.Add( new ZoneInfo( summary, summary.FindMeanColors( 3 )));
+            ZoneSummaries.Add( new ZoneInfo( summary, summary.FindMeanColors( 4 )));
 
             ElapsedTime = $"{mImageProcessor.ElapsedTime} ms";
             RaisePropertyChanged( () => ElapsedTime );
