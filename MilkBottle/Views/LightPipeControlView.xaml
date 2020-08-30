@@ -9,12 +9,15 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeControlViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="1200">
 
     <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
+
         <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="25"/>
@@ -24,20 +27,32 @@
 
     <Grid Margin="5,0" Background="Black">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <views:LightPipeStatusView Grid.Column="0" VerticalAlignment="Center"/>
+        <Grid Grid.Column="0" Visibility="{Binding LightPipeState, Converter={StaticResource HideIfFalse}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent">
-            <Slider Width="100" VerticalAlignment="Center" Margin="0,0,5,0" Style="{DynamicResource MahApps.Styles.Slider}" IsEnabled="{Binding LightPipeState}"
-                    Maximum="{Binding OverallBrightnessMaximum}" Minimum="{Binding OverallBrightnessMinimum}" Value="{Binding OverallBrightness}" ToolTip="Overall Light Brightness"/>
+            <views:LightPipeStatusView Grid.Column="0" VerticalAlignment="Center"/>
 
-            <mah:ToggleSwitch VerticalAlignment="Center" OnContent="On" OffContent="Off" MinWidth="30" IsOn="{Binding LightPipeState}" ToolTip="Enable/Disable LightPipe"/>
+            <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Capture Rate:"/>
+                <Slider Width="100" VerticalAlignment="Center" Margin="0,0,10,0" Style="{DynamicResource MahApps.Styles.Slider}" IsDirectionReversed="True"
+                        Maximum="{Binding CaptureFrequencyMaximum}" Minimum="{Binding CaptureFrequencyMinimum}" Value="{Binding CaptureFrequency}" ToolTip="Capture Rate"/>
 
+                <TextBlock VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Brightness:"/>
+                <Slider Width="100" VerticalAlignment="Center" Margin="0,0,10,0" Style="{DynamicResource MahApps.Styles.Slider}"
+                        Maximum="{Binding OverallBrightnessMaximum}" Minimum="{Binding OverallBrightnessMinimum}" Value="{Binding OverallBrightness}" ToolTip="Overall Light Brightness"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Column="1" Tag="dimmed" Orientation="Horizontal">
+            <mah:ToggleSwitch VerticalAlignment="Center" OnContent="On" OffContent="Off" Width="90" IsOn="{Binding LightPipeState}" ToolTip="Enable/Disable LightPipe"/>
             <Button Style="{StaticResource ControllerButtonStyle}" Margin="0,0,5,0" Padding="2" Content="{StaticResource Path_Configure}" Command="{Binding Configuration}" ToolTip="Configure LightPipe"/>
             <Button Style="{StaticResource ControllerButtonStyle}" Padding="5" Content="{StaticResource Path_Close}" VerticalAlignment="Center" Command="{Binding Close}" ToolTip="Close Control View"/>
         </StackPanel>

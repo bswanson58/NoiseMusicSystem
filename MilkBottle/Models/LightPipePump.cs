@@ -34,6 +34,10 @@ namespace MilkBottle.Models {
             mZoneManager = zoneManager;
             mEventAggregator = eventAggregator;
             mPreferences = preferences;
+
+            var milkPreferences = mPreferences.Load<MilkPreferences>();
+
+            mCaptureFrequency = milkPreferences.LightPipeCaptureFrequency;
         }
 
         public async Task<bool> EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
@@ -102,8 +106,17 @@ namespace MilkBottle.Models {
             return IsEnabled;
         }
 
-        public void SetCaptureFrequency( int milliseconds ) {
-            mCaptureFrequency = milliseconds;
+        public int CaptureFrequency {
+            get => mCaptureFrequency;
+            set {
+                mCaptureFrequency = Math.Min( 2000, Math.Max( 0, value ));
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.LightPipeCaptureFrequency = mCaptureFrequency;
+
+                mPreferences.Save( preferences );
+            }
         }
 
         public void Handle( LightPipe.Events.FrameRendered args ) {

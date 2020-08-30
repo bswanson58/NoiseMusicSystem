@@ -7,7 +7,7 @@ namespace MilkBottle.Interfaces {
         Task<bool>  Initialize();
         Task<bool>  EnableLightPipe( bool state, bool startLightPipeIfDesired = false );
 
-        void        SetCaptureFrequency( int milliseconds );
+        int         CaptureFrequency { get; set; }
         double      OverallBrightness { get; set; }
     }
 }

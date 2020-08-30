@@ -33,6 +33,13 @@ namespace MilkBottle.ViewModels {
             set => mLightPipePump.OverallBrightness = value / 100.0;
         }
 
+        public int CaptureFrequencyMinimum => 0;
+        public int CaptureFrequencyMaximum => 2000;
+        public int CaptureFrequency {
+            get => mLightPipePump.CaptureFrequency;
+            set => mLightPipePump.CaptureFrequency = value;
+        }
+
         public bool LightPipeState {
             get => mLightPipeState;
             set {
@@ -43,7 +50,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private async void OnLightPipeStateChanged() {
-            await mLightPipePump.EnableLightPipe( mLightPipeState, true );
+            mLightPipeState = await mLightPipePump.EnableLightPipe( mLightPipeState, true );
 
             RaisePropertyChanged( () => LightPipeState );
             RaisePropertyChanged( () => OverallBrightness );
