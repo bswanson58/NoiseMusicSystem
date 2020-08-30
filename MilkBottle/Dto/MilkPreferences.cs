@@ -15,7 +15,6 @@ namespace MilkBottle.Dto {
         public  double  Longitude { get; set; }
         public  string  CurrentMood { get; set; }
         public  int     SceneRatingsBoostMode { get; set; }
-        public  bool    LightPipeEnabled { get; set; }
         public  int     LightPipeCaptureFrequency { get; set; }
 
         public MilkPreferences() {
@@ -37,7 +36,6 @@ namespace MilkBottle.Dto {
 
             SceneRatingsBoostMode = RatingsBoostMode.PreferMusicOverMood;
 
-            LightPipeEnabled = false;
             LightPipeCaptureFrequency = 100;
         }
     }

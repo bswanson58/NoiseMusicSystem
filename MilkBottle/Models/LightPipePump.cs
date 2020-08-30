@@ -41,12 +41,6 @@ namespace MilkBottle.Models {
         }
 
         public async Task<bool> EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
-            var preferences = mPreferences.Load<MilkPreferences>();
-
-            preferences.LightPipeEnabled = state;
-
-            mPreferences.Save( preferences );
-
             if(!state ) {
                 await SetLightPipeState( false );
             }
@@ -58,9 +52,7 @@ namespace MilkBottle.Models {
         }
 
         public async Task<bool> Initialize() {
-            var preferences = mPreferences.Load<MilkPreferences>();
-
-            return await SetLightPipeState( preferences.LightPipeEnabled );
+            return await SetLightPipeState( false );
         }
 
         public double OverallBrightness {
