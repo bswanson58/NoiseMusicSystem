@@ -163,6 +163,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Properties\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Dto\Bulb.cs" />
     <Compile Include="Dto\EntertainmentGroup.cs" />
     <Compile Include="Dto\HubInformation.cs" />
