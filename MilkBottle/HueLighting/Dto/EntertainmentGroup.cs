@@ -29,46 +29,48 @@ namespace HueLighting.Dto {
             var lowerThird = -0.5;
             var upperThird = 0.5;
 
-            foreach( var groupLight in layer ) {
-                if( groupLight.LightLocation.X < lowerThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Left, groupLight, lightList );
-                }
+            if( layer != null ) {
+                foreach( var groupLight in layer ) {
+                    if( groupLight.LightLocation.X < lowerThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Left, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.X > upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Right, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.X > upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Right, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.Y < lowerThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Back, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.Y < lowerThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Back, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.Y > upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Front, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.Y > upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Front, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.Z < lowerThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Ground, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.Z < lowerThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Ground, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.Z > upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Ceiling, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.Z > upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Ceiling, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.Z > lowerThird && groupLight.LightLocation.Z < upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Television, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.Z > lowerThird && groupLight.LightLocation.Z < upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Television, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.Y > lowerThird && groupLight.LightLocation.Y < upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.CenterLeftRight, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.Y > lowerThird && groupLight.LightLocation.Y < upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.CenterLeftRight, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.CenterFrontBack, groupLight, lightList );
-                }
+                    if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.CenterFrontBack, groupLight, lightList );
+                    }
 
-                if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird &&
-                    groupLight.LightLocation.Y > lowerThird && groupLight.LightLocation.Y < upperThird ) {
-                    AddLightToGroup( retValue, GroupLightLocation.Center, groupLight, lightList );
+                    if( groupLight.LightLocation.X > lowerThird && groupLight.LightLocation.X < upperThird &&
+                        groupLight.LightLocation.Y > lowerThird && groupLight.LightLocation.Y < upperThird ) {
+                        AddLightToGroup( retValue, GroupLightLocation.Center, groupLight, lightList );
+                    }
                 }
             }
 
