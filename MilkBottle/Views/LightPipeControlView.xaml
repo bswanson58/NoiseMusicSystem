@@ -25,13 +25,13 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="5,0" Background="Black">
+    <Grid Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Visibility="{Binding LightPipeState, Converter={StaticResource HideIfFalse}}">
+        <Grid Grid.Column="0" Margin="5,0,0,0" Visibility="{Binding LightPipeState, Converter={StaticResource HideIfFalse}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -51,7 +51,7 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Column="1" Tag="dimmed" Orientation="Horizontal">
+        <StackPanel Grid.Column="1" Margin="0,0,5,0" Tag="dimmed" Orientation="Horizontal">
             <mah:ToggleSwitch VerticalAlignment="Center" OnContent="On" OffContent="Off" Width="90" IsOn="{Binding LightPipeState}" ToolTip="Enable/Disable LightPipe"/>
             <Button Style="{StaticResource ControllerButtonStyle}" Margin="0,0,5,0" Padding="2" Content="{StaticResource Path_Configure}" Command="{Binding Configuration}" ToolTip="Configure LightPipe"/>
             <Button Style="{StaticResource ControllerButtonStyle}" Padding="5" Content="{StaticResource Path_Close}" VerticalAlignment="Center" Command="{Binding Close}" ToolTip="Close Control View"/>
