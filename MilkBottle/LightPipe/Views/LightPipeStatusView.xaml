@@ -13,7 +13,7 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="ZoneColorTemplate" DataType="dto:ColorBin">
-            <Rectangle Margin="1,0" Height="15" Width="15">
+            <Rectangle Margin="2,0" Height="14" Width="14">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="{Binding Color}"/>
                 </Rectangle.Fill>
@@ -21,7 +21,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="MeanColorTemplate" DataType="Color">
-            <Rectangle Margin="1,0" Height="15" Width="15">
+            <Rectangle Margin="2,0" Height="14" Width="14">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="{Binding}"/>
                 </Rectangle.Fill>
@@ -48,14 +48,14 @@
                     </ListBox.ItemsPanel>
                 </ListBox>
 -->
-                <ListBox Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" MinWidth="100"
+                <ItemsControl Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" MinWidth="80"
                          ItemsSource="{Binding MeanColors}" ItemTemplate="{StaticResource MeanColorTemplate}">
-                    <ListBox.ItemsPanel>
+                    <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                            <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                         </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                </ListBox>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -67,15 +67,15 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Zones:"/>
+        <TextBlock Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Zones:"/>
 
-        <ListBox Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding ZoneSummaries}" ItemTemplate="{StaticResource ZoneSummaryTemplate}">
-            <ListBox.ItemsPanel>
+        <ItemsControl Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding ZoneSummaries}" ItemTemplate="{StaticResource ZoneSummaryTemplate}">
+            <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                    <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                 </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" Text="Processing Time:"/>
