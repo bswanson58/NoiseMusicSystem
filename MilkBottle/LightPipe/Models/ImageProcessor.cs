@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Subjects;
+using Caliburn.Micro;
 using LightPipe.Dto;
 using LightPipe.Interfaces;
 using LightPipe.Utility;
@@ -22,7 +23,7 @@ namespace LightPipe.Models {
         }
     }
 
-    public class ImageProcessor : IImageProcessor {
+    public class ImageProcessor : IImageProcessor, IHandle<MilkBottle.Infrastructure.Events.CurrentZoneChanged> {
         private const int       cZoneSummaryLength = 10;
         private const int       cWhitenessLimit = 230;
         private const int       cBlacknessLimit = 25;
@@ -31,24 +32,41 @@ namespace LightPipe.Models {
         private const int       cSourceSampleFrequency = 8;
 
         private readonly IZoneManager           mZoneManager;
+        private readonly IEventAggregator       mEventAggregator;
         private readonly Dictionary<string, List<ZoneSummary>>  mZoneSummaries;
-        private readonly Subject<ZoneSummary>   mZoneUpdated;
-        private readonly ZoneGroup              mZoneGroup;
+        private Subject<ZoneSummary>            mZoneUpdated;
+        private ZoneGroup                       mZoneGroup;
+        private bool                            mZoneChanged;
 
         public  IObservable<ZoneSummary>        ZoneUpdate => mZoneUpdated;
 
         public  long                            ElapsedTime { get; private set; }
 
-        public ImageProcessor( IZoneManager zoneManager ) {
+        public ImageProcessor( IZoneManager zoneManager, IEventAggregator eventAggregator ) {
             mZoneManager = zoneManager;
+            mEventAggregator = eventAggregator;
             mZoneSummaries = new Dictionary<string, List<ZoneSummary>>();
 
-            mZoneGroup = mZoneManager.GetCurrentGroup();
-
             mZoneUpdated = new Subject<ZoneSummary>();
+            mEventAggregator.Subscribe( this );
+        }
+
+        public void Handle( MilkBottle.Infrastructure.Events.CurrentZoneChanged args ) {
+            mZoneChanged = true;
+        }
+
+        private void UpdateZone() {
+            if(( mZoneGroup == null ) ||
+               ( mZoneChanged )) {
+                mZoneGroup = mZoneManager.GetCurrentGroup();
+
+                mZoneChanged = mZoneGroup != null;
+            }
         }
 
         public void ProcessImage( Bitmap image ) {
+            UpdateZone();
+
             if( mZoneGroup != null ) {
                 var stopWatch = Stopwatch.StartNew();
                 var context = new ProcessContext( image );
@@ -125,6 +143,13 @@ namespace LightPipe.Models {
 
         private System.Windows.Media.Color CreateBinnedColor( PixelData colorData ) {
             return System.Windows.Media.Color.FromArgb( colorData.Alpha, (byte)( colorData.Red & cBinMask ), (byte)( colorData.Green & cBinMask ), (byte)( colorData.Blue & cBinMask ));
+        }
+
+        public void Dispose() {
+            mZoneUpdated?.Dispose();
+            mZoneUpdated = null;
+
+            mEventAggregator.Unsubscribe( this );
         }
     }
 }
