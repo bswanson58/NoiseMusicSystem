@@ -12,9 +12,11 @@ namespace LightPipe.ViewModels {
 
         public  ObservableCollection<ZoneGroup> Zones { get; }
         public  List<ZoneDefinition>            ZoneList => CurrentZone?.Zones;
+        public  ZoneDisplayViewModel            ZoneDisplay { get; }
 
-        public ZoneSelectionViewModel( IZoneManager zoneManager ) {
+        public ZoneSelectionViewModel( IZoneManager zoneManager, ZoneDisplayViewModel zoneDisplayViewModel ) {
             mZoneManager = zoneManager;
+            ZoneDisplay = zoneDisplayViewModel;
 
             Zones = new ObservableCollection<ZoneGroup>();
 
@@ -26,6 +28,7 @@ namespace LightPipe.ViewModels {
             set {
                 mCurrentZone = value;
                 mZoneManager.SetCurrentGroup( CurrentZone.GroupId );
+                ZoneDisplay.SetZones( mCurrentZone );
 
                 RaisePropertyChanged( () => CurrentZone );
                 RaisePropertyChanged( () => ZoneList );

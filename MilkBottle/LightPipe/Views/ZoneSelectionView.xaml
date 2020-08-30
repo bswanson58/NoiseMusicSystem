@@ -6,6 +6,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:LightPipe.ViewModels"
              xmlns:dto="clr-namespace:MilkBottle.Infrastructure.Dto;assembly=MilkBottle.Infrastructure"
+             xmlns:views="clr-namespace:LightPipe.Views"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ZoneSelectionViewModel, IsDesignTimeCreatable=False}"
@@ -30,7 +31,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="120"/>
+            <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -39,6 +40,15 @@
                       ItemTemplate="{StaticResource ZoneGroupTemplate}"/>
         </StackPanel>
 
-        <ItemsControl Grid.Row="1" Margin="130,5,0,0" ItemsSource="{Binding ZoneList}" ItemTemplate="{StaticResource ZoneDefinitionTemplate}"/>
+        <Grid Grid.Row="1" Margin="35,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <views:ZoneDisplayView Grid.Column="0" HorizontalAlignment="Left" DataContext="{Binding ZoneDisplay}"/>
+
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding ZoneList}" ItemTemplate="{StaticResource ZoneDefinitionTemplate}"/>
+        </Grid>
     </Grid>
 </UserControl>
