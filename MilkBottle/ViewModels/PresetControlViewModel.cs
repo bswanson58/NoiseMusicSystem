@@ -243,7 +243,14 @@ namespace MilkBottle.ViewModels {
 
         public bool IsBlended {
             get => mPresetController.BlendPresetTransition;
-            set => mPresetController.BlendPresetTransition = value;
+            set {
+                var  preferences = mPreferences.Load<MilkPreferences>();
+
+                mPresetController.BlendPresetTransition = value;
+                preferences.BlendPresetTransition = value;
+
+                mPreferences.Save( preferences );
+            }
         }
 
         public int PresetDuration {
