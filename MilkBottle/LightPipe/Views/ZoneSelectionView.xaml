@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:LightPipe.ViewModels"
-             xmlns:dto="clr-namespace:LightPipe.Dto"
+             xmlns:dto="clr-namespace:MilkBottle.Infrastructure.Dto;assembly=MilkBottle.Infrastructure"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ZoneSelectionViewModel, IsDesignTimeCreatable=False}"
