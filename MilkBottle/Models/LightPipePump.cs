@@ -109,7 +109,7 @@ namespace MilkBottle.Models {
         public int CaptureFrequency {
             get => mCaptureFrequency;
             set {
-                mCaptureFrequency = Math.Min( 2000, Math.Max( 0, value ));
+                mCaptureFrequency = Math.Min( 1000, Math.Max( 0, value ));
 
                 var preferences = mPreferences.Load<MilkPreferences>();
 

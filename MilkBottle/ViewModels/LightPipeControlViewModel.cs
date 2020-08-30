@@ -34,7 +34,7 @@ namespace MilkBottle.ViewModels {
         }
 
         public int CaptureFrequencyMinimum => 0;
-        public int CaptureFrequencyMaximum => 2000;
+        public int CaptureFrequencyMaximum => 1000;
         public int CaptureFrequency {
             get => mLightPipePump.CaptureFrequency;
             set => mLightPipePump.CaptureFrequency = value;
