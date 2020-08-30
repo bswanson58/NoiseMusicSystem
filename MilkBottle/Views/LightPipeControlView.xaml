@@ -22,7 +22,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="5,0">
+    <Grid Margin="5,0" Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
