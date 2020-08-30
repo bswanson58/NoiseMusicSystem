@@ -7,19 +7,24 @@
              xmlns:viewModels="clr-namespace:LightPipe.ViewModels"
              xmlns:dto="clr-namespace:MilkBottle.Infrastructure.Dto;assembly=MilkBottle.Infrastructure"
              xmlns:views="clr-namespace:LightPipe.Views"
+             xmlns:dto1="clr-namespace:LightPipe.Dto"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ZoneSelectionViewModel, IsDesignTimeCreatable=False}"
              Height="180" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="ZoneDefinitionTemplate" DataType="dto:ZoneDefinition">
+        <DataTemplate x:Key="ZoneDefinitionTemplate" DataType="dto1:UiZoneDefinition">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding ZoneName}" MinWidth="80" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}"/>
+                <TextBlock Text="{Binding Name}" MinWidth="80" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}">
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="{Binding LegendColor}"/>
+                    </TextBlock.Foreground>
+                </TextBlock>
                 <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding ZoneArea}" MinWidth="200" Style="{StaticResource ControlTitleStyle}"/>
+                <TextBlock Text="{Binding AreaDescription}" MinWidth="200" Style="{StaticResource ControlTitleStyle}"/>
                 <TextBlock Text="Controls location:" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0"/>
-                <TextBlock Text="{Binding LightLocation}" Style="{StaticResource ControlTitleStyle}"/>
+                <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}"/>
             </StackPanel>
         </DataTemplate>
 

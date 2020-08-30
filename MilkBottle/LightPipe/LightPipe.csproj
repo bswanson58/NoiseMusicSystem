@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dto\LightPipeConfiguration.cs" />
+    <Compile Include="Dto\UiZoneDefinition.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="LightPipeModule.cs" />
     <Compile Include="Models\ImageProcessor.cs" />
