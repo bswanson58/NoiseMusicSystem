@@ -73,7 +73,7 @@ namespace HueLighting.Models {
         }
 
         public void SetLightColor( string lightId, Color toColor ) {
-            var light = mBaseLayer.FirstOrDefault( l => l.Id.ToString().Equals( lightId ));
+            var light = mBaseLayer?.FirstOrDefault( l => l.Id.ToString().Equals( lightId ));
 
             if( light != null ) {
                 var color = new RGBColor( toColor.R, toColor.G, toColor.B );
