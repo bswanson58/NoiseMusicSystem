@@ -5,8 +5,6 @@ using Prism.Services.Dialogs;
 
 namespace MilkBottle.ViewModels {
     class LightPipeDialogModel : IDialogAware {
-        private readonly ILightPipePump     mLightPipe;
-
         public  string                      Title { get; }
         public  DelegateCommand             Ok { get; }
         public  DelegateCommand             Cancel { get; }
@@ -14,13 +12,11 @@ namespace MilkBottle.ViewModels {
         public  event Action<IDialogResult> RequestClose;
 
         public LightPipeDialogModel( ILightPipePump lightPipe ) {
-            mLightPipe = lightPipe;
-
             Title = "LightPipe";
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
 
-            mLightPipe.EnableLightPipe( false );
+            lightPipe.EnableLightPipe( false );
         }
 
         public bool CanCloseDialog() {
@@ -30,7 +26,6 @@ namespace MilkBottle.ViewModels {
         public void OnDialogOpened( IDialogParameters parameters ) { }
 
         public void OnDialogClosed() {
-            mLightPipe.Initialize();
         }
 
         public void OnOk() {

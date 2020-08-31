@@ -57,6 +57,8 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnConfiguration() {
+            LightPipeState = false;
+
             mDialogService.ShowDialog( nameof( LightPipeDialog ), new DialogParameters(), result => { });
         }
 
