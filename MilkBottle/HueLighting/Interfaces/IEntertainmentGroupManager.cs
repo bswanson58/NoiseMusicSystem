@@ -8,11 +8,14 @@ namespace HueLighting.Interfaces {
     public interface IEntertainmentGroupManager : IDisposable {
         Group                       EntertainmentGroup { get; }
 
+        void                        EnableAutoUpdate();
         Task<EntertainmentGroup>    GetGroupLayout();
 
         double                      OverallBrightness { get; set; }
 
         void                        SetLightColor( string lightId, Color toColor );
+        void                        SetLightColor( string lightId, Color toColor, TimeSpan transitionTime );
+
         void                        UpdateLights();
     }
 }

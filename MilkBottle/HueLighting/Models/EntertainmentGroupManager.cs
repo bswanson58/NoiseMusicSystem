@@ -18,6 +18,7 @@ namespace HueLighting.Models {
         private StreamingHueClient              mStreamingClient;
         private StreamingGroup                  mStreamingGroup;
         private EntertainmentLayer              mBaseLayer;
+        private CancellationTokenSource         mAutoUpdateToken;
         private double                          mBrightness;
 
         public  Group                           EntertainmentGroup { get; }
@@ -53,6 +54,15 @@ namespace HueLighting.Models {
             return retValue;
         }
 
+        public void EnableAutoUpdate() {
+            if(( mStreamingClient != null ) &&
+               ( mStreamingGroup != null )) {
+                mAutoUpdateToken = new CancellationTokenSource();
+
+                mStreamingClient.AutoUpdate( mStreamingGroup, mAutoUpdateToken.Token, 50, true );
+            }
+        }
+
         public async Task<EntertainmentGroup> GetGroupLayout() {
             var hubInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
                 
@@ -82,11 +92,24 @@ namespace HueLighting.Models {
             }
         }
 
+        public void SetLightColor( string lightId, Color toColor, TimeSpan transitionTime ) {
+            var light = mBaseLayer?.FirstOrDefault( l => l.Id.ToString().Equals( lightId ));
+
+            if( light != null ) {
+                var color = new RGBColor( toColor.R, toColor.G, toColor.B );
+
+                light.SetState( CancellationToken.None, color, transitionTime, mBrightness );
+            }
+        }
+
         public void UpdateLights() {
             mStreamingClient.ManualUpdate( mStreamingGroup, true );
         }
 
         public void Dispose() {
+            mAutoUpdateToken?.Cancel();
+            mAutoUpdateToken = null;
+
             mStreamingClient?.Dispose();
             mStreamingClient = null;
 

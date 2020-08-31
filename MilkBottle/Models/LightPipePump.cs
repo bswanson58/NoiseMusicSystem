@@ -78,6 +78,7 @@ namespace MilkBottle.Models {
             if( IsEnabled ) {
                 mEntertainmentGroupManager = await mHubManager.StartEntertainmentGroup();
                 mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
+                mEntertainmentGroupManager.EnableAutoUpdate();
                 mZoneGroup = mZoneManager.GetCurrentGroup();
 
                 mZoneUpdateSubscription = mImageProcessor.ZoneUpdate.Subscribe( OnZoneUpdate );
@@ -142,15 +143,18 @@ namespace MilkBottle.Models {
                         var colorIndex = 0;
 
                         foreach( var light in lightGroup.Lights ) {
-                            mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex]);
+                            if( mCaptureFrequency > 100 ) {
+                                mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex], TimeSpan.FromMilliseconds( mCaptureFrequency * 0.75 ));
+                            }
+                            else {
+                                mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex]);
+                            }
 
                             colorIndex++;
                             if( colorIndex >= colors.Count ) {
                                 colorIndex = 0;
                             }
                         }
-
-                        mEntertainmentGroupManager.UpdateLights();
                     }
                 }
             }
