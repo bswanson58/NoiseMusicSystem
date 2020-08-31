@@ -58,6 +58,14 @@
                 </ItemsControl>
             </Grid>
         </DataTemplate>
+
+        <Style x:Key="TimeHighlight" TargetType="TextBlock" BasedOn="{StaticResource ControlTitleStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HighProcessingTime}" Value="True">
+                    <Setter Property="Foreground" Value="Red"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -78,8 +86,9 @@
         </ItemsControl>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Margin="3,0" Style="{StaticResource ControlTitleStyle}" Text="Processing Time:"/>
-            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ElapsedTime}"/>
+            <TextBlock Margin="3,0" Style="{StaticResource TimeHighlight}" Text="Processing Time:"/>
+            <TextBlock Style="{StaticResource TimeHighlight}" MinWidth="20" Text="{Binding ElapsedTime}"/>
+            <TextBlock Margin="3,0" Style="{StaticResource TimeHighlight}" Text="ms"/>
         </StackPanel>
     </Grid>
 </UserControl>
