@@ -43,7 +43,7 @@
             <StackPanel Grid.Column="2" Tag="dimmed" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent">
                 <TextBlock VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Capture Rate:"/>
                 <Slider Width="100" VerticalAlignment="Center" Margin="0,0,10,0" Style="{DynamicResource MahApps.Styles.Slider}" IsDirectionReversed="True"
-                        Maximum="{Binding CaptureFrequencyMaximum}" Minimum="{Binding CaptureFrequencyMinimum}" Value="{Binding CaptureFrequency}" ToolTip="Capture Rate"/>
+                        Maximum="{Binding CaptureFrequencyMaximum}" Minimum="{Binding CaptureFrequencyMinimum}" Value="{Binding CaptureFrequency}" ToolTip="{Binding CaptureFrequencyTooltip}"/>
 
                 <TextBlock VerticalAlignment="Center" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" Text="Brightness:"/>
                 <Slider Width="100" VerticalAlignment="Center" Margin="0,0,10,0" Style="{DynamicResource MahApps.Styles.Slider}"

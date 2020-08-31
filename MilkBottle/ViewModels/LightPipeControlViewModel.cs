@@ -12,6 +12,8 @@ namespace MilkBottle.ViewModels {
         private readonly IEventAggregator   mEventAggregator;
         private bool                        mLightPipeState;
 
+        public  string                      CaptureFrequencyTooltip => $"Capture Frequency: {CaptureFrequency} ms";
+
         public  DelegateCommand             Configuration { get; }
         public  DelegateCommand             Close { get; }
 
@@ -37,7 +39,11 @@ namespace MilkBottle.ViewModels {
         public int CaptureFrequencyMaximum => 1000;
         public int CaptureFrequency {
             get => mLightPipePump.CaptureFrequency;
-            set => mLightPipePump.CaptureFrequency = value;
+            set {
+                mLightPipePump.CaptureFrequency = value;
+
+                RaisePropertyChanged( () => CaptureFrequencyTooltip );
+            }
         }
 
         public bool LightPipeState {
