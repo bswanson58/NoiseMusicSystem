@@ -213,7 +213,7 @@
             <ContentControl x:Name="_3Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_3Star}" Visibility="Collapsed"/>
             <ContentControl x:Name="_2Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_2Star}" Visibility="Collapsed"/>
             <ContentControl x:Name="_1Star" Height="16" Width="16" Margin="0,0,0,2" Content="{DynamicResource Path_1Star}" Visibility="Collapsed"/>
-            <TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" VerticalAlignment="Center" 
+            <TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" VerticalAlignment="Center" TextAlignment="Center"
                        Foreground="{StaticResource DefaultForegroundBrush}" FontSize="16" Visibility="Collapsed"/>
         </Grid>
         <DataTemplate.Triggers>

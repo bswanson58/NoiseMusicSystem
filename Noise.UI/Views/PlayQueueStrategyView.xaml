@@ -34,6 +34,7 @@
         <Grid Grid.Row="2" Margin="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -41,9 +42,11 @@
 
 			<Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding StartStrategy}"
 					Content="Start" ToolTip="Start Play Using The Current Strategy"/>
-            <Button Grid.Column="2" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding PlayingFocus}" 
+            <Button Grid.Column="1" Tag="dimmed" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SuggestedTrackPicker}"
+                    Content="I Wanna Pick..." ToolTip="Pick From The List Of Potential Upcoming Tracks"/>
+            <Button Grid.Column="3" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding PlayingFocus}" 
                     Content="{StaticResource Path_Information}" ToolTip="Focus On Playing Track"/>
-			<Button Grid.Column="3" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding ConfigureStrategy}" 
+			<Button Grid.Column="4" Tag="dimmed" Height="25" Width="25" Margin="3,0" Padding="3" Style="{StaticResource PathButtonStyle}" Command="{Binding ConfigureStrategy}" 
                     Content="{StaticResource Path_Configure}" ToolTip="Configure Play Strategies"/>
         </Grid>
         <b:Interaction.Behaviors>

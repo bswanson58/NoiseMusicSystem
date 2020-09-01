@@ -66,7 +66,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         public IEnumerable<DbTrack> SelectTracks( IPlayQueue playQueue, int minCount ) {
             if( StrategyHasBeenSet()) {
                 var context = mContextFactory.CreateContext( playQueue, StrategySpecification.SuggesterParameter );
-                var circuitBreaker = 3;
+                var circuitBreaker = minCount;
 
                 do {
                     mPlaySuggesters.ForEach( h => h.SelectTrack( context ));

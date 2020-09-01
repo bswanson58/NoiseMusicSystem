@@ -19,6 +19,7 @@ namespace Noise.UI.ViewModels {
 		public	DelegateCommand				StartStrategy { get; }
 		public	DelegateCommand				PlayingFocus { get; }
 		public	DelegateCommand				ConfigureStrategy { get; }
+		public	DelegateCommand				SuggestedTrackPicker { get; }
 
 		public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
@@ -28,6 +29,7 @@ namespace Noise.UI.ViewModels {
 			StartStrategy = new DelegateCommand( OnStartStrategy, CanStartStrategy  );
 			PlayingFocus = new DelegateCommand( OnPlayingFocus, CanPlayingFocus );
 			ConfigureStrategy = new DelegateCommand( OnConfigureStrategy );
+			SuggestedTrackPicker = new DelegateCommand( OnPickTracks );
 
 			SetStrategyDescriptions();
 
@@ -94,5 +96,9 @@ namespace Noise.UI.ViewModels {
                 }
             });
 		}
+
+		private void OnPickTracks() {
+			mDialogService.ShowDialog( nameof( ExhaustedPlayPickerView ), new DialogParameters(), result => { });
+        }
 	}
 }

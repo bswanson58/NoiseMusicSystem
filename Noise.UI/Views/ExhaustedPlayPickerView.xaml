@@ -1,0 +1,135 @@
+﻿<UserControl x:Class="Noise.UI.Views.ExhaustedPlayPickerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:ExhaustedPlayPickerViewModel, IsDesignTimeCreatable=False}"
+             Height="600" Width="1000">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="Manual" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <UserControl.Resources>
+        <ControlTemplate TargetType="DataGrid" x:Key="EmptyListBoxTemplate">
+            <TextBlock Margin="5,35,5,0" Style="{StaticResource EmptyListTextStyle}" Text="Selecting tracks for you..." />
+        </ControlTemplate>
+
+        <!-- Header Styles -->
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <Style x:Key="RightAlignHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Padding" Value="1,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <!-- Play -->
+        <DataTemplate x:Key="PlayTemplate" DataType="dto:UiArtistAlbumTrack">
+            <Button Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
+        </DataTemplate>
+
+        <!-- Track Name -->
+        <DataTemplate x:Key="TrackNameTemplate" DataType="dto:UiArtistAlbumTrack">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding TrackName}"/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Opacity="0.6" Text=" - "/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Opacity="0.6" Text="{Binding ArtistName}"/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Opacity="0.6" Text="/"/>
+                <TextBlock Style="{StaticResource ListViewTextStyle}" Opacity="0.6" Text="{Binding AlbumName}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Duration -->
+        <DataTemplate x:Key="DurationTemplate" DataType="dto:UiArtistAlbumTrack">
+            <TextBlock x:Name="Duration" Style="{StaticResource ListViewTextStyle}" Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="5,0"/>
+        </DataTemplate>
+
+        <!-- Rating -->
+        <DataTemplate x:Key="RatingTemplate" DataType="dto:UiArtistAlbumTrack">
+            <ContentPresenter Content="{Binding Track}" ContentTemplate="{StaticResource ReadOnlyRating}"/>
+        </DataTemplate>
+
+        <!-- Tags -->
+        <DataTemplate x:Key="TagsTemplate" DataType="dto:UiArtistAlbumTrack">
+            <ContentControl x:Name="TagContainer" Opacity="0.3">
+                <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                        Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding HasTags}" Value="True">
+                    <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True"
+                  ItemsSource="{Binding SuggestedTracks}" SelectedItem="{Binding SelectedTrack}">
+            <DataGrid.Columns>
+                <!-- Play -->
+                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}"
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
+                <!-- Track Name -->
+                <DataGridTemplateColumn Width="*" Header="Track - Artist/Album" CellTemplate="{StaticResource TrackNameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
+
+                <!-- Duration -->
+                <DataGridTemplateColumn Width="83" Header="Duration" HeaderStyle="{StaticResource RightAlignHeaderStyle}" CellTemplate="{StaticResource DurationTemplate}"/>
+
+                <!-- Rating -->
+                <DataGridTemplateColumn Width="35" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}" 
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource RatingTemplate}"/>
+                <!-- Tags -->
+                <DataGridTemplateColumn Width="35" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}"
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource TagsTemplate}"/>
+            </DataGrid.Columns>
+
+            <b:Interaction.Behaviors>
+                <behaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+            </b:Interaction.Behaviors>
+        </DataGrid>
+
+        <StackPanel Grid.Row="1" Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Close}" IsDefault="True"/>
+        </StackPanel>
+    </Grid>
+
+    <b:Interaction.Behaviors>
+        <behaviours:DialogPlacement AssociatedControlTag="MainWindow" HorizontalPlacement="AlignRight" HorizontalOffset="-100"
+                                    VerticalPlacement="Center" VerticalOffset="-50"/>
+    </b:Interaction.Behaviors>
+</UserControl>

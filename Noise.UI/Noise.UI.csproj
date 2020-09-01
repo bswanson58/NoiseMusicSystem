@@ -282,6 +282,7 @@
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiAlbumExtra.cs" />
     <Compile Include="Dto\UiArtist.cs" />
+    <Compile Include="Dto\UiArtistAlbumTrack.cs" />
     <Compile Include="Dto\UiArtistTrackNode.cs" />
     <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiCategory.cs" />
@@ -343,6 +344,7 @@
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\ExhaustedPlayPickerViewModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryBackupDialogModel.cs" />
@@ -413,6 +415,9 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExhaustedPlayPickerView.xaml.cs">
+      <DependentUpon>ExhaustedPlayPickerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
@@ -715,6 +720,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExhaustedPlayPickerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

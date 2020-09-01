@@ -31,6 +31,7 @@ namespace Noise.UI {
             containerRegistry.RegisterDialog<ArtistArtworkView, ArtistArtworkViewModel>();
             containerRegistry.RegisterDialog<ArtistEditDialog, ArtistEditDialogModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationViewModel>();
+            containerRegistry.RegisterDialog<ExhaustedPlayPickerView, ExhaustedPlayPickerViewModel>();
             containerRegistry.RegisterDialog<LibraryBackupDialog, LibraryBackupDialogModel>();
             containerRegistry.RegisterDialog<LibraryConfigurationDialog, LibraryConfigurationDialogModel>();
             containerRegistry.RegisterDialog<PlaybackContextDialog, PlaybackContextDialogManager>();
