@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="LightPipe.Views.ZoneEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:LightPipe.ViewModels"
+             xmlns:dto="clr-namespace:LightPipe.Dto"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:ZoneEditViewModel, IsDesignTimeCreatable=False}"
+             Height="500" Width="1100">
+
+    <mvvm:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </mvvm:Dialog.WindowStyle>
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="ZoneTemplate" DataType="dto:UiZoneDefinition">
+            <Grid>
+                <Rectangle StrokeThickness="0" Height="{Binding Height}" Width="{Binding Width}" ToolTip="{Binding Description}">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{Binding LegendColor}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ZoneDefinitionTemplate" DataType="dto:UiZoneDefinition">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Name}" MinWidth="80" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}">
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="{Binding LegendColor}"/>
+                    </TextBlock.Foreground>
+                </TextBlock>
+                <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding AreaDescription}" MinWidth="200" Style="{StaticResource ControlTitleStyle}"/>
+                <TextBlock Text="Controls location:" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0"/>
+                <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" Text="Group Name:"/>
+            <TextBox Width="200" Text="{Binding ZoneName}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="480"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Capture Zones:"/>
+
+                <ListBox Grid.Row="1" ItemsSource="{Binding Zones}" ItemTemplate="{StaticResource ZoneDefinitionTemplate}" SelectedItem="{Binding CurrentZone}"/>
+
+                <TextBlock Grid.Row="2" Style="{StaticResource ControlTitleStyle}" Text="Capture Zone Properties:"/>
+
+                <StackPanel Grid.Row="3" Margin="15,5,0,0" Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Zone Name:"/>
+                    <TextBox VerticalAlignment="Center" Width="120"/>
+
+                    <TextBlock Margin="15,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Entertainment Group:"/>
+                    <ComboBox VerticalAlignment="Center" Width="120"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="4" Margin="0,20,0,0" Orientation="Horizontal">
+                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="New Capture Zone" Command="" ToolTip=""/>
+                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="Delete Capture Zone" Command="" ToolTip=""/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Margin="0,0,0,5" Style="{StaticResource ControlTitleStyle}" Text="Capture Zone Display:"/>
+
+                <Viewbox Grid.Row="1" Stretch="Uniform" VerticalAlignment="Top">
+                    <Grid Width="1600" Height="900">
+                        <Viewbox Stretch="Fill">
+                            <ItemsControl Height="100" Width="100" ItemsSource="{Binding Zones}" ItemTemplate="{StaticResource ZoneTemplate}" Background="DimGray">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas IsItemsHost="True" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                                        <Setter Property="Canvas.Right" Value="{Binding Right}"/>
+                                        <Setter Property="Canvas.Bottom" Value="{Binding Bottom}"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+                        </Viewbox>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

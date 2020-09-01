@@ -162,12 +162,16 @@
     <Compile Include="Utility\DirectAccessBitmap.cs" />
     <Compile Include="ViewModels\LightPipeStatusViewModel.cs" />
     <Compile Include="ViewModels\ZoneDisplayViewModel.cs" />
+    <Compile Include="ViewModels\ZoneEditViewModel.cs" />
     <Compile Include="ViewModels\ZoneSelectionViewModel.cs" />
     <Compile Include="Views\LightPipeStatusView.xaml.cs">
       <DependentUpon>LightPipeStatusView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ZoneDisplayView.xaml.cs">
       <DependentUpon>ZoneDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ZoneEditView.xaml.cs">
+      <DependentUpon>ZoneEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ZoneSelectionView.xaml.cs">
       <DependentUpon>ZoneSelectionView.xaml</DependentUpon>
@@ -201,6 +205,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ZoneDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ZoneEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

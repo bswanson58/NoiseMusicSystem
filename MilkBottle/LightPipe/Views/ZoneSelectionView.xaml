@@ -39,10 +39,16 @@
             <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" MinWidth="120" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="Zone Definition:"/>
             <ComboBox Width="250" VerticalAlignment="Center" HorizontalAlignment="Left" ItemsSource="{Binding Zones}" SelectedItem="{Binding CurrentZone}" 
                       ItemTemplate="{StaticResource ZoneGroupTemplate}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
+            <Button Margin="0,0,10,0" MinWidth="60" Style="{StaticResource GeneralButtonStyle}" Content="New" Command="{Binding NewZone}" ToolTip="Create A New Zone Definition"/>
+            <Button Margin="0,0,10,0" MinWidth="60" Style="{StaticResource GeneralButtonStyle}" Content="Edit" Command="{Binding EditZone}" ToolTip="Edit The Selected Zone Definition"/>
+            <Button Content="Delete" MinWidth="60" Style="{StaticResource GeneralButtonStyle}" Command="{Binding DeleteZone}" ToolTip="Delete The Selected Zone Definition"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="35,10,0,0">
