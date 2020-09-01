@@ -123,10 +123,10 @@ namespace MilkBottle.Models {
         }
 
         private void CaptureFrame( IntPtr hWnd ) {
-            var bitmap = BitmapCapture.Capture( hWnd );
-
-            if( bitmap != null ) {
-                mImageProcessor.ProcessImage( bitmap );
+            using( var bitmap = BitmapCapture.Capture( hWnd )) {
+                if( bitmap != null ) {
+                    mImageProcessor.ProcessImage( bitmap );
+                }
             }
         }
 
