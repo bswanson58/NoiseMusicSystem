@@ -17,8 +17,17 @@ namespace LightPipe.Controls {
                     case VerticalAlignment.Top:
                         deltaVertical = Math.Min( e.VerticalChange, designerItem.ActualHeight - designerItem.MinHeight );
                         deltaHorizontal = Canvas.GetBottom( designerItem );
-                        Canvas.SetTop( designerItem, Canvas.GetTop( designerItem ) + deltaVertical );
-                        Canvas.SetBottom( designerItem, deltaHorizontal );
+
+                        if(( deltaVertical > 0 ) &&
+                           ( deltaHorizontal >= designerItem.MaxHeight )) {
+                            Canvas.SetBottom( designerItem, deltaHorizontal - deltaVertical );
+                            Canvas.SetTop( designerItem, Canvas.GetTop( designerItem ) + deltaVertical );
+                        }
+                        else {
+                            Canvas.SetTop( designerItem, Canvas.GetTop( designerItem ) + deltaVertical );
+                            Canvas.SetBottom( designerItem, deltaHorizontal );
+                        }
+
                         break;
 
                     case VerticalAlignment.Bottom:
@@ -31,8 +40,16 @@ namespace LightPipe.Controls {
                     case HorizontalAlignment.Left:
                         deltaHorizontal = Math.Min( e.HorizontalChange, designerItem.ActualWidth - designerItem.MinWidth );
                         deltaVertical = Canvas.GetRight( designerItem );
-                        Canvas.SetLeft( designerItem, Canvas.GetLeft( designerItem ) + deltaHorizontal );
-                        Canvas.SetRight( designerItem, deltaVertical );
+
+                        if(( deltaHorizontal > 0 ) &&
+                           ( deltaVertical >= designerItem.MaxWidth )) {
+                            Canvas.SetRight( designerItem, deltaVertical - deltaHorizontal );
+                            Canvas.SetLeft( designerItem, Canvas.GetLeft( designerItem ) + deltaHorizontal );
+                        }
+                        else {
+                            Canvas.SetLeft( designerItem, Canvas.GetLeft( designerItem ) + deltaHorizontal );
+                            Canvas.SetRight( designerItem, deltaVertical );
+                        }
                         break;
 
                     case HorizontalAlignment.Right:

@@ -22,10 +22,6 @@
     </mvvm:Dialog.WindowStyle>
 
     <UserControl.Resources>
-        <ControlTemplate x:Key="MoveThumbTemplate" TargetType="{x:Type controls:MoveThumb}">
-            <Rectangle Fill="Transparent"/>
-        </ControlTemplate>
-
         <ControlTemplate x:Key="ResizeDecoratorTemplate" TargetType="{x:Type Control}">
             <Grid x:Name="ThumbContainer" Opacity="0.1" Background="Transparent">
                 <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="-4 -18 -4 0" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
@@ -37,6 +33,14 @@
                 <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" Margin="0 -26 -18 0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
                 <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" Margin="-18 0 0 -26" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
                 <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" Margin="0 0 -18 -26" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+
+                <controls:MoveThumb Cursor="SizeAll">
+                    <controls:MoveThumb.Template>
+                        <ControlTemplate>
+                            <Rectangle Fill="Transparent"/>
+                        </ControlTemplate>
+                    </controls:MoveThumb.Template>
+                </controls:MoveThumb>
             </Grid>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -51,7 +55,6 @@
                     <SolidColorBrush Color="{Binding LegendColor}"/>
                 </Grid.Background>
 
-                <controls:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
                 <Control Template="{StaticResource ResizeDecoratorTemplate}" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
             </Grid>
         </DataTemplate>
@@ -65,7 +68,7 @@
                 </TextBlock>
                 <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding AreaDescription}" MinWidth="200" Style="{StaticResource ControlTitleStyle}"/>
-                <TextBlock Text="Controls location:" Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0"/>
+                <TextBlock Text="- Controls Location:" Style="{StaticResource ControlTitleStyle}" Margin="3,0"/>
                 <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}"/>
             </StackPanel>
         </DataTemplate>
@@ -80,7 +83,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" Text="Group Name:"/>
-            <TextBox Width="200" Text="{Binding ZoneName}"/>
+            <TextBox Width="200" Text="{Binding GroupName}"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="0,10">
@@ -106,15 +109,15 @@
 
                 <StackPanel Grid.Row="3" Margin="15,5,0,0" Orientation="Horizontal">
                     <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Zone Name:"/>
-                    <TextBox VerticalAlignment="Center" Width="120"/>
+                    <TextBox VerticalAlignment="Center" Width="120" Text="{Binding ZoneName, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Margin="15,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Entertainment Group:"/>
-                    <ComboBox VerticalAlignment="Center" Width="120"/>
+                    <ComboBox VerticalAlignment="Center" Width="120" ItemsSource="{Binding Locations}" SelectedItem="{Binding CurrentLocation}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="4" Margin="0,20,0,0" Orientation="Horizontal">
-                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="New Capture Zone" ToolTip="Add A Capture Zone"/>
-                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="Delete Capture Zone" ToolTip="Delete The Selected Capture Zone"/>
+                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="New Capture Zone" Command="{Binding AddZone}" ToolTip="Add A Capture Zone"/>
+                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="Delete Capture Zone" Command="{Binding DeleteZone}" ToolTip="Delete The Selected Capture Zone"/>
                 </StackPanel>
             </Grid>
 
@@ -137,12 +140,14 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style TargetType="FrameworkElement">
-                                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
-                                        <Setter Property="Canvas.Top" Value="{Binding Top, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
-                                        <Setter Property="Canvas.Right" Value="{Binding Right, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
-                                        <Setter Property="Canvas.Bottom" Value="{Binding Bottom, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
-                                        <Setter Property="MinWidth" Value="10"/>
-                                        <Setter Property="MinHeight" Value="12"/>
+                                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=TwoWay}"/>
+                                        <Setter Property="Canvas.Top" Value="{Binding Top, Mode=TwoWay}"/>
+                                        <Setter Property="Canvas.Right" Value="{Binding Right, Mode=TwoWay}"/>
+                                        <Setter Property="Canvas.Bottom" Value="{Binding Bottom, Mode=TwoWay}"/>
+                                        <Setter Property="MinWidth" Value="50"/>
+                                        <Setter Property="MaxWidth" Value="1000"/>
+                                        <Setter Property="MinHeight" Value="50"/>
+                                        <Setter Property="MaxHeight" Value="1000"></Setter>
                                     </Style>
                                 </ItemsControl.ItemContainerStyle>
                             </ItemsControl>

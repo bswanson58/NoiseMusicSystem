@@ -15,7 +15,7 @@ namespace LightPipe.Dto {
 
         public  Color                       LegendColor { get; }
         public  string                      Location => mZoneLocation.ToString();
-        public  string                      AreaDescription => $"(Top: {Top / 10.0:N0} Left:{Left / 10.0:N0} Bottom:{Bottom / 10.0:N0} Right:{Right / 10.0:N0})";
+        public  string                      AreaDescription => $"(Top: {Top / 10.0:N0}, Left: {Left / 10.0:N0}, Bottom: {Bottom / 10.0:N0}, Right: {Right / 10.0:N0})";
 
         public UiZoneEdit( ZoneDefinition zone, Color color ) {
             mZoneDefinition = zone;
@@ -34,15 +34,16 @@ namespace LightPipe.Dto {
             set {
                 mZoneName = value;
 
-                RaisePropertyChanged( () => mZoneName );
+                RaisePropertyChanged( () => ZoneName );
             }
         }
 
-        private GroupLightLocation LightLocation {
+        public GroupLightLocation LightLocation {
             get => mZoneLocation;
             set {
                 mZoneLocation = value;
 
+                RaisePropertyChanged( () => Location );
                 RaisePropertyChanged( () => LightLocation );
             }
         }
@@ -50,12 +51,13 @@ namespace LightPipe.Dto {
         public float Top {
             get => mTop;
             set {
-                mTop = Math.Max( Math.Min( value, 950 ), 0 );
+                mTop = (float)Math.Round( Math.Max( Math.Min( value, 950 ), 0 ));
                 if(( mTop + mHeight ) > 1000 ) {
                     mTop = 1000 - mHeight;
                 }
 
                 RaisePropertyChanged( () => Top );
+                RaisePropertyChanged( () => Bottom );
                 RaisePropertyChanged( () => AreaDescription );
             }
         }
@@ -63,12 +65,13 @@ namespace LightPipe.Dto {
         public float Left {
             get => mLeft;
             set {
-                mLeft = Math.Max( Math.Min( value, 950 ), 0 );
+                mLeft = (float)( Math.Round( Math.Max( Math.Min( value, 950 ), 0 )));
                 if(( mLeft + mWidth ) > 1000 ) {
                     mLeft = 1000 - mWidth;
                 }
 
                 RaisePropertyChanged( () => Left );
+                RaisePropertyChanged( () => Right );
                 RaisePropertyChanged( () => AreaDescription );
             }
         }
@@ -76,12 +79,13 @@ namespace LightPipe.Dto {
         public float Height {
             get => mHeight;
             set {
-                mHeight = value;
+                mHeight = (float)Math.Round( value );
                 if( Bottom > 1000 ) {
                     mHeight = 1000 - mTop;
                 }
 
                 RaisePropertyChanged( () => Height );
+                RaisePropertyChanged( () => Bottom );
                 RaisePropertyChanged( () => AreaDescription );
             }
         }
@@ -89,12 +93,13 @@ namespace LightPipe.Dto {
         public float Width {
             get => mWidth;
             set {
-                mWidth = value;
+                mWidth = (float)Math.Round( value );
                 if( Right > 1000 ) {
                     mWidth = 1000 - Left;
                 }
 
                 RaisePropertyChanged( () => Width );
+                RaisePropertyChanged( () => Right );
                 RaisePropertyChanged( () => AreaDescription );
             }
         }
@@ -102,7 +107,7 @@ namespace LightPipe.Dto {
         public float Right {
             get => mLeft + mWidth;
             set {
-                mWidth = value - mLeft;
+                mWidth = (float)Math.Round( value ) - mLeft;
                 if( Right > 1000 ) {
                     mWidth = 1000 - mLeft;
                 }
@@ -116,7 +121,7 @@ namespace LightPipe.Dto {
         public float Bottom {
             get => mTop + mHeight;
             set {
-                mHeight = value - mTop;
+                mHeight = (float)Math.Round( value ) - mTop;
                 if( Bottom > 1000 ) {
                     mHeight = 1000 - mTop;
                 }
