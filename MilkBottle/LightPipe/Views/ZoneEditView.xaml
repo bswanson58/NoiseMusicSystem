@@ -6,6 +6,7 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:viewModels="clr-namespace:LightPipe.ViewModels"
              xmlns:dto="clr-namespace:LightPipe.Dto"
+             xmlns:controls="clr-namespace:LightPipe.Controls"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ZoneEditViewModel, IsDesignTimeCreatable=False}"
@@ -21,19 +22,43 @@
     </mvvm:Dialog.WindowStyle>
 
     <UserControl.Resources>
-        <DataTemplate x:Key="ZoneTemplate" DataType="dto:UiZoneDefinition">
-            <Grid>
-                <Rectangle StrokeThickness="0" Height="{Binding Height}" Width="{Binding Width}" ToolTip="{Binding Description}">
-                    <Rectangle.Fill>
-                        <SolidColorBrush Color="{Binding LegendColor}"/>
-                    </Rectangle.Fill>
-                </Rectangle>
+        <ControlTemplate x:Key="MoveThumbTemplate" TargetType="{x:Type controls:MoveThumb}">
+            <Rectangle Fill="Transparent"/>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ResizeDecoratorTemplate" TargetType="{x:Type Control}">
+            <Grid x:Name="ThumbContainer" Opacity="0.1" Background="Transparent">
+                <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="-4 -18 -4 0" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+                <controls:ResizeThumb Width="6" Cursor="SizeWE" Margin="-12 -4 0 -4" VerticalAlignment="Stretch" HorizontalAlignment="Left"/>
+                <controls:ResizeThumb Width="6" Cursor="SizeWE" Margin="0 -4 -12 -4" VerticalAlignment="Stretch" HorizontalAlignment="Right"/>
+                <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="-4 0 -4 -18" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
+
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" Margin="-18 -26 0 0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" Margin="0 -26 -18 0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" Margin="-18 0 0 -26" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" Margin="0 0 -18 -26" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="ThumbContainer" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <DataTemplate x:Key="ZoneEditTemplate" DataType="dto:UiZoneEdit">
+            <Grid Height="{Binding Height}" Width="{Binding Width}">
+                <Grid.Background>
+                    <SolidColorBrush Color="{Binding LegendColor}"/>
+                </Grid.Background>
+
+                <controls:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+                <Control Template="{StaticResource ResizeDecoratorTemplate}" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="ZoneDefinitionTemplate" DataType="dto:UiZoneDefinition">
+        <DataTemplate x:Key="ZoneDefinitionTemplate" DataType="dto:UiZoneEdit">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Name}" MinWidth="80" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}">
+                <TextBlock Text="{Binding ZoneName}" MinWidth="80" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}">
                     <TextBlock.Foreground>
                         <SolidColorBrush Color="{Binding LegendColor}"/>
                     </TextBlock.Foreground>
@@ -64,7 +89,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="0" Margin="0,0,15,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -88,8 +113,8 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="4" Margin="0,20,0,0" Orientation="Horizontal">
-                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="New Capture Zone" Command="" ToolTip=""/>
-                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="Delete Capture Zone" Command="" ToolTip=""/>
+                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="New Capture Zone" ToolTip="Add A Capture Zone"/>
+                    <Button Margin="0,0,10,0" Padding="10,3" Style="{StaticResource GeneralButtonStyle}" Content="Delete Capture Zone" ToolTip="Delete The Selected Capture Zone"/>
                 </StackPanel>
             </Grid>
 
@@ -104,18 +129,20 @@
                 <Viewbox Grid.Row="1" Stretch="Uniform" VerticalAlignment="Top">
                     <Grid Width="1600" Height="900">
                         <Viewbox Stretch="Fill">
-                            <ItemsControl Height="100" Width="100" ItemsSource="{Binding Zones}" ItemTemplate="{StaticResource ZoneTemplate}" Background="DimGray">
+                            <ItemsControl Height="1000" Width="1000" ItemsSource="{Binding Zones}" ItemTemplate="{StaticResource ZoneEditTemplate}" Background="DimGray">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Canvas IsItemsHost="True" />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
-                                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
-                                        <Setter Property="Canvas.Right" Value="{Binding Right}"/>
-                                        <Setter Property="Canvas.Bottom" Value="{Binding Bottom}"/>
+                                    <Style TargetType="FrameworkElement">
+                                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
+                                        <Setter Property="Canvas.Top" Value="{Binding Top, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
+                                        <Setter Property="Canvas.Right" Value="{Binding Right, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
+                                        <Setter Property="Canvas.Bottom" Value="{Binding Bottom, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
+                                        <Setter Property="MinWidth" Value="10"/>
+                                        <Setter Property="MinHeight" Value="12"/>
                                     </Style>
                                 </ItemsControl.ItemContainerStyle>
                             </ItemsControl>

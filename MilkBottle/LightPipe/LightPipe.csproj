@@ -146,8 +146,11 @@
     <Compile Include="..\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Controls\MoveThumb.cs" />
+    <Compile Include="Controls\ResizeThumb.cs" />
     <Compile Include="Dto\LightPipeConfiguration.cs" />
     <Compile Include="Dto\UiZoneDefinition.cs" />
+    <Compile Include="Dto\UiZoneEdit.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="LightPipeModule.cs" />
     <Compile Include="Models\ImageProcessor.cs" />

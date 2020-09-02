@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
@@ -10,25 +11,27 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace LightPipe.ViewModels {
     class ZoneEditViewModel : PropertyChangeBase, IDialogAware {
-        public  const string                            cZoneParameter = "zone";
+        public  const string                        cZoneParameter = "zone";
 
-        private ZoneGroup                               mZoneGroup;
-        private ZoneDefinition                          mCurrentZone;
+        private readonly List<Color>                mLegendColors;
+        private ZoneGroup                           mZoneGroup;
+        private UiZoneEdit                          mCurrentZone;
 
-        public  ObservableCollection<UiZoneDefinition>  Zones { get; }
+        public  ObservableCollection<UiZoneEdit>    Zones { get; }
 
-        public  DelegateCommand                         Ok { get; }
-        public  DelegateCommand                         Cancel { get; }
+        public  DelegateCommand                     Ok { get; }
+        public  DelegateCommand                     Cancel { get; }
 
-        public  string                                  Title { get; }
+        public  string                              Title { get; }
 
-        public  event Action<IDialogResult>             RequestClose;
+        public  event Action<IDialogResult>         RequestClose;
 
         public ZoneEditViewModel() {
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
 
-            Zones = new ObservableCollection<UiZoneDefinition>();
+            Zones = new ObservableCollection<UiZoneEdit>();
+            mLegendColors = new List<Color> { Colors.OrangeRed, Colors.LimeGreen, Colors.CornflowerBlue, Colors.Goldenrod,   Colors.BlueViolet };
 
             Title = "Edit Zone Group";
         }
@@ -38,7 +41,7 @@ namespace LightPipe.ViewModels {
 
             Zones.Clear();
             if( mZoneGroup != null ) {
-                Zones.AddRange( from z in mZoneGroup.Zones select new UiZoneDefinition( z, Colors.White ));
+                Zones.AddRange( from z in mZoneGroup.Zones select new UiZoneEdit( z, mLegendColors[Zones.Count % mLegendColors.Count]));
             }
 
             RaisePropertyChanged( () => ZoneName );
@@ -53,7 +56,7 @@ namespace LightPipe.ViewModels {
             }
         }
 
-        public ZoneDefinition CurrentZone {
+        public UiZoneEdit CurrentZone {
             get => mCurrentZone;
             set {
                 mCurrentZone = value;
