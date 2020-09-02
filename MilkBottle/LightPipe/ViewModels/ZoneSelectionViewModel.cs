@@ -67,16 +67,20 @@ namespace LightPipe.ViewModels {
         }
 
         private void OnNewZone() {
-            var newZone = mZoneManager.CreateZone( "Unnamed Zone" );
-            var parameters = new DialogParameters{{ ZoneEditViewModel.cZoneParameter, newZone }};
+            var parameters = new DialogParameters{{ ZoneEditViewModel.cZoneParameter, new ZoneGroup( "Unnamed Zone" ) }};
 
             mDialogService.ShowDialog( nameof( ZoneEditView ), parameters, result => {
                 if( result.Result == ButtonResult.OK ) {
-                    mZoneManager.UpdateZone( newZone );
+                    var zone = result.Parameters.GetValue<ZoneGroup>( ZoneEditViewModel.cZoneParameter );
+
+                    if( zone != null ) {
+                        mZoneManager.AddOrUpdateZone( zone );
+
+                        LoadZones();
+                        CurrentZone = Zones.FirstOrDefault( g => g.GroupId.Equals( zone.GroupId ));
+                    }
                 }
             });
-
-            LoadZones();
         }
 
         private void OnEditZone() {
@@ -85,11 +89,16 @@ namespace LightPipe.ViewModels {
 
                 mDialogService.ShowDialog( nameof( ZoneEditView ), parameters, result => {
                     if( result.Result == ButtonResult.OK ) {
-                        mZoneManager.UpdateZone( CurrentZone );
+                        var zone = result.Parameters.GetValue<ZoneGroup>( ZoneEditViewModel.cZoneParameter );
+
+                        if( zone != null ) {
+                            mZoneManager.AddOrUpdateZone( zone );
+
+                            LoadZones();
+                            CurrentZone = Zones.FirstOrDefault( g => g.GroupId.Equals( zone.GroupId ));
+                        }
                     }
                 });
-
-                LoadZones();
             }
         }
 
@@ -97,7 +106,20 @@ namespace LightPipe.ViewModels {
             return CurrentZone != null;
         }
 
-        private void OnDeleteZone() { }
+        private void OnDeleteZone() {
+            if( CurrentZone != null ) {
+                var parameters = new DialogParameters{{ ConfirmDeleteDialogModel.cEntityNameParameter, $"Zone Group ({CurrentZone.GroupName})" }};
+
+                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), parameters, result => {
+                    if( result.Result == ButtonResult.OK ) {
+                        mZoneManager.DeleteZone( CurrentZone.GroupId );
+
+                        LoadZones();
+                    }
+                });
+            }
+        }
+
         private bool CanDeleteZone() {
             return CurrentZone != null;
         }

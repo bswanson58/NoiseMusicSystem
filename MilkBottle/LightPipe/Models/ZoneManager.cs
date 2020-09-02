@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Caliburn.Micro;
 using LightPipe.Dto;
@@ -25,36 +24,6 @@ namespace LightPipe.Models {
             mEventAggregator = eventAggregator;
 
             mZones = new List<ZoneGroup>();
-
-            AddDebugZones();
-        }
-
-        private void AddDebugZones() {
-            UpdateZones();
-
-            if(!mZones.Any()) {
-                var zoneGroup = new ZoneGroup( "Bar Room L/R/Front" );
-
-                zoneGroup.Zones.Add( new ZoneDefinition( "Left", new RectangleF( 5, 20, 20, 50 ), GroupLightLocation.Left ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Front ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 ), GroupLightLocation.Right ));
-                mZones.Add( zoneGroup );
-
-                zoneGroup = new ZoneGroup( "Bar Front/Ground" );
-                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Front ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 30, 85, 40, 15 ), GroupLightLocation.Ground ));
-                mZones.Add( zoneGroup );
-
-                zoneGroup = new ZoneGroup( "Bar L/TV/R/G" );
-                zoneGroup.Zones.Add( new ZoneDefinition( "Left", new RectangleF( 1, 1, 30, 30 ), GroupLightLocation.Left ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Center", new RectangleF( 35, 35, 30, 30 ), GroupLightLocation.Television ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Right", new RectangleF( 75, 5, 20, 50 ), GroupLightLocation.Right ));
-                zoneGroup.Zones.Add( new ZoneDefinition( "Bottom", new RectangleF( 30, 85, 40, 15 ), GroupLightLocation.Ground ));
-                mZones.Add( zoneGroup );
-
-                SaveZoneDefinitions();
-                SetCurrentGroup( zoneGroup.GroupId );
-            }
         }
 
         public IEnumerable<ZoneGroup> GetZones() {
@@ -72,18 +41,7 @@ namespace LightPipe.Models {
             return mZones.FirstOrDefault( z => z.GroupId.Equals( groupId ));
         }
 
-        public ZoneGroup CreateZone( string zoneName ) {
-            var retValue = new ZoneGroup( zoneName );
-
-            UpdateZones();
-
-            mZones.Add( retValue );
-            SaveZoneDefinitions();
-
-            return retValue;
-        }
-
-        public void UpdateZone( ZoneGroup zone ) {
+        public void AddOrUpdateZone( ZoneGroup zone ) {
             UpdateZones();
 
             var existing = mZones.FirstOrDefault( z => z.GroupId.Equals( zone.GroupId ));

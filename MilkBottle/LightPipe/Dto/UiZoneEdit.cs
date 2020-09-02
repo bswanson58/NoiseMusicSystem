@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Windows.Media;
+using System.Drawing;
 using MilkBottle.Infrastructure.Dto;
 using ReusableBits.Mvvm.ViewModelSupport;
+using Color = System.Windows.Media.Color;
 
 namespace LightPipe.Dto {
     public class UiZoneEdit : PropertyChangeBase {
-        private readonly ZoneDefinition     mZoneDefinition;
         private string                      mZoneName;
         private GroupLightLocation          mZoneLocation;
         private float                       mTop;
@@ -17,16 +17,21 @@ namespace LightPipe.Dto {
         public  string                      Location => mZoneLocation.ToString();
         public  string                      AreaDescription => $"(Top: {Top / 10.0:N0}, Left: {Left / 10.0:N0}, Bottom: {Bottom / 10.0:N0}, Right: {Right / 10.0:N0})";
 
-        public UiZoneEdit( ZoneDefinition zone, Color color ) {
-            mZoneDefinition = zone;
+        public UiZoneEdit( ZoneDefinition zoneDefinition, Color color ) {
             LegendColor = color;
 
-            mZoneName = mZoneDefinition.ZoneName;
-            mZoneLocation = mZoneDefinition.LightLocation;
-            mTop = mZoneDefinition.ZoneArea.Top * 10;
-            mLeft = mZoneDefinition.ZoneArea.Left * 10;
-            mHeight = mZoneDefinition.ZoneArea.Height * 10;
-            mWidth = mZoneDefinition.ZoneArea.Width * 10;
+            mZoneName = zoneDefinition.ZoneName;
+            mZoneLocation = zoneDefinition.LightLocation;
+            mTop = zoneDefinition.ZoneArea.Top * 10;
+            mLeft = zoneDefinition.ZoneArea.Left * 10;
+            mHeight = zoneDefinition.ZoneArea.Height * 10;
+            mWidth = zoneDefinition.ZoneArea.Width * 10;
+        }
+
+        public ZoneDefinition GetUpdatedZone() {
+            return new ZoneDefinition( ZoneName, 
+                                       new RectangleF((float)Math.Round( Left / 10.0 ), (float)Math.Round( Top / 10.0 ), (float)Math.Round( Width / 10.0 ), (float)Math.Round( Height / 10.0 )),
+                                       LightLocation );
         }
 
         public string ZoneName {

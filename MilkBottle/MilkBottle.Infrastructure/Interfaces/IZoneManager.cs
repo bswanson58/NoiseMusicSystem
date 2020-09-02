@@ -6,8 +6,7 @@ namespace MilkBottle.Infrastructure.Interfaces {
         IEnumerable<ZoneGroup>  GetZones();
         ZoneGroup               GetZone( string groupId );
 
-        ZoneGroup               CreateZone( string zoneName );
-        void                    UpdateZone( ZoneGroup zone );
+        void                    AddOrUpdateZone( ZoneGroup zone );
         void                    DeleteZone( string groupId );
 
         void                    SetCurrentGroup( string groupId );

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Media;
 using LightPipe.Dto;
+using LightPipe.Views;
 using MilkBottle.Infrastructure.Dto;
 using Prism.Commands;
 using Prism.Services.Dialogs;
@@ -15,6 +16,7 @@ namespace LightPipe.ViewModels {
     class ZoneEditViewModel : PropertyChangeBase, IDialogAware {
         public  const string                        cZoneParameter = "zone";
 
+        private readonly IDialogService             mDialogService;
         private readonly List<Color>                mLegendColors;
         private ZoneGroup                           mZoneGroup;
         private UiZoneEdit                          mCurrentZone;
@@ -32,7 +34,9 @@ namespace LightPipe.ViewModels {
 
         public  event Action<IDialogResult>         RequestClose;
 
-        public ZoneEditViewModel() {
+        public ZoneEditViewModel( IDialogService dialogService ) {
+            mDialogService = dialogService;
+
             AddZone = new DelegateCommand( OnAddZone );
             DeleteZone = new DelegateCommand( OnDeleteZone, CanDeleteZone );
             Ok = new DelegateCommand( OnOk );
@@ -116,12 +120,19 @@ namespace LightPipe.ViewModels {
             Zones.Add( zone );
             CurrentZone = zone;
         }
+
         private void OnDeleteZone() {
             if( CurrentZone != null ) {
-                Zones.Remove( CurrentZone );
-            }
+                var parameters = new DialogParameters{{ ConfirmDeleteDialogModel.cEntityNameParameter, $"Zone ({CurrentZone.ZoneName})" }};
 
-            CurrentZone = Zones.FirstOrDefault();
+                mDialogService.ShowDialog( nameof( ConfirmDeleteDialog ), parameters, result => {
+                    if( result.Result == ButtonResult.OK ) {
+                        Zones.Remove( CurrentZone );
+
+                        CurrentZone = Zones.FirstOrDefault();
+                    }
+                });
+            }
         }
 
         private bool CanDeleteZone() {
@@ -129,7 +140,11 @@ namespace LightPipe.ViewModels {
         }
 
         public void OnOk() {
-            RaiseRequestClose(new DialogResult( ButtonResult.OK, new DialogParameters()));
+            mZoneGroup.GroupName = GroupName;
+            mZoneGroup.Zones.Clear();
+            mZoneGroup.Zones.AddRange( from zone in Zones select zone.GetUpdatedZone());
+
+            RaiseRequestClose(new DialogResult( ButtonResult.OK, new DialogParameters{{ cZoneParameter, mZoneGroup }}));
         }
 
         public void OnCancel() {
