@@ -80,7 +80,7 @@ namespace HueLighting.ViewModels {
                 mEntertainmentGroup = await mHubManager.GetEntertainmentGroupLayout( mSelectedGroup );
 
                 GroupLights.Clear();
-                GroupLights.AddRange( from light in mEntertainmentGroup.Lights select new UiGroupLights( light ));
+                GroupLights.AddRange( from light in mEntertainmentGroup.LightGroups select new UiGroupLights( light ));
 
                 IndicateZones();
             }

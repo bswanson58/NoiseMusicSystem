@@ -18,10 +18,28 @@ namespace HueLighting.Dto {
     }
 
     public class EntertainmentGroup {
-        public  List<GroupLights>   Lights { get; }
+        public  List<Bulb>          AllLights { get; }
+        public  List<GroupLights>   LightGroups { get; }
 
         public EntertainmentGroup( EntertainmentLayer fromLayer, IList<Light> lightList  ) {
-            Lights = new List<GroupLights>( from g in BuildLightGroups( fromLayer, lightList ) orderby g.Location select g );
+            AllLights = new List<Bulb>( BuildLights( fromLayer, lightList ));
+            LightGroups = new List<GroupLights>( from g in BuildLightGroups( fromLayer, lightList ) orderby g.Location select g );
+        }
+
+        private IEnumerable<Bulb> BuildLights( EntertainmentLayer layer, IList<Light> lightList ) {
+            var retValue = new List<Bulb>();
+
+            if( layer != null ) {
+                foreach( var groupLight in layer ) {
+                    var light = lightList.FirstOrDefault( l => l.Id.Equals( groupLight.Id.ToString()));
+
+                    if( light != null ) {
+                        retValue.Add( new Bulb( light.Id, light.Name, true, groupLight.LightLocation ));
+                    }
+                }
+            }
+
+            return retValue;
         }
 
         private IEnumerable<GroupLights> BuildLightGroups( EntertainmentLayer layer, IList<Light> lightList ) {
@@ -98,14 +116,14 @@ namespace HueLighting.Dto {
             var bulb = lightList.FirstOrDefault( l => l.Id.Equals( light.Id.ToString()));
 
             if( bulb != null ) {
-                retValue = new Bulb( bulb.Id, bulb.Name, true );
+                retValue = new Bulb( bulb.Id, bulb.Name, true, light.LightLocation );
             }
 
             return retValue;
         }
 
         public GroupLights GetLights( GroupLightLocation forLocation ) {
-            return Lights.FirstOrDefault( g => g.Location.Equals( forLocation ));
+            return LightGroups.FirstOrDefault( g => g.Location.Equals( forLocation ));
         }
     }
 }
