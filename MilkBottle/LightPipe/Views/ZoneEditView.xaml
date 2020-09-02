@@ -23,18 +23,18 @@
 
     <UserControl.Resources>
         <ControlTemplate x:Key="ResizeDecoratorTemplate" TargetType="{x:Type Control}">
-            <Grid x:Name="ThumbContainer" Opacity="0.1" Background="Transparent">
-                <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="-4 -18 -4 0" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
-                <controls:ResizeThumb Width="6" Cursor="SizeWE" Margin="-12 -4 0 -4" VerticalAlignment="Stretch" HorizontalAlignment="Left"/>
-                <controls:ResizeThumb Width="6" Cursor="SizeWE" Margin="0 -4 -12 -4" VerticalAlignment="Stretch" HorizontalAlignment="Right"/>
-                <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="-4 0 -4 -18" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
+            <Grid x:Name="ThumbContainer" Opacity="0.1" Margin="-18,-26" Background="Transparent">
+                <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="0, 9, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+                <controls:ResizeThumb Width="6" Cursor="SizeWE" Margin="6, 0, 0, 0" VerticalAlignment="Stretch" HorizontalAlignment="Left"/>
+                <controls:ResizeThumb Width="6" Cursor="SizeWE" Margin="0, 0, 6, 0" VerticalAlignment="Stretch" HorizontalAlignment="Right"/>
+                <controls:ResizeThumb Height="8" Cursor="SizeNS" Margin="0, 0, 0, 9" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
 
-                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" Margin="-18 -26 0 0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" Margin="0 -26 -18 0" VerticalAlignment="Top" HorizontalAlignment="Right"/>
-                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" Margin="-18 0 0 -26" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" Margin="0 0 -18 -26" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNESW" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                <controls:ResizeThumb Width="16" Height="24" Cursor="SizeNWSE" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
 
-                <controls:MoveThumb Cursor="SizeAll">
+                <controls:MoveThumb Cursor="SizeAll" Margin="12, 17">
                     <controls:MoveThumb.Template>
                         <ControlTemplate>
                             <Rectangle Fill="Transparent"/>
