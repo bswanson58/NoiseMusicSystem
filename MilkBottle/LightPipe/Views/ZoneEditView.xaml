@@ -67,8 +67,8 @@
                     </TextBlock.Foreground>
                 </TextBlock>
                 <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding AreaDescription}" MinWidth="200" Style="{StaticResource ControlTitleStyle}"/>
-                <TextBlock Text="- Controls Location:" Style="{StaticResource ControlTitleStyle}" Margin="3,0"/>
+                <TextBlock Text="{Binding AreaDescription}" MinWidth="230" Style="{StaticResource ControlTitleStyle}"/>
+                <TextBlock Text="Controls Group:" Style="{StaticResource ControlTitleStyle}"/>
                 <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}"/>
             </StackPanel>
         </DataTemplate>
@@ -127,7 +127,8 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Margin="0,0,0,5" Style="{StaticResource ControlTitleStyle}" Text="Capture Zone Display:"/>
+                <TextBlock Grid.Row="0" Margin="0,0,0,5" Style="{StaticResource ControlTitleStyle}" Text="Capture Zone Area:"/>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="(Drag handles to configure capture zones.)"/>
 
                 <Viewbox Grid.Row="1" Stretch="Uniform" VerticalAlignment="Top">
                     <Grid Width="1600" Height="900">

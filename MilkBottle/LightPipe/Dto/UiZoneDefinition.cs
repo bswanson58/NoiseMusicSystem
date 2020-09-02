@@ -15,7 +15,7 @@ namespace LightPipe.Dto {
 
         public  string  Name => mZoneDefinition.ZoneName;
         public  string  Location => mZoneDefinition.LightLocation.ToString();
-        public  string  AreaDescription => $"(Top: {mZoneDefinition.ZoneArea.Top:N0} Left:{mZoneDefinition.ZoneArea.Left:N0} Bottom:{mZoneDefinition.ZoneArea.Bottom:N0} Right:{mZoneDefinition.ZoneArea.Right:N0})";
+        public  string  AreaDescription => $"(Top: {mZoneDefinition.ZoneArea.Top:N0}, Left:{mZoneDefinition.ZoneArea.Left:N0}, Bottom:{mZoneDefinition.ZoneArea.Bottom:N0}, Right:{mZoneDefinition.ZoneArea.Right:N0})";
         public  string  Description => $"{Name} - Controls: {mZoneDefinition.LightLocation}";
         public  Color   LegendColor { get; }
 
