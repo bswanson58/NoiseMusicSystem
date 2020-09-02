@@ -19,6 +19,9 @@
                     <Path.Data>
                         <EllipseGeometry RadiusX="8" RadiusY="6"/>
                     </Path.Data>
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="{Binding Height}" ScaleY="{Binding Height}"/>
+                    </Path.RenderTransform>
                 </Path>
                 <!--
                 <Ellipse StrokeThickness="0" Height="30" Width="40" ToolTip="{Binding Description}">
@@ -35,7 +38,7 @@
         <Grid Width="600" Height="800">
             <Grid Background="DimGray"/>
 
-            <Viewbox Stretch="Fill" Margin="25">
+            <Viewbox Stretch="Fill" Margin="40">
                 <ItemsControl Height="200" Width="200" ItemsSource="{Binding LightList}" ItemTemplate="{StaticResource LightTemplate}" Background="DimGray">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

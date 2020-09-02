@@ -8,7 +8,7 @@ namespace HueLighting.Dto {
 
         public  double      Top => ( mBulb.Location.Y * 100 ) + 100;
         public  double      Left => ( mBulb.Location.X * 100 ) + 100;
-        public  double      Height => mBulb.Location.Z * 100 + 100;
+        public  double      Height => mBulb.Location.Z + 2;
 
         public  string      Description => $"{mBulb.Name} ({mBulb.Id})";
 
