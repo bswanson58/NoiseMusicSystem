@@ -163,10 +163,14 @@
     <Compile Include="Utility\BitmapCapture.cs" />
     <Compile Include="Utility\ColorSpace.cs" />
     <Compile Include="Utility\DirectAccessBitmap.cs" />
+    <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
     <Compile Include="ViewModels\LightPipeStatusViewModel.cs" />
     <Compile Include="ViewModels\ZoneDisplayViewModel.cs" />
     <Compile Include="ViewModels\ZoneEditViewModel.cs" />
     <Compile Include="ViewModels\ZoneSelectionViewModel.cs" />
+    <Compile Include="Views\ConfirmDeleteDialog.xaml.cs">
+      <DependentUpon>ConfirmDeleteDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LightPipeStatusView.xaml.cs">
       <DependentUpon>LightPipeStatusView.xaml</DependentUpon>
     </Compile>
@@ -202,6 +206,10 @@
     <Page Include="Resources\DesignTimeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ConfirmDeleteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LightPipeStatusView.xaml">
       <SubType>Designer</SubType>

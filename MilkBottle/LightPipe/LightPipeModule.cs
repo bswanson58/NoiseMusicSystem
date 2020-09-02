@@ -12,6 +12,7 @@ namespace LightPipe {
             containerRegistry.RegisterSingleton<IImageProcessor, ImageProcessor>();
             containerRegistry.RegisterSingleton<IZoneManager, ZoneManager>();
 
+            containerRegistry.RegisterDialog<ConfirmDeleteDialog, ConfirmDeleteDialogModel>();
             containerRegistry.RegisterDialog<ZoneEditView, ZoneEditViewModel>();
         }
 
