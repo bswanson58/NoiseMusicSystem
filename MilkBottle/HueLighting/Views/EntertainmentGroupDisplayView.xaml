@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="HueLighting.Views.EntertainmentGroupDisplayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:HueLighting.ViewModels"
+             xmlns:dto="clr-namespace:HueLighting.Dto"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:EntertainmentGroupDisplayViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="100" d:DesignWidth="100">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="LightTemplate" DataType="dto:UiBulb">
+            <Grid>
+                <Path ToolTip="{Binding Description}">
+                    <Path.Fill>
+                        <SolidColorBrush Color="{Binding LightColor}"/>
+                    </Path.Fill>
+                    <Path.Data>
+                        <EllipseGeometry RadiusX="8" RadiusY="6"/>
+                    </Path.Data>
+                </Path>
+                <!--
+                <Ellipse StrokeThickness="0" Height="30" Width="40" ToolTip="{Binding Description}">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{Binding LightColor}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                -->
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="600" Height="800">
+            <Grid Background="DimGray"/>
+
+            <Viewbox Stretch="Fill" Margin="25">
+                <ItemsControl Height="200" Width="200" ItemsSource="{Binding LightList}" ItemTemplate="{StaticResource LightTemplate}" Background="DimGray">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </Viewbox>
+        </Grid>
+    </Viewbox>
+</UserControl>

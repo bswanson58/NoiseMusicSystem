@@ -30,19 +30,22 @@ namespace HueLighting.ViewModels {
     }
 
     class EntertainmentGroupViewModel : PropertyChangeBase, IDisposable, IHandle<MilkBottle.Infrastructure.Events.CurrentZoneChanged> {
-        private readonly IEventAggregator   mEventAggregator;
-        private readonly IHubManager        mHubManager;
-        private readonly IPreferences       mPreferences;
-        private readonly IZoneManager       mZoneManager;
-        private Group                       mSelectedGroup;
-        private EntertainmentGroup          mEntertainmentGroup;
+        private readonly IEventAggregator           mEventAggregator;
+        private readonly IHubManager                mHubManager;
+        private readonly IPreferences               mPreferences;
+        private readonly IZoneManager               mZoneManager;
+        private Group                               mSelectedGroup;
+        private EntertainmentGroup                  mEntertainmentGroup;
 
+        public  EntertainmentGroupDisplayViewModel  GroupDisplay { get; }
         public  ObservableCollection<Group>         Groups { get; }
         public  ObservableCollection<UiGroupLights> GroupLights { get; }
 
-        public EntertainmentGroupViewModel( IHubManager hubManager, IZoneManager zoneManager, IPreferences preferences, IEventAggregator eventAggregator ) {
+        public EntertainmentGroupViewModel( IHubManager hubManager, IZoneManager zoneManager, EntertainmentGroupDisplayViewModel groupDisplay,
+                                            IPreferences preferences, IEventAggregator eventAggregator ) {
             mHubManager = hubManager;
             mZoneManager = zoneManager;
+            GroupDisplay = groupDisplay;
             mPreferences = preferences;
             mEventAggregator = eventAggregator;
 
@@ -80,7 +83,12 @@ namespace HueLighting.ViewModels {
                 mEntertainmentGroup = await mHubManager.GetEntertainmentGroupLayout( mSelectedGroup );
 
                 GroupLights.Clear();
-                GroupLights.AddRange( from light in mEntertainmentGroup.LightGroups select new UiGroupLights( light ));
+
+                if( mEntertainmentGroup != null ) {
+                    GroupLights.AddRange( from light in mEntertainmentGroup.LightGroups select new UiGroupLights( light ));
+
+                    GroupDisplay.SetEntertainmentGroup( mEntertainmentGroup );
+                }
 
                 IndicateZones();
             }
