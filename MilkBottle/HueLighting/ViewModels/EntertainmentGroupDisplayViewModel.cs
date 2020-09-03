@@ -15,7 +15,7 @@ namespace HueLighting.ViewModels {
             LightList.Clear();
 
             if( group != null ) {
-                LightList.AddRange( group.AllLights.Select( b => new UiBulb( b, Colors.Yellow )));
+                LightList.AddRange( group.AllLights.Select( b => new UiBulb( b, Colors.LemonChiffon )));
             }
         }
     }
