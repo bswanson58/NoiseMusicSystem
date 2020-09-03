@@ -11,5 +11,8 @@ namespace MilkBottle.Infrastructure.Interfaces {
 
         void                    SetCurrentGroup( string groupId );
         ZoneGroup               GetCurrentGroup();
+
+        void                    SetZoneLegend( ZoneGroupLegend legend );
+        ZoneGroupLegend         GetZoneLegend();
     }
 }

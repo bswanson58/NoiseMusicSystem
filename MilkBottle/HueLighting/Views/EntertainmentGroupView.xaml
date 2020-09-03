@@ -35,7 +35,11 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Location}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="{Binding LegendColor}"/>
+                        </TextBlock.Foreground>
+                    </TextBlock>
                     <TextBlock Text=":" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 

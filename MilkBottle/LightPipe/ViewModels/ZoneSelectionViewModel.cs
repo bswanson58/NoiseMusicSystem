@@ -49,11 +49,12 @@ namespace LightPipe.ViewModels {
                 ZoneList.Clear();
 
                 if( mCurrentZone != null ) {
-                    mZoneManager.SetCurrentGroup( CurrentZone.GroupId );
-
                     mCurrentZone.Zones.ForEach( z => {
                         ZoneList.Add( new UiZoneDefinition( z, mLegendColors[ZoneList.Count % mLegendColors.Count]));
                     });
+
+                    mZoneManager.SetZoneLegend( new ZoneGroupLegend( CurrentZone.GroupId, from z in ZoneList select new ZoneLegend( z.ZoneDefinition.LightLocation, z.LegendColor )));
+                    mZoneManager.SetCurrentGroup( CurrentZone.GroupId );
                 }
 
                 ZoneDisplay.SetZones( ZoneList );

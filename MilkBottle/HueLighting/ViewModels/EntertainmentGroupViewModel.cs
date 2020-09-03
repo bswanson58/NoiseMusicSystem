@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Media;
 using Caliburn.Micro;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
@@ -17,14 +18,17 @@ namespace HueLighting.ViewModels {
         public  GroupLightLocation      Location => mLights.Location;
         public  List<Bulb>              Lights => mLights.Lights;
         public  bool                    IsUtilized { get; private set; }
+        public  Color                   LegendColor { get; private set; }
 
         public UiGroupLights( GroupLights lights ) {
             mLights = lights;
         }
 
-        public void SetUtilization( bool state ) {
+        public void SetUtilization( bool state, Color legendColor ) {
             IsUtilized = state;
+            LegendColor = legendColor;
 
+            RaisePropertyChanged( () => LegendColor );
             RaisePropertyChanged( () => IsUtilized );
         }
     }
@@ -96,10 +100,21 @@ namespace HueLighting.ViewModels {
 
         private void IndicateZones() {
             var group = mZoneManager.GetCurrentGroup();
+            var legend = mZoneManager.GetZoneLegend();
 
             if( group != null ) {
                 foreach( var zone in GroupLights ) {
-                    zone.SetUtilization( group.Zones.FirstOrDefault( z => z.LightLocation.Equals( zone.Location )) != null );
+                    if( ColorConverter.ConvertFromString("#FFA0A0A0") is Color color ) {
+                        if( legend?.GroupId.Equals( group.GroupId ) == true ) {
+                            var zoneLegend = legend.Zones.FirstOrDefault( l => l.Location.Equals( zone.Location ));
+
+                            if( zoneLegend != null ) {
+                                color = zoneLegend.ZoneColor;
+                            }
+                        }
+
+                        zone.SetUtilization( group.Zones.FirstOrDefault( z => z.LightLocation.Equals( zone.Location )) != null, color );
+                    }
                 }
             }
         }

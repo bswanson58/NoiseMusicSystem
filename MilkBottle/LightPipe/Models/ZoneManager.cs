@@ -18,6 +18,7 @@ namespace LightPipe.Models {
         private readonly IEventAggregator   mEventAggregator;
         private readonly IPreferences       mPreferences;
         private readonly List<ZoneGroup>    mZones;
+        private ZoneGroupLegend             mZoneLegend;
 
         public ZoneManager( IPreferences preferences, IEventAggregator  eventAggregator ) {
             mPreferences = preferences;
@@ -81,6 +82,14 @@ namespace LightPipe.Models {
             UpdateZones();
 
             return mZones.FirstOrDefault( z => z.GroupId.Equals( preferences.ZoneGroupId ));
+        }
+
+        public void SetZoneLegend( ZoneGroupLegend legend ) {
+            mZoneLegend = legend;
+        }
+
+        public ZoneGroupLegend GetZoneLegend() {
+            return mZoneLegend;
         }
 
         private void UpdateZones() {

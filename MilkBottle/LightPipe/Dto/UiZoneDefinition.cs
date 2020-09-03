@@ -3,27 +3,26 @@ using MilkBottle.Infrastructure.Dto;
 
 namespace LightPipe.Dto {
     public class UiZoneDefinition {
-        private readonly ZoneDefinition mZoneDefinition;
+        public  ZoneDefinition  ZoneDefinition { get; }
+        public  Color           LegendColor { get; }
 
-        public  float   Top => mZoneDefinition.ZoneArea.Top;
-        public  float   Left => mZoneDefinition.ZoneArea.Left;
-        public  float   Right => mZoneDefinition.ZoneArea.Right;
-        public  float   Bottom => mZoneDefinition.ZoneArea.Bottom;
+        public  float           Top => ZoneDefinition.ZoneArea.Top;
+        public  float           Left => ZoneDefinition.ZoneArea.Left;
+        public  float           Right => ZoneDefinition.ZoneArea.Right;
+        public  float           Bottom => ZoneDefinition.ZoneArea.Bottom;
 
-        public  float   Height => mZoneDefinition.ZoneArea.Height;
-        public  float   Width => mZoneDefinition.ZoneArea.Width;
+        public  float           Height => ZoneDefinition.ZoneArea.Height;
+        public  float           Width => ZoneDefinition.ZoneArea.Width;
 
-        public  string  Name => mZoneDefinition.ZoneName;
-        public  string  Location => mZoneDefinition.LightLocation.ToString();
-        public  string  AreaDescription => $"(Top: {mZoneDefinition.ZoneArea.Top:N0}, Left:{mZoneDefinition.ZoneArea.Left:N0}, Bottom:{mZoneDefinition.ZoneArea.Bottom:N0}, Right:{mZoneDefinition.ZoneArea.Right:N0})";
-        public  string  Description => $"{Name} - Controls: {mZoneDefinition.LightLocation}";
-        public  Color   LegendColor { get; }
+        public  string          Name => ZoneDefinition.ZoneName;
+        public  string          Location => ZoneDefinition.LightLocation.ToString();
+        public  string          AreaDescription => $"(Top: {ZoneDefinition.ZoneArea.Top:N0}, Left:{ZoneDefinition.ZoneArea.Left:N0}, Bottom:{ZoneDefinition.ZoneArea.Bottom:N0}, Right:{ZoneDefinition.ZoneArea.Right:N0})";
+        public  string          Description => $"{Name} - Controls: {ZoneDefinition.LightLocation}";
 
         public UiZoneDefinition( ZoneDefinition zone, Color color ) {
-            mZoneDefinition = zone;
+            ZoneDefinition = zone;
 
             LegendColor = color;
         }
     }
-    
 }
