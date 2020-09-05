@@ -87,6 +87,14 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public void Handle( CurrentGroupChanged message ) {
+            UpdatePairing();
+        }
+
+        public void Handle( CurrentZoneChanged message ) {
+            UpdatePairing();
+        }
+
         private void UpdatePairing() {
             var currentZone = mZoneManager.GetCurrentGroup();
             var huePreferences = mPreferences.Load<HueConfiguration>();
@@ -97,14 +105,6 @@ namespace MilkBottle.ViewModels {
                                                                                                       p.ZoneGroupId.Equals( currentZone.GroupId )));
             }
 
-            LoadPairings();
-        }
-
-        public void Handle( CurrentGroupChanged message ) {
-            LoadPairings();
-        }
-
-        public void Handle( CurrentZoneChanged message ) {
             LoadPairings();
         }
 
