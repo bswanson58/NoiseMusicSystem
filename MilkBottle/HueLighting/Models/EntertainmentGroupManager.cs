@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
+using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi.ColorConverters;
 using Q42.HueApi.Models.Groups;
@@ -104,6 +105,12 @@ namespace HueLighting.Models {
 
         public void UpdateLights() {
             mStreamingClient.ManualUpdate( mStreamingGroup, true );
+        }
+
+        public async Task<bool> IsStreamingActive() {
+            var bridgeInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
+
+            return bridgeInfo?.IsStreamingActive == true;
         }
 
         public void Dispose() {

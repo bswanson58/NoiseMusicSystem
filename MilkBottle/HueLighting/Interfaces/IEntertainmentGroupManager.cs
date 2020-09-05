@@ -17,5 +17,7 @@ namespace HueLighting.Interfaces {
         void                        SetLightColor( string lightId, Color toColor, TimeSpan transitionTime );
 
         void                        UpdateLights();
+
+        Task<bool>                  IsStreamingActive();
     }
 }

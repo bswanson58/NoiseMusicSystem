@@ -99,6 +99,13 @@ namespace MilkBottle.Models {
             return IsEnabled;
         }
 
+        private async void RestartHue() {
+            if( IsEnabled ) {
+                await SetLightPipeState( false );
+                await SetLightPipeState( true );
+            }
+        }
+
         public int CaptureFrequency {
             get => mCaptureFrequency;
             set {
@@ -122,11 +129,17 @@ namespace MilkBottle.Models {
             }
         }
 
-        private void CaptureFrame( IntPtr hWnd ) {
+        private async void CaptureFrame( IntPtr hWnd ) {
             using( var bitmap = BitmapCapture.Capture( hWnd )) {
                 if( bitmap != null ) {
                     mImageProcessor.ProcessImage( bitmap );
                 }
+            }
+
+            var streamingActive = await mEntertainmentGroupManager.IsStreamingActive();
+
+            if(!streamingActive ) {
+                RestartHue();
             }
         }
 
