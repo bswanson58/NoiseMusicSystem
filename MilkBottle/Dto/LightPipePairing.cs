@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace MilkBottle.Dto {
+    [DebuggerDisplay("Pairing: {" + nameof( PairingName ) + "}")]
     public class LightPipePairing {
         public  string  PairingId { get; set; }
         public  string  PairingName { get; set; }
