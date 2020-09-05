@@ -169,7 +169,6 @@
     <Compile Include="Dto\Bulb.cs" />
     <Compile Include="Dto\EntertainmentGroup.cs" />
     <Compile Include="Dto\HubInformation.cs" />
-    <Compile Include="Dto\HueConfiguration.cs" />
     <Compile Include="Dto\UiBulb.cs" />
     <Compile Include="HueLightingModule.cs" />
     <Compile Include="Interfaces\IEntertainmentGroupManager.cs" />

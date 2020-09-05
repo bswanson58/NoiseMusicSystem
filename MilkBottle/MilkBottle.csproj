@@ -242,6 +242,7 @@
     <Compile Include="Database\SceneProvider.cs" />
     <Compile Include="Database\TagProvider.cs" />
     <Compile Include="Database\ValidationBase.cs" />
+    <Compile Include="Dto\LightPipePairing.cs" />
     <Compile Include="Dto\MilkConfiguration.cs" />
     <Compile Include="Dto\MilkPreferences.cs" />
     <Compile Include="Dto\PresetList.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Interfaces\ILightPipePump.cs" />
     <Compile Include="Interfaces\IMilkController.cs" />
     <Compile Include="Interfaces\IMoodProvider.cs" />
+    <Compile Include="Interfaces\IPairingManager.cs" />
     <Compile Include="Interfaces\IPresetController.cs" />
     <Compile Include="Interfaces\IPresetLibraryProvider.cs" />
     <Compile Include="Interfaces\IPresetProvider.cs" />
@@ -293,6 +295,7 @@
     <Compile Include="Models\IpcManager.cs" />
     <Compile Include="Models\LightPipePump.cs" />
     <Compile Include="Models\MilkController.cs" />
+    <Compile Include="Models\PairingManager.cs" />
     <Compile Include="Models\PresetController.cs" />
     <Compile Include="Models\PresetListProvider.cs" />
     <Compile Include="Models\PresetSequencers\PresetSequencerFactory.cs" />
@@ -330,6 +333,7 @@
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
     <Compile Include="ViewModels\LightPipeControlViewModel.cs" />
     <Compile Include="ViewModels\LightPipeDialogModel.cs" />
+    <Compile Include="ViewModels\LightPipePairingViewModel.cs" />
     <Compile Include="ViewModels\MilkViewModel.cs" />
     <Compile Include="ViewModels\MoodManagementDialogModel.cs" />
     <Compile Include="ViewModels\MoodSelectionDialogModel.cs" />
@@ -361,6 +365,9 @@
     </Compile>
     <Compile Include="Views\LightPipeDialog.xaml.cs">
       <DependentUpon>LightPipeDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LightPipePairingView.xaml.cs">
+      <DependentUpon>LightPipePairingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ManualControlView.xaml.cs">
       <DependentUpon>ManualControlView.xaml</DependentUpon>
@@ -454,6 +461,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LightPipeDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LightPipePairingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

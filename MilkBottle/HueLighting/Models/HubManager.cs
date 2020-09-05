@@ -6,6 +6,7 @@ using System.Windows.Media;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
 using JetBrains.Annotations;
+using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi;
 using Q42.HueApi.Interfaces;

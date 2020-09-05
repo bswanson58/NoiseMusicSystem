@@ -47,6 +47,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Dto\GroupLightLocation.cs" />
+    <Compile Include="Dto\HueConfiguration.cs" />
     <Compile Include="Dto\ZoneDefinition.cs" />
     <Compile Include="Dto\ZoneGroupLegend.cs" />
     <Compile Include="Events\Events.cs" />

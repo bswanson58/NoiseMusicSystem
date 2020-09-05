@@ -94,6 +94,7 @@ namespace HueLighting.ViewModels {
                     GroupDisplay.SetEntertainmentGroup( mEntertainmentGroup );
                 }
 
+                mEventAggregator.PublishOnUIThread( new MilkBottle.Infrastructure.Events.CurrentGroupChanged());
                 IndicateZones();
             }
         }

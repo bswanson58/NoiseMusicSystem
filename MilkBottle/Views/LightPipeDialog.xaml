@@ -7,6 +7,7 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:hueViews="clr-namespace:HueLighting.Views;assembly=HueLighting"
              xmlns:lightPipeViews="clr-namespace:LightPipe.Views;assembly=LightPipe"
+             xmlns:views="clr-namespace:MilkBottle.Views"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeDialogModel, IsDesignTimeCreatable=False}"
@@ -33,6 +34,8 @@
         <hueViews:HubConfigurationView Grid.Row="0"/>
         <hueViews:EntertainmentGroupView Grid.Row="1"/>
         <lightPipeViews:ZoneSelectionView Grid.Row="2"/>
+
+        <views:LightPipePairingView Grid.Row="4" />
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Ok}"/>

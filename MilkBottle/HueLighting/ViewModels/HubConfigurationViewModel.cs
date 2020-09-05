@@ -1,6 +1,5 @@
-﻿using HueLighting.Dto;
-using HueLighting.Interfaces;
-using HueLighting.Views;
+﻿using HueLighting.Views;
+using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Prism.Commands;
 using Prism.Services.Dialogs;
@@ -8,7 +7,6 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace HueLighting.ViewModels {
     class HubConfigurationViewModel : PropertyChangeBase {
-        private readonly IHubManager    mHubManager;
         private readonly IPreferences   mPreferences;
         private readonly IDialogService mDialogService;
 
@@ -16,8 +14,7 @@ namespace HueLighting.ViewModels {
 
         public  DelegateCommand         ConfigureBridge { get; }
 
-        public HubConfigurationViewModel( IHubManager hubManager, IPreferences preferences, IDialogService dialogService ) {
-            mHubManager = hubManager;
+        public HubConfigurationViewModel( IPreferences preferences, IDialogService dialogService ) {
             mDialogService = dialogService;
             mPreferences = preferences;
 

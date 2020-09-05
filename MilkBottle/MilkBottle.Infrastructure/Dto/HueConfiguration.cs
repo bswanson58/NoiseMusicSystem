@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HueLighting.Dto {
+namespace MilkBottle.Infrastructure.Dto {
     public class HueConfiguration {
         public  String  BridgeIp;
         public  String  BridgeId;
