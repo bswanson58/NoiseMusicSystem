@@ -27,8 +27,6 @@ namespace MilkBottle.ViewModels {
 
         public  ObservableCollection<LightPipePairing>  Pairs { get; }
 
-        public  string                                  CaptureFrequencyTooltip => $"Capture Frequency: {CaptureFrequency} ms";
-
         public  DelegateCommand                         Configuration { get; }
         public  DelegateCommand                         Close { get; }
 
@@ -131,17 +129,21 @@ namespace MilkBottle.ViewModels {
         public int OverallBrightnessMaximum => 100;
         public int OverallBrightness {
             get => (int)( mLightPipePump.OverallBrightness * 100.0 );
-            set => mLightPipePump.OverallBrightness = value / 100.0;
+            set {
+                mLightPipePump.OverallBrightness = value / 100.0;
+
+                RaisePropertyChanged( () => OverallBrightness );
+            }
         }
 
-        public int CaptureFrequencyMinimum => 0;
+        public int CaptureFrequencyMinimum => 30;
         public int CaptureFrequencyMaximum => 1000;
         public int CaptureFrequency {
             get => mLightPipePump.CaptureFrequency;
             set {
                 mLightPipePump.CaptureFrequency = value;
 
-                RaisePropertyChanged( () => CaptureFrequencyTooltip );
+                RaisePropertyChanged( () => CaptureFrequency );
             }
         }
 
