@@ -125,7 +125,7 @@ namespace MilkBottle.Models {
             if( mGlControl != null ) {
                 mGlControl.SwapBuffers();
 
-                mEventAggregator.PublishOnUIThread( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+                mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
             }
         }
 
