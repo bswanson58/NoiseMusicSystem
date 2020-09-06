@@ -7,6 +7,8 @@ namespace LightPipe.Interfaces {
         void                        ProcessImage( Bitmap image );
 
         long                        ElapsedTime { get; }
+        int                         BlacknessLimit { get; set; }
+        int                         WhitenessLimit { get; set; }
 
         IObservable<ZoneSummary>    ZoneUpdate { get; }
     }

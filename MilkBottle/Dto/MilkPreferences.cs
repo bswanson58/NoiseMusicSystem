@@ -17,6 +17,7 @@ namespace MilkBottle.Dto {
         public  int     SceneRatingsBoostMode { get; set; }
         public  int     LightPipeCaptureFrequency { get; set; }
         public  string  LightPipePairing { get; set; }
+        public  int     ZoneColorsLimit { get; set; }
 
         public MilkPreferences() {
             CurrentPresetLibrary = String.Empty;
@@ -39,6 +40,7 @@ namespace MilkBottle.Dto {
 
             LightPipeCaptureFrequency = 100;
             LightPipePairing = String.Empty;
+            ZoneColorsLimit = 10;
         }
     }
 }

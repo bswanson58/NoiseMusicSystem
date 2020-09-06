@@ -9,5 +9,8 @@ namespace MilkBottle.Interfaces {
 
         int         CaptureFrequency { get; set; }
         double      OverallBrightness { get; set; }
+        int         BlacknessLimit { get; set; }
+        int         WhitenessLimit { get; set; }
+        int         ZoneColorsLimit { get; set; }
     }
 }

@@ -147,6 +147,25 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public int WhitenessLimit {
+            get => mLightPipePump.WhitenessLimit;
+            set => mLightPipePump.WhitenessLimit = value;
+        }
+
+        public int BlacknessLimit {
+            get => mLightPipePump.BlacknessLimit;
+            set => mLightPipePump.BlacknessLimit = value;
+        }
+
+        public int ZoneColorLimit {
+            get => mLightPipePump.ZoneColorsLimit;
+            set {
+                mLightPipePump.ZoneColorsLimit = value; 
+
+                RaisePropertyChanged( () => ZoneColorLimit );
+            }
+        }
+
         public bool LightPipeState {
             get => mLightPipeState;
             set {

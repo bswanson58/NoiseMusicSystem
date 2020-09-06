@@ -23,6 +23,7 @@ namespace MilkBottle.Models {
         private EntertainmentGroup              mEntertainmentGroup;
         private ZoneGroup                       mZoneGroup;
         private int                             mCaptureFrequency;
+        private int                             mZoneColorsLimit;
         private DateTime                        mLastCaptureTime;
         private IDisposable                     mZoneUpdateSubscription;
 
@@ -38,6 +39,7 @@ namespace MilkBottle.Models {
             var milkPreferences = mPreferences.Load<MilkPreferences>();
 
             mCaptureFrequency = milkPreferences.LightPipeCaptureFrequency;
+            mZoneColorsLimit = milkPreferences.ZoneColorsLimit;
         }
 
         public async Task<bool> EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
@@ -70,6 +72,42 @@ namespace MilkBottle.Models {
                     mEntertainmentGroupManager.OverallBrightness = value;
                 }
             }
+        }
+
+        public int CaptureFrequency {
+            get => mCaptureFrequency;
+            set {
+                mCaptureFrequency = Math.Min( 1000, Math.Max( 30, value ));
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.LightPipeCaptureFrequency = mCaptureFrequency;
+
+                mPreferences.Save( preferences );
+            }
+        }
+
+        public int ZoneColorsLimit {
+            get => mZoneColorsLimit;
+            set {
+                mZoneColorsLimit = Math.Min( Math.Max( value, 1 ), 10 );
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.ZoneColorsLimit = mZoneColorsLimit;
+
+                mPreferences.Save( preferences );
+            }
+        }
+
+        public int WhitenessLimit {
+            get => mImageProcessor.WhitenessLimit;
+            set => mImageProcessor.WhitenessLimit = value;
+        }
+
+        public int BlacknessLimit {
+            get => mImageProcessor.BlacknessLimit;
+            set => mImageProcessor.BlacknessLimit = value;
         }
 
         private async Task<bool> SetLightPipeState( bool state ) {
@@ -106,19 +144,6 @@ namespace MilkBottle.Models {
             }
         }
 
-        public int CaptureFrequency {
-            get => mCaptureFrequency;
-            set {
-                mCaptureFrequency = Math.Min( 1000, Math.Max( 30, value ));
-
-                var preferences = mPreferences.Load<MilkPreferences>();
-
-                preferences.LightPipeCaptureFrequency = mCaptureFrequency;
-
-                mPreferences.Save( preferences );
-            }
-        }
-
         public void Handle( LightPipe.Events.FrameRendered args ) {
             if(( IsEnabled ) &&
                ( mLastCaptureTime + TimeSpan.FromMilliseconds( mCaptureFrequency ) < DateTime.Now )) {
@@ -150,7 +175,7 @@ namespace MilkBottle.Models {
                 var lightGroup = mEntertainmentGroup.GetLights( zoneGroup.LightLocation );
 
                 if( lightGroup != null ) {
-                    var colors = zone.FindMeanColors( lightGroup.Lights.Count );
+                    var colors = zone.FindMeanColors( Math.Min( lightGroup.Lights.Count, mZoneColorsLimit ));
 
                     if( colors.Any()) {
                         var colorIndex = 0;

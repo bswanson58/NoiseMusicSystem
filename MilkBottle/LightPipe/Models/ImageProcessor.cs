@@ -24,31 +24,64 @@ namespace LightPipe.Models {
     }
 
     public class ImageProcessor : IImageProcessor, IHandle<MilkBottle.Infrastructure.Events.CurrentZoneChanged> {
-        private const int       cZoneSummaryLength = 10;
-        private const int       cWhitenessLimit = 230;
-        private const int       cBlacknessLimit = 25;
-        private const int       cMinimumBinCount = 4;
-        private const byte      cBinMask = 0b11100000;
-        private const int       cSourceSampleFrequency = 8;
+        private const int                       cZoneSummaryLength = 4;
+        private const int                       cMinimumBinCount = 4;
+        private const byte                      cBinMask = 0b11100000;
+        private const int                       cSourceSampleFrequency = 8;
 
         private readonly IZoneManager           mZoneManager;
         private readonly IEventAggregator       mEventAggregator;
+        private readonly IPreferences           mPreferences;
         private readonly Dictionary<string, List<ZoneSummary>>  mZoneSummaries;
         private Subject<ZoneSummary>            mZoneUpdated;
         private ZoneGroup                       mZoneGroup;
         private bool                            mZoneChanged;
+        private int                             mBlacknessLimit;
+        private int                             mWhitenessLimit;
 
         public  IObservable<ZoneSummary>        ZoneUpdate => mZoneUpdated;
 
         public  long                            ElapsedTime { get; private set; }
 
-        public ImageProcessor( IZoneManager zoneManager, IEventAggregator eventAggregator ) {
+        public ImageProcessor( IZoneManager zoneManager, IPreferences preferences, IEventAggregator eventAggregator ) {
             mZoneManager = zoneManager;
             mEventAggregator = eventAggregator;
+            mPreferences = preferences;
             mZoneSummaries = new Dictionary<string, List<ZoneSummary>>();
+
+            var lightPipePreferences = mPreferences.Load<LightPipeConfiguration>();
+
+            mBlacknessLimit = lightPipePreferences.BlacknessLimit;
+            mWhitenessLimit = lightPipePreferences.WhitenessLimit;
 
             mZoneUpdated = new Subject<ZoneSummary>();
             mEventAggregator.Subscribe( this );
+        }
+
+        public int BlacknessLimit {
+            get => mBlacknessLimit;
+            set {
+                mBlacknessLimit = Math.Min( Math.Max( value, 0 ), WhitenessLimit );
+
+                var preferences = mPreferences.Load<LightPipeConfiguration>();
+
+                preferences.BlacknessLimit = mBlacknessLimit;
+
+                mPreferences.Save( preferences );
+            }
+        }
+
+        public int WhitenessLimit {
+            get => mWhitenessLimit;
+            set {
+                mWhitenessLimit = Math.Min( Math.Max( value, BlacknessLimit ), 255 );
+
+                var preferences = mPreferences.Load<LightPipeConfiguration>();
+
+                preferences.WhitenessLimit = mWhitenessLimit;
+
+                mPreferences.Save( preferences );
+            }
         }
 
         public void Handle( MilkBottle.Infrastructure.Events.CurrentZoneChanged args ) {
@@ -124,9 +157,9 @@ namespace LightPipe.Models {
         }
 
         private bool IsUsableColor( PixelData colorData ) {
-            return (( colorData.Red > cBlacknessLimit && colorData.Red < cWhitenessLimit ) ||
-                    ( colorData.Green > cBlacknessLimit && colorData.Green < cWhitenessLimit ) ||
-                    ( colorData.Blue > cBlacknessLimit && colorData.Blue < cWhitenessLimit ));
+            return (( colorData.Red > mBlacknessLimit && colorData.Red < mWhitenessLimit ) ||
+                    ( colorData.Green > mBlacknessLimit && colorData.Green < mWhitenessLimit ) ||
+                    ( colorData.Blue > mBlacknessLimit && colorData.Blue < mWhitenessLimit ));
         }
 
         private PixelData AssignZoneAndBin( PixelData pixelData, string zoneId ) {
