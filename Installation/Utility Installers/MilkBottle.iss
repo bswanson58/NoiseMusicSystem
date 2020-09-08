@@ -104,7 +104,7 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Milk Bottle"; File
 
 [Run]
 Filename: "{tmp}\VC_redist.{#Platform}.exe"; StatusMsg: "{cm:InstallingVC2019redist}"; Parameters: "/quiet"; Check: VC2019RedistNeedsInstall ; Flags: waituntilterminated
-Filename: "{app}\MilkBottle.exe"; Description: "{cm:LaunchProgram,Milk Bottle}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\MilkBottle.exe"; Description: "{cm:LaunchProgram,Milk Bottle}"; Flags: nowait postinstall skipifsilent unchecked
 
 [CustomMessages]
 InstallingVC2019redist=Installing Visual C++ runtime
