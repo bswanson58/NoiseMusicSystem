@@ -10,6 +10,7 @@ namespace MilkBottle.Dto {
         public  bool    ShouldMinimizeToTray { get; set; }
         public  bool    DisplayControllerWhenMaximized { get; set; }
         public  bool    DisplayFps { get; set; }
+        public  bool    DisplayBuildDate { get; set; }
         public  string  DefaultScene { get; set; }
         public  double  Latitude { get; set; }
         public  double  Longitude { get; set; }
@@ -27,6 +28,7 @@ namespace MilkBottle.Dto {
             ShouldMinimizeToTray = false;
             DisplayControllerWhenMaximized = true;
             DisplayFps = false;
+            DisplayBuildDate = false;
 
             DefaultScene = String.Empty;
 
