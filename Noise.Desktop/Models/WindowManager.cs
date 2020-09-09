@@ -128,7 +128,7 @@ namespace Noise.Desktop.Models {
 		private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
 			mEventAggregator.Unsubscribe( this );
 
-			mNotifyIcon.Dispose();
+			mNotifyIcon?.Dispose();
 			mNotifyIcon = null;
 		}
 
