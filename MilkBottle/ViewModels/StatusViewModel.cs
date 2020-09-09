@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
+using MilkBottle.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -15,16 +16,27 @@ namespace MilkBottle.ViewModels {
 		private readonly IEnvironment			mEnvironment;
         private IVersionFormatter               mVersionFormatter;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
+        private readonly string					mCompileDate;
 		private bool							mViewAttached;
 
-		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}";
+		public	string							VersionString => $"Noise Music System v{mVersionFormatter.VersionString}{mCompileDate}";
 
-		public StatusViewModel( IEventAggregator eventAggregator, IEnvironment environment, IVersionFormatter versionFormatter ) {
+		public StatusViewModel( IEventAggregator eventAggregator, IEnvironment environment, IVersionFormatter versionFormatter, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mEnvironment = environment;
             mVersionFormatter = versionFormatter;
 
 			mHoldingQueue = new Queue<StatusMessage>();
+
+            var pref = preferences.Load<MilkPreferences>();
+            if( pref.DisplayBuildDate ) {
+                var compileDate = ApplicationInformation.CompileDate;
+
+                mCompileDate = $" - {compileDate.Month:D2}/{compileDate.Day:D2}/{compileDate.Year % 100:D2}";
+            }
+            else {
+                mCompileDate = String.Empty;
+            }
 
             mVersionFormatter.SetVersion( VersionInformation.Version );
             mVersionFormatter.DisplayLevel = VersionLevel.Build;
