@@ -1,4 +1,6 @@
 ﻿using Noise.Desktop.Models;
+using Noise.Desktop.ViewModels;
+using Noise.Desktop.Views;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Views;
@@ -15,6 +17,8 @@ namespace Noise.Desktop {
             containerRegistry.RegisterSingleton<IIpcManager, IpcManager>();
             containerRegistry.RegisterSingleton<IIpcHandler, IpcHandler>();
             containerRegistry.Register<IPlaybackPublisher, PlaybackPublisher>();
+
+            containerRegistry.RegisterDialog<ExitApplicationDialogView, ExitApplicationDialogViewModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

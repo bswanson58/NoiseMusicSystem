@@ -17,6 +17,7 @@ namespace Noise.Core {
 		private readonly IRemoteServer			mRemoteServer;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDatabaseManager		mDatabaseManager;
+		private readonly IPlayController		mPlayController;
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 INoiseLog log,
@@ -25,11 +26,11 @@ namespace Noise.Core {
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
 							 IPreferences preferences,
+                             IPlayController playController,
 							 // components that just need to be referenced.
 							 // ReSharper disable UnusedParameter.Local
 							 IAudioController audioController,
 							 ILibraryBackupManager backupManager,
-							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,
 							 IMetadataManager metadataManager,
@@ -42,6 +43,7 @@ namespace Noise.Core {
 			mDatabaseManager = databaseManager;
 			mLibraryBuilder = libraryBuilder;
 			mPreferences = preferences;
+			mPlayController = playController;
 		}
 
 		public Task<bool> AsyncInitialize() {
@@ -85,6 +87,23 @@ namespace Noise.Core {
 
 			return ( isInitialized );
 		}
+
+		public bool CanShutDown( out string reason ) {
+			var retValue = true;
+
+			reason = String.Empty;
+
+			if( mLibraryBuilder.LibraryUpdateInProgress ) {
+				reason = "A library update is in progress.";
+				retValue = false;
+            }
+			else if( mPlayController.CanStop ) {
+				reason = "Music is currently playing.";
+				retValue = false;
+            }
+
+			return retValue;
+        }
 
 		public void Shutdown() {
 			mEvents.PublishOnUIThread( new Events.SystemShutdown());

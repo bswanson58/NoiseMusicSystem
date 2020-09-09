@@ -232,10 +232,18 @@
     <Compile Include="Models\IpcManager.cs" />
     <Compile Include="Models\PlaybackPublisher.cs" />
     <Compile Include="Models\WindowManager.cs" />
+    <Compile Include="ViewModels\ExitApplicationDialogViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
+    <Compile Include="Views\ExitApplicationDialogView.xaml.cs">
+      <DependentUpon>ExitApplicationDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\ExitApplicationDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

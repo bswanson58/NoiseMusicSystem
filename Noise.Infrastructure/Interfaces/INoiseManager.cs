@@ -6,6 +6,7 @@ namespace Noise.Infrastructure.Interfaces {
 		bool		InitializeAndNotify();
 		Task<bool>	AsyncInitialize();
 
-		void		Shutdown();
+        bool		CanShutDown( out string reason );
+        void		Shutdown();
 	}
 }

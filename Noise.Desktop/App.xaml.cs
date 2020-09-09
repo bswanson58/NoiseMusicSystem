@@ -7,6 +7,7 @@ using System.Windows;
 using Caliburn.Micro;
 using Noise.AppSupport;
 using Noise.Desktop.Properties;
+using Noise.Desktop.ViewModels;
 using Noise.Desktop.Views;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -17,6 +18,7 @@ using Noise.UI.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
+using Prism.Services.Dialogs;
 using ReusableBits.Platform;
 
 namespace Noise.Desktop {
@@ -96,7 +98,21 @@ namespace Noise.Desktop {
         }
 
         private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            StopNoise();
+            if(!mNoiseManager.CanShutDown( out var shutdownReason )) {
+                var dialogService = Container.Resolve<IDialogService>();
+
+                dialogService.ShowDialog( nameof( ExitApplicationDialogView ), new DialogParameters{{ ExitApplicationDialogViewModel.cReasonParameter, shutdownReason } }, result => {
+                    if( result.Result == ButtonResult.OK ) {
+                        StopNoise();
+                    }
+                    else {
+                        e.Cancel = true;
+                    }
+                });
+            }
+            else {
+                StopNoise();
+            }
         }
 
         private async void StartNoise() {
