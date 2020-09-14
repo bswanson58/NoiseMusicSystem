@@ -7,6 +7,7 @@ using System.Windows.Data;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using MilkBottle.Types;
@@ -242,7 +243,14 @@ namespace MilkBottle.ViewModels {
 
         public bool IsBlended {
             get => mPresetController.BlendPresetTransition;
-            set => mPresetController.BlendPresetTransition = value;
+            set {
+                var  preferences = mPreferences.Load<MilkPreferences>();
+
+                mPresetController.BlendPresetTransition = value;
+                preferences.BlendPresetTransition = value;
+
+                mPreferences.Save( preferences );
+            }
         }
 
         public int PresetDuration {

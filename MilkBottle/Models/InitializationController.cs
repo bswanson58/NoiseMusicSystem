@@ -5,19 +5,21 @@ using OpenTK;
 
 namespace MilkBottle.Models {
     class InitializationController : IInitializationController, IHandle<Events.MilkConfigurationUpdated>, IHandle<Events.ApplicationClosing> {
-        private readonly IEventAggregator   mEventAggregator;
-        private readonly IStateManager      mStateManager;
-        private readonly IMilkController    mMilkController;
-        private readonly IPresetController  mPresetController;
-        private readonly Task<bool>         mDatabaseBuildTask;
-        private GLControl                   mGlControl;
+        private readonly IEventAggregator       mEventAggregator;
+        private readonly IStateManager          mStateManager;
+        private readonly IMilkController        mMilkController;
+        private readonly IPresetController      mPresetController;
+        private readonly ILightPipePump         mLightPipePump;
+        private readonly Task<bool>             mDatabaseBuildTask;
+        private GLControl                       mGlControl;
 
-        public InitializationController( IStateManager stateManager, IMilkController milkController, IPresetController presetController, IDatabaseBuilder databaseBuilder,
-                                         IEventAggregator eventAggregator ) {
+        public InitializationController( IStateManager stateManager, IMilkController milkController, IPresetController presetController, ILightPipePump lightPipePump,
+                                         IDatabaseBuilder databaseBuilder, IEventAggregator eventAggregator ) {
             mEventAggregator = eventAggregator;
             mStateManager = stateManager;
             mMilkController = milkController;
             mPresetController = presetController;
+            mLightPipePump = lightPipePump;
 
             mEventAggregator.Subscribe( this );
 
@@ -32,7 +34,8 @@ namespace MilkBottle.Models {
 
             if( await mDatabaseBuildTask ) {
                 mPresetController.Initialize();
-
+                await mLightPipePump.Initialize();
+                
                 mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
             }
         }

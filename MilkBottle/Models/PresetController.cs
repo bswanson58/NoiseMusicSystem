@@ -6,6 +6,7 @@ using System.Reactive.Subjects;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using MilkBottle.Types;

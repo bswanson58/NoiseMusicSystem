@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Dto;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Support;
 using OpenTK;
@@ -121,7 +122,11 @@ namespace MilkBottle.Models {
         private void UpdateVisualization() {
             mProjectM.renderFrame();
 
-            mGlControl?.SwapBuffers();
+            if( mGlControl != null ) {
+                mGlControl.SwapBuffers();
+
+                mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+            }
         }
 
         private void OnAudioData( byte[] audioData, int samples, int channels ) {

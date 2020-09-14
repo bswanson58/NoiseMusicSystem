@@ -11,14 +11,15 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
-using MilkBottle.Properties;
 using ReusableBits.Platform;
 
 namespace MilkBottle.Models {
     class IpcManager : IIpcManager {
         private const int                           cHeartbeatSeconds = 30;
 
+        private readonly IApplicationConstants      mApplicationConstants;
         private readonly IIpcHandler                mIpcHandler;
         private readonly IPlatformLog               mLog;
         private readonly DispatcherTimer            mIpcTimer;
@@ -35,9 +36,10 @@ namespace MilkBottle.Models {
         private readonly Subject<bool>                                      mActivationSubject;
         public  IObservable<bool>                                           OnActivationRequest => mActivationSubject.AsObservable();
         
-        public IpcManager( IIpcHandler ipcHandler, IPlatformLog log ) {
+        public IpcManager( IIpcHandler ipcHandler, IPlatformLog log, IApplicationConstants applicationConstants ) {
             mIpcHandler = ipcHandler;
             mLog = log;
+            mApplicationConstants = applicationConstants;
 
             mCompanionApplications = new List<ActiveCompanionApp>();
             mCompanionAppSubject = new BehaviorSubject<IEnumerable<ActiveCompanionApp>>( new List<ActiveCompanionApp>());
@@ -53,7 +55,7 @@ namespace MilkBottle.Models {
                 mIpcIcon = reader.ReadToEnd();
             }
 
-            mIpcHandler.Initialize( ApplicationConstants.ApplicationName, ApplicationConstants.EcosystemName, OnIpcMessage );
+            mIpcHandler.Initialize( mApplicationConstants.ApplicationName, mApplicationConstants.EcosystemName, OnIpcMessage );
             mSerializer = new JavaScriptSerializer();
 
             mIpcTimer = new DispatcherTimer( DispatcherPriority.Background ) { Interval = TimeSpan.FromSeconds( cHeartbeatSeconds )};
@@ -131,7 +133,7 @@ namespace MilkBottle.Models {
 
         private void OnIpcTimer( object sender, EventArgs args ) {
             try {
-                var message = new CompanionApplication( ApplicationConstants.ApplicationName, mIpcIcon );
+                var message = new CompanionApplication( mApplicationConstants.ApplicationName, mIpcIcon );
                 var json = mSerializer.Serialize( message );
 
                 mIpcHandler.BroadcastMessage( NoiseIpcSubject.cCompanionApplication, json );

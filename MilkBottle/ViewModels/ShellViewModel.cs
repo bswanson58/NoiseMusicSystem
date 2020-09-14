@@ -7,8 +7,9 @@ using System.Windows.Forms;
 using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Entities;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
-using MilkBottle.Properties;
+using MilkBottle.Views;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -21,7 +22,7 @@ namespace MilkBottle.ViewModels {
         Sync
     }
 
-    class ShellViewModel : PropertyChangeBase {
+    class ShellViewModel : PropertyChangeBase, IHandle<Events.CloseLightPipeController> {
         private readonly IStateManager          mStateManager;
         private readonly IIpcManager            mIpcManager;
         private readonly IEventAggregator       mEventAggregator;
@@ -35,6 +36,7 @@ namespace MilkBottle.ViewModels {
 
         public  ShellView                       ShellViewDisplayed { get; private set; }
         public  DelegateCommand                 Configuration { get; }
+        public  DelegateCommand                 LightPipe { get; }
         public  DelegateCommand                 DisplayManualController { get; }
         public  DelegateCommand                 DisplayReviewer { get; }
         public  DelegateCommand                 DisplaySyncView { get; }
@@ -44,8 +46,10 @@ namespace MilkBottle.ViewModels {
 
         public  bool                            DisplayStatus { get; private set; }
         public  bool                            DisplayController { get; private set; }
+        public  bool                            DisplayLightPipeController { get; private set; }
 
-        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager, IEventAggregator eventAggregator ) {
+        public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager,
+                               IEventAggregator eventAggregator, IApplicationConstants applicationConstants ) {
             mStateManager = stateManager;
             mIpcManager = ipcManager;
             mPreferences = preferences;
@@ -53,12 +57,13 @@ namespace MilkBottle.ViewModels {
             mEventAggregator = eventAggregator;
 
             Configuration = new DelegateCommand( OnConfiguration );
+            LightPipe = new DelegateCommand( OnLightPipe );
             DisplayManualController = new DelegateCommand( OnDisplayManualController );
             DisplayReviewer = new DelegateCommand( OnDisplayReviewer );
             DisplaySyncView = new DelegateCommand( OnDisplaySyncView );
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
-            mNotifyIcon = new NotifyIcon { BalloonTipTitle = ApplicationConstants.ApplicationName, Text = ApplicationConstants.ApplicationName }; 
+            mNotifyIcon = new NotifyIcon { BalloonTipTitle = applicationConstants.ApplicationName, Text = applicationConstants.ApplicationName }; 
             mNotifyIcon.Click += OnNotifyIconClick;
 
             var iconStream = Application.GetResourceStream( new Uri( "pack://application:,,,/MilkBottle;component/Resources/Milk Bottle.ico" ));
@@ -70,8 +75,12 @@ namespace MilkBottle.ViewModels {
             DisplayController = true;
             ShellViewDisplayed = ShellView.Manual;
 
+            DisplayLightPipeController = false;
+
             mCompanionAppsSubscription = mIpcManager.CompanionAppsUpdate.Subscribe( OnCompanionAppsUpdate );
             mActivationSubscription = mIpcManager.OnActivationRequest.Subscribe( OnActivationRequest );
+
+            mEventAggregator.Subscribe( this );
         }
 
         private void OnCompanionAppsUpdate( IEnumerable<ActiveCompanionApp> apps ) {
@@ -192,13 +201,25 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnConfiguration() {
-            mDialogService.ShowDialog( "ConfigurationDialog", null, OnConfigurationCompleted );
+            mDialogService.ShowDialog( nameof( ConfigurationDialog ), null, OnConfigurationCompleted );
         }
 
         private void OnConfigurationCompleted( IDialogResult result ) {
             if( result.Result == ButtonResult.OK ) {
                 mEventAggregator.PublishOnUIThread( new Events.MilkConfigurationUpdated());
             }
+        }
+
+        public void OnLightPipe() {
+            DisplayLightPipeController = true;
+
+            RaisePropertyChanged( () => DisplayLightPipeController );
+        }
+
+        public void Handle( Events.CloseLightPipeController args ) {
+            DisplayLightPipeController = false;
+
+            RaisePropertyChanged( () => DisplayLightPipeController );
         }
 
         private void OnDisplayManualController() {

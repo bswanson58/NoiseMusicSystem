@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="HueLighting.Views.EntertainmentGroupDisplayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:HueLighting.ViewModels"
+             xmlns:dto="clr-namespace:HueLighting.Dto"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:EntertainmentGroupDisplayViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="400" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <!-- A light -->
+        <DataTemplate x:Key="LightTemplate" DataType="dto:UiBulb">
+            <Grid>
+                <Path ToolTip="{Binding Description}">
+                    <Path.Fill>
+                        <SolidColorBrush Color="{Binding LightColor}"/>
+                    </Path.Fill>
+                    <Path.Data>
+                        <EllipseGeometry RadiusX="8" RadiusY="6"/>
+                    </Path.Data>
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="{Binding Height}" ScaleY="{Binding Height}"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1" Grid.Column="1" Background="DimGray"/>
+
+        <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Opacity="0.7" Margin="0,0,0,3" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Back"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource ControlTitleStyle}" Opacity="0.7" Margin="0,3,0,0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Front"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlTitleStyle}" Opacity="0.7" Margin="0,0,3,0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="L"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource ControlTitleStyle}" Opacity="0.7" Margin="3,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="R"/>
+
+        <Viewbox Stretch="Uniform" Grid.Row="1" Grid.Column="1">
+            <Grid Height="400" Width="300">
+                <Viewbox Stretch="Fill" Margin="20">
+                    <ItemsControl Height="200" Width="200" ItemsSource="{Binding LightList}" ItemTemplate="{StaticResource LightTemplate}" Background="DimGray">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas IsItemsHost="True" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                                <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+                </Viewbox>
+
+                <Line X1="0" X2="300" Y1="133" Y2="133" Stroke="LightGray" StrokeThickness="1"/>
+                <Line X1="0" X2="300" Y1="266" Y2="266" Stroke="LightGray" StrokeThickness="1"/>
+                <Line X1="100" X2="100" Y1="0" Y2="400" Stroke="LightGray" StrokeThickness="1"/>
+                <Line X1="200" X2="200" Y1="0" Y2="400" Stroke="LightGray" StrokeThickness="1"/>
+            </Grid>
+        </Viewbox>
+    </Grid>
+</UserControl>

@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using MilkBottle.Database;
+using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 using MilkBottle.Logging;
 using MilkBottle.Models;
@@ -24,7 +25,9 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IDatabaseProvider, DatabaseProvider>();
             containerRegistry.RegisterSingleton<IInitializationController, InitializationController>();
             containerRegistry.RegisterSingleton<IIpcManager, IpcManager>();
+            containerRegistry.RegisterSingleton<ILightPipePump, LightPipePump>();
             containerRegistry.RegisterSingleton<IMilkController, MilkController>();
+            containerRegistry.RegisterSingleton<IPairingManager, PairingManager>();
             containerRegistry.RegisterSingleton<ProjectMWrapper, ProjectMWrapper>();
             containerRegistry.RegisterSingleton<IPresetController, PresetController>();
             containerRegistry.RegisterSingleton<IStateManager, StateManager>();
@@ -40,6 +43,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<ISceneProvider, SceneProvider>();
             containerRegistry.RegisterSingleton<ITagProvider, TagProvider>();
 
+            containerRegistry.Register<IApplicationConstants, ApplicationConstants>();
             containerRegistry.Register<ICelestialCalculator, CelestialCalculator>();
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
@@ -51,6 +55,7 @@ namespace MilkBottle {
             containerRegistry.RegisterDialog<ConfirmDeleteDialog, ConfirmDeleteDialogModel>();
             containerRegistry.RegisterDialog<SelectPresetDialog, SelectPresetDialogModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationDialogModel>();
+            containerRegistry.RegisterDialog<LightPipeDialog, LightPipeDialogModel>();
             containerRegistry.RegisterDialog<TagEditDialog, TagEditDialogModel>();
             containerRegistry.RegisterDialog<MoodManagementDialog, MoodManagementDialogModel>();
             containerRegistry.RegisterDialog<MoodSelectionDialog, MoodSelectionDialogModel>();

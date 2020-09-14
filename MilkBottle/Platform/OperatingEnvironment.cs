@@ -1,24 +1,27 @@
 ﻿using System;
 using System.IO;
-using MilkBottle.Interfaces;
-using MilkBottle.Properties;
+using MilkBottle.Infrastructure.Interfaces;
 
 namespace MilkBottle.Platform {
     class OperatingEnvironment : IEnvironment {
-        private readonly string		mApplicationName;
+        private readonly IApplicationConstants  mApplicationConstants;
 
-        public OperatingEnvironment() {
-            mApplicationName = ApplicationConstants.ApplicationName;
+        public OperatingEnvironment( IApplicationConstants applicationConstants ) {
+            mApplicationConstants = applicationConstants;
         }
 
         public string ApplicationName() {
-            return( mApplicationName );
+            return mApplicationConstants.ApplicationName;
+        }
+
+        public string EnvironmentName() {
+            return Environment.MachineName;
         }
 
         public string ApplicationDirectory() {
             var retValue = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
-                ApplicationConstants.CompanyName,
-                ApplicationConstants.ApplicationName );
+                mApplicationConstants.CompanyName,
+                mApplicationConstants.ApplicationName );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
@@ -28,7 +31,7 @@ namespace MilkBottle.Platform {
         }
 
         public string DatabaseDirectory() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.DatabaseDirectory );
+            var retValue = Path.Combine( ApplicationDirectory(), mApplicationConstants.DatabaseDirectory );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
@@ -38,7 +41,7 @@ namespace MilkBottle.Platform {
         }
 
         public string LogFileDirectory() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.LogFileDirectory );
+            var retValue = Path.Combine( ApplicationDirectory(), mApplicationConstants.LogFileDirectory );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
@@ -48,7 +51,7 @@ namespace MilkBottle.Platform {
         }
 
         public string PreferencesDirectory() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory );
+            var retValue = Path.Combine( ApplicationDirectory(), mApplicationConstants.ConfigurationDirectory );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
@@ -58,7 +61,7 @@ namespace MilkBottle.Platform {
         }
 
         public string MilkLibraryFolder() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.MilkLibraryFolder );
+            var retValue = Path.Combine( ApplicationDirectory(), mApplicationConstants.MilkLibraryFolder );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
@@ -68,7 +71,7 @@ namespace MilkBottle.Platform {
         }
 
         public string MilkTextureFolder() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.MilkTextureFolder );
+            var retValue = Path.Combine( ApplicationDirectory(), mApplicationConstants.MilkTextureFolder );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );

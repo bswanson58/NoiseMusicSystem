@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="HueLighting.Views.HubSelectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:HueLighting.ViewModels"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:dto="clr-namespace:HueLighting.Dto"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:HubSelectionViewModel, IsDesignTimeCreatable=False}"
+             Height="250" Width="400">
+
+    <mvvm:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </mvvm:Dialog.WindowStyle>
+
+    <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
+
+        <DataTemplate x:Key="BridgeTemplate" DataType="dto:HubInformation">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="{Binding BridgeId}"/>
+                    <TextBlock Text="(" Margin="5,0,0,0"/>
+                    <TextBlock Text="{Binding IpAddress}"/>
+                    <TextBlock Text=")"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="2" Margin="0,0,5,0" Text="Configured Hub" Visibility="{Binding IsConfiguredHub, Converter={StaticResource HideIfFalse}}"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="15,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Located Hubs:"/>
+
+        <ListBox Grid.Row="1" Margin="0,5" ItemsSource="{Binding HubList}" ItemTemplate="{StaticResource BridgeTemplate}" SelectedItem="{Binding SelectedHub}"/>
+
+        <Button Grid.Row="2" HorizontalAlignment="Left" Margin="5" Content="Configure Hub" Style="{StaticResource GeneralButtonStyle}" Command="{Binding ConfigureHub}"/>
+
+        <StackPanel Grid.Row="3" Margin="5" Orientation="Horizontal">
+            <Button Style="{StaticResource GeneralButtonStyle}" Content="Register Hub" Command="{Binding RegisterHub}"/>
+            <TextBlock Margin="15,0,0,0" Text="Press Link button on this hub first!" VerticalAlignment="Center" Foreground="Red" FontSize="14"
+                       Visibility="{Binding CanRegister, Converter={StaticResource HideIfFalse}}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Ok}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

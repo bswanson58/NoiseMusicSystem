@@ -78,6 +78,8 @@
             <Button Command="{Binding DisplayManualController}" Content="revel"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
+            <Button Command="{Binding LightPipe}" Content="{StaticResource Path_LightPipe}" Padding="8" ToolTip="LightPipe"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
             <Button Command="{Binding Configuration}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Configuration"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
@@ -95,13 +97,17 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.Row="0" Content="{Binding ShellViewDisplayed}" ContentTemplateSelector="{StaticResource ShellViewSelector}"/>
+        <views:LightPipeControlView Grid.Row="0" 
+                                    Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayLightPipeController, Converter={StaticResource CollapseOnFalse}}"/>
 
-        <views:StatusView Grid.Row="1" 
+        <ContentControl Grid.Row="1" Content="{Binding ShellViewDisplayed}" ContentTemplateSelector="{StaticResource ShellViewSelector}"/>
+
+        <views:StatusView Grid.Row="2" 
                           Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource CollapseOnFalse}}"/>
     </Grid>
 

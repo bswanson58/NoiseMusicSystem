@@ -1,0 +1,156 @@
+﻿<UserControl x:Class="MilkBottle.Views.LightPipeControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:views="clr-namespace:LightPipe.Views;assembly=LightPipe"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:LightPipeControlViewModel, IsDesignTimeCreatable=False}"
+             Height="34" d:DesignWidth="1600">
+
+    <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideIfFalse" IsHidden="True" TriggerValue="False"/>
+
+        <Storyboard x:Key="WidgetEnterSubduedAnimation" x:Shared="False">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.5" To="1.0" Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <Storyboard x:Key="WidgetLeaveSubduedAnimation" x:Shared="False">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.5" Duration="0:0:1"/>
+        </Storyboard>
+
+        <Storyboard x:Key="WidgetEnterSlider" x:Shared="False">
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleX" From="0.0" To="1.0" Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <Storyboard x:Key="WidgetLeaveSlider" x:Shared="False">
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleX" From="1.0" To="0.0" Duration="0:0:0.8"/>
+        </Storyboard>
+
+        <Storyboard x:Key="WidgetEnterStatus" x:Shared="False">
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleX" From="1.0" To="0.0" Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <Storyboard x:Key="WidgetLeaveStatus" x:Shared="False">
+            <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleX" From="0.0" To="1.0" Duration="0:0:0.8"/>
+        </Storyboard>
+
+        <DataTemplate x:Key="HorizontalSeparator">
+            <Grid Margin="5">
+                <Grid Background="{StaticResource ControlTextColor}" Width="2"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Padding" Value="1"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="Black">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="5,3,0,3" Visibility="{Binding LightPipeState, Converter={StaticResource HideIfFalse}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <views:LightPipeStatusView Grid.Column="0" Tag="expanded" VerticalAlignment="Center">
+                <views:LightPipeStatusView.LayoutTransform>
+                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                </views:LightPipeStatusView.LayoutTransform>
+            </views:LightPipeStatusView>
+
+            <StackPanel Grid.Column="2" Tag="subdued" Background="Transparent" Orientation="Horizontal">
+                <!-- Capture Frequency -->
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Capture Rate:"/>
+                <Slider Width="120" Tag="collapsed" Margin="5,0" VerticalAlignment="Center" Style="{DynamicResource MahApps.Styles.Slider}" IsDirectionReversed="True" IsMoveToPointEnabled="True"
+                        Maximum="{Binding CaptureFrequencyMaximum}" Minimum="{Binding CaptureFrequencyMinimum}" Value="{Binding CaptureFrequency}" ToolTip="Capture Frequency (ms)"
+                        RenderTransformOrigin="0.5,0.5">
+                    <Slider.LayoutTransform>
+                        <ScaleTransform ScaleX="0.0" ScaleY="1.0"/>
+                    </Slider.LayoutTransform>
+                </Slider>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center" MinWidth="26" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding CaptureFrequency}"/>
+                    <TextBlock VerticalAlignment="Center" Margin="5,0" Style="{StaticResource ControlTitleStyle}" Text="ms"/>
+                </StackPanel>
+
+                <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}" Opacity="0.5"/>
+
+                <!-- Luminosity -->
+                <TextBlock VerticalAlignment="Center" Margin="1,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="Luminosity Limits:"/>
+                <TextBlock VerticalAlignment="Center" Margin="3,0,0,0" MinWidth="20" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding BlacknessLimit}"/>
+                <mah:RangeSlider Width="120" Tag="collapsed" Margin="5,0,0,0" Style="{DynamicResource MahApps.Styles.RangeSlider}" VerticalAlignment="Center"
+                                 Maximum="255" Minimum="0" UpperValue="{Binding WhitenessLimit}" LowerValue="{Binding BlacknessLimit}" AutoToolTipPlacement="TopLeft"
+                                 RenderTransformOrigin="0.5,0.5" IsMoveToPointEnabled="True" ToolTip="Luminosity Limits">
+                    <mah:RangeSlider.LayoutTransform>
+                        <ScaleTransform ScaleX="0.0" ScaleY="1.0"/>
+                    </mah:RangeSlider.LayoutTransform>
+                </mah:RangeSlider>
+                <TextBlock VerticalAlignment="Center" Margin="3,0,0,0" MinWidth="20" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding WhitenessLimit}"/>
+
+                <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}" Opacity="0.5"/>
+
+                <!-- Colors Per Zone -->
+                <TextBlock VerticalAlignment="Center" Margin="1,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="Colors:"/>
+                <Slider Width="120" Tag="collapsed" Margin="5,0" VerticalAlignment="Center" Style="{DynamicResource MahApps.Styles.Slider}" IsMoveToPointEnabled="True"
+                        Maximum="10" Minimum="1" Value="{Binding ZoneColorLimit}" ToolTip="Limit Of Colors Used Per Zone" RenderTransformOrigin="0.5,0.5">
+                    <Slider.LayoutTransform>
+                        <ScaleTransform x:Name="_scaleTransform" ScaleX="0.0" ScaleY="1.0"/>
+                    </Slider.LayoutTransform>
+                </Slider>
+                <TextBlock VerticalAlignment="Center" MinWidth="14" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding ZoneColorLimit}"/>
+
+                <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}" Opacity="0.5"/>
+
+                <!-- Brightness -->
+                <TextBlock VerticalAlignment="Center" Margin="1,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="Brightness:"/>
+                <Slider Width="120" Tag="collapsed" Margin="5.0" VerticalAlignment="Center" Style="{DynamicResource MahApps.Styles.Slider}" IsMoveToPointEnabled="True" RenderTransformOrigin="0.5,0.5"
+                        Maximum="{Binding OverallBrightnessMaximum}" Minimum="{Binding OverallBrightnessMinimum}" Value="{Binding OverallBrightness}" ToolTip="Overall Light Brightness (%)">
+                    <Slider.LayoutTransform>
+                        <ScaleTransform ScaleX="0.0" ScaleY="1.0"/>
+                    </Slider.LayoutTransform>
+                </Slider>
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" MinWidth="20" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding OverallBrightness}"/>
+                    <TextBlock VerticalAlignment="Center" Margin="3,0,15,0" Style="{StaticResource ControlTitleStyle}" Text="%"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Column="1" Margin="10,2" Tag="dimmed" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0" VerticalAlignment="Center" Text="Pairing:"/>
+            <ComboBox VerticalAlignment="Center" Width="150" ItemsSource="{Binding Pairs}" SelectedItem="{Binding CurrentPairing}" DisplayMemberPath="PairingName"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Margin="0,0,5,0" Tag="dimmed" Orientation="Horizontal" >
+            <mah:ToggleSwitch VerticalAlignment="Center" OnContent="On" OffContent="Off" Width="80" IsOn="{Binding LightPipeState}" ToolTip="Enable/Disable LightPipe"/>
+            <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}"/>
+            <Button Style="{StaticResource ControllerButtonStyle}" Margin="1,0,5,0" Padding="2" Content="{StaticResource Path_Configure}" Command="{Binding Configuration}" ToolTip="Configure LightPipe"/>
+            <Button Style="{StaticResource ControllerButtonStyle}" Padding="5" Content="{StaticResource Path_Close}" VerticalAlignment="Center" Command="{Binding Close}" ToolTip="Close Control View"/>
+        </StackPanel>
+    </Grid>
+
+    <b:Interaction.Behaviors>
+        <behaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
+        <behaviours:WidgetOpacity TagName="subdued" FadeInAnimation="{StaticResource WidgetEnterSubduedAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveSubduedAnimation}"/>
+        <behaviours:WidgetOpacity TagName="collapsed" FadeInAnimation="{StaticResource WidgetEnterSlider}" FadeOutAnimation="{StaticResource WidgetLeaveSlider}"/>
+        <behaviours:WidgetOpacity TagName="expanded" FadeInAnimation="{StaticResource WidgetEnterStatus}" FadeOutAnimation="{StaticResource WidgetLeaveStatus}"/>
+    </b:Interaction.Behaviors>
+</UserControl>
