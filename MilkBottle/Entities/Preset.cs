@@ -38,7 +38,7 @@ namespace MilkBottle.Entities {
             IsFavorite = isFavorite;
             IsDuplicate = isDuplicate;
             Rating = rating;
-            Library = new PresetLibrary( String.Empty, String.Empty );
+            Library = PresetLibrary.Default();
             Tags = new List<PresetTag>();
         }
 

@@ -311,10 +311,10 @@
     <Compile Include="Platform\ApplicationConstants.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Platform\StringEx.cs" />
+    <Compile Include="Properties\ApplicationConstants.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\LimitedRepeatingRandom.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
-    <Compile Include="Properties\ApplicationConstants.cs" />
     <Compile Include="Interfaces\IPlatformLog.cs" />
     <Compile Include="Logging\SeriLogAdapter.cs" />
     <Compile Include="Platform\OperatingEnvironment.cs" />

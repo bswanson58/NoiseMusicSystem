@@ -34,26 +34,10 @@ namespace MilkBottle.Models {
                 var root = mEnvironment.MilkLibraryFolder();
 
                 if( Directory.Exists( root )) {
-                    var directories = Directory.EnumerateDirectories( root ).ToList();
-                    var libraries = new List<PresetLibrary>();
-                
-                    mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
+                    var library = PresetLibrary.RootLibrary( root );
 
-                    // add any new directories as libraries
-                    var missingLibraries = directories.Where( d => !libraries.Any( l => l.Name.Equals( Path.GetFileName( d )))).ToList();
-                    missingLibraries.ForEach( l => mLibraryProvider.Insert( new PresetLibrary( Path.GetFileName( l ), l ))
-                                                .IfLeft( ex => LogException( "LibraryProvider.Insert", ex )));
-
-                    // find any deleted directories
-                    var missingDirectories = libraries.Where( l => !directories.Any( d => d.Equals( l.Location ))).ToList();
-
-                    // reconcile the presets in each library
-                    libraries.Clear();
-                    mLibraryProvider.SelectLibraries( list => libraries.AddRange( list ));
-                    libraries.ForEach( ReconcilePresets );
-
-                    // remove any missing directories
-                    missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( ex => LogException( "LibraryProvider.Delete", ex )));
+                    // Traverse the folder tree.
+                    ReconcileLibrary( library );
 
                     // remove any presets without parent directories.
                     RemoveOrphans();
@@ -71,6 +55,36 @@ namespace MilkBottle.Models {
             return retValue;
         }
 
+        private void ReconcileLibrary( PresetLibrary root ) {
+            var directories = new List<string>();
+            var libraries = new List<PresetLibrary>();
+
+            if( Directory.Exists( root.Location )) {
+                directories = Directory.EnumerateDirectories( root.Location ).ToList();
+            }
+                
+            mLibraryProvider.SelectLibraries( list => libraries.AddRange( from l in list where l.Parent.Equals( root.Id ) select l ));
+
+            // add any new directories as libraries
+            var missingLibraries = directories.Where( d => !libraries.Any( l => l.Name.Equals( Path.GetFileName( d )))).ToList();
+            missingLibraries.ForEach( l => mLibraryProvider.Insert( new PresetLibrary( Path.GetFileName( l ), l, root ))
+                                                .IfLeft( ex => LogException( "LibraryProvider.Insert", ex )));
+
+            // find any deleted directories
+            var missingDirectories = libraries.Where( l => !directories.Any( d => d.Equals( l.Location ))).ToList();
+
+            // reconcile the presets in each library
+            libraries.Clear();
+            mLibraryProvider.SelectLibraries( list => libraries.AddRange( from l in list where l.Parent.Equals( root.Id ) select l ));
+            libraries.ForEach( ReconcilePresets );
+
+            // traverse into each folder
+            libraries.ForEach( ReconcileLibrary );
+
+            // remove any missing directories
+            missingDirectories.ForEach( p => mLibraryProvider.Delete( p ).IfLeft( ex => LogException( "LibraryProvider.Delete", ex )));
+        }
+
         private void ReconcilePresets( PresetLibrary forLibrary ) {
             var files = new List<String>();
             var presets = new List<Preset>();
@@ -78,7 +92,7 @@ namespace MilkBottle.Models {
             mPresetProvider.SelectPresets( forLibrary, list => presets.AddRange( list ));
 
             if( Directory.Exists( forLibrary.Location )) {
-                files.AddRange( Directory.EnumerateFiles( forLibrary.Location ));
+                files.AddRange( from f in Directory.EnumerateFiles( forLibrary.Location ) where IsPresetFile( f) select f );
             }
 
             // add any new presets found
@@ -89,6 +103,10 @@ namespace MilkBottle.Models {
             // remove any presets not found
             var missingFiles = presets.Where( p => !files.Any( f => f.Equals( p.Location ))).ToList();
             missingFiles.ForEach( p => mPresetProvider.Delete( p ).IfLeft( ex => LogException( "PresetProvider.Delete", ex )));
+        }
+
+        private bool IsPresetFile( string path ) {
+            return Path.GetExtension( path ).ToLower().Equals( ".milk" );
         }
 
         private void RemoveOrphans() {
