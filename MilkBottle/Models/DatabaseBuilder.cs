@@ -23,6 +23,14 @@ namespace MilkBottle.Models {
             mLog = log;
         }
 
+        public bool WaitForDatabaseReconcile() {
+            var retValue = true;
+
+            mLibraryProvider.SelectLibraries( list => retValue = !list.Any());
+
+            return retValue;
+        }
+
         public Task<bool> ReconcileDatabase() {
             return Task.Run( ReconcileLibraries );
         }

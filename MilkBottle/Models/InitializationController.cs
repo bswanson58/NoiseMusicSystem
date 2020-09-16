@@ -12,6 +12,7 @@ namespace MilkBottle.Models {
         private readonly ILightPipePump         mLightPipePump;
         private readonly Task<bool>             mDatabaseBuildTask;
         private GLControl                       mGlControl;
+        private bool                            mWaitForDatabaseReconcile;
 
         public InitializationController( IStateManager stateManager, IMilkController milkController, IPresetController presetController, ILightPipePump lightPipePump,
                                          IDatabaseBuilder databaseBuilder, IEventAggregator eventAggregator ) {
@@ -23,6 +24,7 @@ namespace MilkBottle.Models {
 
             mEventAggregator.Subscribe( this );
 
+            mWaitForDatabaseReconcile = databaseBuilder.WaitForDatabaseReconcile();
             mDatabaseBuildTask = databaseBuilder.ReconcileDatabase();
         }
 
@@ -32,11 +34,12 @@ namespace MilkBottle.Models {
 
             mMilkController.Initialize( mGlControl );
 
-            if( await mDatabaseBuildTask ) {
+            if((!mWaitForDatabaseReconcile ) ||
+               ( await mDatabaseBuildTask )) {
                 mPresetController.Initialize();
                 await mLightPipePump.Initialize();
                 
-                mEventAggregator.PublishOnUIThread( new Events.InitializationComplete());
+                await mEventAggregator.PublishOnUIThreadAsync( new Events.InitializationComplete());
             }
         }
 
