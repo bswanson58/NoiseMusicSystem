@@ -9,8 +9,12 @@ using MilkBottle.Interfaces;
 
 namespace MilkBottle.Database {
     class PresetProvider : EntityProvider<Preset>, IPresetProvider {
-        public PresetProvider( IDatabaseProvider databaseProvider ) :
-            base( databaseProvider, EntityCollection.PresetCollection ) { }
+        private readonly ISidecarHandler    mSidecarHandler;
+
+        public PresetProvider( IDatabaseProvider databaseProvider, ISidecarHandler sidecarHandler ) :
+            base( databaseProvider, EntityCollection.PresetCollection ) {
+            mSidecarHandler = sidecarHandler;
+        }
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
@@ -60,7 +64,7 @@ namespace MilkBottle.Database {
         }
 
         public Either<Exception, Unit> Update( Preset preset ) {
-            return UpdateEntity( preset );
+            return UpdateEntity( preset ).IfRight( unit => mSidecarHandler.SaveSidecar( preset ));
         }
 
         public Task<Either<Exception, Unit>> UpdateAll( Preset preset ) {

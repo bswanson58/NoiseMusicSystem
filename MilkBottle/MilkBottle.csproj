@@ -240,6 +240,7 @@
     <Compile Include="Database\PresetProvider.cs" />
     <Compile Include="Database\PresetSetProvider.cs" />
     <Compile Include="Database\SceneProvider.cs" />
+    <Compile Include="Database\SidecarHandler.cs" />
     <Compile Include="Database\TagProvider.cs" />
     <Compile Include="Database\ValidationBase.cs" />
     <Compile Include="Dto\LightPipePairing.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="Entities\PresetLibrary.cs" />
     <Compile Include="Entities\PresetScene.cs" />
     <Compile Include="Entities\PresetSet.cs" />
+    <Compile Include="Entities\PresetSidecar.cs" />
     <Compile Include="Entities\PresetTag.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IAudioManager.cs" />
@@ -285,6 +287,7 @@
     <Compile Include="Interfaces\IPresetTimerFactory.cs" />
     <Compile Include="Interfaces\IPresetListProvider.cs" />
     <Compile Include="Interfaces\ISceneProvider.cs" />
+    <Compile Include="Interfaces\ISidecarHandler.cs" />
     <Compile Include="Interfaces\IStateManager.cs" />
     <Compile Include="Interfaces\ISyncManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />

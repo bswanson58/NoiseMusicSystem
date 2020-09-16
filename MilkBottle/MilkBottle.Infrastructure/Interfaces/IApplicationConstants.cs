@@ -13,5 +13,7 @@ namespace MilkBottle.Infrastructure.Interfaces {
 
         String  MilkLibraryFolder { get; }
         String  MilkTextureFolder { get; }
+
+        String  PresetSidecarExtension { get; }
     }
 }

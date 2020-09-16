@@ -30,6 +30,7 @@ namespace MilkBottle {
             containerRegistry.RegisterSingleton<IPairingManager, PairingManager>();
             containerRegistry.RegisterSingleton<ProjectMWrapper, ProjectMWrapper>();
             containerRegistry.RegisterSingleton<IPresetController, PresetController>();
+            containerRegistry.RegisterSingleton<ISidecarHandler, SidecarHandler>();
             containerRegistry.RegisterSingleton<IStateManager, StateManager>();
             containerRegistry.RegisterSingleton<ISyncManager, SyncManager>();
             containerRegistry.RegisterSingleton<IPresetTimerFactory, PresetTimerFactory>();

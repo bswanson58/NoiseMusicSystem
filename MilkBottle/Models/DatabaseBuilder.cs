@@ -14,12 +14,14 @@ namespace MilkBottle.Models {
         private readonly IEnvironment           mEnvironment;
         private readonly IPresetProvider        mPresetProvider;
         private readonly IPresetLibraryProvider mLibraryProvider;
+        private readonly ISidecarHandler        mSidecarHandler;
         private readonly IPlatformLog           mLog;
 
-        public DatabaseBuilder( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, IEnvironment environment, IPlatformLog log ) {
+        public DatabaseBuilder( IPresetLibraryProvider libraryProvider, IPresetProvider presetProvider, ISidecarHandler sidecarHandler, IEnvironment environment, IPlatformLog log ) {
             mEnvironment = environment;
             mPresetProvider = presetProvider;
             mLibraryProvider = libraryProvider;
+            mSidecarHandler = sidecarHandler;
             mLog = log;
         }
 
@@ -127,6 +129,8 @@ namespace MilkBottle.Models {
 
                 preset = preset.WithCategories( categories );
             }
+
+            preset = mSidecarHandler.LoadSidecar( preset );
 
             mPresetProvider.Insert( preset ).IfLeft( ex => LogException( "PresetProvider.Insert", ex ));
         }

@@ -14,5 +14,7 @@ namespace MilkBottle.Platform {
 
         public  string  MilkLibraryFolder => "Milk Preset Library";
         public  string  MilkTextureFolder => "Milk Textures";
+
+        public  string  PresetSidecarExtension => ".mbsc";
     }
 }
