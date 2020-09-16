@@ -14,7 +14,7 @@ namespace MilkBottle.Database {
 
         protected override void InitializeDatabase( LiteDatabase db ) {
             BsonMapper.Global.Entity<Preset>().Id( e => e.Id );
-            BsonMapper.Global.Entity<Preset>().DbRef( p => p.Library, EntityCollection.LibraryCollection );
+            BsonMapper.Global.Entity<Preset>().DbRef( p => p.ParentLibrary, EntityCollection.LibraryCollection );
             BsonMapper.Global.Entity<Preset>().DbRef( t => t.Tags, EntityCollection.TagCollection );
 /*
             var presets = db.GetCollection( EntityCollection.PresetCollection );
@@ -31,7 +31,7 @@ namespace MilkBottle.Database {
 
         protected override ILiteCollection<Preset> Include( ILiteCollection<Preset> list ) {
             return list
-                .Include( p => p.Library )
+                .Include( p => p.ParentLibrary )
                 .Include( p => p.Tags );
         }
 
@@ -44,7 +44,7 @@ namespace MilkBottle.Database {
         }
 
         public Either<Exception, Unit> SelectPresets( PresetLibrary forLibrary, Action<IEnumerable<Preset>> action ) {
-            return SelectEntities( list => action( from p in list where p.Library?.Id == forLibrary?.Id select p ));
+            return SelectEntities( list => action( from p in list where p.ParentLibrary?.Id == forLibrary?.Id select p ));
         }
 
         public Either<Exception, Unit> SelectPresets( PresetTag forTag, Action<IEnumerable<Preset>> action ) {

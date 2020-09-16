@@ -14,20 +14,22 @@ namespace MilkBottle.Entities {
         public  bool            IsDuplicate { get; }
         public  int             Rating { get; }
         public  List<PresetTag> Tags { get; set; }
-        public  PresetLibrary   Library { get; set; }
+        public  List<string>    Categories { get; set; }
+        public  PresetLibrary   ParentLibrary { get; set; }
 
-        public Preset( string name, string location, PresetLibrary library ) :
-            this( ObjectId.NewObjectId(), name, location, false, false, PresetRating.UnRatedValue, library ) { }
+        public Preset( string name, string location, PresetLibrary parentLibrary ) :
+            this( ObjectId.NewObjectId(), name, location, false, false, PresetRating.UnRatedValue, parentLibrary ) { }
 
-        public Preset( ObjectId id, string name, string location, bool isDuplicate, bool isFavorite, int rating, PresetLibrary library ) :
+        public Preset( ObjectId id, string name, string location, bool isDuplicate, bool isFavorite, int rating, PresetLibrary parentLibrary ) :
             base( id ) {
             Name = ( name ?? String.Empty ).Trim();
             Location = ( location ?? String.Empty ).Trim();
             IsFavorite = isFavorite;
             IsDuplicate = isDuplicate;
             Rating = rating;
-            Library = library;
+            ParentLibrary = parentLibrary;
             Tags = new List<PresetTag>();
+            Categories = new List<string>();
         }
 
         [BsonCtorAttribute]
@@ -38,8 +40,9 @@ namespace MilkBottle.Entities {
             IsFavorite = isFavorite;
             IsDuplicate = isDuplicate;
             Rating = rating;
-            Library = PresetLibrary.Default();
+            ParentLibrary = PresetLibrary.Default();
             Tags = new List<PresetTag>();
+            Categories = new List<string>();
         }
 
         private Preset( Preset clone, bool isFavorite ) :
@@ -49,8 +52,9 @@ namespace MilkBottle.Entities {
             IsFavorite = isFavorite;
             IsDuplicate = clone.IsDuplicate;
             Rating = clone.Rating;
-            Library = clone.Library;
+            ParentLibrary = clone.ParentLibrary;
             Tags = new List<PresetTag>( clone.Tags );
+            Categories = new List<string>( clone.Categories );
         }
 
         private Preset( Preset clone, PresetRating rating ) :
@@ -60,12 +64,20 @@ namespace MilkBottle.Entities {
             IsFavorite = clone.IsFavorite;
             IsDuplicate = clone.IsDuplicate;
             Rating = rating;
-            Library = clone.Library;
+            ParentLibrary = clone.ParentLibrary;
             Tags = new List<PresetTag>( clone.Tags );
+            Categories = new List<string>( clone.Categories );
         }
 
         public Preset WithFavorite( bool isFavorite ) {
             return new Preset( this, isFavorite );
+        }
+
+        public Preset WithCategories( IEnumerable<string> categories ) {
+            Categories.Clear();
+            Categories.AddRange( categories );
+
+            return this;
         }
 
         public Preset WithRating( PresetRating rating ) {
@@ -107,7 +119,7 @@ namespace MilkBottle.Entities {
         }
 
         public Preset WithDuplicate( bool isDuplicate ) {
-            return new Preset( Id, Name, Location, isDuplicate, IsFavorite, Rating, Library ) { Tags = Tags };
+            return new Preset( Id, Name, Location, isDuplicate, IsFavorite, Rating, ParentLibrary ) { Tags = Tags, Categories = Categories };
         }
     }
 }
