@@ -5,11 +5,57 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:BrowseViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="250" d:DesignWidth="400">
-    <Grid>
-        <TextBlock Text="Browse"></TextBlock>
+
+    <UserControl.Resources>
+        <Style x:Key="ListBoxNoFocus" TargetType="ListBoxItem">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+
+        <DataTemplate x:Key="PresetTemplate" DataType="dto:UiVisualPreset">
+            <Image Height="150" Width="150" Margin="12,8" Source="{Binding PresetImage}" ToolTip="{Binding PresetName}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CategoryTemplate" DataType="dto:UiPresetCategory">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource ListViewTextStyle}" FontSize="18" Text="{Binding CategoryName}"/>
+
+                <ItemsControl Grid.Row="1" Margin="0,0,0,5" ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource PresetTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="10,0,5,0" VerticalAlignment="Center" Text="Library:"/>
+            <ComboBox VerticalAlignment="Center" Width="150" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="Name"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <ListBox ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource CategoryTemplate}" VirtualizingPanel.ScrollUnit="Pixel"
+                     ItemContainerStyle="{StaticResource ListBoxNoFocus}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        </Grid>
     </Grid>
 </UserControl>

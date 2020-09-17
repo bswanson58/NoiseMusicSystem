@@ -17,6 +17,8 @@ namespace MilkBottle.Entities {
         public  List<string>    Categories { get; set; }
         public  PresetLibrary   ParentLibrary { get; set; }
 
+        public  string          PrimaryCategory => Categories.Any() ? Categories[0] : String.Empty;
+
         public Preset( string name, string location, PresetLibrary parentLibrary ) :
             this( ObjectId.NewObjectId(), name, location, false, false, PresetRating.UnRatedValue, parentLibrary ) { }
 

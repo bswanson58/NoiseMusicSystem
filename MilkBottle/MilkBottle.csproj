@@ -256,6 +256,7 @@
     <Compile Include="Dto\UiSet.cs" />
     <Compile Include="Dto\UiSource.cs" />
     <Compile Include="Dto\UiTag.cs" />
+    <Compile Include="Dto\UiVisualPreset.cs" />
     <Compile Include="Entities\ActiveCompanionApp.cs" />
     <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="Entities\Mood.cs" />
