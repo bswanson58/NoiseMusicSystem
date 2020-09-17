@@ -332,6 +332,7 @@
     <Compile Include="Types\PresetDuration.cs" />
     <Compile Include="Types\PresetRating.cs" />
     <Compile Include="Types\ValidationException.cs" />
+    <Compile Include="ViewModels\BrowseViewModel.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
     <Compile Include="ViewModels\LightPipeControlViewModel.cs" />
@@ -357,6 +358,9 @@
     <Compile Include="ViewModels\SyncStatusViewModel.cs" />
     <Compile Include="ViewModels\TagEditDialogModel.cs" />
     <Compile Include="ViewModels\TagEditViewModel.cs" />
+    <Compile Include="Views\BrowseView.xaml.cs">
+      <DependentUpon>BrowseView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
     </Compile>
@@ -454,6 +458,10 @@
     <Page Include="Resources\GroupBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BrowseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ConfirmDeleteDialog.xaml">
       <SubType>Designer</SubType>

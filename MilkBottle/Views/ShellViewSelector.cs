@@ -7,6 +7,7 @@ namespace MilkBottle.Views {
         public  DataTemplate    ManualView { get; set; }
         public  DataTemplate    ReviewView { get ;set; }
         public  DataTemplate    SyncView { get; set; }
+        public  DataTemplate    BrowseView { get; set; }
 
         public override DataTemplate SelectTemplate( object item, DependencyObject container ) {
             var retValue = ManualView;
@@ -23,6 +24,10 @@ namespace MilkBottle.Views {
 
                     case ShellView.Sync:
                         retValue = SyncView;
+                        break;
+
+                    case ShellView.Browse:
+                        retValue = BrowseView;
                         break;
                 }
             }

@@ -19,7 +19,8 @@ namespace MilkBottle.ViewModels {
     public enum ShellView {
         Manual,
         Review,
-        Sync
+        Sync,
+        Browse
     }
 
     class ShellViewModel : PropertyChangeBase, IHandle<Events.CloseLightPipeController> {
@@ -40,6 +41,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 DisplayManualController { get; }
         public  DelegateCommand                 DisplayReviewer { get; }
         public  DelegateCommand                 DisplaySyncView { get; }
+        public  DelegateCommand                 DisplayBrowseView { get; }
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
         public  bool                            HaveCompanionApplications => CompanionApplications.Any();
@@ -61,6 +63,7 @@ namespace MilkBottle.ViewModels {
             DisplayManualController = new DelegateCommand( OnDisplayManualController );
             DisplayReviewer = new DelegateCommand( OnDisplayReviewer );
             DisplaySyncView = new DelegateCommand( OnDisplaySyncView );
+            DisplayBrowseView = new DelegateCommand( OnDisplayBrowseView );
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
             mNotifyIcon = new NotifyIcon { BalloonTipTitle = applicationConstants.ApplicationName, Text = applicationConstants.ApplicationName }; 
@@ -232,6 +235,10 @@ namespace MilkBottle.ViewModels {
 
         private void OnDisplaySyncView() {
             SwitchView( ShellView.Sync );
+        }
+
+        private void OnDisplayBrowseView() {
+            SwitchView( ShellView.Browse );
         }
 
         private void SwitchView( ShellView toView ) {

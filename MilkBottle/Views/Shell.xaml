@@ -41,9 +41,15 @@
         <DataTemplate x:Key="SyncView">
             <views:SyncView/>
         </DataTemplate>
+        <DataTemplate x:Key="BrowseView">
+            <views:BrowseView/>
+        </DataTemplate>
 
-        <views:ShellViewSelector x:Key="ShellViewSelector" ManualView="{StaticResource ManualView}" ReviewView="{StaticResource ReviewView}" SyncView="{StaticResource SyncView}"/>
-
+        <views:ShellViewSelector x:Key="ShellViewSelector" 
+                                 ManualView="{StaticResource ManualView}" 
+                                 ReviewView="{StaticResource ReviewView}" 
+                                 SyncView="{StaticResource SyncView}" 
+                                 BrowseView="{StaticResource BrowseView}"/>
     </Window.Resources>
 
     <mah:MetroWindow.IconTemplate>
@@ -71,6 +77,8 @@
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
+            <Button Command="{Binding DisplayBrowseView}" Content="browse"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
             <Button Command="{Binding DisplaySyncView}" Content="sync"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
             <Button Command="{Binding DisplayReviewer}" Content="review"
