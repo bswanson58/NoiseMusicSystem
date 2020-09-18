@@ -122,6 +122,7 @@
     <Compile Include="Behaviours\FocusOnLoad.cs" />
     <Compile Include="Behaviours\FullScreenBehavior.cs" />
     <Compile Include="Behaviours\GridLengthAnimation.cs" />
+    <Compile Include="Behaviours\ItemsControlItemLocation.cs" />
     <Compile Include="Behaviours\ListBoxItemVisible.cs" />
     <Compile Include="Behaviours\ListBoxSelectionVisible.cs" />
     <Compile Include="Behaviours\MouseHideBehavior.cs" />

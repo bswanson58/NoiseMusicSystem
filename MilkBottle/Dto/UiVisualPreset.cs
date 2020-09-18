@@ -1,31 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using MilkBottle.Entities;
+using Prism.Commands;
 
 namespace MilkBottle.Dto {
     class UiPresetCategory {
-        public  string  CategoryName { get; }
+        public  string                  CategoryName { get; }
         public  List<UiVisualPreset>    Presets { get; }
 
-        public UiPresetCategory( string name, IEnumerable<Preset> presets ) {
+        public UiPresetCategory( string name, IEnumerable<Preset> presets, Action<UiVisualPreset> onDisplayPreset ) {
             CategoryName = name;
-            Presets = new List<UiVisualPreset>( from p in presets orderby p.Name select new UiVisualPreset( p ));
+            Presets = new List<UiVisualPreset>( from p in presets orderby p.Name select new UiVisualPreset( p, onDisplayPreset ));
         }
     }
 
     class UiVisualPreset : PropertyChangedBase {
-        private BitmapImage mImage;
-        private byte[]      mImageBits;
+        private readonly Action<UiVisualPreset> mOnDisplayPreset;
+        private BitmapImage                     mImage;
+        private byte[]                          mImageBits;
 
-        public  Preset      Preset { get; }
+        public  Preset                          Preset { get; }
+        public  string                          PresetName => Preset.Name;
+        public  DelegateCommand                 DisplayActivePreset { get; }
 
-        public  string      PresetName => Preset.Name;
+        public  Point                           Location { get; set; }
 
-        public UiVisualPreset( Preset preset ) {
+        public UiVisualPreset( Preset preset, Action<UiVisualPreset> onDisplayPreset ) {
             Preset = preset;
+            mOnDisplayPreset = onDisplayPreset;
+
+            DisplayActivePreset = new DelegateCommand( OnDisplayActivePreset );
         }
 
         public BitmapImage PresetImage {
@@ -52,6 +61,10 @@ namespace MilkBottle.Dto {
             mImageBits = bits;
 
             NotifyOfPropertyChange( () => PresetImage );
+        }
+
+        private void OnDisplayActivePreset() {
+            mOnDisplayPreset?.Invoke( this );
         }
     }
 }

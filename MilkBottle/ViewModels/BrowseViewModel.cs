@@ -8,11 +8,15 @@ using Caliburn.Micro;
 using MilkBottle.Dto;
 using MilkBottle.Interfaces;
 using MoreLinq;
+using Prism.Commands;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
     class BrowseViewModel : PropertyChangeBase {
+        private const string					cDisplayActivePreset = "_displayActivePreset";
+        private const string					cHideActivePreset = "_normal";
+
         private readonly IPresetListProvider    mListProvider;
         private readonly IPlatformLog           mLog;
         private ICollectionView                 mLibrariesView;
@@ -22,6 +26,11 @@ namespace MilkBottle.ViewModels {
         private readonly ObservableCollection<PresetList>   mLibraries;
 
         public  ObservableCollection<UiPresetCategory>      Presets { get; }
+        public  string                                      ActivePresetState { get; private set; }
+        public  DelegateCommand                             HideActivePreset { get; }
+
+        public  double                                      ActivePresetTop { get; private set; }
+        public  double                                      ActivePresetLeft { get; private set; }
 
         public BrowseViewModel( IPresetListProvider listProvider, IPlatformLog log ) {
             mListProvider = listProvider;
@@ -29,6 +38,10 @@ namespace MilkBottle.ViewModels {
 
             mLibraries = new ObservableCollection<PresetList>();
             Presets = new ObservableCollection<UiPresetCategory>();
+
+            HideActivePreset = new DelegateCommand( OnHideActivePreset );
+
+            ActivePresetState = cHideActivePreset;
 
             LoadLibraries();
         }
@@ -54,6 +67,22 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        private void OnDisplayActivePreset( UiVisualPreset preset ) {
+            ActivePresetLeft = preset.Location.X;
+            ActivePresetTop = preset.Location.Y;
+            ActivePresetState = cDisplayActivePreset;
+
+            RaisePropertyChanged( () => ActivePresetLeft );
+            RaisePropertyChanged( () => ActivePresetTop );
+            RaisePropertyChanged( () => ActivePresetState );
+        }
+
+        private void OnHideActivePreset() {
+            ActivePresetState = cHideActivePreset;
+
+            RaisePropertyChanged( () => ActivePresetState );
+        }
+
         private void OnLibraryChanged() {
             if( mCurrentLibrary != null ) {
                 LoadPresets( mCurrentLibrary );
@@ -66,7 +95,7 @@ namespace MilkBottle.ViewModels {
 
             Presets.AddRange( from p in mListProvider.GetPresets( forLibrary.ListType, forLibrary.ListIdentifier ) 
                               group p by p.PrimaryCategory into g 
-                              select new UiPresetCategory( g.Key, g ));
+                              select new UiPresetCategory( g.Key, g, OnDisplayActivePreset ));
         }
 
         private void LoadLibraries() {

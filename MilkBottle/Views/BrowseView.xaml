@@ -6,14 +6,30 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:dto="clr-namespace:MilkBottle.Dto"
+             xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:BrowseViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="250" d:DesignWidth="400">
+             d:DesignHeight="250" d:DesignWidth="400"
+             behaviours:VisualStateAdapter.VisualState="{Binding ActivePresetState}">
 
     <UserControl.Resources>
         <DataTemplate x:Key="PresetTemplate" DataType="dto:UiVisualPreset">
-            <Image Height="150" Width="150" Margin="12,8" Source="{Binding PresetImage}" ToolTip="{Binding PresetName}"/>
+            <Grid>
+                <Image Height="150" Width="150" Margin="12,8" Source="{Binding PresetImage}" ToolTip="{Binding PresetName}">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="MouseEnter">
+                            <b:InvokeCommandAction Command="{Binding DisplayActivePreset}" CommandParameter="ViewImportProgress"/>
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </Image>
+
+                <b:Interaction.Behaviors>
+                    <behaviours:ItemsControlItemLocation ItemLocation="{Binding Location, Mode=TwoWay}" RootElementTag="_rootContainer"
+                                                         ItemsControl="{Binding RelativeSource = {RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"/>
+                </b:Interaction.Behaviors>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="CategoryTemplate" DataType="dto:UiPresetCategory">
@@ -25,7 +41,7 @@
 
                 <TextBlock Grid.Row="0" Style="{StaticResource ListViewTextStyle}" FontSize="18" Text="{Binding CategoryName}"/>
 
-                <ItemsControl Grid.Row="1" Margin="0,0,0,5" ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource PresetTemplate}">
+                <ItemsControl x:Name="_presetContainer" Grid.Row="1" Margin="0,0,0,5" ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource PresetTemplate}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel IsItemsHost="True"/>
@@ -37,10 +53,12 @@
 
     </UserControl.Resources>
 
-    <Grid Margin="10">
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -48,7 +66,7 @@
             <ComboBox VerticalAlignment="Center" Width="150" ItemsSource="{Binding Libraries}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="Name"/>
         </StackPanel>
 
-        <Grid Grid.Row="1">
+        <Grid Tag="_rootContainer" Grid.Row="1" Margin="0,5,0,0">
             <ListView ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource CategoryTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <!-- Prevents mouse over highlighting of the view items -->
                 <ListView.ItemContainerStyle>
@@ -65,5 +83,55 @@
                 </ListView.ItemContainerStyle>
             </ListView>
         </Grid>
+
+        <Canvas Grid.Row="1" Margin="0,5,0,0">
+            <Grid x:Name="_activePreset" Canvas.Top="{Binding ActivePresetTop}" Canvas.Left="{Binding ActivePresetLeft}" Margin="12,8" Width="400" Height="225" 
+                  Background="Wheat" Opacity="0" Visibility="Hidden">
+                <StackPanel Orientation="Horizontal" Margin="10,15,0,0">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Left: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ActivePresetLeft}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" - Top:"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ActivePresetTop}"/>
+                </StackPanel>
+
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="MouseLeave">
+                        <b:InvokeCommandAction Command="{Binding HideActivePreset}" CommandParameter="ViewImportProgress"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </Grid>
+        </Canvas>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10,15,0,0">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Left: "/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ActivePresetLeft}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text=" - Top:"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding ActivePresetTop}"/>
+        </StackPanel>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="_normal">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_activePreset" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="_activePreset" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Hidden}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="_displayActivePreset">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="_activePreset" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_activePreset" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </UserControl>
