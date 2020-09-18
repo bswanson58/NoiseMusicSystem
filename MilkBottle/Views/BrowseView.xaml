@@ -12,11 +12,6 @@
              d:DesignHeight="250" d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Style x:Key="ListBoxNoFocus" TargetType="ListBoxItem">
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="IsHitTestVisible" Value="False"/>
-        </Style>
-
         <DataTemplate x:Key="PresetTemplate" DataType="dto:UiVisualPreset">
             <Image Height="150" Width="150" Margin="12,8" Source="{Binding PresetImage}" ToolTip="{Binding PresetName}"/>
         </DataTemplate>
@@ -54,8 +49,21 @@
         </StackPanel>
 
         <Grid Grid.Row="1">
-            <ListBox ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource CategoryTemplate}" VirtualizingPanel.ScrollUnit="Pixel"
-                     ItemContainerStyle="{StaticResource ListBoxNoFocus}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+            <ListView ItemsSource="{Binding Presets}" ItemTemplate="{StaticResource CategoryTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <!-- Prevents mouse over highlighting of the view items -->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ContentPresenter/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
         </Grid>
     </Grid>
 </UserControl>
