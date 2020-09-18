@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
@@ -18,7 +18,7 @@ namespace MilkBottle.Dto {
 
     class UiVisualPreset : PropertyChangedBase {
         private BitmapImage mImage;
-        private string      mImagePath;
+        private byte[]      mImageBits;
 
         public  Preset      Preset { get; }
 
@@ -31,16 +31,25 @@ namespace MilkBottle.Dto {
         public BitmapImage PresetImage {
             get {
                 if(( mImage == null ) &&
-                   (!String.IsNullOrWhiteSpace( mImagePath ))) {
-                    mImage = new BitmapImage( new Uri( mImagePath ));
+                   ( mImageBits != null )) {
+                    using( var stream = new MemoryStream( mImageBits )) {
+                        stream.Seek( 0, SeekOrigin.Begin );
+                        mImage = new BitmapImage();
+                        mImage.BeginInit();
+                        mImage.CacheOption = BitmapCacheOption.OnLoad;
+                        mImage.StreamSource = stream;
+                        mImage.EndInit();
+                    }
+
+                    mImageBits = null;
                 }
 
                 return mImage;
             }
         }
 
-        public void SetImage( string path ) {
-            mImagePath = path;
+        public void SetImage( byte[] bits ) {
+            mImageBits = bits;
 
             NotifyOfPropertyChange( () => PresetImage );
         }

@@ -98,7 +98,14 @@ namespace MilkBottle.ViewModels {
 
                             if((!String.IsNullOrWhiteSpace( imagePath )) && 
                                ( File.Exists( imagePath ))) {
-                                preset.SetImage( imagePath );
+                                using ( var stream = File.OpenRead( imagePath )) {
+                                    var fileBytes= new byte[stream.Length];
+
+                                    stream.Read( fileBytes, 0, fileBytes.Length );
+                                    stream.Close();
+
+                                    preset.SetImage( fileBytes );
+                                }
                             }
                         });
                     });
