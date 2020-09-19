@@ -16,6 +16,7 @@ using Q42.HueApi.Streaming.Models;
 namespace HueLighting.Models {
     class EntertainmentGroupManager : IEntertainmentGroupManager {
         private readonly IPreferences           mPreferences;
+        private readonly IBasicLog              mLog;
         private StreamingHueClient              mStreamingClient;
         private StreamingGroup                  mStreamingGroup;
         private EntertainmentLayer              mBaseLayer;
@@ -24,7 +25,8 @@ namespace HueLighting.Models {
 
         public  Group                           EntertainmentGroup { get; }
 
-        public EntertainmentGroupManager( IPreferences preferences, Group forGroup ) {
+        public EntertainmentGroupManager( IPreferences preferences, IBasicLog log, Group forGroup ) {
+            mLog = log;
             mPreferences = preferences;
             EntertainmentGroup = forGroup;
 
@@ -108,9 +110,18 @@ namespace HueLighting.Models {
         }
 
         public async Task<bool> IsStreamingActive() {
-            var bridgeInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
+            var retValue = false;
 
-            return bridgeInfo?.IsStreamingActive == true;
+            try {
+                var bridgeInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
+
+                retValue = bridgeInfo?.IsStreamingActive == true;
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "IsStreamingActive", ex );
+            }
+
+            return retValue;
         }
 
         public void Dispose() {

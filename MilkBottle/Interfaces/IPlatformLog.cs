@@ -1,12 +1,9 @@
-﻿using System;
+﻿using MilkBottle.Infrastructure.Interfaces;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace MilkBottle.Interfaces {
-    public interface IPlatformLog {
-        void	LogException( string message, Exception exception );
-        void	LogMessage( string message );
-
+    public interface IPlatformLog : IBasicLog {
         void    AddLoggingSink( ILogEventSink sink, LogEventLevel forMinimumEventLevel );
     }
 }

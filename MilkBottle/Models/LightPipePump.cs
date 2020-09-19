@@ -19,6 +19,7 @@ namespace MilkBottle.Models {
         private readonly IZoneManager           mZoneManager;
         private readonly IEventAggregator       mEventAggregator;
         private readonly IPreferences           mPreferences;
+        private readonly IBasicLog              mLog;
         private IEntertainmentGroupManager      mEntertainmentGroupManager;
         private EntertainmentGroup              mEntertainmentGroup;
         private ZoneGroup                       mZoneGroup;
@@ -29,12 +30,13 @@ namespace MilkBottle.Models {
 
         public  bool                            IsEnabled { get; private set; }
 
-        public LightPipePump( IImageProcessor imageProcessor, IHubManager hubManager, IZoneManager zoneManager, IEventAggregator eventAggregator, IPreferences preferences ) {
+        public LightPipePump( IImageProcessor imageProcessor, IHubManager hubManager, IZoneManager zoneManager, IEventAggregator eventAggregator, IPreferences preferences, IBasicLog log ) {
             mImageProcessor = imageProcessor;
             mHubManager = hubManager;
             mZoneManager = zoneManager;
             mEventAggregator = eventAggregator;
             mPreferences = preferences;
+            mLog = log;
 
             var milkPreferences = mPreferences.Load<MilkPreferences>();
 
@@ -115,12 +117,18 @@ namespace MilkBottle.Models {
 
             if( IsEnabled ) {
                 mEntertainmentGroupManager = await mHubManager.StartEntertainmentGroup();
-                mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
-                mEntertainmentGroupManager.EnableAutoUpdate();
-                mZoneGroup = mZoneManager.GetCurrentGroup();
 
-                mZoneUpdateSubscription = mImageProcessor.ZoneUpdate.Subscribe( OnZoneUpdate );
-                mEventAggregator.Subscribe( this );
+                if( mEntertainmentGroupManager != null ) {
+                    mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
+                    mEntertainmentGroupManager.EnableAutoUpdate();
+                    mZoneGroup = mZoneManager.GetCurrentGroup();
+
+                    mZoneUpdateSubscription = mImageProcessor.ZoneUpdate.Subscribe( OnZoneUpdate );
+                    mEventAggregator.Subscribe( this );
+                }
+                else {
+                    IsEnabled = false;
+                }
             }
             else {
                 mEventAggregator.Unsubscribe( this );
@@ -155,16 +163,21 @@ namespace MilkBottle.Models {
         }
 
         private async void CaptureFrame( IntPtr hWnd ) {
-            using( var bitmap = BitmapCapture.Capture( hWnd )) {
-                if( bitmap != null ) {
-                    mImageProcessor.ProcessImage( bitmap );
+            try {
+                using( var bitmap = BitmapCapture.Capture( hWnd )) {
+                    if( bitmap != null ) {
+                        mImageProcessor.ProcessImage( bitmap );
+                    }
+                }
+
+                var streamingActive = await mEntertainmentGroupManager.IsStreamingActive();
+
+                if(!streamingActive ) {
+                    RestartHue();
                 }
             }
-
-            var streamingActive = await mEntertainmentGroupManager.IsStreamingActive();
-
-            if(!streamingActive ) {
-                RestartHue();
+            catch( Exception ex ) {
+                mLog.LogException( "CaptureFrame", ex );
             }
         }
 

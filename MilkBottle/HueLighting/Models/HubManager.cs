@@ -19,15 +19,17 @@ namespace HueLighting.Models {
         private readonly IApplicationConstants  mApplicationConstants;
         private readonly IEnvironment           mEnvironment;
         private readonly IPreferences           mPreferences;
+        private readonly IBasicLog              mLog;
         private ILocalHueClient                 mClient;
         private bool                            mEmulating;
 
         public  bool                            IsInitialized => mClient != null;
 
         [UsedImplicitly]
-        public HubManager( IEnvironment environment, IPreferences preferences, IApplicationConstants constants ) {
+        public HubManager( IEnvironment environment, IPreferences preferences, IBasicLog log, IApplicationConstants constants ) {
             mEnvironment = environment;
             mPreferences = preferences;
+            mLog = log;
             mApplicationConstants = constants;
 
             mEmulating = false;
@@ -83,7 +85,9 @@ namespace HueLighting.Models {
                     }
 
                 }
-                catch( Exception ) { }
+                catch( Exception ex ) {
+                    mLog.LogException( "LocateHubs", ex );
+                }
             }
 
             return retValue;
@@ -121,12 +125,17 @@ namespace HueLighting.Models {
         public async Task<IEnumerable<Group>> GetEntertainmentGroups() {
             var retValue = default( IEnumerable<Group>);
 
-            if( mClient == null ) {
-                await InitializeConfiguredHub();
-            }
+            try {
+                if( mClient == null ) {
+                    await InitializeConfiguredHub();
+                }
 
-            if( mClient != null ) {
-                retValue = await mClient.GetEntertainmentGroups();
+                if( mClient != null ) {
+                    retValue = await mClient.GetEntertainmentGroups();
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "GetEntertainmentGroups", ex );
             }
 
             return retValue;
@@ -147,26 +156,34 @@ namespace HueLighting.Models {
                     retValue = new EntertainmentGroup( baseLayer, hubInfo?.Lights.ToList());
                 }
             }
-            catch( Exception ) { }
+            catch( Exception ex ) {
+                mLog.LogException( "GetEntertainmentGroupLayout", ex );
+            }
 
             return retValue;
         }
 
         public async Task<IEntertainmentGroupManager> StartEntertainmentGroup() {
             var retValue = default( IEntertainmentGroupManager );
-            var preferences = mPreferences.Load<HueConfiguration>();
-            var groups = await GetEntertainmentGroups();
-            var group = groups.FirstOrDefault( g => g.Id.Equals( preferences.EntertainmentGroupId ));
 
-            if( group != null ) {
-                retValue = await StartEntertainmentGroup( group );
+            try {
+                var preferences = mPreferences.Load<HueConfiguration>();
+                var groups = await GetEntertainmentGroups();
+                var group = groups.FirstOrDefault( g => g.Id.Equals( preferences.EntertainmentGroupId ));
+
+                if( group != null ) {
+                    retValue = await StartEntertainmentGroup( group );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "StartEntertainmentGroup", ex );
             }
 
             return retValue;
         }
 
         public async Task<IEntertainmentGroupManager> StartEntertainmentGroup( Group forGroup ) {
-            var retValue = new EntertainmentGroupManager( mPreferences, forGroup );
+            var retValue = new EntertainmentGroupManager( mPreferences, mLog, forGroup );
 
             await retValue.StartStreamingGroup();
 

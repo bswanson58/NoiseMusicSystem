@@ -53,6 +53,7 @@
     <Compile Include="Events\Events.cs" />
     <Compile Include="Interfaces\IApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
+    <Compile Include="Interfaces\IBasicLog.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IZoneManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

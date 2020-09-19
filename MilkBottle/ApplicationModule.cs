@@ -48,6 +48,7 @@ namespace MilkBottle {
             containerRegistry.Register<ICelestialCalculator, CelestialCalculator>();
             containerRegistry.Register<IEnvironment, OperatingEnvironment>();
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
+            containerRegistry.Register<IBasicLog, SeriLogAdapter>();
             containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
             containerRegistry.Register<IPreferences, PreferencesManager>();
 
