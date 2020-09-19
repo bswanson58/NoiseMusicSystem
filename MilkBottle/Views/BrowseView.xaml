@@ -8,6 +8,7 @@
              xmlns:dto="clr-namespace:MilkBottle.Dto"
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:BrowseViewModel, IsDesignTimeCreatable=False}"
@@ -85,7 +86,7 @@
         </Grid>
 
         <Canvas Grid.Row="1" Margin="0,5,0,0">
-            <Grid x:Name="_activePreset" Canvas.Top="{Binding ActivePresetTop}" Canvas.Left="{Binding ActivePresetLeft}" Margin="12,8" Width="400" Height="225" 
+            <Grid x:Name="_activePreset" Margin="12,8" Width="400" Height="225" 
                   Background="Wheat" Opacity="0" Visibility="Hidden">
                 <StackPanel Orientation="Horizontal" Margin="10,15,0,0">
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Left: "/>
@@ -99,6 +100,12 @@
                         <b:InvokeCommandAction Command="{Binding HideActivePreset}" CommandParameter="ViewImportProgress"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
+
+                <b:Interaction.Behaviors>
+                    <behaviors:CanvasPlacement Canvas="{Binding RelativeSource = {RelativeSource FindAncestor, AncestorType={x:Type Canvas}}}"
+                                               PlacementTop="{Binding ActivePresetTop}" PlacementLeft="{Binding ActivePresetLeft}"
+                                               PlacementXOffset="-125" PlacementYOffset="-37" ClampToCanvas="True"/>
+                </b:Interaction.Behaviors>
             </Grid>
         </Canvas>
 
