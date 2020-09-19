@@ -67,9 +67,18 @@ namespace HueLighting.Models {
         }
 
         public async Task<EntertainmentGroup> GetGroupLayout() {
-            var hubInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
+            var retValue = default( EntertainmentGroup );
+
+            try {
+                var hubInfo = await mStreamingClient.LocalHueClient.GetBridgeAsync();
                 
-            return new EntertainmentGroup( mBaseLayer, hubInfo?.Lights.ToList());
+                retValue = new EntertainmentGroup( mBaseLayer, hubInfo?.Lights.ToList());
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "GetGroupLayout", ex );
+            }
+
+            return retValue;
         }
 
         public double OverallBrightness {
