@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IO;
 using System.Windows;
+using MilkBottle.Properties;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -15,7 +16,7 @@ namespace MilkBottle.Logging {
 
             mTextFormatter.Format( logEvent, renderSpace );
 
-            MessageBox.Show( renderSpace.ToString(), "Tune Archivist Error" );
+            MessageBox.Show( renderSpace.ToString(), $"{ApplicationConstants.ApplicationName} Error" );
         }
     }
 }
