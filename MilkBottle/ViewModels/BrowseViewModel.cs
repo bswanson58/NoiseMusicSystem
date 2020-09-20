@@ -6,43 +6,101 @@ using System.Linq;
 using System.Windows.Data;
 using Caliburn.Micro;
 using MilkBottle.Dto;
+using MilkBottle.Entities;
 using MilkBottle.Interfaces;
+using MilkBottle.Types;
+using MilkBottle.Views;
 using MoreLinq;
+using Prism;
 using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class BrowseViewModel : PropertyChangeBase {
+    class BrowseViewModel : PropertyChangeBase, IActiveAware, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
         private const string					cDisplayActivePreset = "_displayActivePreset";
         private const string					cHideActivePreset = "_normal";
 
         private readonly IPresetListProvider    mListProvider;
+        private readonly IPresetProvider        mPresetProvider;
         private readonly IPlatformLog           mLog;
+        private readonly IPresetController      mPresetController;
+        private readonly IStateManager          mStateManager;
+        private readonly IEventAggregator       mEventAggregator;
+        private readonly IDialogService         mDialogService;
         private ICollectionView                 mLibrariesView;
         private PresetList                      mCurrentLibrary;
         private TaskHandler                     mImageLoaderTask;
+        private bool                            mIsActive;
+        private Preset                          mActivePreset;
 
         private readonly ObservableCollection<PresetList>   mLibraries;
 
         public  ObservableCollection<UiPresetCategory>      Presets { get; }
         public  string                                      ActivePresetState { get; private set; }
         public  DelegateCommand                             HideActivePreset { get; }
+        public  DelegateCommand                             EditTags { get; }
 
         public  double                                      ActivePresetTop { get; private set; }
         public  double                                      ActivePresetLeft { get; private set; }
+        public  string                                      ActivePresetName { get; private set; }
+        public  bool                                        HasTags => mActivePreset?.Tags.Any() ?? false;
 
-        public BrowseViewModel( IPresetListProvider listProvider, IPlatformLog log ) {
+        public  event EventHandler                          IsActiveChanged = delegate { };
+
+        public BrowseViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, IPresetController presetController, IStateManager stateManager,
+                                IEventAggregator eventAggregator, IDialogService dialogService, IPlatformLog log ) {
             mListProvider = listProvider;
+            mPresetController = presetController;
+            mPresetProvider = presetProvider;
+            mStateManager = stateManager;
+            mEventAggregator = eventAggregator;
+            mDialogService = dialogService;
             mLog = log;
 
             mLibraries = new ObservableCollection<PresetList>();
             Presets = new ObservableCollection<UiPresetCategory>();
 
             HideActivePreset = new DelegateCommand( OnHideActivePreset );
+            EditTags = new DelegateCommand( OnTagEdit );
 
             ActivePresetState = cHideActivePreset;
 
+            mPresetController.BlendPresetTransition = false;
+            mPresetController.ConfigurePresetSequencer( PresetSequence.Sequential );
+            mPresetController.ConfigurePresetTimer( PresetTimer.Infinite );
+            mStateManager.EnterState( eStateTriggers.Stop );
+
+            if( mPresetController.IsInitialized ) {
+                Initialize();
+            }
+
+            mEventAggregator.Subscribe( this );
+        }
+
+        public bool IsActive {
+            get => mIsActive;
+            set {
+                mIsActive = value;
+
+                if( mIsActive ) {
+                    LoadLibraries();
+                }
+            }
+        }
+
+        public void Handle( Events.ModeChanged args ) {
+            if( args.ToView != ShellView.Review ) {
+                mEventAggregator.Unsubscribe( this );
+            }
+        }
+
+        public void Handle( Events.InitializationComplete args ) {
+            Initialize();
+        }
+
+        private void Initialize() {
             LoadLibraries();
         }
 
@@ -68,24 +126,107 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnDisplayActivePreset( UiVisualPreset preset ) {
+            mActivePreset = preset.Preset;
+
             ActivePresetLeft = preset.Location.X;
             ActivePresetTop = preset.Location.Y;
+            ActivePresetName = Path.GetFileNameWithoutExtension( preset.Preset.Name );
             ActivePresetState = cDisplayActivePreset;
+
+            mPresetController.PlayPreset( preset.Preset );
+            mStateManager.EnterState( eStateTriggers.Run );
 
             RaisePropertyChanged( () => ActivePresetLeft );
             RaisePropertyChanged( () => ActivePresetTop );
+            RaisePropertyChanged( () => ActivePresetName );
             RaisePropertyChanged( () => ActivePresetState );
+            RaisePropertyChanged( () => HasTags );
+            RaisePropertyChanged( () => TagsTooltip );
+            RaisePropertyChanged( () => IsFavorite );
+            RaisePropertyChanged( () => DoNotPlay );
         }
 
         private void OnHideActivePreset() {
             ActivePresetState = cHideActivePreset;
 
+            mStateManager.EnterState( eStateTriggers.Stop );
+
             RaisePropertyChanged( () => ActivePresetState );
+        }
+
+        public bool IsFavorite {
+            get => mActivePreset?.IsFavorite ?? false;
+            set => OnIsFavoriteChanged( value );
+        }
+
+        private async void OnIsFavoriteChanged( bool toState ) {
+            var preset = mActivePreset?.WithFavorite( toState );
+
+            if( preset != null ) {
+                if( preset.Id.Equals( mActivePreset?.Id )) {
+                    mActivePreset = preset;
+
+                    RaisePropertyChanged( () => IsFavorite );
+                }
+
+                ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnIsFavoriteChanged.Update", ex ));
+            }
+        }
+
+        public bool DoNotPlay {
+            get => mActivePreset != null && mActivePreset.Rating == PresetRating.DoNotPlayValue;
+            set => OnDoNotPlayChanged( value );
+        }
+
+        private async void OnDoNotPlayChanged( bool toState ) {
+            var preset = mActivePreset?.WithRating( toState ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
+
+            if( preset != null ) {
+                if( preset.Id.Equals( mActivePreset?.Id )) {
+                    mActivePreset = preset;
+
+                    RaisePropertyChanged( () => DoNotPlay );
+                }
+
+                ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnDoNotPlayChanged.Update", ex ));
+            }
+        }
+
+        public string TagsTooltip => 
+            mActivePreset != null ? 
+                mActivePreset.Tags.Any() ? 
+                    String.Join( Environment.NewLine, from t in mActivePreset.Tags orderby t.Name select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
+
+        private void OnTagEdit() {
+            if( mActivePreset != null ) {
+                var parameters = new DialogParameters { { TagEditDialogModel.cPresetParameter, mActivePreset } };
+
+                mDialogService.ShowDialog( nameof( TagEditDialog ), parameters, OnTagsEdited );
+            }
+        }
+
+        private async void OnTagsEdited( IDialogResult result ) {
+            if( result.Result == ButtonResult.OK ) {
+                var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
+
+                if( preset != null ) {
+                    if( preset.Id.Equals( mActivePreset?.Id )) {
+                        mActivePreset = preset;
+
+                        RaisePropertyChanged( () => IsFavorite );
+                        RaisePropertyChanged( () => HasTags );
+                        RaisePropertyChanged( () => TagsTooltip );
+                    }
+
+                    ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnTagsEdited", ex ));
+                }
+            }
         }
 
         private void OnLibraryChanged() {
             if( mCurrentLibrary != null ) {
                 LoadPresets( mCurrentLibrary );
+                mPresetController.LoadLibrary( mCurrentLibrary );
                 LoadImages();
             }
         }
@@ -141,6 +282,10 @@ namespace MilkBottle.ViewModels {
                 },
                 () => { }, 
                 ex => { mLog.LogException( "LoadImages", ex ); });
+        }
+
+        private void LogException( string message, Exception ex ) {
+            mLog.LogException( message, ex );
         }
     }
 }

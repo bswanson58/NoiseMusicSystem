@@ -25,7 +25,6 @@ namespace MilkBottle.Dto {
         private byte[]                          mImageBits;
 
         public  Preset                          Preset { get; }
-        public  string                          PresetName => Preset.Name;
         public  DelegateCommand                 DisplayActivePreset { get; }
 
         public  Point                           Location { get; set; }
