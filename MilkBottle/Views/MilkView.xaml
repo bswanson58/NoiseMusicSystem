@@ -4,9 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <WindowsFormsHost Initialized="WindowsFormsHost_Initialized" SizeChanged="OnSizeChanged"/>
+    <WindowsFormsHost Initialized="WindowsFormsHost_Initialized" SizeChanged="OnSizeChanged">
+        <b:Interaction.Behaviors>
+            <behaviors:FormsHostEventRouting RouteMouseWheelEvents="True"/>
+        </b:Interaction.Behaviors>
+    </WindowsFormsHost>
 </UserControl>

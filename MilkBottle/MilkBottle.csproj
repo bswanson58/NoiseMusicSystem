@@ -230,7 +230,9 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Behaviors\CanvasPlacement.cs" />
     <Compile Include="Behaviors\DelayedMouseHide.cs" />
+    <Compile Include="Behaviors\FormsHostEventRouting.cs" />
     <Compile Include="Behaviors\MetroWindowTitleColor.cs" />
+    <Compile Include="Behaviors\RedirectRoutedEventBehavior.cs" />
     <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
     <Compile Include="Database\DatabaseProvider.cs" />

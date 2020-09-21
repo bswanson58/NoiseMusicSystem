@@ -162,6 +162,9 @@
                     <b:EventTrigger EventName="MouseLeave">
                         <b:InvokeCommandAction Command="{Binding HideActivePreset}"/>
                     </b:EventTrigger>
+                    <b:EventTrigger EventName="MouseWheel">
+                        <b:InvokeCommandAction Command="{Binding HideActivePreset}"/>
+                    </b:EventTrigger>
                 </b:Interaction.Triggers>
             </Border>
         </Canvas>
