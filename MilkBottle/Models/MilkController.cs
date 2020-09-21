@@ -18,17 +18,19 @@ namespace MilkBottle.Models {
         private readonly DispatcherTimer            mRenderTimer;
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
+        private readonly IBasicLog                  mLog;
         private GLControl                           mGlControl;
         private Size                                mLastWindowSize;
 
         public  bool                                IsRunning { get; private set; }
 
-        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEnvironment environment, IEventAggregator eventAggregator ) {
+        public MilkController( ProjectMWrapper projectM, IAudioManager audioManager, IPreferences preferences, IEnvironment environment, IEventAggregator eventAggregator, IBasicLog log ) {
             mAudio = audioManager;
             mEventAggregator = eventAggregator;
             mPreferences = preferences;
             mEnvironment = environment;
             mProjectM = projectM;
+            mLog = log;
 
             mLastWindowSize = Size.Empty;
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Send );
@@ -120,12 +122,17 @@ namespace MilkBottle.Models {
         }
 
         private void UpdateVisualization() {
-            mProjectM.renderFrame();
+            try {
+                mProjectM.renderFrame();
 
-            if( mGlControl != null ) {
-                mGlControl.SwapBuffers();
+                if( mGlControl != null ) {
+                    mGlControl.SwapBuffers();
 
-                mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+                    mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "UpdateVisualization", ex );
             }
         }
 
