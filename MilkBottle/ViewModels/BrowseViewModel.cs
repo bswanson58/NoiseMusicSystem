@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows.Data;
 using Caliburn.Micro;
 using MilkBottle.Dto;
@@ -18,22 +20,25 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace MilkBottle.ViewModels {
-    class BrowseViewModel : PropertyChangeBase, IActiveAware, IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
-        private const string					cDisplayActivePreset = "_displayActivePreset";
-        private const string					cHideActivePreset = "_normal";
+    class BrowseViewModel : PropertyChangeBase, IActiveAware, IDisposable,
+                            IHandle<Events.ModeChanged>, IHandle<Events.InitializationComplete> {
+        private const string					    cDisplayActivePreset = "_displayActivePreset";
+        private const string					    cHideActivePreset = "_normal";
 
-        private readonly IPresetListProvider    mListProvider;
-        private readonly IPresetProvider        mPresetProvider;
-        private readonly IPlatformLog           mLog;
-        private readonly IPresetController      mPresetController;
-        private readonly IStateManager          mStateManager;
-        private readonly IEventAggregator       mEventAggregator;
-        private readonly IDialogService         mDialogService;
-        private ICollectionView                 mLibrariesView;
-        private PresetList                      mCurrentLibrary;
-        private TaskHandler                     mImageLoaderTask;
-        private bool                            mIsActive;
-        private Preset                          mActivePreset;
+        private readonly IPresetListProvider        mListProvider;
+        private readonly IPresetProvider            mPresetProvider;
+        private readonly IPlatformLog               mLog;
+        private readonly IPresetController          mPresetController;
+        private readonly IStateManager              mStateManager;
+        private readonly IEventAggregator           mEventAggregator;
+        private readonly IDialogService             mDialogService;
+        private Subject<UiVisualPreset>             mPresetDisplaySubject;
+        private IDisposable                         mPresetDisplaySubscription;
+        private ICollectionView                     mLibrariesView;
+        private PresetList                          mCurrentLibrary;
+        private TaskHandler                         mImageLoaderTask;
+        private bool                                mIsActive;
+        private Preset                              mActivePreset;
 
         private readonly ObservableCollection<PresetList>   mLibraries;
 
@@ -66,6 +71,9 @@ namespace MilkBottle.ViewModels {
             EditTags = new DelegateCommand( OnTagEdit );
 
             ActivePresetState = cHideActivePreset;
+
+            mPresetDisplaySubject = new Subject<UiVisualPreset>();
+            mPresetDisplaySubscription =  mPresetDisplaySubject.Delay( TimeSpan.FromMilliseconds( 500 )).Subscribe( DisplayActivePreset );
 
             mPresetController.BlendPresetTransition = false;
             mPresetController.ConfigurePresetSequencer( PresetSequence.Sequential );
@@ -126,6 +134,10 @@ namespace MilkBottle.ViewModels {
         }
 
         private void OnDisplayActivePreset( UiVisualPreset preset ) {
+            mPresetDisplaySubject.OnNext( preset );
+        }
+
+        private void DisplayActivePreset( UiVisualPreset preset ) {
             mActivePreset = preset.Preset;
 
             ActivePresetLeft = preset.Location.X;
@@ -286,6 +298,16 @@ namespace MilkBottle.ViewModels {
 
         private void LogException( string message, Exception ex ) {
             mLog.LogException( message, ex );
+        }
+
+        public void Dispose() {
+            mPresetDisplaySubject?.Dispose();
+            mPresetDisplaySubject = null;
+
+            mPresetDisplaySubscription?.Dispose();
+            mPresetDisplaySubscription = null;
+
+            mEventAggregator.Unsubscribe( this );
         }
     }
 }
