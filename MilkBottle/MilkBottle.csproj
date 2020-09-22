@@ -282,6 +282,7 @@
     <Compile Include="Interfaces\IMoodProvider.cs" />
     <Compile Include="Interfaces\IPairingManager.cs" />
     <Compile Include="Interfaces\IPresetController.cs" />
+    <Compile Include="Interfaces\IPresetImageHandler.cs" />
     <Compile Include="Interfaces\IPresetLibraryProvider.cs" />
     <Compile Include="Interfaces\IPresetProvider.cs" />
     <Compile Include="Interfaces\IPresetSequencer.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="Models\MilkController.cs" />
     <Compile Include="Models\PairingManager.cs" />
     <Compile Include="Models\PresetController.cs" />
+    <Compile Include="Models\PresetImageHandler.cs" />
     <Compile Include="Models\PresetListProvider.cs" />
     <Compile Include="Models\PresetSequencers\PresetSequencerFactory.cs" />
     <Compile Include="Models\PresetSequencers\RandomSequencer.cs" />

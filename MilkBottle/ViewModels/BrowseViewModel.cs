@@ -29,6 +29,7 @@ namespace MilkBottle.ViewModels {
         private readonly IPresetProvider            mPresetProvider;
         private readonly IPlatformLog               mLog;
         private readonly IPresetController          mPresetController;
+        private readonly IPresetImageHandler        mImageHandler;
         private readonly IStateManager              mStateManager;
         private readonly IEventAggregator           mEventAggregator;
         private readonly IDialogService             mDialogService;
@@ -55,10 +56,11 @@ namespace MilkBottle.ViewModels {
         public  event EventHandler                          IsActiveChanged = delegate { };
 
         public BrowseViewModel( IPresetListProvider listProvider, IPresetProvider presetProvider, IPresetController presetController, IStateManager stateManager,
-                                IEventAggregator eventAggregator, IDialogService dialogService, IPlatformLog log ) {
+                                IPresetImageHandler imageHandler, IEventAggregator eventAggregator, IDialogService dialogService, IPlatformLog log ) {
             mListProvider = listProvider;
             mPresetController = presetController;
             mPresetProvider = presetProvider;
+            mImageHandler = imageHandler;
             mStateManager = stateManager;
             mEventAggregator = eventAggregator;
             mDialogService = dialogService;
@@ -274,36 +276,9 @@ namespace MilkBottle.ViewModels {
 
         private void LoadImages() {
             ImageLoaderTask.StartTask( () => {
-                    var defaultImage = default( byte[]);
-                    var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-
-                    using( var stream = assembly.GetManifestResourceStream( assembly.GetName().Name + ".Resources.Default Preset Image.png" )) {
-                        if( stream != null ) {
-                            defaultImage = new byte[stream.Length];
-
-                            stream.Read( defaultImage, 0, defaultImage.Length);
-                        }
-                    }
-
                     Presets.ForEach( category => {
                         category.Presets.ForEach( preset => {
-                            var imagePath = Path.ChangeExtension( preset.Preset.Location, ".jpg" );
-
-                            if(!String.IsNullOrWhiteSpace( imagePath )) {
-                                if( File.Exists( imagePath )) {
-                                    using ( var stream = File.OpenRead( imagePath )) {
-                                        var fileBytes= new byte[stream.Length];
-
-                                        stream.Read( fileBytes, 0, fileBytes.Length );
-                                        stream.Close();
-
-                                        preset.SetImage( fileBytes );
-                                    }
-                                }
-                                else {
-                                    preset.SetImage( defaultImage );
-                                }
-                            }
+                            preset.SetImage( mImageHandler.GetPresetImage( preset.Preset ));
                         });
                     });
                 },
