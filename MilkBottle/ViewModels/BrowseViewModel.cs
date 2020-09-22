@@ -274,19 +274,34 @@ namespace MilkBottle.ViewModels {
 
         private void LoadImages() {
             ImageLoaderTask.StartTask( () => {
+                    var defaultImage = default( byte[]);
+                    var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+
+                    using( var stream = assembly.GetManifestResourceStream( assembly.GetName().Name + ".Resources.Default Preset Image.png" )) {
+                        if( stream != null ) {
+                            defaultImage = new byte[stream.Length];
+
+                            stream.Read( defaultImage, 0, defaultImage.Length);
+                        }
+                    }
+
                     Presets.ForEach( category => {
                         category.Presets.ForEach( preset => {
                             var imagePath = Path.ChangeExtension( preset.Preset.Location, ".jpg" );
 
-                            if((!String.IsNullOrWhiteSpace( imagePath )) && 
-                               ( File.Exists( imagePath ))) {
-                                using ( var stream = File.OpenRead( imagePath )) {
-                                    var fileBytes= new byte[stream.Length];
+                            if(!String.IsNullOrWhiteSpace( imagePath )) {
+                                if( File.Exists( imagePath )) {
+                                    using ( var stream = File.OpenRead( imagePath )) {
+                                        var fileBytes= new byte[stream.Length];
 
-                                    stream.Read( fileBytes, 0, fileBytes.Length );
-                                    stream.Close();
+                                        stream.Read( fileBytes, 0, fileBytes.Length );
+                                        stream.Close();
 
-                                    preset.SetImage( fileBytes );
+                                        preset.SetImage( fileBytes );
+                                    }
+                                }
+                                else {
+                                    preset.SetImage( defaultImage );
                                 }
                             }
                         });
