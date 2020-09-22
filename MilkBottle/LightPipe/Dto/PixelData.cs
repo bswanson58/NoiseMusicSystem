@@ -6,10 +6,10 @@ namespace LightPipe.Dto {
     public class PixelData {
         public  int     Row { get; }
         public  int     Column { get; }
-        public  byte    Blue { get; }
-        public  byte    Green { get; }
-        public  byte    Red { get; }
-        public  byte    Alpha { get; }
+        public  byte    Blue { get; private set; }
+        public  byte    Green { get; private set; }
+        public  byte    Red { get; private set; }
+        public  byte    Alpha { get; private set; }
         public  string  ZoneId { get; private set; }
         public  Color   ColorBin { get; private set; }
         
@@ -45,6 +45,13 @@ namespace LightPipe.Dto {
 
         public void SetBin( Color bin ) {
             ColorBin = bin;
+        }
+
+        public void SetColorData( Color color ) {
+            Red = color.R;
+            Green = color.G;
+            Blue = color.B;
+            Alpha = color.A;
         }
     }
 }

@@ -153,6 +153,7 @@
     <Compile Include="Dto\UiZoneEdit.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="LightPipeModule.cs" />
+    <Compile Include="Models\HslColor.cs" />
     <Compile Include="Models\ImageProcessor.cs" />
     <Compile Include="Interfaces\IImageProcessor.cs" />
     <Compile Include="Dto\PixelData.cs" />

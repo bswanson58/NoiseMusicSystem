@@ -112,6 +112,16 @@ namespace MilkBottle.Models {
             set => mImageProcessor.BlacknessLimit = value;
         }
 
+        public bool BoostLuminosity {
+            get => mImageProcessor.BoostLuminosity;
+            set => mImageProcessor.BoostLuminosity = value;
+        }
+
+        public bool BoostSaturation {
+            get => mImageProcessor.BoostSaturation;
+            set => mImageProcessor.BoostSaturation = value;
+        }
+
         private async Task<bool> SetLightPipeState( bool state ) {
             IsEnabled = state;
 

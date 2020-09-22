@@ -165,6 +165,16 @@ namespace MilkBottle.ViewModels {
             }
         }
 
+        public bool BoostLuminosity {
+            get => mLightPipePump.BoostLuminosity;
+            set {
+                mLightPipePump.BoostLuminosity = value;
+                mLightPipePump.BoostSaturation = value;
+
+                RaisePropertyChanged( () => BoostLuminosity );
+            }
+        }
+
         public int ZoneColorLimit {
             get => mLightPipePump.ZoneColorsLimit;
             set {

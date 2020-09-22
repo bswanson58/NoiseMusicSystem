@@ -38,6 +38,8 @@ namespace LightPipe.Models {
         private bool                            mZoneChanged;
         private int                             mBlacknessLimit;
         private int                             mWhitenessLimit;
+        private bool                            mBoostLuminosity;
+        private bool                            mBoostSaturation;
 
         public  IObservable<ZoneSummary>        ZoneUpdate => mZoneUpdated;
 
@@ -53,6 +55,8 @@ namespace LightPipe.Models {
 
             mBlacknessLimit = lightPipePreferences.BlacknessLimit;
             mWhitenessLimit = lightPipePreferences.WhitenessLimit;
+            mBoostLuminosity = lightPipePreferences.BoostLuminosity;
+            mBoostSaturation = lightPipePreferences.BoostSaturation;
 
             mZoneUpdated = new Subject<ZoneSummary>();
             mEventAggregator.Subscribe( this );
@@ -74,11 +78,37 @@ namespace LightPipe.Models {
         public int WhitenessLimit {
             get => mWhitenessLimit;
             set {
-                mWhitenessLimit = Math.Min( Math.Max( value, BlacknessLimit ), 255 );
+                mWhitenessLimit = Math.Min( Math.Max( value, BlacknessLimit ), 100 );
 
                 var preferences = mPreferences.Load<LightPipeConfiguration>();
 
                 preferences.WhitenessLimit = mWhitenessLimit;
+
+                mPreferences.Save( preferences );
+            }
+        }
+
+        public bool BoostLuminosity {
+            get => mBoostLuminosity;
+            set {
+                mBoostLuminosity = value;
+
+                var preferences = mPreferences.Load<LightPipeConfiguration>();
+
+                preferences.BoostLuminosity = mBoostLuminosity;
+
+                mPreferences.Save( preferences );
+            }
+        }
+
+        public bool BoostSaturation {
+            get => mBoostSaturation;
+            set {
+                mBoostSaturation = value;
+
+                var preferences = mPreferences.Load<LightPipeConfiguration>();
+
+                preferences.BoostSaturation = mBoostSaturation;
 
                 mPreferences.Save( preferences );
             }
@@ -117,7 +147,7 @@ namespace LightPipe.Models {
                     var zoneList = 
                         from pixel in zonePair.Value
                         where IsUsableColor( pixel ) 
-                        select AssignZoneAndBin( pixel, zonePair.Key );
+                        select AssignZoneAndBin( AdjustColorData( pixel ), zonePair.Key );
 
                     UpdateZoneQueue( ProcessZone( zonePair.Key, zoneList ));
                 });
@@ -156,10 +186,29 @@ namespace LightPipe.Models {
             }
         }
 
+        private PixelData AdjustColorData( PixelData colorData ) {
+            var retValue = colorData;
+            var hslColor = new HslColor( colorData.Alpha, colorData.Red, colorData.Green, colorData.Blue );
+
+            if(( mBoostLuminosity ) &&
+               ( hslColor.L < 0.8 )) {
+                hslColor = hslColor.Lighten( 1.0 + ( 1.0 - ( hslColor.L * 1.25 )) * 0.75 );
+            }
+
+            if(( mBoostSaturation ) &&
+               ( hslColor.S < 0.8 )) {
+                hslColor = hslColor.Saturate( 1.0 + ( 1.0 - (hslColor.S * 1.25 )) * 0.75 );
+            }
+
+            colorData.SetColorData( hslColor.ToRgb());
+
+            return retValue;
+        }
+
         private bool IsUsableColor( PixelData colorData ) {
-            return (( colorData.Red > mBlacknessLimit && colorData.Red < mWhitenessLimit ) ||
-                    ( colorData.Green > mBlacknessLimit && colorData.Green < mWhitenessLimit ) ||
-                    ( colorData.Blue > mBlacknessLimit && colorData.Blue < mWhitenessLimit ));
+            var hslColor = new HslColor( colorData.Alpha, colorData.Red, colorData.Green, colorData.Blue );
+
+            return hslColor.L > ( mBlacknessLimit / 100.0 ) && hslColor.L < ( mWhitenessLimit / 100.0 );
         }
 
         private PixelData AssignZoneAndBin( PixelData pixelData, string zoneId ) {

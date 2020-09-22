@@ -48,6 +48,10 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="BoostLuminosityTemplate">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Boost S/L" ToolTip="Boost Low End Saturation And Luminosity"/>
+        </DataTemplate>
+
         <Style x:Key="ControllerButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="25"/>
@@ -97,13 +101,20 @@
                 <TextBlock VerticalAlignment="Center" Margin="1,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="Luminosity Limits:"/>
                 <TextBlock VerticalAlignment="Center" Margin="3,0,0,0" MinWidth="20" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding BlacknessLimit}"/>
                 <mah:RangeSlider Width="120" Tag="collapsed" Margin="5,0,0,0" Style="{DynamicResource MahApps.Styles.RangeSlider}" VerticalAlignment="Center"
-                                 Maximum="255" Minimum="0" UpperValue="{Binding WhitenessLimit}" LowerValue="{Binding BlacknessLimit}" AutoToolTipPlacement="TopLeft"
+                                 Maximum="100" Minimum="0" UpperValue="{Binding WhitenessLimit}" LowerValue="{Binding BlacknessLimit}" AutoToolTipPlacement="TopLeft"
                                  RenderTransformOrigin="0.5,0.5" IsMoveToPointEnabled="True" ToolTip="Luminosity Limits">
                     <mah:RangeSlider.LayoutTransform>
                         <ScaleTransform ScaleX="0.0" ScaleY="1.0"/>
                     </mah:RangeSlider.LayoutTransform>
                 </mah:RangeSlider>
                 <TextBlock VerticalAlignment="Center" Margin="3,0,0,0" MinWidth="20" TextAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="{Binding WhitenessLimit}"/>
+
+                <!-- Boost Luminosity -->
+                <CheckBox Tag="collapsed" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="{Binding BoostLuminosity}" ContentTemplate="{StaticResource BoostLuminosityTemplate}">
+                    <CheckBox.LayoutTransform>
+                        <ScaleTransform ScaleX="0.0" ScaleY="1.0"/>
+                    </CheckBox.LayoutTransform>
+                </CheckBox>
 
                 <ContentPresenter ContentTemplate="{StaticResource HorizontalSeparator}" Opacity="0.5"/>
 

@@ -11,6 +11,8 @@ namespace MilkBottle.Interfaces {
         double      OverallBrightness { get; set; }
         int         BlacknessLimit { get; set; }
         int         WhitenessLimit { get; set; }
+        bool        BoostLuminosity { get; set; }
+        bool        BoostSaturation { get; set; }
         int         ZoneColorsLimit { get; set; }
     }
 }

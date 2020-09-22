@@ -9,6 +9,8 @@ namespace LightPipe.Interfaces {
         long                        ElapsedTime { get; }
         int                         BlacknessLimit { get; set; }
         int                         WhitenessLimit { get; set; }
+        bool                        BoostLuminosity { get; set; }
+        bool                        BoostSaturation { get; set; }
 
         IObservable<ZoneSummary>    ZoneUpdate { get; }
     }
