@@ -145,6 +145,10 @@
 
                     <views:MilkView Grid.Row="1"/>
 
+                    <StackPanel Grid.Row="2" Margin="5,0" Orientation="Horizontal">
+                        <Button Content="Capture" Command="{Binding CapturePresetImage}"/>
+                    </StackPanel>
+
                     <StackPanel Grid.Row="2" Margin="5,0" HorizontalAlignment="Right" Orientation="Horizontal">
                         <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FavoriteTemplate}"/>
                         <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DoNotPlayTemplate}"/>

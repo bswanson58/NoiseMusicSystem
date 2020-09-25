@@ -39,7 +39,7 @@ namespace MilkBottle.ViewModels {
         private PresetList                          mCurrentLibrary;
         private TaskHandler                         mImageLoaderTask;
         private bool                                mIsActive;
-        private Preset                              mActivePreset;
+        private UiVisualPreset                      mActivePreset;
 
         private readonly ObservableCollection<PresetList>   mLibraries;
 
@@ -47,11 +47,12 @@ namespace MilkBottle.ViewModels {
         public  string                                      ActivePresetState { get; private set; }
         public  DelegateCommand                             HideActivePreset { get; }
         public  DelegateCommand                             EditTags { get; }
+        public  DelegateCommand                             CapturePresetImage { get; }
 
         public  double                                      ActivePresetTop { get; private set; }
         public  double                                      ActivePresetLeft { get; private set; }
         public  string                                      ActivePresetName { get; private set; }
-        public  bool                                        HasTags => mActivePreset?.Tags.Any() ?? false;
+        public  bool                                        HasTags => mActivePreset?.Preset.Tags.Any() ?? false;
 
         public  event EventHandler                          IsActiveChanged = delegate { };
 
@@ -71,6 +72,7 @@ namespace MilkBottle.ViewModels {
 
             HideActivePreset = new DelegateCommand( OnHideActivePreset );
             EditTags = new DelegateCommand( OnTagEdit );
+            CapturePresetImage = new DelegateCommand( OnCapturePresetImage );
 
             ActivePresetState = cHideActivePreset;
 
@@ -140,7 +142,7 @@ namespace MilkBottle.ViewModels {
         }
 
         private void DisplayActivePreset( UiVisualPreset preset ) {
-            mActivePreset = preset.Preset;
+            mActivePreset = preset;
 
             ActivePresetLeft = preset.Location.X;
             ActivePresetTop = preset.Location.Y;
@@ -169,16 +171,16 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool IsFavorite {
-            get => mActivePreset?.IsFavorite ?? false;
+            get => mActivePreset?.Preset.IsFavorite ?? false;
             set => OnIsFavoriteChanged( value );
         }
 
         private async void OnIsFavoriteChanged( bool toState ) {
-            var preset = mActivePreset?.WithFavorite( toState );
+            var preset = mActivePreset?.Preset.WithFavorite( toState );
 
             if( preset != null ) {
-                if( preset.Id.Equals( mActivePreset?.Id )) {
-                    mActivePreset = preset;
+                if( preset.Id.Equals( mActivePreset?.Preset.Id )) {
+//                    mActivePreset = preset;
 
                     RaisePropertyChanged( () => IsFavorite );
                 }
@@ -188,16 +190,16 @@ namespace MilkBottle.ViewModels {
         }
 
         public bool DoNotPlay {
-            get => mActivePreset != null && mActivePreset.Rating == PresetRating.DoNotPlayValue;
+            get => mActivePreset != null && mActivePreset?.Preset.Rating == PresetRating.DoNotPlayValue;
             set => OnDoNotPlayChanged( value );
         }
 
         private async void OnDoNotPlayChanged( bool toState ) {
-            var preset = mActivePreset?.WithRating( toState ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
+            var preset = mActivePreset?.Preset.WithRating( toState ? PresetRating.DoNotPlayValue : PresetRating.UnRatedValue );
 
             if( preset != null ) {
-                if( preset.Id.Equals( mActivePreset?.Id )) {
-                    mActivePreset = preset;
+                if( preset.Id.Equals( mActivePreset?.Preset.Id )) {
+//                    mActivePreset = preset;
 
                     RaisePropertyChanged( () => DoNotPlay );
                 }
@@ -208,8 +210,8 @@ namespace MilkBottle.ViewModels {
 
         public string TagsTooltip => 
             mActivePreset != null ? 
-                mActivePreset.Tags.Any() ? 
-                    String.Join( Environment.NewLine, from t in mActivePreset.Tags orderby t.Name select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
+                mActivePreset.Preset.Tags.Any() ? 
+                    String.Join( Environment.NewLine, from t in mActivePreset.Preset.Tags orderby t.Name select t.Name ) : "Set Preset Tags" : "Set Preset Tags";
 
         private void OnTagEdit() {
             if( mActivePreset != null ) {
@@ -224,8 +226,8 @@ namespace MilkBottle.ViewModels {
                 var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
 
                 if( preset != null ) {
-                    if( preset.Id.Equals( mActivePreset?.Id )) {
-                        mActivePreset = preset;
+                    if( preset.Id.Equals( mActivePreset?.Preset.Id )) {
+//                        mActivePreset = preset;
 
                         RaisePropertyChanged( () => IsFavorite );
                         RaisePropertyChanged( () => HasTags );
@@ -235,6 +237,10 @@ namespace MilkBottle.ViewModels {
                     ( await mPresetProvider.UpdateAll( preset )).IfLeft( ex => LogException( "OnTagsEdited", ex ));
                 }
             }
+        }
+
+        private async void OnCapturePresetImage() {
+            mActivePreset?.SetImage( await mImageHandler.CapturePresetImage( mActivePreset.Preset ));
         }
 
         private void OnLibraryChanged() {

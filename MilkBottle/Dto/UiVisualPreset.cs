@@ -58,6 +58,7 @@ namespace MilkBottle.Dto {
 
         public void SetImage( byte[] bits ) {
             mImageBits = bits;
+            mImage = null;
 
             NotifyOfPropertyChange( () => PresetImage );
         }
