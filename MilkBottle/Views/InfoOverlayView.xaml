@@ -7,13 +7,75 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:controls="clr-namespace:MilkBottle.Controls"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:InfoOverlayViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <Storyboard x:Key="SlideRight">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Top)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.4"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Left)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-0.7"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:8" Value="1.3"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Foreground).(SolidColorBrush.Color)">
+                <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Thistle"/>
+            </ColorAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:8" Value="{x:Static Visibility.Collapsed}"/>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.5"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:3" Value="0.5"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:8" Value="0.0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="FontSize">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="128"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="DropFromTop">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Top)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-0.2"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:8" Value="1.0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Left)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.05"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Foreground).(SolidColorBrush.Color)">
+                <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Coral"/>
+            </ColorAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:8" Value="{x:Static Visibility.Collapsed}"/>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.5"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:3" Value="0.5"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:8" Value="0.0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="FontSize">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:8" Value="300"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
         <Storyboard x:Key="ExpandFromCenter">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Top)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:8" Value="-0.2"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Left)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:8" Value="-1.2"/>
+            </DoubleAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Foreground).(SolidColorBrush.Color)">
                 <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Red"/>
             </ColorAnimationUsingKeyFrames>
@@ -22,30 +84,33 @@
                 <DiscreteObjectKeyFrame KeyTime="0:0:8" Value="{x:Static Visibility.Collapsed}"/>
             </ObjectAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.5"/>
                 <DiscreteDoubleKeyFrame KeyTime="0:0:3" Value="0.5"/>
                 <LinearDoubleKeyFrame KeyTime="0:0:8" Value="0.0"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="FontSize">
-                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="4"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="4"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:8" Value="400"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
         <x:Array x:Key="Storyboards" Type="{x:Type Storyboard}">
+            <StaticResource ResourceKey="SlideRight"/>
+            <StaticResource ResourceKey="DropFromTop"/>
             <StaticResource ResourceKey="ExpandFromCenter"/>
         </x:Array>
     </UserControl.Resources>
 
-    <Canvas>
-        <Button Margin="10" Content="Animate" Command="{Binding Animate}"/>
+    <controls:CustomPlacementCanvas>
+        <Button Canvas.Top="0.01" Canvas.Left="0.01" Content="Animate" Command="{Binding Animate}"/>
 
-        <TextBlock x:Name="_artistName" Canvas.Top="100" Canvas.Left="200" Foreground="White" Text="{Binding ArtistName}" Visibility="Collapsed"/>
-        <TextBlock x:Name="_albumName" Canvas.Top="100" Canvas.Left="200" Foreground="White" Text="{Binding AlbumName}" Visibility="Collapsed"/>
-        <TextBlock x:Name="_trackName" Canvas.Top="100" Canvas.Left="200" Foreground="White" Text="{Binding TrackName}" Visibility="Collapsed"/>
+        <TextBlock x:Name="_artistName" Canvas.Top="0" Canvas.Left="0" Foreground="White" Text="{Binding ArtistName}" Visibility="Collapsed"/>
+        <TextBlock x:Name="_albumName" Canvas.Top="0" Canvas.Left="0" Foreground="White" Text="{Binding AlbumName}" Visibility="Collapsed"/>
+        <TextBlock x:Name="_trackName" Canvas.Top="0" Canvas.Left="0" Foreground="White" Text="{Binding TrackName}" Visibility="Collapsed"/>
 
         <b:Interaction.Behaviors>
             <behaviors:StoryboardManager Storyboards="{StaticResource Storyboards}" TargetElementName="{Binding TargetElement}" TriggerAnimation="{Binding AnimationTrigger}"/>
         </b:Interaction.Behaviors>
-</Canvas>
+</controls:CustomPlacementCanvas>
 </UserControl>

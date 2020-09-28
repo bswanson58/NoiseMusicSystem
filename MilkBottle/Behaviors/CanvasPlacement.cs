@@ -3,6 +3,9 @@ using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 
 namespace MilkBottle.Behaviors {
+    //<i:Interaction.Behaviors>
+    //    <behaviors:CanvasPlacement Canvas={{Binding RelativeSource = {RelativeSource FindAncestor, AncestorType={x:Type Canvas}}}/>
+    //</i:Interaction.Behaviors>
     public class CanvasPlacement : Behavior<FrameworkElement>{
         public static readonly DependencyProperty CanvasProperty = DependencyProperty.Register(
             "Canvas",

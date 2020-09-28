@@ -33,7 +33,7 @@ namespace MilkBottle.ViewModels {
             Animate = new DelegateCommand( OnAnimate );
 
             mArtistSubject = new Subject<string>();
-            mArtistSubscription = mArtistSubject.Delay( TimeSpan.FromMilliseconds( 2000 )).ObserveOnDispatcher().Subscribe( OnArtist );
+            mArtistSubscription = mArtistSubject.Delay( TimeSpan.FromMilliseconds( 500 )).ObserveOnDispatcher().Subscribe( OnArtist );
             mAlbumSubject = new Subject<string>();
             mAlbumSubscription = mAlbumSubject.Delay( TimeSpan.FromMilliseconds( 7000 )).ObserveOnDispatcher().Subscribe( OnAlbum );
             mTrackSubject = new Subject<string>();

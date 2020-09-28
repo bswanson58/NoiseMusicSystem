@@ -236,6 +236,7 @@
     <Compile Include="Behaviors\StoryboardManager.cs" />
     <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
+    <Compile Include="Controls\CustomPlacementCanvas.cs" />
     <Compile Include="Database\DatabaseProvider.cs" />
     <Compile Include="Database\EntityCollection.cs" />
     <Compile Include="Database\EntityProvider.cs" />
@@ -674,5 +675,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Default Preset Image.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
