@@ -24,7 +24,8 @@ namespace MilkBottle.Dto {
         private BitmapImage                     mImage;
         private byte[]                          mImageBits;
 
-        public  Preset                          Preset { get; }
+        public  Preset                          Preset { get; private set; }
+        public  string                          PresetName => Preset?.Name;
         public  DelegateCommand                 DisplayActivePreset { get; }
 
         public  Point                           Location { get; set; }
@@ -34,6 +35,13 @@ namespace MilkBottle.Dto {
             mOnDisplayPreset = onDisplayPreset;
 
             DisplayActivePreset = new DelegateCommand( OnDisplayActivePreset );
+        }
+
+        public void UpdatePreset( Preset preset ) {
+            Preset = preset;
+
+            NotifyOfPropertyChange( () => Preset );
+            NotifyOfPropertyChange( () => PresetName );
         }
 
         public BitmapImage PresetImage {

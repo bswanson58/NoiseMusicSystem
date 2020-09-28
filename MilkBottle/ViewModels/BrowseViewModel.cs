@@ -146,7 +146,7 @@ namespace MilkBottle.ViewModels {
 
             ActivePresetLeft = preset.Location.X;
             ActivePresetTop = preset.Location.Y;
-            ActivePresetName = Path.GetFileNameWithoutExtension( preset.Preset.Name );
+            ActivePresetName = Path.GetFileNameWithoutExtension( preset.PresetName );
             ActivePresetState = cDisplayActivePreset;
 
             mPresetController.PlayPreset( preset.Preset );
@@ -180,7 +180,7 @@ namespace MilkBottle.ViewModels {
 
             if( preset != null ) {
                 if( preset.Id.Equals( mActivePreset?.Preset.Id )) {
-//                    mActivePreset = preset;
+                    mActivePreset.UpdatePreset( preset );
 
                     RaisePropertyChanged( () => IsFavorite );
                 }
@@ -199,7 +199,7 @@ namespace MilkBottle.ViewModels {
 
             if( preset != null ) {
                 if( preset.Id.Equals( mActivePreset?.Preset.Id )) {
-//                    mActivePreset = preset;
+                    mActivePreset.UpdatePreset( preset );
 
                     RaisePropertyChanged( () => DoNotPlay );
                 }
@@ -225,9 +225,10 @@ namespace MilkBottle.ViewModels {
             if( result.Result == ButtonResult.OK ) {
                 var preset = result.Parameters.GetValue<Preset>( TagEditDialogModel.cPresetParameter );
 
-                if( preset != null ) {
+                if(( preset != null ) &&
+                   ( mActivePreset != null )) {
                     if( preset.Id.Equals( mActivePreset?.Preset.Id )) {
-//                        mActivePreset = preset;
+                        mActivePreset.UpdatePreset( preset );
 
                         RaisePropertyChanged( () => IsFavorite );
                         RaisePropertyChanged( () => HasTags );
