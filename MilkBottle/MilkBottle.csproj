@@ -233,6 +233,7 @@
     <Compile Include="Behaviors\FormsHostEventRouting.cs" />
     <Compile Include="Behaviors\MetroWindowTitleColor.cs" />
     <Compile Include="Behaviors\RedirectRoutedEventBehavior.cs" />
+    <Compile Include="Behaviors\StoryboardManager.cs" />
     <Compile Include="Behaviors\TextBoxHelper.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
     <Compile Include="Database\DatabaseProvider.cs" />
@@ -341,6 +342,7 @@
     <Compile Include="ViewModels\BrowseViewModel.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
+    <Compile Include="ViewModels\InfoOverlayViewModel.cs" />
     <Compile Include="ViewModels\LightPipeControlViewModel.cs" />
     <Compile Include="ViewModels\LightPipeDialogModel.cs" />
     <Compile Include="ViewModels\LightPipePairingViewModel.cs" />
@@ -372,6 +374,9 @@
     </Compile>
     <Compile Include="Views\ConfirmDeleteDialog.xaml.cs">
       <DependentUpon>ConfirmDeleteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InfoOverlayView.xaml.cs">
+      <DependentUpon>InfoOverlayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LightPipeControlView.xaml.cs">
       <DependentUpon>LightPipeControlView.xaml</DependentUpon>
@@ -470,6 +475,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ConfirmDeleteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InfoOverlayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -641,6 +650,10 @@
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
       <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
       <Name>ReusableBits</Name>
+    </ProjectReference>
+    <ProjectReference Include="AirSpace\AirSpace.csproj">
+      <Project>{80a10b86-6615-4440-93b0-c943df5b8693}</Project>
+      <Name>AirSpace</Name>
     </ProjectReference>
     <ProjectReference Include="HueLighting\HueLighting.csproj">
       <Project>{811d89d6-43db-464f-bef9-621ea6632e05}</Project>

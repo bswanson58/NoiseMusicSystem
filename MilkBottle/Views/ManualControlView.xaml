@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MilkBottle.Views"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:interop="clr-namespace:AirSpace.Interop;assembly=AirSpace"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -18,7 +19,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <local:MilkView Grid.Row="0"/>
+        <interop:AirspaceDecorator Grid.Row="0" AirspaceMode="Redirect" Background="Black" IsInputRedirectionEnabled="False" IsOutputRedirectionEnabled="True">
+            <local:MilkView/>
+        </interop:AirspaceDecorator>
+        <local:InfoOverlayView Grid.Row="0"/>
 
         <local:PresetControlView Grid.Row="1"
                                  Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DisplayController, 
