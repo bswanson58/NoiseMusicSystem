@@ -228,12 +228,13 @@ namespace MilkBottle.Controls {
 
             if( mFormattedText == null ) {
                 mFormattedText = new FormattedText(
-                    (Text == null) ? String.Empty : Text,
+                    Text ?? String.Empty,
                     CultureInfo.CurrentUICulture,
                     FlowDirection,
                     new Typeface( FontFamily, FontStyle, FontWeight, FontStretches.Normal ),
                     FontSize,
-                    Brushes.Black );
+                    Brushes.Black, 
+                    VisualTreeHelper.GetDpi( this ).PixelsPerDip );
             }
 
             // constrain the formatted text according to the available size
@@ -283,7 +284,14 @@ namespace MilkBottle.Controls {
                 return;
             }
 
-            mFormattedText = new FormattedText( Text ?? "", CultureInfo.CurrentUICulture, FlowDirection, new Typeface( FontFamily, FontStyle, FontWeight, FontStretch ), FontSize, Brushes.Black );
+            mFormattedText = new FormattedText( 
+                Text ?? String.Empty, 
+                CultureInfo.CurrentUICulture,
+                FlowDirection, 
+                new Typeface( FontFamily, FontStyle, FontWeight, FontStretch ),
+                FontSize,
+                Brushes.Black,
+                VisualTreeHelper.GetDpi( this ).PixelsPerDip );
 
             UpdateFormattedText();
         }
