@@ -37,6 +37,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\MilkBottle.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\AirSpace.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\BouncyCastle.Crypto.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.Platform.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
