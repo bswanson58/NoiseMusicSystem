@@ -214,7 +214,7 @@ namespace MilkBottle.ViewModels {
         }
 
         public void OnLightPipe() {
-            DisplayLightPipeController = true;
+            DisplayLightPipeController = !DisplayLightPipeController;
 
             RaisePropertyChanged( () => DisplayLightPipeController );
         }
