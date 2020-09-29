@@ -16,14 +16,14 @@
     </UserControl.Resources>
 
     <Grid>
-        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/>
+<!--        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/> -->
 
         <StackPanel x:Name="_trackInformation" Opacity="0" Margin="80" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
                 <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" Text="{Binding ArtistName}" Opacity="0.8"/>
             </Viewbox>
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" Text="{Binding TrackName}" Opacity="0.8"/>
+                <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" FontWeight="Bold" Text="{Binding TrackName}" Opacity="0.8"/>
             </Viewbox>
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
                 <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" Text="{Binding AlbumName}" Opacity="0.8"/>
