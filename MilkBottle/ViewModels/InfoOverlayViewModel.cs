@@ -6,11 +6,9 @@ using ReusableBits.Platform;
 
 namespace MilkBottle.ViewModels {
     class InfoOverlayViewModel : PropertyChangeBase, IDisposable {
-        private const string                cInactiveState = "_inactiveState";
-        private const string                cDisplayTrackInformation = "_displayTrackInformation";
         private IDisposable                 mPlaybackSubscription;
 
-        public  string                      VisualState { get; private set; }
+        public  string                      TrackInformationTrigger { get; private set; }
 
         public  string                      ArtistName { get; private set; }
         public  string                      AlbumName { get; private set; }
@@ -24,7 +22,6 @@ namespace MilkBottle.ViewModels {
             ArtistName = "The Rolling Stones"; //String.Empty;
             AlbumName = "Sticky Fingers"; // String.Empty;
             TrackName = "You Can't Always Get What You Want"; // String.Empty;
-            VisualState = cInactiveState;
 
             mPlaybackSubscription = ipcManager.OnPlaybackEvent.Subscribe( OnPlaybackEvent );
         }
@@ -48,9 +45,9 @@ namespace MilkBottle.ViewModels {
         }
 
         private void TriggerDisplay() {
-            VisualState = cDisplayTrackInformation + '|' + DateTime.Now.Millisecond;
+            TrackInformationTrigger = DateTime.Now.Millisecond.ToString();
 
-            RaisePropertyChanged( () => VisualState );
+            RaisePropertyChanged( () => TrackInformationTrigger );
         }
 
         public void Dispose() {

@@ -13,10 +13,16 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <Storyboard x:Key="TrackInformationStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_trackInformation" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <LinearDoubleKeyFrame KeyTime="0:0:5" Value="1.0"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:15" Value="0.0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </UserControl.Resources>
 
     <Grid>
-<!--        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/> -->
+        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/>
 
         <StackPanel x:Name="_trackInformation" Opacity="0" Margin="80" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
@@ -29,24 +35,9 @@
                 <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" Text="{Binding AlbumName}" Opacity="0.8"/>
             </Viewbox>
         </StackPanel>
-
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="_inactiveState">
-                </VisualState>
-                <VisualState x:Name="_displayTrackInformation">
-                    <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_trackInformation" Storyboard.TargetProperty="(UIElement.Opacity)">
-                            <LinearDoubleKeyFrame KeyTime="0:0:5" Value="1.0"/>
-                            <LinearDoubleKeyFrame KeyTime="0:0:15" Value="0.0"/>
-                        </DoubleAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
     </Grid>
 
     <b:Interaction.Behaviors>
-        <behaviors:VisualStateController VisualState="{Binding VisualState}" DefaultState="_inactiveState"/>
+        <behaviors:StoryboardManager Storyboard="{StaticResource TrackInformationStoryboard}" TriggerAnimation="{Binding TrackInformationTrigger}"/>
     </b:Interaction.Behaviors>
 </UserControl>
