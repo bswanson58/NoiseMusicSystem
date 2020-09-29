@@ -7,6 +7,7 @@
              xmlns:viewModels="clr-namespace:MilkBottle.ViewModels"
              xmlns:behaviors="clr-namespace:MilkBottle.Behaviors"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:controls="clr-namespace:MilkBottle.Controls"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:InfoOverlayViewModel, IsDesignTimeCreatable=False}"
@@ -15,24 +16,25 @@
     <UserControl.Resources>
         <Storyboard x:Key="TrackInformationStoryboard">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_trackInformation" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <LinearDoubleKeyFrame KeyTime="0:0:5" Value="1.0"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:3" Value="1.0"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:10" Value="1.0"/>
                 <LinearDoubleKeyFrame KeyTime="0:0:15" Value="0.0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
 
     <Grid>
-        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/>
+<!--        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/> -->
 
         <StackPanel x:Name="_trackInformation" Opacity="0" Margin="80" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" Text="{Binding ArtistName}" Opacity="0.8"/>
+                <controls:OutlinedTextBlock HorizontalAlignment="Center" FontSize="72" Stroke="#A0000000" StrokeThickness="1.5" Fill="#C0808080" Text="{Binding ArtistName}"/>
             </Viewbox>
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" FontWeight="Bold" Text="{Binding TrackName}" Opacity="0.8"/>
+                <controls:OutlinedTextBlock HorizontalAlignment="Center" FontSize="72" Stroke="#A0000000" StrokeThickness="1.5" Fill="#A0808080" FontWeight="Bold" Text="{Binding TrackName}"/>
             </Viewbox>
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <TextBlock HorizontalAlignment="Center" FontSize="72" Foreground="Gray" Text="{Binding AlbumName}" Opacity="0.8"/>
+                <controls:OutlinedTextBlock HorizontalAlignment="Center" FontSize="72" Stroke="#A0000000" StrokeThickness="1.5" Fill="#C0808080" Text="{Binding AlbumName}"/>
             </Viewbox>
         </StackPanel>
     </Grid>

@@ -238,6 +238,7 @@
     <Compile Include="Behaviors\VisualStateController.cs" />
     <Compile Include="Behaviors\WindowsFormsHostMouseRouter.cs" />
     <Compile Include="Controls\CustomPlacementCanvas.cs" />
+    <Compile Include="Controls\OutlinedTextBlock.cs" />
     <Compile Include="Database\DatabaseProvider.cs" />
     <Compile Include="Database\EntityCollection.cs" />
     <Compile Include="Database\EntityProvider.cs" />
