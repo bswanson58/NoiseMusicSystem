@@ -19,6 +19,7 @@ namespace MilkBottle.Models {
         private readonly ProjectMWrapper            mProjectM;
         private readonly IAudioManager              mAudio;
         private readonly IBasicLog                  mLog;
+        private readonly object                     mRenderingLock;
         private GLControl                           mGlControl;
         private Size                                mLastWindowSize;
 
@@ -36,6 +37,7 @@ namespace MilkBottle.Models {
             mRenderTimer = new DispatcherTimer( DispatcherPriority.Send );
             mRenderTimer.Tick += OnTimer;
             IsRunning = false;
+            mRenderingLock = new object();
 
             mEventAggregator.Subscribe( this );
         }
@@ -70,12 +72,15 @@ namespace MilkBottle.Models {
             nativeSettings.DataFolder = mEnvironment.MilkTextureFolder();
             nativeSettings.PresetFolder = mEnvironment.MilkTextureFolder();
 
-            if( mProjectM.isInitialized()) {
-                nativeSettings.WindowHeight = mProjectM.getWindowHeight();
-                nativeSettings.WindowWidth = mProjectM.getWindowWidth();
+            lock( mRenderingLock ) {
+                if( mProjectM.isInitialized()) {
+                    nativeSettings.WindowHeight = mProjectM.getWindowHeight();
+                    nativeSettings.WindowWidth = mProjectM.getWindowWidth();
+                }
+
+                mProjectM.initialize( nativeSettings );
             }
 
-            mProjectM.initialize( nativeSettings );
             UpdateWindowSize( mLastWindowSize );
 //            mProjectM.showFrameRate( true );
 
@@ -111,9 +116,11 @@ namespace MilkBottle.Models {
         }
 
         private void UpdateWindowSize( Size size ) {
-            if(( mProjectM.isInitialized()) &&
-               (!size.IsEmpty )) {
-                mProjectM.updateWindowSize( Scaler.Current.ScaleWidth((int)size.Width ), Scaler.Current.ScaleHeight((int)size.Height ));
+            lock( mRenderingLock ) {
+                if(( mProjectM.isInitialized()) &&
+                   (!size.IsEmpty )) {
+                    mProjectM.updateWindowSize( Scaler.Current.ScaleWidth((int)size.Width ), Scaler.Current.ScaleHeight((int)size.Height ));
+                }
             }
         }
 
@@ -122,24 +129,28 @@ namespace MilkBottle.Models {
         }
 
         private void UpdateVisualization() {
-            try {
-                mProjectM.renderFrame();
+            lock( mRenderingLock ) {
+                try {
+                    mProjectM.renderFrame();
 
-                if( mGlControl != null ) {
-                    mGlControl.SwapBuffers();
+                    if( mGlControl != null ) {
+                        mGlControl.SwapBuffers();
 
-                    mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+                        mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+                    }
                 }
-            }
-            catch( Exception ex ) {
-                mLog.LogException( "UpdateVisualization", ex );
+                catch( Exception ex ) {
+                    mLog.LogException( "UpdateVisualization", ex );
+                }
             }
         }
 
         private void OnAudioData( byte[] audioData, int samples, int channels ) {
-            unsafe {
-                fixed( byte * ptr = audioData ) {
-                    mProjectM.addPCMfloat( ptr, samples, channels );
+            lock( mRenderingLock ) {
+                unsafe {
+                    fixed( byte * ptr = audioData ) {
+                        mProjectM.addPCMfloat( ptr, samples, channels );
+                    }
                 }
             }
         }
