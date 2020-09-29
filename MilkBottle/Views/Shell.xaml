@@ -16,6 +16,7 @@
                  ResizeMode="CanResizeWithGrip"
                  IgnoreTaskbarOnMaximize="True"
                  Title="Milk Bottle"
+                 Topmost="{Binding IsTopmostWindow}"
                  mc:Ignorable="d" 
                  d:DataContext="{d:DesignInstance viewModels:ShellViewModel, IsDesignTimeCreatable=False}">
 
@@ -27,6 +28,17 @@
         <Style x:Key="WindowButtonStyle" TargetType="{x:Type mah:WindowButtonCommands}" BasedOn="{StaticResource {x:Type mah:WindowButtonCommands}}">
             <Setter Property="Opacity" Value="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
         </Style>
+
+        <DataTemplate x:Key="TopmostWindowTemplate">
+            <ContentControl x:Name="_contentControl" Content="{StaticResource Path_Topmost}"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsTopmostWindow}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
 
         <DataTemplate x:Key="CompanionAppTemplate" DataType="dto:UiCompanionApp">
             <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
@@ -100,6 +112,9 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
+
+            <Button Command="{Binding ToggleTopmostWindow}" ContentTemplate="{StaticResource TopmostWindowTemplate}" Padding="7" ToolTip="Set MilkBottle As The Top Window"
+                    Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
 

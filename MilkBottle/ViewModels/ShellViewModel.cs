@@ -42,6 +42,7 @@ namespace MilkBottle.ViewModels {
         public  DelegateCommand                 DisplayReviewer { get; }
         public  DelegateCommand                 DisplaySyncView { get; }
         public  DelegateCommand                 DisplayBrowseView { get; }
+        public  DelegateCommand                 ToggleTopmostWindow { get; }
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications { get; }
         public  bool                            HaveCompanionApplications => CompanionApplications.Any();
@@ -49,6 +50,8 @@ namespace MilkBottle.ViewModels {
         public  bool                            DisplayStatus { get; private set; }
         public  bool                            DisplayController { get; private set; }
         public  bool                            DisplayLightPipeController { get; private set; }
+
+        public  bool                            IsTopmostWindow { get; private set; }
 
         public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager,
                                IEventAggregator eventAggregator, IApplicationConstants applicationConstants ) {
@@ -64,6 +67,7 @@ namespace MilkBottle.ViewModels {
             DisplayReviewer = new DelegateCommand( OnDisplayReviewer );
             DisplaySyncView = new DelegateCommand( OnDisplaySyncView );
             DisplayBrowseView = new DelegateCommand( OnDisplayBrowseView );
+            ToggleTopmostWindow = new DelegateCommand( OnToggleTopmost );
             CompanionApplications = new ObservableCollection<UiCompanionApp>();
 
             mNotifyIcon = new NotifyIcon { BalloonTipTitle = applicationConstants.ApplicationName, Text = applicationConstants.ApplicationName }; 
@@ -79,6 +83,8 @@ namespace MilkBottle.ViewModels {
             ShellViewDisplayed = ShellView.Manual;
 
             DisplayLightPipeController = false;
+
+            IsTopmostWindow = false;
 
             mCompanionAppsSubscription = mIpcManager.CompanionAppsUpdate.Subscribe( OnCompanionAppsUpdate );
             mActivationSubscription = mIpcManager.OnActivationRequest.Subscribe( OnActivationRequest );
@@ -211,6 +217,12 @@ namespace MilkBottle.ViewModels {
             if( result.Result == ButtonResult.OK ) {
                 mEventAggregator.PublishOnUIThread( new Events.MilkConfigurationUpdated());
             }
+        }
+
+        private void OnToggleTopmost() {
+            IsTopmostWindow = !IsTopmostWindow;
+
+            RaisePropertyChanged( () => IsTopmostWindow );
         }
 
         public void OnLightPipe() {
