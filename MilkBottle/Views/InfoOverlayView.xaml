@@ -21,20 +21,27 @@
                 <LinearDoubleKeyFrame KeyTime="0:0:15" Value="0.0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+
+        <Style x:Key="OverlayTextStyle" TargetType="controls:OutlinedTextBlock">
+            <Setter Property="FontSize" Value="72"/>
+            <Setter Property="Stroke" Value="#A0000000"/>
+            <Setter Property="StrokeThickness" Value="1.5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
-<!--        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/> -->
+        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/>
 
         <StackPanel x:Name="_trackInformation" Opacity="0" Margin="80" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <controls:OutlinedTextBlock HorizontalAlignment="Center" FontSize="72" Stroke="#A0000000" StrokeThickness="1.5" Fill="#C0808080" Text="{Binding ArtistName}"/>
+                <controls:OutlinedTextBlock Style="{StaticResource OverlayTextStyle}" Fill="#C0808080" Text="{Binding ArtistName}"/>
             </Viewbox>
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <controls:OutlinedTextBlock HorizontalAlignment="Center" FontSize="72" Stroke="#A0000000" StrokeThickness="1.5" Fill="#A0808080" FontWeight="Bold" Text="{Binding TrackName}"/>
+                <controls:OutlinedTextBlock Style="{StaticResource OverlayTextStyle}" Fill="#A0808080" FontSize="96" FontWeight="Bold" Text="{Binding TrackName}"/>
             </Viewbox>
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
-                <controls:OutlinedTextBlock HorizontalAlignment="Center" FontSize="72" Stroke="#A0000000" StrokeThickness="1.5" Fill="#C0808080" Text="{Binding AlbumName}"/>
+                <controls:OutlinedTextBlock Style="{StaticResource OverlayTextStyle}" Fill="#C0808080" Text="{Binding AlbumName}"/>
             </Viewbox>
         </StackPanel>
     </Grid>
