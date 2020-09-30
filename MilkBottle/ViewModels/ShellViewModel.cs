@@ -52,6 +52,10 @@ namespace MilkBottle.ViewModels {
         public  bool                            DisplayLightPipeController { get; private set; }
 
         public  bool                            IsTopmostWindow { get; private set; }
+        public  bool                            IsDisplayingManualController { get; private set; }
+        public  bool                            IsDisplayingReviewer { get; private set; }
+        public  bool                            IsDisplayingSync { get; private set; }
+        public  bool                            IsDisplayingBrowser { get; private set; }
 
         public ShellViewModel( IStateManager stateManager, IPreferences preferences, IDialogService dialogService, IIpcManager ipcManager,
                                IEventAggregator eventAggregator, IApplicationConstants applicationConstants ) {
@@ -80,9 +84,11 @@ namespace MilkBottle.ViewModels {
 
             DisplayStatus = true;
             DisplayController = true;
-            ShellViewDisplayed = ShellView.Manual;
-
             DisplayLightPipeController = false;
+
+            SwitchView( ShellView.Manual );
+            IsDisplayingManualController = true;
+            RaisePropertyChanged( () => IsDisplayingManualController );
 
             IsTopmostWindow = false;
 
@@ -119,6 +125,8 @@ namespace MilkBottle.ViewModels {
             mShell.Closing += OnShellClosing;
 
             SwitchView( ShellView.Manual );
+            IsDisplayingManualController = true;
+            RaisePropertyChanged( () => IsDisplayingManualController );
         }
 
         private void OnShellStateChanged( object sender, EventArgs args ) {
@@ -239,18 +247,30 @@ namespace MilkBottle.ViewModels {
 
         private void OnDisplayManualController() {
             SwitchView( ShellView.Manual );
+
+            IsDisplayingManualController = true;
+            RaisePropertyChanged( () => IsDisplayingManualController );
         }
 
         private void OnDisplayReviewer() {
             SwitchView( ShellView.Review );
+
+            IsDisplayingReviewer = true;
+            RaisePropertyChanged( () => IsDisplayingReviewer );
         }
 
         private void OnDisplaySyncView() {
             SwitchView( ShellView.Sync );
+
+            IsDisplayingSync = true;
+            RaisePropertyChanged( () => IsDisplayingSync );
         }
 
         private void OnDisplayBrowseView() {
             SwitchView( ShellView.Browse );
+
+            IsDisplayingBrowser = true;
+            RaisePropertyChanged( () => IsDisplayingBrowser );
         }
 
         private void SwitchView( ShellView toView ) {
@@ -261,6 +281,15 @@ namespace MilkBottle.ViewModels {
                 RaisePropertyChanged( () => ShellViewDisplayed );
                 mEventAggregator.PublishOnUIThread( new Events.ModeChanged( toView ));
             }
+
+            IsDisplayingBrowser = false;
+            IsDisplayingManualController = false;
+            IsDisplayingReviewer = false;
+            IsDisplayingSync = false;
+            RaisePropertyChanged( () => IsDisplayingBrowser );
+            RaisePropertyChanged( () => IsDisplayingManualController );
+            RaisePropertyChanged( () => IsDisplayingReviewer );
+            RaisePropertyChanged( () => IsDisplayingSync );
         }
     } 
 }

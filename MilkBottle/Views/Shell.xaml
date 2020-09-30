@@ -40,6 +40,50 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
+        <DataTemplate x:Key="DisplayRevelTemplate">
+            <TextBlock x:Name="_contentControl" Text="revel"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsDisplayingManualController}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DisplaySyncTemplate">
+            <TextBlock x:Name="_contentControl" Text="sync"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsDisplayingSync}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DisplayReviewTemplate">
+            <TextBlock x:Name="_contentControl" Text="review"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsDisplayingReviewer}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DisplayBrowserTemplate">
+            <TextBlock x:Name="_contentControl" Text="browse"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsDisplayingBrowser}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
         <DataTemplate x:Key="CompanionAppTemplate" DataType="dto:UiCompanionApp">
             <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
         </DataTemplate>
@@ -89,13 +133,13 @@
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <Button Command="{Binding DisplayBrowseView}" Content="browse"
+            <Button Command="{Binding DisplayBrowseView}" ContentTemplate="{StaticResource DisplayBrowserTemplate}"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
-            <Button Command="{Binding DisplaySyncView}" Content="sync"
+            <Button Command="{Binding DisplaySyncView}" ContentTemplate="{StaticResource DisplaySyncTemplate}"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
-            <Button Command="{Binding DisplayReviewer}" Content="review"
+            <Button Command="{Binding DisplayReviewer}" ContentTemplate="{StaticResource DisplayReviewTemplate}"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
-            <Button Command="{Binding DisplayManualController}" Content="revel"
+            <Button Command="{Binding DisplayManualController}" ContentTemplate="{StaticResource DisplayRevelTemplate}"
                     Opacity="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.DisplayStatus, Converter={StaticResource OpacityConverter}}"/>
 
             <Button Command="{Binding LightPipe}" Content="{StaticResource Path_LightPipe}" Padding="8" ToolTip="LightPipe"
