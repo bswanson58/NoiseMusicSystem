@@ -126,17 +126,24 @@ namespace MilkBottle.Models {
             IsEnabled = state;
 
             if( IsEnabled ) {
-                mEntertainmentGroupManager = await mHubManager.StartEntertainmentGroup();
+                try {
+                    mEntertainmentGroupManager = await mHubManager.StartEntertainmentGroup();
 
-                if( mEntertainmentGroupManager != null ) {
-                    mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
-                    mEntertainmentGroupManager.EnableAutoUpdate();
-                    mZoneGroup = mZoneManager.GetCurrentGroup();
+                    if( mEntertainmentGroupManager != null ) {
+                        mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
+                        mEntertainmentGroupManager.EnableAutoUpdate();
+                        mZoneGroup = mZoneManager.GetCurrentGroup();
 
-                    mZoneUpdateSubscription = mImageProcessor.ZoneUpdate.Subscribe( OnZoneUpdate );
-                    mEventAggregator.Subscribe( this );
+                        mZoneUpdateSubscription = mImageProcessor.ZoneUpdate.Subscribe( OnZoneUpdate );
+                        mEventAggregator.Subscribe( this );
+                    }
+                    else {
+                        IsEnabled = false;
+                    }
                 }
-                else {
+                catch( Exception ex ) {
+                    mLog.LogException( "SetLightPipeState:true", ex );
+
                     IsEnabled = false;
                 }
             }
