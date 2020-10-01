@@ -31,7 +31,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/>
+<!--        <Button Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Animate" Command="{Binding Animate}"/> -->
 
         <StackPanel x:Name="_trackInformation" Opacity="0" Margin="80" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
             <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
