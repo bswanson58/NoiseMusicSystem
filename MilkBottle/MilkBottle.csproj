@@ -300,6 +300,7 @@
     <Compile Include="Interfaces\IStateManager.cs" />
     <Compile Include="Interfaces\ISyncManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />
+    <Compile Include="Interfaces\IZoneUpdater.cs" />
     <Compile Include="Logging\MessageBoxSink.cs" />
     <Compile Include="Models\AudioManager.cs" />
     <Compile Include="Models\DatabaseBuilder.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="Models\StateManager.cs" />
     <Compile Include="Models\Sunset\CelestialCalculator.cs" />
     <Compile Include="Models\SyncManager.cs" />
+    <Compile Include="Models\ZoneUpdater.cs" />
     <Compile Include="Platform\ApplicationConstants.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Platform\StringEx.cs" />

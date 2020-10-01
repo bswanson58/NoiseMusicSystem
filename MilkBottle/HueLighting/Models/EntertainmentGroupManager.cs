@@ -29,10 +29,6 @@ namespace HueLighting.Models {
             mLog = log;
             mPreferences = preferences;
             EntertainmentGroup = forGroup;
-
-            var huePreferences = mPreferences.Load<HueConfiguration>();
-
-            mBrightness = huePreferences.OverallBrightness;
         }
 
         public async Task<bool> StartStreamingGroup() {
@@ -83,15 +79,7 @@ namespace HueLighting.Models {
 
         public double OverallBrightness {
             get => mBrightness;
-            set {
-                mBrightness = Math.Min( 1.0, Math.Max( 0.0, value ));
-
-                var preferences = mPreferences.Load<HueConfiguration>();
-
-                preferences.OverallBrightness = mBrightness;
-
-                mPreferences.Save( preferences );
-            }
+            set => mBrightness = Math.Min( 1.0, Math.Max( 0.0, value ));
         }
 
         public void SetLightColor( string lightId, Color toColor ) {

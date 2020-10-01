@@ -1,47 +1,48 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Concurrent;
+using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using HueLighting.Dto;
-using HueLighting.Interfaces;
 using LightPipe.Dto;
 using LightPipe.Interfaces;
 using LightPipe.Utility;
 using MilkBottle.Dto;
-using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 
 namespace MilkBottle.Models {
-    class LightPipePump : ILightPipePump, IHandle<LightPipe.Events.FrameRendered> {
-        private readonly IImageProcessor        mImageProcessor;
-        private readonly IHubManager            mHubManager;
-        private readonly IZoneManager           mZoneManager;
-        private readonly IEventAggregator       mEventAggregator;
-        private readonly IPreferences           mPreferences;
-        private readonly IBasicLog              mLog;
-        private IEntertainmentGroupManager      mEntertainmentGroupManager;
-        private EntertainmentGroup              mEntertainmentGroup;
-        private ZoneGroup                       mZoneGroup;
-        private int                             mCaptureFrequency;
-        private int                             mZoneColorsLimit;
-        private DateTime                        mLastCaptureTime;
-        private IDisposable                     mZoneUpdateSubscription;
+    internal class LightPipePump : ILightPipePump, IHandle<LightPipe.Events.FrameRendered> {
+        private readonly IImageProcessor            mImageProcessor;
+        private readonly IZoneUpdater               mZoneUpdater;
+        private readonly IEventAggregator           mEventAggregator;
+        private readonly IPreferences               mPreferences;
+        private readonly IBasicLog                  mLog;
+        private CancellationTokenSource             mCancellationTokenSource;
+        private BlockingCollection<Bitmap>          mCaptureQueue;
+        private BlockingCollection<ZoneSummary>     mSummaryQueue;
+        private Task                                mCaptureTask;
+        private Task                                mSummaryTask;
+        private int                                 mCaptureFrequency;
+        private int                                 mZoneColorsLimit;
+        private DateTime                            mLastCaptureTime;
+        private IDisposable                         mZoneUpdateSubscription;
 
-        public  bool                            IsEnabled { get; private set; }
+        public  bool                                IsEnabled { get; private set; }
 
-        public LightPipePump( IImageProcessor imageProcessor, IHubManager hubManager, IZoneManager zoneManager, IEventAggregator eventAggregator, IPreferences preferences, IBasicLog log ) {
+        public LightPipePump( IImageProcessor imageProcessor, IZoneUpdater zoneUpdater,
+                              IEventAggregator eventAggregator, IPreferences preferences, IBasicLog log ) {
             mImageProcessor = imageProcessor;
-            mHubManager = hubManager;
-            mZoneManager = zoneManager;
+            mZoneUpdater = zoneUpdater;
             mEventAggregator = eventAggregator;
             mPreferences = preferences;
             mLog = log;
 
             var milkPreferences = mPreferences.Load<MilkPreferences>();
 
-            mCaptureFrequency = milkPreferences.LightPipeCaptureFrequency;
-            mZoneColorsLimit = milkPreferences.ZoneColorsLimit;
+            CaptureFrequency = milkPreferences.LightPipeCaptureFrequency;
+            ZoneColorsLimit = milkPreferences.ZoneColorsLimit;
+            OverallBrightness = milkPreferences.OverallBrightness;
         }
 
         public async Task<bool> EnableLightPipe( bool state, bool startLightPipeIfDesired ) {
@@ -60,19 +61,15 @@ namespace MilkBottle.Models {
         }
 
         public double OverallBrightness {
-            get {
-                var retValue = 0.0;
-
-                if( mEntertainmentGroupManager != null ) {
-                    retValue = mEntertainmentGroupManager.OverallBrightness;
-                }
-
-                return retValue;
-            } 
+            get => mZoneUpdater.OverallLightBrightness;
             set {
-                if( mEntertainmentGroupManager != null ) {
-                    mEntertainmentGroupManager.OverallBrightness = value;
-                }
+                mZoneUpdater.OverallLightBrightness = value;
+
+                var preferences = mPreferences.Load<MilkPreferences>();
+
+                preferences.OverallBrightness = value;
+
+                mPreferences.Save( preferences );
             }
         }
 
@@ -80,6 +77,7 @@ namespace MilkBottle.Models {
             get => mCaptureFrequency;
             set {
                 mCaptureFrequency = Math.Min( 1000, Math.Max( 30, value ));
+                mZoneUpdater.CaptureFrequency = mCaptureFrequency;
 
                 var preferences = mPreferences.Load<MilkPreferences>();
 
@@ -93,6 +91,7 @@ namespace MilkBottle.Models {
             get => mZoneColorsLimit;
             set {
                 mZoneColorsLimit = Math.Min( Math.Max( value, 1 ), 10 );
+                mZoneUpdater.ZoneColorsLimit = mZoneColorsLimit;
 
                 var preferences = mPreferences.Load<MilkPreferences>();
 
@@ -127,12 +126,13 @@ namespace MilkBottle.Models {
 
             if( IsEnabled ) {
                 try {
-                    mEntertainmentGroupManager = await mHubManager.StartEntertainmentGroup();
+                    if( await mZoneUpdater.Start()) {
+                        mCaptureQueue = new BlockingCollection<Bitmap>( 10 );
+                        mSummaryQueue = new BlockingCollection<ZoneSummary>( 30 );
 
-                    if( mEntertainmentGroupManager != null ) {
-                        mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
-                        mEntertainmentGroupManager.EnableAutoUpdate();
-                        mZoneGroup = mZoneManager.GetCurrentGroup();
+                        mCancellationTokenSource = new CancellationTokenSource();
+                        mCaptureTask = Task.Run( () => CaptureConsumer( mCancellationTokenSource.Token ), mCancellationTokenSource.Token );
+                        mSummaryTask = Task.Run( () => SummaryConsumer( mCancellationTokenSource.Token ), mCancellationTokenSource.Token );
 
                         mZoneUpdateSubscription = mImageProcessor.ZoneUpdate.Subscribe( OnZoneUpdate );
                         mEventAggregator.Subscribe( this );
@@ -148,25 +148,23 @@ namespace MilkBottle.Models {
                 }
             }
             else {
+                mCaptureQueue?.CompleteAdding();
+                mSummaryQueue?.CompleteAdding();
+                mCancellationTokenSource?.Cancel();
+
+                mZoneUpdater.Stop();
                 mEventAggregator.Unsubscribe( this );
+
+                mCaptureTask?.Wait( 200 );
+                mSummaryTask?.Wait( 200 );
+                mCaptureTask = null;
+                mSummaryTask = null;
 
                 mZoneUpdateSubscription?.Dispose();
                 mZoneUpdateSubscription = null;
-
-                mEntertainmentGroupManager?.Dispose();
-                mEntertainmentGroupManager = null;
-                mEntertainmentGroup = null;
-                mZoneGroup = null;
             }
 
             return IsEnabled;
-        }
-
-        private async void RestartHue() {
-            if( IsEnabled ) {
-                await SetLightPipeState( false );
-                await SetLightPipeState( true );
-            }
         }
 
         public void Handle( LightPipe.Events.FrameRendered args ) {
@@ -179,51 +177,66 @@ namespace MilkBottle.Models {
             }
         }
 
-        private async void CaptureFrame( IntPtr hWnd ) {
+        private void CaptureFrame( IntPtr hWnd ) {
             try {
-                using( var bitmap = BitmapCapture.Capture( hWnd )) {
-                    if( bitmap != null ) {
-                        mImageProcessor.ProcessImage( bitmap );
-                    }
-                }
-
-                var streamingActive = await mEntertainmentGroupManager.IsStreamingActive();
-
-                if(!streamingActive ) {
-                    RestartHue();
+                if(!mCaptureQueue.IsAddingCompleted ) {
+                    mCaptureQueue.TryAdd( BitmapCapture.Capture( hWnd ));
                 }
             }
+            catch( OperationCanceledException ) { }
             catch( Exception ex ) {
                 mLog.LogException( "CaptureFrame", ex );
             }
         }
 
-        private void OnZoneUpdate( ZoneSummary zone ) {
-            var zoneGroup = mZoneGroup?.Zones.FirstOrDefault( z => z.ZoneName.Equals( zone.ZoneId ));
+        private void CaptureConsumer( CancellationToken cancelToken ) {
+            while(!mCaptureQueue.IsCompleted ) {
+                try {
+                    using( var image = mCaptureQueue.Take( cancelToken )) {
+                        if( cancelToken.IsCancellationRequested ) {
+                            break;
+                        }
 
-            if( zoneGroup != null ) {
-                var lightGroup = mEntertainmentGroup.GetLights( zoneGroup.LightLocation );
-
-                if( lightGroup != null ) {
-                    var colors = zone.FindMeanColors( Math.Min( lightGroup.Lights.Count, mZoneColorsLimit ));
-
-                    if( colors.Any()) {
-                        var colorIndex = 0;
-
-                        foreach( var light in lightGroup.Lights ) {
-                            if( mCaptureFrequency > 100 ) {
-                                mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex], TimeSpan.FromMilliseconds( mCaptureFrequency * 0.75 ));
-                            }
-                            else {
-                                mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex]);
-                            }
-
-                            colorIndex++;
-                            if( colorIndex >= colors.Count ) {
-                                colorIndex = 0;
-                            }
+                        if( image != null ) {
+                            mImageProcessor.ProcessImage( image );
                         }
                     }
+                }
+                catch( OperationCanceledException ) {
+                    break;
+                }
+            }
+        }
+
+        private void OnZoneUpdate( ZoneSummary zone ) {
+            try {
+                if(( zone != null ) &&
+                   (!mSummaryQueue.IsAddingCompleted )) {
+                    mSummaryQueue.TryAdd( zone );
+                }
+            }
+            catch( OperationCanceledException ) { }
+        }
+
+        private async void SummaryConsumer( CancellationToken cancelToken ) {
+            while(!mSummaryQueue.IsCompleted ) {
+                try {
+                    var summary = mSummaryQueue.Take( cancelToken );
+
+                    if( cancelToken.IsCancellationRequested ) {
+                        break;
+                    }
+
+                    mZoneUpdater.UpdateZone( summary );
+
+                    if(!await mZoneUpdater.CheckRunning()) {
+                        if( IsEnabled ) {
+                            await mZoneUpdater.Start();
+                        }
+                    }
+                }
+                catch( OperationCanceledException ) {
+                    break;
                 }
             }
         }

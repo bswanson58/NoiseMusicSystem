@@ -128,32 +128,34 @@ namespace LightPipe.Models {
         }
 
         public void ProcessImage( Bitmap image ) {
-            UpdateZone();
+            if( image != null ) {
+                UpdateZone();
 
-            if( mZoneGroup != null ) {
-                var stopWatch = Stopwatch.StartNew();
-                var context = new ProcessContext( image );
-                var zoneData = new Dictionary<string, IEnumerable<PixelData>>();
+                if( mZoneGroup != null ) {
+                    var stopWatch = Stopwatch.StartNew();
+                    var context = new ProcessContext( image );
+                    var zoneData = new Dictionary<string, IEnumerable<PixelData>>();
 
-                mZoneGroup.Zones.ForEach( zone => {
-                    var zoneArea = ZoneToContext( zone, context );
+                    mZoneGroup.Zones.ForEach( zone => {
+                        var zoneArea = ZoneToContext( zone, context );
 
-                    using( var bitmapAccess = new DirectAccessBitmap( image, zoneArea.X, zoneArea.Y, zoneArea.Width, zoneArea.Height )) {
-                        zoneData.Add( zone.ZoneName, bitmapAccess.SamplePixels( cSourceSampleFrequency ));
-                    }
-                });
+                        using( var bitmapAccess = new DirectAccessBitmap( image, zoneArea.X, zoneArea.Y, zoneArea.Width, zoneArea.Height )) {
+                            zoneData.Add( zone.ZoneName, bitmapAccess.SamplePixels( cSourceSampleFrequency ));
+                        }
+                    });
 
-                zoneData.ForEach( zonePair => {
-                    var zoneList = 
-                        from pixel in zonePair.Value
-                        where IsUsableColor( pixel ) 
-                        select AssignZoneAndBin( AdjustColorData( pixel ), zonePair.Key );
+                    zoneData.ForEach( zonePair => {
+                        var zoneList = 
+                            from pixel in zonePair.Value
+                            where IsUsableColor( pixel ) 
+                            select AssignZoneAndBin( AdjustColorData( pixel ), zonePair.Key );
 
-                    UpdateZoneQueue( ProcessZone( zonePair.Key, zoneList ));
-                });
+                        UpdateZoneQueue( ProcessZone( zonePair.Key, zoneList ));
+                    });
 
-                ElapsedTime = stopWatch.ElapsedMilliseconds;
-                stopWatch.Stop();
+                    ElapsedTime = stopWatch.ElapsedMilliseconds;
+                    stopWatch.Stop();
+                }
             }
         }
 
