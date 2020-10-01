@@ -39,17 +39,9 @@
                     <TextBlock Text="{Binding ZoneId}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                     <TextBlock Text="-" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
-<!--
-                <ListBox Grid.Row="1" Margin="0,2,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Colors}" ItemTemplate="{StaticResource ZoneColorTemplate}">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" IsItemsHost="True" />
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                </ListBox>
--->
+
                 <ItemsControl Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" MinWidth="80"
-                         ItemsSource="{Binding MeanColors}" ItemTemplate="{StaticResource MeanColorTemplate}">
+                              ItemsSource="{Binding MeanColors}" ItemTemplate="{StaticResource MeanColorTemplate}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
