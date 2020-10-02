@@ -24,7 +24,6 @@ namespace LightPipe.Models {
     }
 
     public class ImageProcessor : IImageProcessor, IHandle<MilkBottle.Infrastructure.Events.CurrentZoneChanged> {
-        private const int                       cZoneSummaryLength = 4;
         private const int                       cMinimumBinCount = 4;
         private const byte                      cBinMask = 0b11100000;
         private const int                       cSourceSampleFrequency = 8;
@@ -32,7 +31,6 @@ namespace LightPipe.Models {
         private readonly IZoneManager           mZoneManager;
         private readonly IEventAggregator       mEventAggregator;
         private readonly IPreferences           mPreferences;
-        private readonly Dictionary<string, List<ZoneSummary>>  mZoneSummaries;
         private Subject<ZoneSummary>            mZoneUpdated;
         private ZoneGroup                       mZoneGroup;
         private bool                            mZoneChanged;
@@ -49,7 +47,6 @@ namespace LightPipe.Models {
             mZoneManager = zoneManager;
             mEventAggregator = eventAggregator;
             mPreferences = preferences;
-            mZoneSummaries = new Dictionary<string, List<ZoneSummary>>();
 
             var lightPipePreferences = mPreferences.Load<LightPipeConfiguration>();
 
@@ -171,21 +168,7 @@ namespace LightPipe.Models {
         }
 
         private void UpdateZoneQueue( ZoneSummary summary ) {
-            if( summary.Colors.Any()) {
-                if( mZoneSummaries.ContainsKey( summary.ZoneId )) {
-                    var summaryList = mZoneSummaries[summary.ZoneId];
-
-                    summaryList.Add( summary );
-                    while( summaryList.Count > cZoneSummaryLength ) {
-                        summaryList.RemoveAt( 0 );
-                    }
-                }
-                else {
-                    mZoneSummaries.Add( summary.ZoneId, new List<ZoneSummary> { summary });
-                }
-
-                mZoneUpdated.OnNext( summary );
-            }
+            mZoneUpdated.OnNext( summary );
         }
 
         private PixelData AdjustColorData( PixelData colorData ) {
