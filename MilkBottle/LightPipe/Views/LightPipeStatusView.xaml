@@ -80,7 +80,7 @@
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Margin="3,0" Style="{StaticResource TimeHighlight}" Text="Processing:"/>
             <TextBlock Style="{StaticResource TimeHighlight}" MinWidth="20" Text="{Binding ElapsedTime}"/>
-            <TextBlock Margin="3,0" Style="{StaticResource TimeHighlight}" Text="ms"/>
+            <TextBlock Margin="3,0,0,0" Style="{StaticResource TimeHighlight}" Text="ms"/>
         </StackPanel>
     </Grid>
 </UserControl>
