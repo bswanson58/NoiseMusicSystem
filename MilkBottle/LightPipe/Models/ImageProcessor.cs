@@ -158,7 +158,7 @@ namespace LightPipe.Models {
 
         private ZoneSummary ProcessZone( string zoneId, IEnumerable<PixelData> zoneData ) {
             var colorBins = 
-                from pixel in zoneData.AsParallel()
+                from pixel in zoneData
                 group pixel by pixel.ColorBin into g
                 where g.Count() > cMinimumBinCount
                 orderby g.Count() descending
