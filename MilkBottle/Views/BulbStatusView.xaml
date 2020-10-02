@@ -1,34 +1,26 @@
-﻿<UserControl x:Class="LightPipe.Views.LightPipeStatusView"
+﻿<UserControl x:Class="MilkBottle.Views.BulbStatusView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mvvm="http://prismlibrary.com/"
-             xmlns:viewModels="clr-namespace:LightPipe.ViewModels"
-             xmlns:dto="clr-namespace:LightPipe.Dto"
+             xmlns:viewModels1="clr-namespace:MilkBottle.ViewModels"
+             xmlns:dto="clr-namespace:MilkBottle.Dto"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance viewModels:LightPipeStatusViewModel, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance viewModels1:BulbStatusViewModel, IsDesignTimeCreatable=False}"
              Height="34" d:DesignWidth="600">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="ZoneColorTemplate" DataType="dto:ColorBin">
-            <Rectangle Margin="2,0" Height="14" Width="14">
+        <DataTemplate x:Key="BulbStateTemplate" DataType="dto:BulbState">
+            <Rectangle Margin="2,0" Height="14" Width="14" ToolTip="{Binding BulbName}">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="{Binding Color}"/>
                 </Rectangle.Fill>
             </Rectangle>
         </DataTemplate>
 
-        <DataTemplate x:Key="MeanColorTemplate" DataType="Color">
-            <Rectangle Margin="2,0" Height="14" Width="14">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{Binding}"/>
-                </Rectangle.Fill>
-            </Rectangle>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ZoneSummaryTemplate" DataType="viewModels:ZoneInfo">
+        <DataTemplate x:Key="ZoneStateTemplate" DataType="dto:ZoneBulbState">
             <Grid Margin="3,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -36,12 +28,11 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding ZoneId}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ZoneName}" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                     <TextBlock Text="-" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <ItemsControl Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center"
-                              ItemsSource="{Binding MeanColors}" ItemTemplate="{StaticResource MeanColorTemplate}">
+                <ItemsControl Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding BulbStates}" ItemTemplate="{StaticResource BulbStateTemplate}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
@@ -67,20 +58,21 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Text="Zones:"/>
+        <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Text="Lights:"/>
 
-        <ItemsControl Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding ZoneSummaries}" ItemTemplate="{StaticResource ZoneSummaryTemplate}">
+        <ItemsControl Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding BulbStates}" ItemTemplate="{StaticResource ZoneStateTemplate}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
-
+<!--
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Margin="3,0" Style="{StaticResource TimeHighlight}" Text="Processing:"/>
             <TextBlock Style="{StaticResource TimeHighlight}" MinWidth="20" Text="{Binding ElapsedTime}"/>
             <TextBlock Margin="3,0" Style="{StaticResource TimeHighlight}" Text="ms"/>
         </StackPanel>
+-->        
     </Grid>
 </UserControl>

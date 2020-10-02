@@ -264,6 +264,7 @@
     <Compile Include="Dto\UiSource.cs" />
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Dto\UiVisualPreset.cs" />
+    <Compile Include="Dto\ZoneBulbState.cs" />
     <Compile Include="Entities\ActiveCompanionApp.cs" />
     <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="Entities\Mood.cs" />
@@ -345,6 +346,7 @@
     <Compile Include="Types\PresetRating.cs" />
     <Compile Include="Types\ValidationException.cs" />
     <Compile Include="ViewModels\BrowseViewModel.cs" />
+    <Compile Include="ViewModels\BulbStatusViewModel.cs" />
     <Compile Include="ViewModels\ConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfirmDeleteDialogModel.cs" />
     <Compile Include="ViewModels\InfoOverlayViewModel.cs" />
@@ -373,6 +375,9 @@
     <Compile Include="ViewModels\TagEditViewModel.cs" />
     <Compile Include="Views\BrowseView.xaml.cs">
       <DependentUpon>BrowseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BulbStatusView.xaml.cs">
+      <DependentUpon>BulbStatusView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
@@ -476,6 +481,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\BrowseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BulbStatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

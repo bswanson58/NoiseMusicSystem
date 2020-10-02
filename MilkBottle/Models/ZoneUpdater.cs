@@ -1,32 +1,40 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
 using LightPipe.Dto;
+using MilkBottle.Dto;
 using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using MilkBottle.Interfaces;
 
 namespace MilkBottle.Models {
     internal class ZoneUpdater : IZoneUpdater {
-        private readonly IHubManager        mHubManager;
-        private readonly IZoneManager       mZoneManager;
-        private readonly IBasicLog          mLog;
-        private IEntertainmentGroupManager  mEntertainmentGroupManager;
-        private EntertainmentGroup          mEntertainmentGroup;
-        private ZoneGroup                   mZoneGroup;
-        private double                      mOverallLightBrightness;
+        private readonly IHubManager            mHubManager;
+        private readonly IZoneManager           mZoneManager;
+        private readonly IBasicLog              mLog;
+        private readonly Subject<ZoneBulbState> mBulbStateSubject;
+        private IEntertainmentGroupManager      mEntertainmentGroupManager;
+        private EntertainmentGroup              mEntertainmentGroup;
+        private ZoneGroup                       mZoneGroup;
+        private double                          mOverallLightBrightness;
 
-        public  int                         CaptureFrequency { get; set; }
-        public  int                         ZoneColorsLimit { get; set; }
+        public  int                             CaptureFrequency { get; set; }
+        public  int                             ZoneColorsLimit { get; set; }
 
-        public  bool                        IsRunning {get; private set; }
+        public  bool                            IsRunning {get; private set; }
+
+        public  IObservable<ZoneBulbState>      BulbStates => mBulbStateSubject;
 
         public ZoneUpdater( IHubManager hubManager, IZoneManager zoneManager, IBasicLog log ) {
             mHubManager = hubManager;
             mZoneManager = zoneManager;
             mLog = log;
+
+            mBulbStateSubject = new Subject<ZoneBulbState>();
         }
 
         public double OverallLightBrightness {
@@ -74,14 +82,11 @@ namespace MilkBottle.Models {
             mZoneGroup = null;
         }
 
-        public async Task<bool> CheckRunning() {
-            return IsRunning && await mEntertainmentGroupManager.IsStreamingActive();
-        }
-
         public void UpdateZone( ZoneSummary zone ) {
             if(( IsRunning ) &&
                ( zone != null )) {
                 try {
+                    var stopWatch = Stopwatch.StartNew();
                     var zoneGroup = mZoneGroup?.Zones.FirstOrDefault( z => z.ZoneName.Equals( zone.ZoneId ));
 
                     if( zoneGroup != null ) {
@@ -91,6 +96,7 @@ namespace MilkBottle.Models {
                             var colors = zone.FindMeanColors( Math.Min( lightGroup.Lights.Count, ZoneColorsLimit ));
 
                             if( colors.Any()) {
+                                var summary = new ZoneBulbState( zone.ZoneId );
                                 var colorIndex = 0;
 
                                 foreach( var light in lightGroup.Lights ) {
@@ -101,14 +107,21 @@ namespace MilkBottle.Models {
                                         mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex]);
                                     }
 
+                                    summary.BulbStates.Add( new BulbState( light.Name, colors[colorIndex]));
+
                                     colorIndex++;
                                     if( colorIndex >= colors.Count ) {
                                         colorIndex = 0;
                                     }
                                 }
+
+                                summary.SetProcessingTime( stopWatch.ElapsedMilliseconds );
+                                mBulbStateSubject.OnNext( summary );
                             }
                         }
                     }
+
+                    stopWatch.Stop();
                 }
                 catch( Exception ex ) {
                     mLog.LogException( "UpdateZone", ex );

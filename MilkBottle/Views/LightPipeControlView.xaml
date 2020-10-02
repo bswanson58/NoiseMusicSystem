@@ -10,6 +10,7 @@
              xmlns:behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:views1="clr-namespace:MilkBottle.Views"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightPipeControlViewModel, IsDesignTimeCreatable=False}"
@@ -69,6 +70,7 @@
         <Grid Grid.Column="0" Margin="5,3,0,3" Visibility="{Binding LightPipeState, Converter={StaticResource HideIfFalse}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
@@ -80,7 +82,13 @@
                 </views:LightPipeStatusView.LayoutTransform>
             </views:LightPipeStatusView>
 
-            <StackPanel Grid.Column="2" Tag="subdued" Background="Transparent" Orientation="Horizontal">
+            <views1:BulbStatusView Grid.Column="1" Margin="5,0,0,0" Tag="expanded" VerticalAlignment="Center">
+                <views1:BulbStatusView.LayoutTransform>
+                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                </views1:BulbStatusView.LayoutTransform>
+            </views1:BulbStatusView>
+
+            <StackPanel Grid.Column="3" Tag="subdued" Background="Transparent" Orientation="Horizontal">
                 <!-- Capture Frequency -->
                 <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Capture Rate:"/>
                 <Slider Width="120" Tag="collapsed" Margin="5,0" VerticalAlignment="Center" Style="{DynamicResource MahApps.Styles.Slider}" IsDirectionReversed="True" IsMoveToPointEnabled="True"
