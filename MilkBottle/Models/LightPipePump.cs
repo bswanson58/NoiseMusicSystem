@@ -128,7 +128,7 @@ namespace MilkBottle.Models {
                 try {
                     if( await mZoneUpdater.Start()) {
                         mCaptureQueue = new BlockingCollection<Bitmap>( 10 );
-                        mSummaryQueue = new BlockingCollection<ZoneSummary>( 30 );
+                        mSummaryQueue = new BlockingCollection<ZoneSummary>( 10 );
 
                         mCancellationTokenSource = new CancellationTokenSource();
                         mCaptureTask = Task.Run( () => CaptureConsumer( mCancellationTokenSource.Token ), mCancellationTokenSource.Token );
@@ -180,7 +180,9 @@ namespace MilkBottle.Models {
         private void CaptureFrame( IntPtr hWnd ) {
             try {
                 if(!mCaptureQueue.IsAddingCompleted ) {
-                    mCaptureQueue.TryAdd( BitmapCapture.Capture( hWnd ));
+                    if(!mCaptureQueue.TryAdd( BitmapCapture.Capture( hWnd ))) {
+                        mLog.LogMessage( "Capture queue is overrun." );
+                    }
                 }
             }
             catch( OperationCanceledException ) { }
@@ -212,7 +214,9 @@ namespace MilkBottle.Models {
             try {
                 if(( zone != null ) &&
                    (!mSummaryQueue.IsAddingCompleted )) {
-                    mSummaryQueue.TryAdd( zone );
+                    if(!mSummaryQueue.TryAdd( zone )) {
+                        mLog.LogMessage( "Summary queue is overrun" );
+                    }
                 }
             }
             catch( OperationCanceledException ) { }
@@ -221,18 +225,14 @@ namespace MilkBottle.Models {
         private async void SummaryConsumer( CancellationToken cancelToken ) {
             while(!mSummaryQueue.IsCompleted ) {
                 try {
-                    var summary = mSummaryQueue.Take( cancelToken );
+                    mZoneUpdater.UpdateZone( mSummaryQueue.Take( cancelToken ));
 
                     if( cancelToken.IsCancellationRequested ) {
                         break;
                     }
 
-                    mZoneUpdater.UpdateZone( summary );
-
-                    if(!await mZoneUpdater.CheckRunning()) {
-                        if( IsEnabled ) {
-                            await mZoneUpdater.Start();
-                        }
+                    if(!mZoneUpdater.IsRunning ) {
+                        await mZoneUpdater.Start();
                     }
                 }
                 catch( OperationCanceledException ) {
