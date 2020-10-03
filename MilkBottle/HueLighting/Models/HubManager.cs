@@ -9,6 +9,8 @@ using JetBrains.Annotations;
 using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi;
+using Q42.HueApi.ColorConverters;
+using Q42.HueApi.ColorConverters.HSB;
 using Q42.HueApi.Interfaces;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
@@ -233,7 +235,7 @@ namespace HueLighting.Models {
         }
 
         public async Task<bool> SetBulbState( String bulbId, Color color ) {
-            return await SetBulbState( new []{ bulbId}, color );
+            return await SetBulbState( new []{ bulbId }, color );
         }
 
         public async Task<bool> SetBulbState( IEnumerable<string> bulbList, Color color ) {
@@ -244,7 +246,7 @@ namespace HueLighting.Models {
 
             var command = new LightCommand();
 
-//            command.SetColor( new RGBColor( color.R, color.G, color.B ));
+            command.SetColor( new RGBColor( color.R, color.G, color.B ));
             var result = await mClient.SendCommandAsync( command, bulbList );
 
             return !result.HasErrors();
