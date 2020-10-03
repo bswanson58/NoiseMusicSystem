@@ -13,6 +13,8 @@ using MilkBottle.Interfaces;
 
 namespace MilkBottle.Models {
     internal class ZoneUpdater : IZoneUpdater {
+        private readonly TimeSpan               mUpdateFrequency = TimeSpan.FromSeconds( 15 );
+
         private readonly IHubManager            mHubManager;
         private readonly IZoneManager           mZoneManager;
         private readonly IBasicLog              mLog;
@@ -21,6 +23,8 @@ namespace MilkBottle.Models {
         private EntertainmentGroup              mEntertainmentGroup;
         private ZoneGroup                       mZoneGroup;
         private double                          mOverallLightBrightness;
+        private Task                            mLightUpdateTask;
+        private DateTime                        mLastCheckTime;
 
         public  int                             CaptureFrequency { get; set; }
         public  int                             ZoneColorsLimit { get; set; }
@@ -54,11 +58,12 @@ namespace MilkBottle.Models {
 
                 if( mEntertainmentGroupManager != null ) {
                     mEntertainmentGroup = await mEntertainmentGroupManager.GetGroupLayout();
-                    mEntertainmentGroupManager.EnableAutoUpdate();
+                    mLightUpdateTask = mEntertainmentGroupManager.EnableAutoUpdate();
                     mZoneGroup = mZoneManager.GetCurrentGroup();
 
                     mEntertainmentGroupManager.OverallBrightness = mOverallLightBrightness;
                     IsRunning = mEntertainmentGroup != null;
+                    mLastCheckTime = DateTime.Now;
                 }
                 else {
                     IsRunning = false;
@@ -80,6 +85,28 @@ namespace MilkBottle.Models {
             mEntertainmentGroupManager = null;
             mEntertainmentGroup = null;
             mZoneGroup = null;
+        }
+
+        public async Task<bool> InsureRunning() {
+            if( mLastCheckTime + mUpdateFrequency < DateTime.Now ) {
+                mLastCheckTime = DateTime.Now;
+
+                if( mLightUpdateTask.Status != TaskStatus.Running ) {
+                    mLightUpdateTask = mEntertainmentGroupManager.EnableAutoUpdate();
+
+                    mLog.LogMessage( $"Light update task status is: {mLightUpdateTask.Status}" );
+                }
+
+                if(!await mEntertainmentGroupManager.IsStreamingActive()) {
+                    Stop();
+
+                    await Start();
+
+                    mLog.LogMessage( "Entertainment group restarted." );
+                }
+            }
+
+            return IsRunning;
         }
 
         public void UpdateZone( ZoneSummary zone ) {

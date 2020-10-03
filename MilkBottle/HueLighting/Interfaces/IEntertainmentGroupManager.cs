@@ -8,7 +8,7 @@ namespace HueLighting.Interfaces {
     public interface IEntertainmentGroupManager : IDisposable {
         Group                       EntertainmentGroup { get; }
 
-        void                        EnableAutoUpdate();
+        Task                        EnableAutoUpdate();
         Task<EntertainmentGroup>    GetGroupLayout();
 
         double                      OverallBrightness { get; set; }

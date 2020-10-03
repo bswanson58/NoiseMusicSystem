@@ -12,6 +12,7 @@ namespace MilkBottle.Interfaces {
         Task<bool>                  Start();
         void                        Stop();
         bool                        IsRunning { get; }
+        Task<bool>                  InsureRunning();
 
         void                        UpdateZone( ZoneSummary zone );
 

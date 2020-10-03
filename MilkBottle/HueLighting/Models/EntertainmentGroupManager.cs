@@ -53,13 +53,17 @@ namespace HueLighting.Models {
             return retValue;
         }
 
-        public void EnableAutoUpdate() {
+        public Task EnableAutoUpdate() {
+            var retValue = Task.CompletedTask;
+
             if(( mStreamingClient != null ) &&
                ( mStreamingGroup != null )) {
                 mAutoUpdateToken = new CancellationTokenSource();
 
-                mStreamingClient.AutoUpdate( mStreamingGroup, mAutoUpdateToken.Token, 50, true );
+                retValue = mStreamingClient.AutoUpdate( mStreamingGroup, mAutoUpdateToken.Token, 50, true );
             }
+
+            return retValue;
         }
 
         public async Task<EntertainmentGroup> GetGroupLayout() {
