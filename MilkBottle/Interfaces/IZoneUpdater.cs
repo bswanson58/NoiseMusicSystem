@@ -16,6 +16,8 @@ namespace MilkBottle.Interfaces {
 
         void                        UpdateZone( ZoneSummary zone );
 
+        Task<bool>                  SetZoneBulbsInactive();
+
         IObservable<ZoneBulbState>  BulbStates { get; }
     }
 }

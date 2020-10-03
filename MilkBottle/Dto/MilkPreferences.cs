@@ -20,6 +20,7 @@ namespace MilkBottle.Dto {
         public  string  LightPipePairing { get; set; }
         public  int     ZoneColorsLimit { get; set; }
         public  double  OverallBrightness;
+        public  string  InactiveBulbColor { get; set; }
 
         public MilkPreferences() {
             CurrentPresetLibrary = String.Empty;
@@ -45,6 +46,7 @@ namespace MilkBottle.Dto {
             LightPipePairing = String.Empty;
             ZoneColorsLimit = 10;
             OverallBrightness = 0.8;
+            InactiveBulbColor = "#80808080";
         }
     }
 }

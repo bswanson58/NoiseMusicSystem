@@ -162,6 +162,8 @@ namespace MilkBottle.Models {
 
                 mZoneUpdateSubscription?.Dispose();
                 mZoneUpdateSubscription = null;
+
+                await mZoneUpdater.SetZoneBulbsInactive();
             }
 
             return IsEnabled;

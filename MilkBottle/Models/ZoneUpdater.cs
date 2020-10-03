@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
 using LightPipe.Dto;
@@ -18,7 +20,9 @@ namespace MilkBottle.Models {
         private readonly IHubManager            mHubManager;
         private readonly IZoneManager           mZoneManager;
         private readonly IBasicLog              mLog;
+        private readonly IPreferences           mPreferences;
         private readonly Subject<ZoneBulbState> mBulbStateSubject;
+        private readonly List<BulbState>        mBulbStates;
         private IEntertainmentGroupManager      mEntertainmentGroupManager;
         private EntertainmentGroup              mEntertainmentGroup;
         private ZoneGroup                       mZoneGroup;
@@ -33,12 +37,14 @@ namespace MilkBottle.Models {
 
         public  IObservable<ZoneBulbState>      BulbStates => mBulbStateSubject;
 
-        public ZoneUpdater( IHubManager hubManager, IZoneManager zoneManager, IBasicLog log ) {
+        public ZoneUpdater( IHubManager hubManager, IZoneManager zoneManager, IBasicLog log, IPreferences preferences ) {
             mHubManager = hubManager;
             mZoneManager = zoneManager;
+            mPreferences = preferences;
             mLog = log;
 
             mBulbStateSubject = new Subject<ZoneBulbState>();
+            mBulbStates = new List<BulbState>();
         }
 
         public double OverallLightBrightness {
@@ -50,6 +56,35 @@ namespace MilkBottle.Models {
                     mEntertainmentGroupManager.OverallBrightness = mOverallLightBrightness;
                 }
             }
+        }
+
+        public async Task<bool> SetZoneBulbsInactive() {
+            var retValue = false;
+
+            if( mBulbStates.Any()) {
+                try {
+                    var preferences = mPreferences.Load<MilkPreferences>();
+
+                    if( ColorConverter.ConvertFromString( preferences.InactiveBulbColor ) is Color inactiveColor ) {
+                        retValue = await mHubManager.SetBulbState( from b in mBulbStates select b.BulbName, inactiveColor );
+
+                        if( retValue ) {
+                            mBulbStates.Clear();
+                        }
+                    }
+                    else {
+                        mLog.LogMessage( "MilkPreferences:InactiveBulbColor is not in the correct format (#ARBG)" );
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "Setting Inactive bulb state", ex );
+                }
+            }
+            else {
+                retValue = true;
+            }
+
+            return retValue;
         }
 
         public async Task<bool> Start() {
@@ -135,6 +170,7 @@ namespace MilkBottle.Models {
                                     }
 
                                     summary.BulbStates.Add( new BulbState( light.Name, colors[colorIndex]));
+                                    UpdateBulbState( new BulbState( light.Id, colors[colorIndex]));
 
                                     colorIndex++;
                                     if( colorIndex >= colors.Count ) {
@@ -156,6 +192,16 @@ namespace MilkBottle.Models {
                     IsRunning = false;
                 }
             }
+        }
+
+        private void UpdateBulbState( BulbState newState ) {
+            var existing = mBulbStates.FirstOrDefault( b => b.BulbName.Equals( newState.BulbName ));
+
+            if( existing != null ) {
+                mBulbStates.Remove( existing );
+            }
+
+            mBulbStates.Add( newState );
         }
     }
 }
