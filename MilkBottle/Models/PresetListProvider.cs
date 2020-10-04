@@ -111,7 +111,8 @@ namespace MilkBottle.Models {
         private IEnumerable<Preset> GetPresets( PresetLibrary forLibrary ) {
             var retValue = new List<Preset>();
 
-            mPresetProvider.SelectPresets( forLibrary, list => retValue.AddRange( list )).IfLeft( ex => LogException( "SelectPresets", ex ));
+            mPresetProvider.SelectPresets( forLibrary, list => retValue.AddRange( from p in list where p.Rating != PresetRating.DoNotPlayValue select p ))
+                .IfLeft( ex => LogException( "SelectPresets", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }
@@ -120,7 +121,8 @@ namespace MilkBottle.Models {
             var retValue = new List<Preset>();
 
             if( forSet.Qualifiers.Any()) {
-                mSetProvider.GetPresetList( forSet, list => retValue.AddRange( list )).IfLeft( ex => LogException( "GetPresetList", ex ));
+                mSetProvider.GetPresetList( forSet, list => retValue.AddRange( from p in list where p.Rating != PresetRating.DoNotPlayValue select p ))
+                    .IfLeft( ex => LogException( "GetPresetList", ex ));
             }
 
             return retValue.DistinctBy( p => p.Name );
@@ -129,7 +131,8 @@ namespace MilkBottle.Models {
         public IEnumerable<Preset> GetPresets( PresetTag forTag ) {
             var retValue = new List<Preset>();
 
-            mPresetProvider.SelectPresets( forTag, list => retValue.AddRange( list )).IfLeft( ex => LogException( "SelectPresets (forTag)", ex ));
+            mPresetProvider.SelectPresets( forTag, list => retValue.AddRange( from p in list where p.Rating != PresetRating.DoNotPlayValue select p ))
+                .IfLeft( ex => LogException( "SelectPresets (forTag)", ex ));
 
             return retValue.DistinctBy( p => p.Name );
         }
