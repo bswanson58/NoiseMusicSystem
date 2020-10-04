@@ -3,11 +3,16 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using System;
+using System.Windows.Media;
+using HueLighting.ViewModels;
+using HueLighting.Views;
 using MilkBottle.Infrastructure.Interfaces;
+using DialogResult = Prism.Services.Dialogs.DialogResult;
 
 namespace MilkBottle.ViewModels {
     class ConfigurationDialogModel : PropertyChangeBase, IDialogAware {
         private readonly IPreferences       mPreferences;
+        private readonly IDialogService     mDialogService;
         private readonly double             mAspectRatio;
         private int                         mMeshWidth;
         private int                         mMeshHeight;
@@ -20,20 +25,24 @@ namespace MilkBottle.ViewModels {
         public  string                      Title { get; }
         public  DelegateCommand             Ok { get; }
         public  DelegateCommand             Cancel { get; }
+        public  DelegateCommand             SelectInactivityColor { get; }
 
         public  bool                        MinimizeToTray { get; set; }
         public  bool                        DisplayControllerWhenMaximized { get; set; }
+        public  Color                       InactivityColor { get; private set; }
 
         public  string                      MeshDescription => $"Width: {mMeshWidth} by Height:{mMeshHeight}";
 
         public event Action<IDialogResult> RequestClose;
 
-        public ConfigurationDialogModel( IPreferences preferences ) {
+        public ConfigurationDialogModel( IPreferences preferences, IDialogService dialogService ) {
             mPreferences = preferences;
+            mDialogService = dialogService;
 
             Title = "Configuration";
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
+            SelectInactivityColor = new DelegateCommand( OnSelectInactivityColor );
 
 //            mAspectRatio = SystemParameters.FullPrimaryScreenHeight / SystemParameters.FullPrimaryScreenWidth;
             mAspectRatio = 9.0 / 16.0; // assume a common aspect ratio for now.
@@ -52,6 +61,15 @@ namespace MilkBottle.ViewModels {
             DisplayControllerWhenMaximized = uiPreferences.DisplayControllerWhenMaximized;
             Latitude = uiPreferences.Latitude;
             Longitude = uiPreferences.Longitude;
+
+            if( ColorConverter.ConvertFromString( uiPreferences.InactiveBulbColor ) is Color inactiveColor ) {
+                InactivityColor = inactiveColor;
+            }
+            else {
+                InactivityColor = Colors.White;
+            }
+
+            RaisePropertyChanged( () => InactivityColor );
         }
 
         public int MeshWidth {
@@ -119,6 +137,23 @@ namespace MilkBottle.ViewModels {
 
                 RaisePropertyChanged( () => Longitude );
             }
+        }
+
+        private void OnSelectInactivityColor() {
+            var  parameters = new DialogParameters{{ LightColorSelectorViewModel.cSelectedColor, InactivityColor }};
+
+            mDialogService.Show( nameof( LightColorSelectorView ), parameters, result => {
+                if( result.Result == ButtonResult.OK ) {
+                    var preferences = mPreferences.Load<MilkPreferences>();
+
+                    InactivityColor = result.Parameters.GetValue<Color>( LightColorSelectorViewModel.cSelectedColor );
+                    preferences.InactiveBulbColor = InactivityColor.ToString();
+
+                    mPreferences.Save( preferences );
+
+                    RaisePropertyChanged( () => InactivityColor );
+                }
+            });
         }
 
         public bool CanCloseDialog() {

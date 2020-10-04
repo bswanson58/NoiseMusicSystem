@@ -11,6 +11,7 @@ namespace HueLighting {
             containerRegistry.RegisterSingleton<IHubManager, HubManager>();
 
             containerRegistry.RegisterDialog<HubSelectionView, HubSelectionViewModel>();
+            containerRegistry.RegisterDialog<LightColorSelectorView, LightColorSelectorViewModel>(  );
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

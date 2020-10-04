@@ -153,7 +153,6 @@
     <Compile Include="Dto\UiZoneEdit.cs" />
     <Compile Include="Events\Events.cs" />
     <Compile Include="LightPipeModule.cs" />
-    <Compile Include="Models\HslColor.cs" />
     <Compile Include="Models\ImageProcessor.cs" />
     <Compile Include="Interfaces\IImageProcessor.cs" />
     <Compile Include="Dto\PixelData.cs" />
@@ -197,6 +196,10 @@
     <ProjectReference Include="..\..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138b-f96a-4a56-84cf-d660730989c9}</Project>
       <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
+      <Name>ReusableBits.Ui</Name>
     </ProjectReference>
     <ProjectReference Include="..\MilkBottle.Infrastructure\MilkBottle.Infrastructure.csproj">
       <Project>{dc3fcf12-17cd-4f9c-9acc-4f1b1e211f94}</Project>

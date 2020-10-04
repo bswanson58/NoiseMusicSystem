@@ -1,16 +1,18 @@
 ﻿using System;
 
-namespace LightPipe.Models {
+namespace ReusableBits.Ui.Models {
     // from: https://www.optifunc.com/blog/hsl-color-for-wpf-and-markup-extension-to-lighten-darken-colors-in-xaml
 
     public class HslColor {
-        public readonly double H, S, L, A;
+        public double H, S, L, A;
+
+        public HslColor() { }
 
         public HslColor( double h, double s, double l, double a ) {
-            H = h;
-            S = s;
-            L = l;
-            A = a;
+            H = Clamp( h, 0.0, 360.0 );
+            S = Clamp( s, 0.0, 1.0 );
+            L = Clamp( l, 0.0, 1.0 );
+            A = Clamp( a, 0.0, 1.0 );
         }
 
         public HslColor( System.Windows.Media.Color rgb ) {

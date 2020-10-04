@@ -11,6 +11,7 @@ using LightPipe.Utility;
 using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using MoreLinq;
+using ReusableBits.Ui.Models;
 
 namespace LightPipe.Models {
     internal class ProcessContext {

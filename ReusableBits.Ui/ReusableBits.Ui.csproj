@@ -154,6 +154,7 @@
     <Compile Include="Localization\ResourceFormattedLocalizedValue.cs" />
     <Compile Include="Localization\ResourceLocalizedValue.cs" />
     <Compile Include="Localization\ResourceManagerExtension.cs" />
+    <Compile Include="Models\HslColor.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -165,6 +166,7 @@
     <Compile Include="Utility\ExecutingEnvironment.cs" />
     <Compile Include="Utility\HSLColor.cs" />
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
+    <Compile Include="ValueConverters\ColorLuminosityConverter.cs" />
     <Compile Include="ValueConverters\ColorToBrushConverter.cs" />
     <Compile Include="ValueConverters\NullableBooleanOpacityConverter.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
@@ -192,6 +194,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
