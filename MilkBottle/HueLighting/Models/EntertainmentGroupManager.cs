@@ -20,7 +20,7 @@ namespace HueLighting.Models {
         private StreamingHueClient              mStreamingClient;
         private StreamingGroup                  mStreamingGroup;
         private EntertainmentLayer              mBaseLayer;
-        private CancellationTokenSource         mAutoUpdateToken;
+        private CancellationTokenSource         mCancellationTokenSource;
         private double                          mBrightness;
 
         public  Group                           EntertainmentGroup { get; }
@@ -38,6 +38,7 @@ namespace HueLighting.Models {
             try {
                 mStreamingClient = new StreamingHueClient( configuration.BridgeIp, configuration.BridgeAppKey, configuration.BridgeStreamingKey );
                 mStreamingGroup = new StreamingGroup( EntertainmentGroup.Locations );
+                mCancellationTokenSource = new CancellationTokenSource();
 
                 await mStreamingClient.Connect( EntertainmentGroup.Id );
                 mBaseLayer = mStreamingGroup.GetNewLayer( true );
@@ -58,9 +59,7 @@ namespace HueLighting.Models {
 
             if(( mStreamingClient != null ) &&
                ( mStreamingGroup != null )) {
-                mAutoUpdateToken = new CancellationTokenSource();
-
-                retValue = mStreamingClient.AutoUpdate( mStreamingGroup, mAutoUpdateToken.Token, 50, true );
+                retValue = mStreamingClient.AutoUpdate( mStreamingGroup, mCancellationTokenSource.Token, 50, true );
             }
 
             return retValue;
@@ -92,7 +91,7 @@ namespace HueLighting.Models {
             if( light != null ) {
                 var color = new RGBColor( toColor.R, toColor.G, toColor.B );
 
-                light.SetState( CancellationToken.None, color, mBrightness );
+                light.SetState( mCancellationTokenSource.Token, color, mBrightness );
             }
         }
 
@@ -102,7 +101,7 @@ namespace HueLighting.Models {
             if( light != null ) {
                 var color = new RGBColor( toColor.R, toColor.G, toColor.B );
 
-                light.SetState( CancellationToken.None, color, transitionTime, mBrightness );
+                light.SetState( mCancellationTokenSource.Token, color, transitionTime, mBrightness );
             }
         }
 
@@ -126,8 +125,8 @@ namespace HueLighting.Models {
         }
 
         public void Dispose() {
-            mAutoUpdateToken?.Cancel();
-            mAutoUpdateToken = null;
+            mCancellationTokenSource?.Cancel();
+            mCancellationTokenSource = null;
 
             mStreamingClient?.Dispose();
             mStreamingClient = null;

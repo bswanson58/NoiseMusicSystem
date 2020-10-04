@@ -233,7 +233,7 @@ namespace MilkBottle.Models {
                         break;
                     }
 
-                    await Task.Delay( 25, cancelToken );
+                    await Task.Delay( 50, cancelToken );
 
                     if(!await mZoneUpdater.InsureRunning()) {
                         mLog.LogMessage( "InsureRunning failed to start ZoneUpdater." );
