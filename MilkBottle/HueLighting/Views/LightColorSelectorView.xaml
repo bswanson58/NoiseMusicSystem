@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:HueLighting.ViewModels"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:controls="clr-namespace:HueLighting.Controls"
+             xmlns:views="clr-namespace:HueLighting.Views"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:LightColorSelectorViewModel, IsDesignTimeCreatable=False}"
@@ -29,6 +30,12 @@
         </Grid.RowDefinitions>
 
         <controls:HslColorSelector Height="120" Grid.Row="0" HorizontalAlignment="Left" DataContext="{Binding ColorSelector}"/>
+
+        <StackPanel Orientation="Vertical" Grid.Row="1">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Select a bulb or group to view color:"/>
+
+            <views:BulbSelectorView Margin="25,3,0,3" DataContext="{Binding BulbSelector}"/>
+        </StackPanel>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}"/>

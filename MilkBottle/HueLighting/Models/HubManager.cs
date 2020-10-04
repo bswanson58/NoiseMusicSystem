@@ -124,6 +124,64 @@ namespace HueLighting.Models {
             mPreferences.Save( userPreferences );
         }
 
+        public async Task<IEnumerable<Bulb>> GetBulbs() {
+            var retValue = default( IEnumerable<Bulb>);
+
+            try {
+                if( mClient == null ) {
+                    await InitializeConfiguredHub();
+                }
+
+                if( mClient != null ) {
+                    var lights = await mClient.GetLightsAsync();
+
+                    retValue = from light in lights select new Bulb( light.Id, light.Name, light.State.IsReachable == true );
+                }
+
+                if( mEmulating ) {
+                    return BuildEmulationBulbSet();
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "GetBulbs", ex );
+            }
+
+            return retValue;
+        }
+
+        public async Task<IEnumerable<BulbGroup>> GetBulbGroups() {
+            var retValue = default( IEnumerable<BulbGroup>);
+
+            try {
+                if( mClient == null ) {
+                    await InitializeConfiguredHub();
+                }
+
+                if( mClient != null ) {
+                    retValue = await ToBulbGroup( await mClient.GetGroupsAsync());
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "GetBulbGroups", ex );
+            }
+
+            return retValue;
+        }
+
+        private async Task<IEnumerable<BulbGroup>> ToBulbGroup( IEnumerable<Group> fromList ) {
+            var retValue = new List<BulbGroup>();
+
+            if( fromList != null ) {
+                var bulbList = await GetBulbs();
+
+                foreach( var g in fromList ) {
+                    retValue.Add( new BulbGroup( g.Name, g.Type, from bulb in g.Lights select bulbList.FirstOrDefault( b => b.Id.Equals( bulb ))));
+                }
+            }
+
+            return retValue;
+        }
+
         public async Task<IEnumerable<Group>> GetEntertainmentGroups() {
             var retValue = default( IEnumerable<Group>);
 
@@ -190,20 +248,6 @@ namespace HueLighting.Models {
             await retValue.StartStreamingGroup();
 
             return retValue;
-        }
-
-        public async Task<IEnumerable<Bulb>> BulbList() {
-            if( mClient != null ) {
-                var lights = await mClient.GetLightsAsync();
-
-                return from light in lights select new Bulb( light.Id, light.Name, light.State.IsReachable == true );
-            }
-
-            if( mEmulating ) {
-                return BuildEmulationBulbSet();
-            }
-
-            return null;
         }
 
         private IEnumerable<Bulb> BuildEmulationBulbSet() {

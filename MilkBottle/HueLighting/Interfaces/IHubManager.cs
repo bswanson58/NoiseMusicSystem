@@ -14,6 +14,8 @@ namespace HueLighting.Interfaces {
         Task<String>                        RegisterApp( HubInformation hub, bool setAsConfiguredHub = false );
         void                                SetConfiguredHub( HubInformation hub );
 
+        Task<IEnumerable<Bulb>>             GetBulbs();
+        Task<IEnumerable<BulbGroup>>        GetBulbGroups();
         Task<IEnumerable<Group>>            GetEntertainmentGroups();
         Task<EntertainmentGroup>            GetEntertainmentGroupLayout( Group forGroup );
         Task<IEntertainmentGroupManager>    StartEntertainmentGroup();
@@ -21,8 +23,6 @@ namespace HueLighting.Interfaces {
         Task<IEntertainmentGroupManager>    StartEntertainmentGroup( Group forGroup );
         
         void                                EmulateHub();
-
-        Task<IEnumerable<Bulb>>             BulbList();
 
         Task<bool>                          SetBulbState( String bulbId, bool state );
         Task<bool>                          SetBulbState( IEnumerable<string> bulbList, bool state );
