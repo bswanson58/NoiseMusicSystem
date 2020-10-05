@@ -90,21 +90,20 @@
             </Grid>
         </Viewbox>
 
-        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="Lightness:"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource ControlTitleStyle}" Text="Brightness:"/>
         <Viewbox Grid.Row="4" Grid.Column="2" Stretch="Uniform" StretchDirection="Both" VerticalAlignment="Center" HorizontalAlignment="Left">
             <Grid>
                 <Rectangle Height="10" Width="100" StrokeThickness="0">
                     <Rectangle.Fill>
                         <LinearGradientBrush StartPoint="0.0, 0.0" EndPoint="1.0, 0.0">
-                            <GradientStop Color="{Binding MinimumLightness}" Offset="0.0"/>
-                            <GradientStop Color="{Binding HueColor}" Offset="0.5"/>
-                            <GradientStop Color="{Binding MaximumLightness}" Offset="1.0"/>
+                            <GradientStop Color="{Binding MinimumBrightness}" Offset="0.0"/>
+                            <GradientStop Color="{Binding MaximumBrightness}" Offset="1.0"/>
                         </LinearGradientBrush>
                     </Rectangle.Fill>
                 </Rectangle>
 
                 <Canvas>
-                    <ContentControl Canvas.Top="5" Canvas.Left="{Binding LightnessSelectorX, Mode=TwoWay}" Template="{StaticResource SelectorTemplate100}" />
+                    <ContentControl Canvas.Top="5" Canvas.Left="{Binding BrightnessSelectorX, Mode=TwoWay}" Template="{StaticResource SelectorTemplate100}" />
                 </Canvas>
             </Grid>
         </Viewbox>

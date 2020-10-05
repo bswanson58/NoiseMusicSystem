@@ -9,14 +9,14 @@ namespace HueLighting.Controls {
     public class HslColorSelectorViewModel : PropertyChangeBase {
         private double              mHueSelectorX;
         private double              mSaturationSelectorX;
-        private double              mLightnessSelectorX;
+        private double              mBrightnessSelectorX;
         private Color               mSelectedColor;
 
         public  LinearGradientBrush GradientBrush { get; }
         public  Color               HueColor { get; private set; }
         public  Color               ZeroSaturation { get; }
-        public  Color               MinimumLightness { get; }
-        public  Color               MaximumLightness { get; }
+        public  Color               MinimumBrightness { get; private set; }
+        public  Color               MaximumBrightness { get; private set; }
 
         public  Subject<Color>      ColorChanged { get; }
 
@@ -24,13 +24,13 @@ namespace HueLighting.Controls {
             ColorChanged = new Subject<Color>();
             GradientBrush = CreateHueBrush();
 
-            ZeroSaturation = Colors.Gray;
+            ZeroSaturation = Colors.White;
 
-            MinimumLightness = Colors.Black;
-            MaximumLightness = Colors.White;
+            MinimumBrightness = Colors.Black;
+            MaximumBrightness = Colors.White;
 
             mHueSelectorX = 0.0;
-            mLightnessSelectorX = 50.0;
+            mBrightnessSelectorX = 50.0;
             mSaturationSelectorX = 100.0;
 
             OnColorSelectorMoved();
@@ -46,15 +46,16 @@ namespace HueLighting.Controls {
         }
 
         private void OnColorChanged() {
-            var hslColor = new HslColor( SelectedColor );
+            var hslColor = new HslColor( mSelectedColor );
 
-            HueSelectorX = hslColor.H;
-            SaturationSelectorX = hslColor.S * 100;
-            LightnessSelectorX = hslColor.L * 100;
+            mHueSelectorX = hslColor.H;
+            mSaturationSelectorX = hslColor.S * 100;
+            mBrightnessSelectorX = hslColor.A * 100;
 
+            OnColorSelectorMoved();
             RaisePropertyChanged( () => HueSelectorX );
             RaisePropertyChanged( () => SaturationSelectorX );
-            RaisePropertyChanged( () => LightnessSelectorX );
+            RaisePropertyChanged( () => BrightnessSelectorX );
         }
 
         public double HueSelectorX {
@@ -75,10 +76,10 @@ namespace HueLighting.Controls {
             }
         }
 
-        public double LightnessSelectorX {
-            get => mLightnessSelectorX;
+        public double BrightnessSelectorX {
+            get => mBrightnessSelectorX;
             set {
-                mLightnessSelectorX = Math.Min( Math.Max( 0, value ), 100 );
+                mBrightnessSelectorX = Math.Min( Math.Max( 0, value ), 100 );
 
                 OnColorSelectorMoved();
             }
@@ -88,13 +89,17 @@ namespace HueLighting.Controls {
             var color = new HslColor{ H = mHueSelectorX, L = 0.5, S = 1.0 }.ToRgb();
                 
             HueColor = Color.FromRgb( color.R, color.G, color.B );
+            MaximumBrightness = HueColor;
+            MinimumBrightness = Color.FromArgb( 25, HueColor.R, HueColor.G, HueColor.B );
 
-            color = new HslColor{ H = mHueSelectorX, L = mLightnessSelectorX / 100.0, S = mSaturationSelectorX / 100.0 }.ToRgb();
+            color = new HslColor{ H = mHueSelectorX, L = 0.5, S = mSaturationSelectorX / 100.0 }.ToRgb();
            
-            mSelectedColor = Color.FromRgb( color.R, color.G, color.B );
+            mSelectedColor = Color.FromArgb((byte)( mBrightnessSelectorX * 2.54 ), color.R, color.G, color.B );
 
             RaisePropertyChanged( () => HueColor );
             RaisePropertyChanged( () => SelectedColor );
+            RaisePropertyChanged( () => MinimumBrightness );
+            RaisePropertyChanged( () => MaximumBrightness );
 
             ColorChanged.OnNext( SelectedColor );
         }
