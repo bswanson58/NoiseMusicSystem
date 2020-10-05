@@ -2,11 +2,12 @@
 using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Media;
+using ColorMine.ColorSpaces;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.Models;
 
 namespace HueLighting.Controls {
-    public class HslColorSelectorViewModel : PropertyChangeBase {
+    public class HsbColorSelectorViewModel : PropertyChangeBase {
         private double              mHueSelectorX;
         private double              mSaturationSelectorX;
         private double              mBrightnessSelectorX;
@@ -20,7 +21,7 @@ namespace HueLighting.Controls {
 
         public  Subject<Color>      ColorChanged { get; }
 
-        public HslColorSelectorViewModel() {
+        public HsbColorSelectorViewModel() {
             ColorChanged = new Subject<Color>();
             GradientBrush = CreateHueBrush();
 
@@ -46,11 +47,11 @@ namespace HueLighting.Controls {
         }
 
         private void OnColorChanged() {
-            var hslColor = new HslColor( mSelectedColor );
+            var hsbColor = new Rgb { R = mSelectedColor.R, G = mSelectedColor.G, B = mSelectedColor.B }.To<Hsb>();
 
-            mHueSelectorX = hslColor.H;
-            mSaturationSelectorX = hslColor.S * 100;
-            mBrightnessSelectorX = hslColor.A * 100;
+            mHueSelectorX = hsbColor.H;
+            mSaturationSelectorX = hsbColor.S * 100;
+            mBrightnessSelectorX = hsbColor.B * 100;
 
             OnColorSelectorMoved();
             RaisePropertyChanged( () => HueSelectorX );
@@ -86,15 +87,18 @@ namespace HueLighting.Controls {
         }
 
         private void OnColorSelectorMoved() {
-            var color = new HslColor{ H = mHueSelectorX, L = 0.5, S = 1.0 }.ToRgb();
-                
-            HueColor = Color.FromRgb( color.R, color.G, color.B );
-            MaximumBrightness = HueColor;
-            MinimumBrightness = Color.FromArgb( 25, HueColor.R, HueColor.G, HueColor.B );
+            var rgbColor = new Hsb {  H = mHueSelectorX, 
+                                      S = mSaturationSelectorX > 0 ? mSaturationSelectorX / 100 : 0, 
+                                      B = mBrightnessSelectorX > 0 ? mBrightnessSelectorX / 100 : 0.01 }.To<Rgb>(); // Brightness of zero = Black.
+            mSelectedColor = Color.FromRgb( (byte)rgbColor.R, (byte)rgbColor.G, (byte)rgbColor.B );
 
-            color = new HslColor{ H = mHueSelectorX, L = 0.5, S = mSaturationSelectorX / 100.0 }.ToRgb();
-           
-            mSelectedColor = Color.FromArgb((byte)( mBrightnessSelectorX * 2.54 ), color.R, color.G, color.B );
+            rgbColor = new Hsb {  H = mHueSelectorX, S = 1.0, B = 1.0 }.To<Rgb>();
+            HueColor = Color.FromRgb( (byte)rgbColor.R, (byte)rgbColor.G, (byte)rgbColor.B );
+
+            MaximumBrightness = HueColor;
+
+            rgbColor = new Hsb {  H = mHueSelectorX, S = mSaturationSelectorX > 0 ? mSaturationSelectorX / 100 : 0, B = 0.01 }.To<Rgb>();
+            MinimumBrightness = Color.FromRgb( (byte)rgbColor.R, (byte)rgbColor.G, (byte)rgbColor.B );
 
             RaisePropertyChanged( () => HueColor );
             RaisePropertyChanged( () => SelectedColor );

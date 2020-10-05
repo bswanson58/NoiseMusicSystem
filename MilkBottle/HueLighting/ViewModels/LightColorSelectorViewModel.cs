@@ -23,7 +23,7 @@ namespace HueLighting.ViewModels {
         private IDisposable                 mColorSelectorSubscription;
         private IDisposable                 mBulbSelectorSubscription;
 
-        public  HslColorSelectorViewModel   ColorSelector { get; }
+        public  HsbColorSelectorViewModel   ColorSelector { get; }
         public  BulbSelectorViewModel       BulbSelector { get; }
 
         public  DelegateCommand             Ok { get; }
@@ -32,7 +32,7 @@ namespace HueLighting.ViewModels {
         public  string                      Title { get; }
         public  event Action<IDialogResult> RequestClose;
 
-        public LightColorSelectorViewModel( IHubManager hubManager, HslColorSelectorViewModel colorSelector, BulbSelectorViewModel bulbSelector ) {
+        public LightColorSelectorViewModel( IHubManager hubManager, HsbColorSelectorViewModel colorSelector, BulbSelectorViewModel bulbSelector ) {
             mHubManager = hubManager;
             ColorSelector = colorSelector;
             BulbSelector = bulbSelector;

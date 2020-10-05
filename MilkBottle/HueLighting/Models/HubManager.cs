@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using ColorMine.ColorSpaces;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
 using JetBrains.Annotations;
@@ -288,11 +289,11 @@ namespace HueLighting.Models {
             }
 
             var command = new LightCommand();
-            var hslColor = new HslColor( color );
+            var hsbColor = new Rgb { R = color.R, G = color.G, B = color.B }.To<Hsb>();
 
-            command.Hue = Math.Max( Math.Min( 65535, (int)(( hslColor.H / 360.0 ) * 65535 )), 0 );
-            command.Saturation = Math.Max( Math.Min( 254, (int)( hslColor.S * 255 )), 0 );
-            command.Brightness = Math.Max( Math.Min( (byte)255, color.A ), (byte)1 );
+            command.Hue = Math.Max( Math.Min( 65535, (int)(( hsbColor.H / 360.0 ) * 65535 )), 0 );
+            command.Saturation = Math.Max( Math.Min( 254, (int)( hsbColor.S * 254 )), 0 );
+            command.Brightness = Math.Max( Math.Min( (byte)254, (byte)( hsbColor.B * 254 )), (byte)1 );
 
             var result = await mClient.SendCommandAsync( command, bulbList );
 
