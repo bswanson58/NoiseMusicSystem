@@ -42,6 +42,7 @@ Source: "..\..\MilkBottle\bin\{#Platform}\Release\BouncyCastle.Crypto.dll"; Dest
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.Platform.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\Caliburn.Micro.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\MilkBottle\bin\{#Platform}\Release\ColorMine.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\ControlzEx.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\MilkBottle\bin\{#Platform}\Release\CuttingEdge.Conditions.dll"; DestDir: "{app}"; Flags: ignoreversion
