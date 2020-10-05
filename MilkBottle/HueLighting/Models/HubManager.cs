@@ -9,12 +9,11 @@ using JetBrains.Annotations;
 using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.ColorConverters.HSB;
 using Q42.HueApi.Interfaces;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
+using ReusableBits.Ui.Models;
 
 namespace HueLighting.Models {
     public class HubManager : IHubManager {
@@ -289,8 +288,12 @@ namespace HueLighting.Models {
             }
 
             var command = new LightCommand();
+            var hslColor = new HslColor( color );
 
-            command.SetColor( new RGBColor( color.R, color.G, color.B ));
+            command.Hue = Math.Max( Math.Min( 65535, (int)(( hslColor.H / 360.0 ) * 65535 )), 0 );
+            command.Saturation = Math.Max( Math.Min( 254, (int)( hslColor.S * 255 )), 0 );
+            command.Brightness = Math.Max( Math.Min( (byte)255, color.A ), (byte)1 );
+
             var result = await mClient.SendCommandAsync( command, bulbList );
 
             return !result.HasErrors();
