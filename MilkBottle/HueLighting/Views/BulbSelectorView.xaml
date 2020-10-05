@@ -16,7 +16,7 @@
 
     <StackPanel Orientation="Horizontal">
         <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Available Lights:"/>
-        <ComboBox VerticalAlignment="Center" Width="220" ItemsSource="{Binding LightList}" SelectedItem="{Binding SelectedLight}" ItemTemplate="{StaticResource BulbGroupTemplate}">
+        <ComboBox VerticalAlignment="Center" Width="250" ItemsSource="{Binding LightList}" SelectedItem="{Binding SelectedLight}" ItemTemplate="{StaticResource BulbGroupTemplate}">
             <ComboBox.ItemContainerStyle>
                 <Style TargetType="ComboBoxItem">
                     <Style.Triggers>

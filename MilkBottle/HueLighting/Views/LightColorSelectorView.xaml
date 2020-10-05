@@ -29,10 +29,14 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <controls:HslColorSelector Height="120" Grid.Row="0" HorizontalAlignment="Left" DataContext="{Binding ColorSelector}"/>
+        <StackPanel Orientation="Vertical" Grid.Row="0">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,5,0,8" Text="Select color/brightness:"/>
+
+            <controls:HsbColorSelector Height="150" HorizontalAlignment="Left" DataContext="{Binding ColorSelector}"/>
+        </StackPanel>
 
         <StackPanel Orientation="Vertical" Grid.Row="1">
-            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Select a bulb or group to view color:"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,10,0,8" Text="Select a bulb or group to preview color:"/>
 
             <views:BulbSelectorView Margin="25,3,0,3" DataContext="{Binding BulbSelector}"/>
         </StackPanel>
