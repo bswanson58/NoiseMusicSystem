@@ -67,7 +67,7 @@ namespace MilkBottle.Models {
 
                     if( ColorConverter.ConvertFromString( preferences.InactiveBulbColor ) is Color inactiveColor ) {
                         await Task.Delay( 250 );
-                        retValue = await mHubManager.SetBulbState( from b in mBulbStates select b.BulbName, inactiveColor );
+                        retValue = await mHubManager.SetBulbState( from b in mBulbStates select b.BulbName, inactiveColor, TimeSpan.FromSeconds( 3 ));
 
                         if( retValue ) {
                             mBulbStates.Clear();
