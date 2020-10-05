@@ -14,7 +14,6 @@ using Q42.HueApi.Interfaces;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
-using ReusableBits.Ui.Models;
 
 namespace HueLighting.Models {
     public class HubManager : IHubManager {
@@ -262,10 +261,18 @@ namespace HueLighting.Models {
             return retValue;
         }
 
+        public async Task<bool> SetBulbState( Bulb bulb, bool state) {
+            return await SetBulbState( new []{ bulb.Id}, state );
+        }
+
         public async Task<bool> SetBulbState( String bulbId, bool state) {
             return await SetBulbState( new []{ bulbId}, state );
         }
 
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, bool state ) {
+            return await SetBulbState( from b in bulbList select b.Id, state );
+        }
+         
         public async Task<bool> SetBulbState( IEnumerable<string> bulbList, bool state ) {
             if(( mClient == null ) ||
                ( mEmulating )) {
@@ -278,30 +285,16 @@ namespace HueLighting.Models {
             return !result.HasErrors();
         }
 
-        public async Task<bool> SetBulbState( String bulbId, Color color ) {
-            return await SetBulbState( new []{ bulbId }, color );
-        }
-
-        public async Task<bool> SetBulbState( IEnumerable<string> bulbList, Color color ) {
-            if(( mClient == null ) ||
-               ( mEmulating )) {
-                return true;
-            }
-
-            var command = new LightCommand();
-            var hsbColor = new Rgb { R = color.R, G = color.G, B = color.B }.To<Hsb>();
-
-            command.Hue = Math.Max( Math.Min( 65535, (int)(( hsbColor.H / 360.0 ) * 65535 )), 0 );
-            command.Saturation = Math.Max( Math.Min( 254, (int)( hsbColor.S * 254 )), 0 );
-            command.Brightness = Math.Max( Math.Min( (byte)254, (byte)( hsbColor.B * 254 )), (byte)1 );
-
-            var result = await mClient.SendCommandAsync( command, bulbList );
-
-            return !result.HasErrors();
+        public async Task<bool> SetBulbState( Bulb bulb, int brightness ) {
+            return await SetBulbState( new []{ bulb.Id }, brightness );
         }
 
         public async Task<bool> SetBulbState( string bulbId, int brightness ) {
             return await SetBulbState( new []{ bulbId }, brightness );
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, int brightness ) {
+            return await SetBulbState( from b in bulbList select b.Id, brightness );
         }
 
         public async Task<bool> SetBulbState( IEnumerable<string> bulbList, int brightness ) {
@@ -313,6 +306,37 @@ namespace HueLighting.Models {
             brightness = Math.Max( Math.Min( 255, brightness ), 0 );
 
             var command = new LightCommand{ Brightness = (byte)brightness };
+            var result = await mClient.SendCommandAsync( command, bulbList );
+
+            return !result.HasErrors();
+        }
+
+        public async Task<bool> SetBulbState( Bulb bulb, Color color, TimeSpan? transitionTime = null ) {
+            return await SetBulbState( new []{ bulb.Id }, color, transitionTime );
+        }
+
+        public async Task<bool> SetBulbState( String bulbId, Color color, TimeSpan? transitionTime = null ) {
+            return await SetBulbState( new []{ bulbId }, color, transitionTime );
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, Color color, TimeSpan? transitionTime = null ) {
+            return await SetBulbState( from b in bulbList select b.Id, color, transitionTime );
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<string> bulbList, Color color, TimeSpan? transitionTime = null ) {
+            if(( mClient == null ) ||
+               ( mEmulating )) {
+                return true;
+            }
+
+            var command = new LightCommand();
+            var hsbColor = new Rgb { R = color.R, G = color.G, B = color.B }.To<Hsb>();
+
+            command.Hue = Math.Max( Math.Min( 65535, (int)(( hsbColor.H / 360.0 ) * 65535 )), 0 );
+            command.Saturation = Math.Max( Math.Min( 254, (int)( hsbColor.S * 254 )), 0 );
+            command.Brightness = Math.Max( Math.Min( (byte)254, (byte)( hsbColor.B * 254 )), (byte)1 );
+            command.TransitionTime = transitionTime;
+
             var result = await mClient.SendCommandAsync( command, bulbList );
 
             return !result.HasErrors();
