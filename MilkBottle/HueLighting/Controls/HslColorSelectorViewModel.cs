@@ -51,6 +51,10 @@ namespace HueLighting.Controls {
             HueSelectorX = hslColor.H;
             SaturationSelectorX = hslColor.S * 100;
             LightnessSelectorX = hslColor.L * 100;
+
+            RaisePropertyChanged( () => HueSelectorX );
+            RaisePropertyChanged( () => SaturationSelectorX );
+            RaisePropertyChanged( () => LightnessSelectorX );
         }
 
         public double HueSelectorX {
