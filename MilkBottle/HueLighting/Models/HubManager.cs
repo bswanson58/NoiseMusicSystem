@@ -262,11 +262,7 @@ namespace HueLighting.Models {
         }
 
         public async Task<bool> SetBulbState( Bulb bulb, bool state) {
-            return await SetBulbState( new []{ bulb.Id}, state );
-        }
-
-        public async Task<bool> SetBulbState( String bulbId, bool state) {
-            return await SetBulbState( new []{ bulbId}, state );
+            return await SetBulbState( new []{ bulb.Id }, state );
         }
 
         public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, bool state ) {
@@ -289,10 +285,6 @@ namespace HueLighting.Models {
             return await SetBulbState( new []{ bulb.Id }, brightness );
         }
 
-        public async Task<bool> SetBulbState( string bulbId, int brightness ) {
-            return await SetBulbState( new []{ bulbId }, brightness );
-        }
-
         public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, int brightness ) {
             return await SetBulbState( from b in bulbList select b.Id, brightness );
         }
@@ -313,10 +305,6 @@ namespace HueLighting.Models {
 
         public async Task<bool> SetBulbState( Bulb bulb, Color color, TimeSpan? transitionTime = null ) {
             return await SetBulbState( new []{ bulb.Id }, color, transitionTime );
-        }
-
-        public async Task<bool> SetBulbState( String bulbId, Color color, TimeSpan? transitionTime = null ) {
-            return await SetBulbState( new []{ bulbId }, color, transitionTime );
         }
 
         public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, Color color, TimeSpan? transitionTime = null ) {

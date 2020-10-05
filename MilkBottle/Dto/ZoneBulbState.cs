@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
+using HueLighting.Dto;
 
 namespace MilkBottle.Dto {
     public class BulbState {
-        public  string      BulbName { get; }
+        public  Bulb        Bulb { get; }
         public  Color       Color { get; }
 
-        public BulbState( string bulbName, Color color ) {
-            BulbName = bulbName;
+        public BulbState( Bulb bulb, Color color ) {
+            Bulb = bulb;
             Color = color;
         }
     }

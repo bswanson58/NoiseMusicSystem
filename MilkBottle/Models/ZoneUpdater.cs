@@ -67,7 +67,7 @@ namespace MilkBottle.Models {
 
                     if( ColorConverter.ConvertFromString( preferences.InactiveBulbColor ) is Color inactiveColor ) {
                         await Task.Delay( 250 );
-                        retValue = await mHubManager.SetBulbState( from b in mBulbStates select b.BulbName, inactiveColor, TimeSpan.FromSeconds( 3 ));
+                        retValue = await mHubManager.SetBulbState( from b in mBulbStates select b.Bulb, inactiveColor, TimeSpan.FromSeconds( 3 ));
 
                         if( retValue ) {
                             mBulbStates.Clear();
@@ -170,8 +170,8 @@ namespace MilkBottle.Models {
                                         mEntertainmentGroupManager.SetLightColor( light.Id, colors[colorIndex]);
                                     }
 
-                                    summary.BulbStates.Add( new BulbState( light.Name, colors[colorIndex]));
-                                    UpdateBulbState( new BulbState( light.Id, colors[colorIndex]));
+                                    summary.BulbStates.Add( new BulbState( light, colors[colorIndex]));
+                                    UpdateBulbState( new BulbState( light, colors[colorIndex]));
 
                                     colorIndex++;
                                     if( colorIndex >= colors.Count ) {
@@ -196,7 +196,7 @@ namespace MilkBottle.Models {
         }
 
         private void UpdateBulbState( BulbState newState ) {
-            var existing = mBulbStates.FirstOrDefault( b => b.BulbName.Equals( newState.BulbName ));
+            var existing = mBulbStates.FirstOrDefault( b => b.Bulb.Name.Equals( newState.Bulb.Name ));
 
             if( existing != null ) {
                 mBulbStates.Remove( existing );

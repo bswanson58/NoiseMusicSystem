@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -59,13 +58,13 @@ namespace HueLighting.ViewModels {
         }
 
         private async void OnBulbTargetChanged( IEnumerable<Bulb> bulbList ) {
-            await mHubManager.SetBulbState( from b in mTargetBulbs select b.Id, false );
+            await mHubManager.SetBulbState( mTargetBulbs, false );
             mTargetBulbs.Clear();
 
             if( bulbList != null ) {
                 mTargetBulbs.AddRange( bulbList );
 
-                await mHubManager.SetBulbState( from b in mTargetBulbs select b.Id, true );
+                await mHubManager.SetBulbState( mTargetBulbs, true );
                 UpdateTargetBulbs();
             }
         }
@@ -80,7 +79,7 @@ namespace HueLighting.ViewModels {
         private async void UpdateTargetBulbsTask( IEnumerable<Bulb> bulbList, Color toColor, CancellationToken cancellationToken ) {
             foreach( var bulb in bulbList ) {
                 if(!cancellationToken.IsCancellationRequested ) {
-                    await mHubManager.SetBulbState( bulb.Id, toColor );
+                    await mHubManager.SetBulbState( bulb, toColor );
                 }
             }
         }
@@ -100,7 +99,7 @@ namespace HueLighting.ViewModels {
         }
 
         public void OnDialogClosed() {
-            mHubManager.SetBulbState( from b in mTargetBulbs select b.Id, false );
+            mHubManager.SetBulbState( mTargetBulbs, false );
         }
 
         private void RaiseRequestClose( IDialogResult dialogResult ) {
