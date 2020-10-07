@@ -4,6 +4,7 @@ using Noise.AppSupport.Logging;
 using Noise.AppSupport.Preferences;
 using Noise.AppSupport.Support;
 using Noise.AudioSupport;
+using Noise.Guide.Browser;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
@@ -79,6 +80,12 @@ namespace Noise.AppSupport {
 
 					break;
 			}
+
+			if( appUsage == ApplicationUsage.Desktop ) {
+				var guideInitialization = mContainer.Resolve<CefInitialization>();
+
+				guideInitialization.Initialize();
+            }
 
 			return true;
 		}

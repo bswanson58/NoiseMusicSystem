@@ -45,6 +45,7 @@
             <Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
             <Button Command="{Binding ListeningLayout}" Content="playback" ToolTip="Display Playback Information"/>
             <Button Command="{Binding Options}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Edit Options"/>
+            <Button Command="{Binding Guide}" Content="{StaticResource Path_Guide}" Padding="8" ToolTip="Noise System Guide"/>
 
             <ItemsControl ItemsSource="{Binding CompanionApplications}" ItemTemplate="{StaticResource CompanionAppTemplate}"
                           Visibility="{Binding HaveCompanionApplications, Converter={StaticResource HideOnFalse}}">

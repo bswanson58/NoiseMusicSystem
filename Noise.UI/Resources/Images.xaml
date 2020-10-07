@@ -634,4 +634,19 @@
                   Data="F1 M 60.000,0.000 L 60.000,60.000 L 30.000,30.000"/>
         </Canvas>
     </Viewbox>
+
+    <Viewbox x:Key="Path_Guide" x:Shared="False">
+        <Canvas Width="93.000" Height="93.000">
+            <Canvas>
+                <Path StrokeThickness="6.0" Stroke="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" StrokeLineJoin="Round" 
+                      Data="F1 M 90.000,46.500 C 90.000,67.211 73.211,84.000 52.500,84.000 C 31.789,84.000 15.000,67.211 15.000,46.500 C 15.000,25.789 31.789,9.000 52.500,9.000 C 73.211,9.000 90.000,25.789 90.000,46.500 Z"/>
+                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" 
+                      Data="F1 M 15.000,31.500 C 23.284,31.500 30.000,38.216 30.000,46.500 C 30.000,54.784 23.284,61.500 15.000,61.500 C 6.716,61.500 0.000,54.784 0.000,46.500 C 0.000,38.216 6.716,31.500 15.000,31.500 Z"/>
+                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" 
+                      Data="F1 M 73.500,0.000 C 81.784,0.000 88.500,6.716 88.500,15.000 C 88.500,23.284 81.784,30.000 73.500,30.000 C 65.216,30.000 58.500,23.284 58.500,15.000 C 58.500,6.716 65.216,0.000 73.500,0.000 Z"/>
+                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" 
+                      Data="F1 M 73.500,63.000 C 81.784,63.000 88.500,69.716 88.500,78.000 C 88.500,86.284 81.784,93.000 73.500,93.000 C 65.216,93.000 58.500,86.284 58.500,78.000 C 58.500,69.716 65.216,63.000 73.500,63.000 Z"/>
+            </Canvas>
+        </Canvas>
+    </Viewbox>
 </ResourceDictionary>

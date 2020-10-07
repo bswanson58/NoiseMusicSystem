@@ -172,6 +172,7 @@ namespace Noise.Desktop {
             RegisterModule( typeof( RemoteHost.RemoteHostModule ));
             RegisterModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
             RegisterModule( typeof( UI.NoiseUiModule ));
+            RegisterModule( typeof( Guide.GuideModule ));
         }
 
         private void RegisterModule( Type moduleType ) {
@@ -189,6 +190,7 @@ namespace Noise.Desktop {
             InitializeModule( typeof( RemoteHost.RemoteHostModule ));
             InitializeModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
             InitializeModule( typeof( UI.NoiseUiModule ));
+            InitializeModule( typeof( Guide.GuideModule ));
         }
 
         private void InitializeModule( Type moduleType ) {

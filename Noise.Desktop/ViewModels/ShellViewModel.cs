@@ -29,6 +29,7 @@ namespace Noise.Desktop.ViewModels {
         public  DelegateCommand                         ListeningLayout { get; }
         public  DelegateCommand                         TimelineLayout { get; }
         public  DelegateCommand                         Options { get; }
+        public  DelegateCommand                         Guide { get; }
 
         public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager, IDataExchangeManager dataExchangeManager, 
                                IDialogService dialogService, IPlatformDialogService platformDialogService, IEventAggregator eventAggregator ) {
@@ -43,6 +44,7 @@ namespace Noise.Desktop.ViewModels {
             ListeningLayout = new DelegateCommand( OnListeningLayout );
             TimelineLayout = new DelegateCommand( OnTimelineLayout );
             Options = new DelegateCommand( OnOptions );
+            Guide = new DelegateCommand( OnGuide );
 
             CompanionApplications.CollectionChanged += OnCollectionChanged;
 
@@ -104,6 +106,10 @@ namespace Noise.Desktop.ViewModels {
 
         private void OnOptions() {
             mDialogService.ShowDialog( nameof( ConfigurationDialog ), new DialogParameters(), result => { });
+        }
+
+        private void OnGuide() {
+            mDialogService.ShowDialog( nameof( Noise.Guide.Views.GuideView ), new DialogParameters(), result => { });
         }
 
         private void OnImport() {

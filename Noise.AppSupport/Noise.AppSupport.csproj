@@ -194,6 +194,10 @@
       <Project>{ed3a5818-ed75-476b-8146-d5eee289d2a2}</Project>
       <Name>Noise.EntityFrameworkDatabase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.Guide\Noise.Guide.csproj">
+      <Project>{9246b179-aaf0-4472-979e-48c4df52df00}</Project>
+      <Name>Noise.Guide</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
