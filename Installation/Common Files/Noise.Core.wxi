@@ -16,6 +16,9 @@
     <Component Id="Noise.EntityFrameworkDatabase" Guid="96832ab1-0333-458a-b121-cd670cb40367">
       <File Id="Noise.EntityFrameworkDatabase.dll" DiskId="10" Source="$(var.Noise.EntityFrameworkDatabase.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Noise.Guide" Guid="03A4E908-20F4-4B39-A93A-D5E9A2788165">
+      <File Id="Noise.Guide.dll" DiskId="10" Source="$(var.Noise.Guide.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Noise.Infrastructure" Guid="89d9bf19-146a-427e-a102-f45e3c71f02b">
       <File Id="Noise.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -45,6 +48,7 @@
     <ComponentRef Id="Noise.BlobStorage" />
     <ComponentRef Id="Noise.Core" />
     <ComponentRef Id="Noise.EntityFrameworkDatabase" />
+    <ComponentRef Id="Noise.Guide" />
     <ComponentRef Id="Noise.Infrastructure" />
     <ComponentRef Id="Noise.Metadata"/>
     <ComponentRef Id="Noise.RemoteHost" />

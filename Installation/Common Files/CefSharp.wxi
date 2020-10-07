@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="CefSharp.BrowserSubprocess.exe" Guid="BE71F691-BADA-49DA-94D4-501EAC417B1B">
+      <File Id="CefSharp.BrowserSubprocess.exe" DiskId="10" Source="$(var.Noise.Guide.TargetDir)CefSharp.BrowserSubprocess.exe" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="CefSharp.BrowserSubprocess.Core.dll" Guid="B15CC68A-2E85-428F-B67E-BC525C94FB9C">
+      <File Id="CefSharp.BrowserSubprocess.Core.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)CefSharp.BrowserSubprocess.Core.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="CefSharp.Core.dll" Guid="44F03AF0-DF5E-4929-92DD-6A83812D69FB">
+      <File Id="CefSharp.Core.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)CefSharp.Core.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="CefSharp.dll" Guid="12105472-98CC-4D54-A101-6434B95E8C93">
+      <File Id="CefSharp.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)CefSharp.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="CefSharp.Wpf.dll" Guid="C1B30515-401A-4DE9-B56A-55ABC9A16534">
+      <File Id="CefSharp.Wpf.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)CefSharp.Wpf.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="libcef.dll" Guid="F48E5A00-3B2C-4248-AFC3-EC927CA88DF9">
+      <File Id="libcef.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)libcef.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="libEGL.dll" Guid="86AAAAB7-E834-4C74-B280-6DBFD09439D7">
+      <File Id="libEGL.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)libEGL.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="libGLESv2.dll" Guid="A8AFA7D3-67F5-4F79-B968-21E69091F591">
+      <File Id="libGLESv2.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)libGLESv2.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="chrome_elf.dll" Guid="4552C850-6201-41FF-BA23-55EB0EA02EF3">
+      <File Id="chrome_elf.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)chrome_elf.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="d3dcompiler_47.dll" Guid="35A0738D-5B20-438F-824E-CBF76557A647">
+      <File Id="d3dcompiler_47.dll" DiskId="10" Source="$(var.Noise.Guide.TargetDir)d3dcompiler_47.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="icudtl.dat" Guid="0F9A0E79-3174-42B9-B459-D27DFE5E6578">
+      <File Id="icudtl.dat" DiskId="10" Source="$(var.Noise.Guide.TargetDir)icudtl.dat" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="snapshot_blob.bin" Guid="79918E68-BFF1-47AF-AFE9-B64957C55DA0">
+      <File Id="snapshot_blob.bin" DiskId="10" Source="$(var.Noise.Guide.TargetDir)snapshot_blob.bin" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="v8_context_snapshot.bin" Guid="C52E3069-5462-45AE-8A3E-408B7F0B9F94">
+      <File Id="v8_context_snapshot.bin" DiskId="10" Source="$(var.Noise.Guide.TargetDir)v8_context_snapshot.bin" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="cef.pak" Guid="B8D35135-29F8-498A-A171-CD349CE46B22">
+      <File Id="cef.pak" DiskId="10" Source="$(var.Noise.Guide.TargetDir)cef.pak" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="cef_100_percent.pak" Guid="3463A1A8-F7A7-43D7-B776-097F0EC51930">
+      <File Id="cef_100_percent.pak" DiskId="10" Source="$(var.Noise.Guide.TargetDir)cef_100_percent.pak" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="cef_200_percent.pak" Guid="45F1E2BD-633F-42E4-9FE7-5568FFAB35BD">
+      <File Id="cef_200_percent.pak" DiskId="10" Source="$(var.Noise.Guide.TargetDir)cef_200_percent.pak" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="cef_extensions.pak" Guid="3957B56C-4F61-4C61-B883-A5A6097506A8">
+      <File Id="cef_extensions.pak" DiskId="10" Source="$(var.Noise.Guide.TargetDir)cef_extensions.pak" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <DirectoryRef Id="CefSharpLocales">
+    <Component Id="en_us.pak" Guid="9F8D75E5-4636-4F04-A6F6-4BE6E62E7CF9">
+      <File Id="en_us.pak" DiskId="10" Source="$(var.Noise.Guide.TargetDir)locales\en-us.pak" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="CefSharpFiles">
+    <ComponentRef Id="CefSharp.BrowserSubprocess.exe" />
+    <ComponentRef Id="CefSharp.BrowserSubprocess.Core.dll" />
+    <ComponentRef Id="CefSharp.Core.dll" />
+    <ComponentRef Id="CefSharp.dll" />
+    <ComponentRef Id="CefSharp.Wpf.dll" />
+    <ComponentRef Id="d3dcompiler_47.dll" />
+    <ComponentRef Id="libcef.dll" />
+    <ComponentRef Id="libEGL.dll" />
+    <ComponentRef Id="libGLESv2.dll" />
+    <ComponentRef Id="chrome_elf.dll" />
+    <ComponentRef Id="icudtl.dat" />
+    <ComponentRef Id="snapshot_blob.bin" />
+    <ComponentRef Id="v8_context_snapshot.bin" />
+    <ComponentRef Id="cef.pak" />
+    <ComponentRef Id="cef_100_percent.pak" />
+    <ComponentRef Id="cef_200_percent.pak" />
+    <ComponentRef Id="cef_extensions.pak" />
+    <ComponentRef Id="en_us.pak" />
+  </ComponentGroup>
+</Include>

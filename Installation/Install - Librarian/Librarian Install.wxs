@@ -37,8 +37,10 @@
 			<Directory Id="$(var.ProgramFolder)">
 				<Directory Id="CompanyDirectory" Name="Secret Squirrel Software">
 					<Directory Id="CommonDirectory" Name="Noise Music System">
-						<Directory Id="INSTALLDIRECTORY" Name="Noise Music Librarian" />
-					</Directory>
+						<Directory Id="INSTALLDIRECTORY" Name="Noise Music Librarian">
+              <Directory Id="CefSharpLocales" Name="locales"/>
+            </Directory>
+          </Directory>
 				</Directory>
 			</Directory>
 
@@ -124,7 +126,8 @@
 		</Feature>
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
-			<ComponentGroupRef Id="ConfigurationFiles"/>
+      <ComponentGroupRef Id="CefSharpFiles"/>
+      <ComponentGroupRef Id="ConfigurationFiles"/>
 			<ComponentGroupRef Id="GongSolutionsFiles"/>
 			<ComponentGroupRef Id="MahAppsMetroFiles"/>
 			<ComponentGroupRef Id="ObservalFiles"/>

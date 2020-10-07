@@ -5,7 +5,8 @@
 
 		<?include Noise.Core.wxi ?>
 		<?include BASS Audio.wxi ?>
-		<?include CaliburnMicro.wxi ?>
+    <?include CaliburnMicro.wxi ?>
+    <?include CefSharp.wxi ?>
 		<?include Configuration.wxi?>
 		<?include CuttingEdge.wxi ?>
 		<?include DotNetZip.wxi ?>

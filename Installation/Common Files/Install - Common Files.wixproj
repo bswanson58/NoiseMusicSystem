@@ -36,6 +36,7 @@
   <ItemGroup>
     <Content Include="BASS Audio.wxi" />
     <Content Include="CaliburnMicro.wxi" />
+    <Content Include="CefSharp.wxi" />
     <Content Include="Configuration.wxi" />
     <Content Include="CuttingEdge.wxi" />
     <Content Include="DotNetZip.wxi" />
@@ -105,6 +106,14 @@
     <ProjectReference Include="..\..\Noise.EntityFrameworkDatabase\Noise.EntityFrameworkDatabase.csproj">
       <Name>Noise.EntityFrameworkDatabase</Name>
       <Project>{ed3a5818-ed75-476b-8146-d5eee289d2a2}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.Guide\Noise.Guide.csproj">
+      <Name>Noise.Guide</Name>
+      <Project>{9246b179-aaf0-4472-979e-48c4df52df00}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

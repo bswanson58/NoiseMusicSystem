@@ -39,7 +39,9 @@
 			<Directory Id="$(var.ProgramFolder)">
 				<Directory Id="CompanyDirectory" Name="Secret Squirrel Software">
 					<Directory Id="CommonDirectory" Name="Noise Music System">
-						<Directory Id="INSTALLDIRECTORY" Name="Noise Desktop" />
+            <Directory Id="INSTALLDIRECTORY" Name="Noise Desktop">
+							<Directory Id="CefSharpLocales" Name="locales"/>
+            </Directory>
 					</Directory>
 				</Directory>
 			</Directory>
@@ -118,7 +120,8 @@
 				<ComponentGroupRef Id="ApplicationFiles" />
 				<ComponentGroupRef Id="CoreFiles"/>
 				<ComponentGroupRef Id="BassAudioFiles"/>
-				<ComponentGroupRef Id="CaliburnMicroFiles"/>
+        <ComponentGroupRef Id="CaliburnMicroFiles"/>
+        <ComponentGroupRef Id="CefSharpFiles"/>
 				<ComponentGroupRef Id="ConfigurationFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
         <ComponentGroupRef Id="DotNetZipFiles"/>

@@ -52,6 +52,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Install - Librarian", "Inst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Librarian", "Noise.Librarian\Noise.Librarian.csproj", "{37156BD4-8E37-4F2C-85C8-4E48359EFED9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Guide", "Noise.Guide\Noise.Guide.csproj", "{9246B179-AAF0-4472-979E-48C4DF52DF00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -565,6 +567,30 @@ Global
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Release|x64.Build.0 = Release|x64
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Release|x86.ActiveCfg = Release|x86
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Release|x86.Build.0 = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|x64.ActiveCfg = Debug|x64
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|x64.Build.0 = Debug|x64
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|x86.ActiveCfg = Debug|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Debug|x86.Build.0 = Debug|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|Mixed Platforms.ActiveCfg = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|Mixed Platforms.Build.0 = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|x64.ActiveCfg = Release|x64
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|x64.Build.0 = Release|x64
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|x86.ActiveCfg = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Installers - Release|x86.Build.0 = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|Mixed Platforms.Build.0 = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|x64.ActiveCfg = Release|x64
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|x64.Build.0 = Release|x64
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|x86.ActiveCfg = Release|x86
+		{9246B179-AAF0-4472-979E-48C4DF52DF00}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
