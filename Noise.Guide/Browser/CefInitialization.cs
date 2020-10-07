@@ -12,7 +12,8 @@ namespace Noise.Guide.Browser {
         }
 
         public void Initialize() {
-            var settings = new CefSettings {
+            var settings = new CefSettings { 
+                CachePath = Path.Combine( mEnvironment.LogFileDirectory(), "GuideCache" ),
                 LogSeverity = LogSeverity.Warning, 
                 LogFile = Path.Combine( mEnvironment.LogFileDirectory(), "Guide.log" )
             };
