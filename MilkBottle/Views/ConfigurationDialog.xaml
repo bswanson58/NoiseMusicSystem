@@ -75,16 +75,18 @@
             <!-- Inactivity Color -->
             <StackPanel Grid.Row="5" Margin="0,5" Orientation="Horizontal">
                 <TextBlock Width="150" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" TextAlignment="Right" VerticalAlignment="Center" Text="Inactivity Color:"/>
-                <Rectangle Width="25" Height="15" Cursor="Hand">
-                    <Rectangle.Fill>
-                        <SolidColorBrush Color="{Binding InactivityColor}"/>
-                    </Rectangle.Fill>
-                    <b:Interaction.Triggers>
-                        <b:EventTrigger EventName="MouseDown" >
-                            <b:InvokeCommandAction Command="{Binding SelectInactivityColor}" />
-                        </b:EventTrigger>
-                    </b:Interaction.Triggers>
-                </Rectangle>
+                <Border BorderThickness="2" BorderBrush="{StaticResource BorderTextColor}">
+                    <Rectangle Width="25" Height="15" Cursor="Hand">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding InactivityColor}"/>
+                        </Rectangle.Fill>
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="MouseDown" >
+                                <b:InvokeCommandAction Command="{Binding SelectInactivityColor}" />
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </Rectangle>
+                </Border>
             </StackPanel>
         </Grid>
 
