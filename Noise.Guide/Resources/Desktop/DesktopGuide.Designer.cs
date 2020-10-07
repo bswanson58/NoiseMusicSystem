@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Noise.Guide.Resources.Desktop {
+namespace Noise.Guide.Resources.desktop {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Noise.Guide.Resources.Desktop {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DesktopResources {
+    internal class DesktopGuide {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal DesktopResources() {
+        internal DesktopGuide() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Noise.Guide.Resources.Desktop {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Noise.Guide.Resources.Desktop.DesktopResources", typeof(DesktopResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Noise.Guide.Resources.desktop.DesktopGuide", typeof(DesktopGuide).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -79,20 +79,66 @@ namespace Noise.Guide.Resources.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;
-        ///&lt;head&gt;&lt;/head&gt;
+        ///   Looks up a localized string similar to html, body {
+        ///    font-family: &apos;Segoe UI&apos;, sans-serif;
+        ///	font-size: 12pt;
+        ///	height: 100%;
+        ///	width: 100%;
+        ///	margin: 0;
+        ///	padding: 0;
+        ///}
+        ///
+        ///body {
+        ///	background: rgb(37, 37, 37);
+        ///}
+        ///.
+        /// </summary>
+        internal static string guide {
+            get {
+                return ResourceManager.GetString("guide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot;
+        ///          &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+        ///&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot; /&gt;
+        ///
+        ///&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Noise Music System&lt;/title&gt;
+        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/guide.css&quot; type=&quot;text/css&quot; /&gt;
+        ///&lt;/head&gt;
+        ///
         ///&lt;body&gt;
-        ///&lt;h1&gt;The Noise Music Desktop&lt;/h1&gt;
-        ///&lt;br&gt;
-        ///&lt;a href=&quot;noise://common/overview.html&quot;&gt;System Overview&lt;/a&gt;&lt;br&gt;
-        ///&lt;a href=&quot;noise://app/credits.html&quot;&gt;Credits&lt;/a&gt;
-        ///&lt;/body&gt;
-        ///&lt;/body&gt;
-        ///&lt;/html&gt;.
+        ///    &lt;h1&gt;The Noise Music Desktop&lt;/h1&gt;
+        ///    &lt;br&gt;
+        ///    &lt;a href=&quot;/common/o [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string home {
             get {
                 return ResourceManager.GetString("home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;h1&gt;Overview&lt;/h1&gt;
+        ///The Noise Music System is composed of a suite of applications.
+        ///&lt;/b&gt;
+        ///&lt;a href=&quot;/home.html&quot;&gt;Home&lt;/a&gt;&lt;br&gt;
+        ///&lt;a href=&quot;/desktop/credits.html&quot;&gt;Credits&lt;/a&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string overview {
+            get {
+                return ResourceManager.GetString("overview", resourceCulture);
             }
         }
     }

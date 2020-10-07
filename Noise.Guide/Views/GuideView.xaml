@@ -23,7 +23,7 @@
 
     <Grid Margin="10">
         <Grid.Resources>
-            <browser:ExternalRequestHandler x:Key="_externalRequestHandler"/>
+            <browser:GuideRequestHandler x:Key="GuideRequestHandler"/>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -31,7 +31,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <wpf:ChromiumWebBrowser Grid.Row="0" Address="noise://app/home.html" RequestHandler="{StaticResource _externalRequestHandler}"/>
+        <wpf:ChromiumWebBrowser Grid.Row="0" Address="http://noise/desktop/home.html" RequestHandler="{StaticResource GuideRequestHandler}"/>
 
         <StackPanel Grid.Row="1" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Close}" IsDefault="True"/>

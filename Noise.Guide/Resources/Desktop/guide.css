@@ -1,0 +1,12 @@
+html, body {
+    font-family: 'Segoe UI', sans-serif;
+	font-size: 12pt;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: rgb(37, 37, 37);
+}

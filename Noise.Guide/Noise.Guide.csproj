@@ -111,19 +111,14 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Browser\CefInitialization.cs" />
-    <Compile Include="Browser\ExternalRequestHandler.cs" />
-    <Compile Include="Browser\SchemeHandlerFactory.cs" />
+    <Compile Include="Browser\GuideRequestHandler.cs" />
+    <Compile Include="Browser\DesktopGuideResourceHandler.cs" />
     <Compile Include="GuideModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\Common\CommonResources.Designer.cs">
+    <Compile Include="Resources\desktop\DesktopGuide.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>CommonResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\Desktop\DesktopResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DesktopResources.resx</DependentUpon>
+      <DependentUpon>DesktopGuide.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\GuideViewModel.cs" />
     <Compile Include="Views\GuideView.xaml.cs">
@@ -147,23 +142,22 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Common\CommonResources.resx">
+    <None Include="Resources\desktop\credits.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\desktop\DesktopGuide.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Desktop\DesktopResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DesktopResources.Designer.cs</LastGenOutput>
+      <LastGenOutput>DesktopGuide.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Desktop\home.html" />
+    <None Include="Resources\desktop\guide.css" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Desktop\credits.html" />
+    <None Include="Resources\desktop\home.html" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Common\overview.html" />
+    <None Include="Resources\desktop\overview.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -18,11 +18,6 @@ namespace Noise.Guide.Browser {
                 LogFile = Path.Combine( mEnvironment.LogFileDirectory(), "Guide.log" )
             };
 
-            settings.RegisterScheme( new CefCustomScheme {
-                SchemeName = SchemeHandlerFactory.cSchemeName,
-                SchemeHandlerFactory = new SchemeHandlerFactory()
-            });
-
             Cef.Initialize( settings );
             Cef.EnableHighDPISupport();
         }
