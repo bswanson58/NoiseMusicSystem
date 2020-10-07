@@ -25,6 +25,10 @@ namespace Noise.Desktop.ViewModels {
         public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
         public  bool									HaveCompanionApplications => CompanionApplications.Any();
 
+        public  bool                                    IsLibraryView { get; private set; }
+        public  bool                                    IsTimelineView { get; private set; }
+        public  bool                                    IsListeningView { get; private set; }
+
         public  DelegateCommand                         LibraryLayout { get; }
         public  DelegateCommand                         ListeningLayout { get; }
         public  DelegateCommand                         TimelineLayout { get; }
@@ -76,6 +80,9 @@ namespace Noise.Desktop.ViewModels {
 
                 case Constants.ExploreLayout:
                     SetShellView( nameof( LibraryView ));
+
+                    IsLibraryView = true;
+                    RaisePropertyChanged( () => IsLibraryView );
                     break;
 
                 case Constants.SmallPlayerViewToggle:
@@ -86,14 +93,23 @@ namespace Noise.Desktop.ViewModels {
 
         private void OnLibraryLayout() {
             SetShellView( nameof( LibraryView ));
+
+            IsLibraryView = true;
+            RaisePropertyChanged( () => IsLibraryView );
         }
 
         private void OnListeningLayout() {
             SetShellView( nameof( ListeningView ));
+
+            IsListeningView = true;
+            RaisePropertyChanged( () => IsListeningView );
         }
 
         private void OnTimelineLayout() {
             SetShellView( nameof( TimelineView ));
+
+            IsTimelineView = true;
+            RaisePropertyChanged( () => IsTimelineView );
         }
 
         private void SetShellView( string regionName ) {
@@ -102,6 +118,14 @@ namespace Noise.Desktop.ViewModels {
             if( region != null ) {
                 Execute.OnUIThread( () => region.RequestNavigate( new Uri( regionName, UriKind.Relative)));
             }
+
+            IsLibraryView = false;
+            IsListeningView = false;
+            IsTimelineView = false;
+
+            RaisePropertyChanged( () => IsLibraryView );
+            RaisePropertyChanged( () => IsListeningView );
+            RaisePropertyChanged( () => IsTimelineView );
         }
 
         private void OnOptions() {

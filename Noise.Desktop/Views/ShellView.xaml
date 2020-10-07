@@ -28,6 +28,39 @@
             <Button Padding="7" Content="{Binding Icon}" Command="{Binding Command}" ToolTip="{Binding Hint}"/>
         </DataTemplate>
 
+        <DataTemplate x:Key="DisplayLibraryTemplate">
+            <TextBlock x:Name="_contentControl" Text="library"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsLibraryView}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DisplayTimelineTemplate">
+            <TextBlock x:Name="_contentControl" Text="timeline"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsTimelineView}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DisplayListeningTemplate">
+            <TextBlock x:Name="_contentControl" Text="playback"/>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.IsListeningView}" Value="True">
+                    <!-- for some unknown reason, static/dynamic resources are not found here -->
+                    <Setter TargetName="_contentControl" Property="Foreground" Value="#FFEA6500"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
     </Window.Resources>
 
     <metro:MetroWindow.IconTemplate>
@@ -41,9 +74,9 @@
 
     <metro:MetroWindow.RightWindowCommands>
         <metro:WindowCommands>
-            <Button Command="{Binding LibraryLayout}" Content="library" ToolTip="Display Music Library"/>
-            <Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
-            <Button Command="{Binding ListeningLayout}" Content="playback" ToolTip="Display Playback Information"/>
+            <Button Command="{Binding LibraryLayout}" ContentTemplate="{StaticResource DisplayLibraryTemplate}"  ToolTip="Display Music Library"/>
+            <Button Command="{Binding TimelineLayout}" ContentTemplate="{StaticResource DisplayTimelineTemplate}" ToolTip="Display Timeline Explorer"/>
+            <Button Command="{Binding ListeningLayout}" ContentTemplate="{StaticResource DisplayListeningTemplate}" ToolTip="Display Playback Information"/>
             <Button Command="{Binding Options}" Content="{StaticResource Path_Configure}" Padding="7" ToolTip="Edit Options"/>
             <Button Command="{Binding Guide}" Content="{StaticResource Path_Guide}" Padding="7" ToolTip="Noise System Guide"/>
 
