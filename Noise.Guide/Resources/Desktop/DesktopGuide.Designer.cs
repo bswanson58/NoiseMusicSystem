@@ -62,15 +62,20 @@ namespace Noise.Guide.Resources.desktop {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;html&gt;
-        ///&lt;head&gt;&lt;/head&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Noise Music System&lt;/title&gt;
+        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;guide.css&quot; type=&quot;text/css&quot; /&gt;
+        ///&lt;/head&gt;
+        ///
         ///&lt;body&gt;
-        ///&lt;h1&gt;Credits&lt;/h1&gt;
-        ///An outstanding application shell was used: &lt;a href=&quot;https://mahapps.com/&quot;&gt;MahApps&lt;/a&gt;
-        ///&lt;br&gt;
-        ///&lt;a href=&quot;noise://common/overview.html&quot;&gt;System Overview&lt;/a&gt;
-        ///&lt;/body&gt;
-        ///&lt;/body&gt;
-        ///&lt;/html&gt;.
+        ///    &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;25px&quot; heigth=&quot;25px&quot; viewBox=&quot;0 0 100 103&quot; style=&quot;enable-background:new 0 0 100 103;&quot; xml:space=&quot;preserve&quot;&gt;
+        ///        &lt;symbol id=&quot;guide&quot; viewBox=&quot;0 0 100 103&quot;&gt;
+        ///            &lt;style type=&quot;text/css&quot;&gt;
+        ///                .st0 {
+        ///                    fill: none;
+        ///                    stro [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string credits {
             get {
@@ -82,10 +87,28 @@ namespace Noise.Guide.Resources.desktop {
         ///   Looks up a localized string similar to html, body {
         ///    font-family: &apos;Segoe UI&apos;, sans-serif;
         ///	font-size: 12pt;
+        ///	color: white;
         ///	height: 100%;
         ///	width: 100%;
         ///	margin: 0;
         ///	padding: 0;
+        ///}
+        ///
+        ///a:link {
+        ///	color: antiquewhite;
+        ///	text-decoration: none;
+        ///}
+        ///a:visited {
+        ///	color: antiquewhite;
+        ///	text-decoration: none;
+        ///}
+        ///a:hover {
+        ///	color: antiquewhite;
+        ///	text-decoration: underline;
+        ///}
+        ///a:active {
+        ///	color: antiquewhite;
+        ///	text-decoration: underline;
         ///}
         ///
         ///body {
@@ -110,13 +133,13 @@ namespace Noise.Guide.Resources.desktop {
         ///&lt;head&gt;
         ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
         ///    &lt;title&gt;Noise Music System&lt;/title&gt;
-        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/guide.css&quot; type=&quot;text/css&quot; /&gt;
+        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/desktop/guide.css&quot; type=&quot;text/css&quot; /&gt;
         ///&lt;/head&gt;
         ///
         ///&lt;body&gt;
         ///    &lt;h1&gt;The Noise Music Desktop&lt;/h1&gt;
         ///    &lt;br&gt;
-        ///    &lt;a href=&quot;/common/o [rest of string was truncated]&quot;;.
+        ///    &lt;a href=&quot;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string home {
             get {
@@ -126,14 +149,21 @@ namespace Noise.Guide.Resources.desktop {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;html&gt;
-        ///&lt;head&gt;&lt;/head&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Noise Music System&lt;/title&gt;
+        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/desktop/guide.css&quot; type=&quot;text/css&quot; /&gt;
+        ///&lt;/head&gt;
+        ///
         ///&lt;body&gt;
-        ///&lt;h1&gt;Overview&lt;/h1&gt;
-        ///The Noise Music System is composed of a suite of applications.
-        ///&lt;/b&gt;
-        ///&lt;a href=&quot;/home.html&quot;&gt;Home&lt;/a&gt;&lt;br&gt;
-        ///&lt;a href=&quot;/desktop/credits.html&quot;&gt;Credits&lt;/a&gt;
+        ///    &lt;h1&gt;Overview&lt;/h1&gt;
+        ///    The Noise Music System is composed of a suite of applications.
+        ///    &lt;/b&gt;
+        ///    &lt;a href=&quot;/desktop/home.html&quot;&gt;Home&lt;/a&gt;&lt;br&gt;
+        ///    &lt;a href=&quot;/desktop/credits.html&quot;&gt;Credits&lt;/a&gt;
         ///&lt;/body&gt;
+        ///
         ///&lt;/html&gt;.
         /// </summary>
         internal static string overview {

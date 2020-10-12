@@ -31,7 +31,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <wpf:ChromiumWebBrowser Grid.Row="0" Address="http://noise/desktop/home.html" RequestHandler="{StaticResource GuideRequestHandler}"/>
+        <wpf:ChromiumWebBrowser Grid.Row="0" Address="http://noise/home.html" RequestHandler="{StaticResource GuideRequestHandler}"/>
 
         <StackPanel Grid.Row="1" Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Close" Command="{Binding Close}" IsDefault="True"/>

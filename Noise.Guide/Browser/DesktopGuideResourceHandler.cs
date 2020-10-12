@@ -5,14 +5,14 @@ using CefSharp;
 
 namespace Noise.Guide.Browser {
     public class DesktopGuideResourceHandler : CefSharp.Handler.ResourceRequestHandler {
-        private readonly Dictionary<string, string> mGuideResources;
+        private readonly Dictionary<string, string> mStringResources;
 
         public DesktopGuideResourceHandler() {
-            mGuideResources = new Dictionary<string, string> {
-                { "/desktop/guide.css", Resources.desktop.DesktopGuide.guide },
-                { "/desktop/home.html", Resources.desktop.DesktopGuide.home },
-                { "/desktop/credits.html", Resources.desktop.DesktopGuide.credits },
-                { "/desktop/overview.html", Resources.desktop.DesktopGuide.overview },
+            mStringResources = new Dictionary<string, string> {
+                { "/guide.css", Resources.desktop.DesktopGuide.guide },
+                { "/home.html", Resources.desktop.DesktopGuide.home },
+                { "/credits.html", Resources.desktop.DesktopGuide.credits },
+                { "/overview.html", Resources.desktop.DesktopGuide.overview },
             };
         }
 
@@ -20,8 +20,8 @@ namespace Noise.Guide.Browser {
             var retValue = default( IResourceHandler );
             var uri = new Uri( request.Url );
 
-            if( mGuideResources.ContainsKey( uri.AbsolutePath )) {
-                var resource = mGuideResources[uri.AbsolutePath];
+            if( mStringResources.ContainsKey( uri.AbsolutePath )) {
+                var resource = mStringResources[uri.AbsolutePath];
                 var fileExtension = Path.GetExtension( uri.AbsolutePath );
 
                 retValue = ResourceHandler.FromString( resource, System.Text.Encoding.UTF8, mimeType: Cef.GetMimeType( fileExtension ));

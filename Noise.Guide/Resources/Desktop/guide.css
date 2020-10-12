@@ -28,3 +28,11 @@ a:active {
 body {
 	background: rgb(37, 37, 37);
 }
+
+div.imageCreditParent {
+	display:flex; 
+	align-items:center;
+}
+div.imageCreditParent div.imageDescription {
+	margin-left: 10px;
+}
