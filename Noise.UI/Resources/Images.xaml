@@ -97,37 +97,31 @@
 	</Viewbox>
 
 	<Viewbox x:Key="Path_Information" x:Shared="False">
-		<Canvas Width="53.776"
-				Height="100"
-				ClipToBounds="True">
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry Figures="M42.82,0C48.852,0 53.776,3.731 53.776,8.329 53.776,12.925 48.852,16.652 42.82,16.652 36.778,16.652 31.869,12.924 31.869,8.329 31.869,3.731 36.778,0 42.82,0" />
-				</Path.Data>
-			</Path>
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry Figures="M2.54,73.97L14.095,52.412 2.005,52.412C13.755,42.948,19.978,35.412,26.378,24.714L42.761,24.714 18.573,74.674C15.325,81.416,24.615,85.705,35.131,81.416L30.837,96.05C24.974,100 22.251,100 18.742,100 9.463,100 -6.139,90.192 2.54,73.97" />
-				</Path.Data>
-			</Path>
-		</Canvas>
-	</Viewbox>
+        <Canvas Width="32.754" Height="31.000">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 16.369,9.004 C 21.048,9.004 25.485,11.300 28.969,15.497 C 25.485,19.698 21.052,21.997 16.385,21.997 C 11.726,21.997 7.290,19.698 3.790,15.495 C 7.270,11.299 11.700,9.004 16.369,9.004 Z M 16.384,24.997 C 22.342,24.997 27.915,21.943 32.077,16.397 L 32.754,15.497 L 32.077,14.597 C 27.918,9.056 22.339,6.005 16.368,6.005 C 10.407,6.005 4.836,9.057 0.677,14.597 L 0.000,15.500 L 0.680,16.400 C 4.861,21.943 10.438,24.997 16.384,24.997 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 16.378,13.000 C 17.728,13.000 18.878,14.091 18.878,15.500 C 18.878,16.878 17.757,18.000 16.378,18.000 C 14.999,18.000 13.878,16.878 13.878,15.500 C 13.878,14.122 15.000,13.000 16.378,13.000 Z M 16.378,21.000 C 19.410,21.000 21.878,18.533 21.878,15.500 C 21.878,13.562 21.043,12.377 19.824,11.176 L 19.768,11.176 C 18.803,10.414 17.621,10.000 16.378,10.000 C 13.346,10.000 10.878,12.467 10.878,15.500 C 10.878,18.533 13.346,21.000 16.378,21.000 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 2.377,8.000 C 3.205,8.000 3.877,7.329 3.877,6.500 L 3.877,3.000 L 7.381,3.000 C 8.209,3.000 8.881,2.329 8.881,1.500 C 8.881,0.671 8.209,0.000 7.381,0.000 L 2.377,0.000 C 1.549,0.000 0.877,0.671 0.877,1.500 L 0.877,6.500 C 0.877,7.329 1.548,8.000 2.377,8.000 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}" 
+                  Data="F1 M 25.377,3.000 L 28.881,3.000 L 28.881,6.500 C 28.881,7.329 29.553,8.000 30.381,8.000 C 31.209,8.000 31.881,7.329 31.881,6.500 L 31.881,1.500 C 31.881,0.671 31.209,0.000 30.381,0.000 L 25.377,0.000 C 24.549,0.000 23.877,0.671 23.877,1.500 C 23.877,2.329 24.548,3.000 25.377,3.000 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 2.377,23.000 C 1.549,23.000 0.877,23.671 0.877,24.500 L 0.877,29.500 C 0.877,30.329 1.549,31.000 2.377,31.000 L 7.381,31.000 C 8.209,31.000 8.881,30.329 8.881,29.500 C 8.881,28.671 8.209,28.000 7.381,28.000 L 3.877,28.000 L 3.877,24.500 C 3.877,23.671 3.205,23.000 2.377,23.000 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 25.377,31.000 L 30.381,31.000 C 31.209,31.000 31.881,30.329 31.881,29.500 L 31.881,24.500 C 31.881,23.671 31.209,23.000 30.381,23.000 C 29.553,23.000 28.881,23.671 28.881,24.500 L 28.881,28.000 L 25.377,28.000 C 24.549,28.000 23.877,28.671 23.877,29.500 C 23.877,30.329 24.548,31.000 25.377,31.000 Z"/>
+        </Canvas>
+    </Viewbox>
 
 	<Viewbox x:Key="Path_Pictures" x:Shared="False">
-		<Canvas Width="100" Height="69.413" ClipToBounds="True" Opacity="0.8">
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<EllipseGeometry Center="50.045,38.771"
-									 RadiusX="12.725"
-									 RadiusY="12.725" />
-				</Path.Data>
-			</Path>
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry Figures="M93.502,8.401L28.701,8.401 28.701,0 11.733,0 11.733,8.401 6.499,8.401C2.91,8.401,0,11.381,0,15.057L0,62.756C0,66.433,2.91,69.412,6.499,69.412L93.502,69.412C97.091,69.412,100,66.433,100,62.756L100,15.057C100,11.381,97.091,8.401,93.502,8.401z M50.045,63.546C36.362,63.546 25.271,52.453 25.271,38.771 25.271,25.089 36.363,13.997 50.045,13.997 63.727,13.997 74.819,25.089 74.819,38.771 74.819,52.454 63.728,63.546 50.045,63.546z" FillRule="Nonzero" />
-				</Path.Data>
-			</Path>
-		</Canvas>
+        <Canvas Width="95.000" Height="76.100">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 86.800,11.700 L 64.400,11.700 L 61.400,4.600 C 60.200,1.800 57.500,0.000 54.500,0.000 L 40.500,0.000 C 37.500,0.000 34.800,1.800 33.600,4.600 L 30.600,11.700 L 24.100,11.700 L 24.100,10.300 C 24.100,8.800 22.900,7.600 21.400,7.600 L 15.600,7.600 C 14.100,7.600 12.900,8.800 12.900,10.300 L 12.900,11.700 L 8.300,11.700 C 3.700,11.700 0.100,15.400 0.100,19.900 L 0.100,31.100 L 29.000,31.100 C 32.900,24.900 39.800,20.800 47.600,20.800 C 55.500,20.800 62.300,24.900 66.200,31.100 L 95.000,31.100 L 95.000,19.900 C 95.000,15.400 91.300,11.700 86.800,11.700 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 69.600,42.900 C 69.600,55.100 59.700,64.900 47.600,64.900 C 35.500,64.900 25.500,55.000 25.500,42.900 C 25.500,40.700 25.800,38.600 26.400,36.600 L 0.000,36.600 L 0.000,67.900 C 0.000,72.500 3.700,76.100 8.200,76.100 L 86.700,76.100 C 91.300,76.100 94.900,72.400 94.900,67.900 L 94.900,36.600 L 68.600,36.600 C 69.200,38.600 69.600,40.700 69.600,42.900 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 47.500,32.700 C 49.000,32.700 50.200,33.900 50.200,35.400 C 50.200,36.900 49.000,38.100 47.500,38.100 C 44.900,38.100 42.700,40.200 42.700,42.900 C 42.700,44.400 41.500,45.600 40.000,45.600 C 38.500,45.600 37.300,44.400 37.300,42.900 C 37.300,37.300 41.900,32.700 47.500,32.700 Z M 47.500,59.500 C 56.600,59.500 64.100,52.100 64.100,42.900 C 64.100,33.800 56.700,26.300 47.500,26.300 C 38.400,26.300 30.900,33.700 30.900,42.900 C 30.900,52.000 38.400,59.500 47.500,59.500 Z"/>
+        </Canvas>
 	</Viewbox>
 
 	<Viewbox x:Key="Path_Documents" x:Shared="False">
@@ -165,18 +159,10 @@
 	</Viewbox>
 
 	<Viewbox x:Key="Path_Folder" x:Shared="False">
-		<Canvas Width="100" Height="76.217" ClipToBounds="True" Opacity="0.8">
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry Figures="M95.674,71.889C95.674,74.28,93.736,76.217,91.346,76.217L8.654,76.217C6.265,76.217,4.326,74.279,4.326,71.889L0,16.121C0,13.73,1.938,11.793,4.326,11.793L95.674,11.793C98.063,11.793,100,13.73,100,16.121L95.674,71.889z" FillRule="Nonzero" />
-				</Path.Data>
-			</Path>
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry Figures="M39.971,3.669C39.893,1.632,38.229,0,36.171,0L6.639,0C4.583,0,2.917,1.632,2.839,3.669L2.825,3.669 2.825,8.896 39.986,8.896 39.986,3.669 39.971,3.669z" FillRule="Nonzero" />
-				</Path.Data>
-			</Path>
-		</Canvas>
+        <Canvas Width="202.000" Height="144.050">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 0.000,135.550 L 0.000,30.530 C 0.000,25.850 3.810,22.040 8.490,22.040 L 88.600,22.040 L 193.510,22.040 C 198.190,22.040 202.000,25.850 202.000,30.530 L 202.000,135.560 C 202.000,140.240 198.190,144.050 193.510,144.050 L 8.480,144.050 C 3.800,144.040 0.000,140.230 0.000,135.550 Z M 5.670,18.040 L 10.780,2.100 C 11.180,0.840 12.340,0.000 13.660,0.000 L 75.110,0.000 C 76.430,0.000 77.590,0.840 77.990,2.100 L 83.100,18.040 L 8.480,18.040 L 5.670,18.040 Z"/>
+        </Canvas>
 	</Viewbox>
 
 	<Viewbox x:Key="Path_Configure" x:Shared="False">
@@ -257,29 +243,13 @@
 		</Canvas>
 	</Viewbox>
 
-	<Viewbox x:Key="Path_Sync" x:Shared="False">
-		<Canvas Width="87.5" Height="100" ClipToBounds="True">
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry FillRule="Nonzero" Figures="M9.157,62.433L18.224,58.587C18.224,58.587 9.862,41.65 27.338,28.551 27.338,28.551 38.261,21.078 50.239,26.176L53.962,17.045C53.962,17.045 35.775,9.42 20.502,21.292 20.502,21.291 -0.787,35.361 9.157,62.433z" />
-				</Path.Data>
-			</Path>
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry FillRule="Nonzero" Figures="M55.317,5.887L43.409,35.101 63.969,26.446z" />
-				</Path.Data>
-			</Path>
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry FillRule="Nonzero" Figures="M76.943,36.001L67.875,39.837C67.875,39.837 76.23,56.777 58.747,69.869 58.747,69.869 47.817,77.34 35.843,72.241L32.12,81.362C32.12,81.362 50.3,89.001 65.581,77.135 65.581,77.135 86.875,63.073 76.943,36.001z" />
-				</Path.Data>
-			</Path>
-			<Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
-				<Path.Data>
-					<PathGeometry FillRule="Nonzero" Figures="M30.762,92.525L42.676,63.312 22.112,71.962z" />
-				</Path.Data>
-			</Path>
-		</Canvas>
+	<Viewbox x:Key="Path_Sync" x:Shared="False" Margin="2">
+        <Canvas Width="91.914" Height="104.778">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 41.893,21.376 C 41.893,22.626 41.893,23.877 41.893,25.127 L 41.893,28.504 C 41.893,31.255 43.894,32.380 46.270,31.005 L 53.023,27.128 C 55.399,25.753 59.275,23.502 61.651,22.126 L 68.404,18.249 C 70.780,16.874 70.780,14.623 68.404,13.247 L 61.651,9.371 C 59.275,7.995 55.399,5.744 53.023,4.368 L 46.270,0.617 C 43.894,-0.759 41.893,0.242 41.893,2.868 C 41.893,4.619 41.893,6.870 41.893,8.870 C 18.633,9.871 0.000,29.129 0.000,52.639 C 0.000,64.144 4.502,74.649 11.755,82.527 L 20.634,73.648 C 15.632,68.146 12.505,60.768 12.505,52.639 C 12.505,36.007 25.511,22.376 41.893,21.376 Z"/>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"
+                  Data="F1 M 80.159,22.251 L 71.281,31.130 C 76.283,36.632 79.409,44.010 79.409,52.139 C 79.409,68.396 67.029,81.652 51.272,83.277 C 51.272,82.402 51.272,81.026 51.272,79.526 L 51.272,76.274 C 51.272,73.523 49.271,72.398 46.895,73.773 L 40.142,77.650 C 37.766,79.025 33.890,81.276 31.513,82.652 L 24.761,86.404 C 22.385,87.779 22.385,90.030 24.761,91.406 L 31.513,95.282 C 33.890,96.658 37.766,98.909 40.142,100.285 L 46.895,104.161 C 49.271,105.537 51.272,104.536 51.272,101.910 C 51.272,99.284 51.272,97.033 51.272,97.033 C 51.272,97.033 51.272,96.533 51.272,95.783 C 74.032,94.157 91.914,75.274 91.914,52.139 C 91.914,40.634 87.412,30.130 80.159,22.251 Z"/>
+        </Canvas>
 	</Viewbox>
 
 	<Viewbox x:Key="Path_Options" x:Shared="False">

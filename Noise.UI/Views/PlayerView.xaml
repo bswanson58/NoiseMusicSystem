@@ -311,7 +311,7 @@
 
 						<!--  Track related commands  -->
 						<Button Margin="9,0,0,0" Tag="dimmed" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
-						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
+						        Content="{StaticResource Path_Information}" ToolTip="Focus On This Track" />
 					</StackPanel>
 
 					<!--  Playing Position  -->

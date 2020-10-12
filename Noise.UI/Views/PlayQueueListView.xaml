@@ -128,7 +128,7 @@
                             <StackPanel Margin="0,0,0,1" Orientation="Horizontal">
                                 <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
                                 <Button Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3" Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
-                                <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
+                                <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Focus On This Track" />
                                 <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" 
                                         Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"/>
                                 <Button Style="{StaticResource QueueButtonStyle}" Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" 
