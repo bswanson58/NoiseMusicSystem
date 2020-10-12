@@ -30,8 +30,9 @@ body {
 }
 
 div.imageCreditParent {
-	display:flex; 
-	align-items:center;
+	display: flex; 
+	align-items: center;
+	margin-top: 10px;
 }
 div.imageCreditParent div.imageDescription {
 	margin-left: 10px;
