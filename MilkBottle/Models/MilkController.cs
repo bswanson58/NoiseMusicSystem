@@ -129,18 +129,18 @@ namespace MilkBottle.Models {
         }
 
         private void UpdateVisualization() {
-            lock( mRenderingLock ) {
-                try {
-                    mProjectM.renderFrame();
+            if( mGlControl != null ) {
+                lock( mRenderingLock ) {
+                    try {
+                        mProjectM.renderFrame();
 
-                    if( mGlControl != null ) {
                         mGlControl.SwapBuffers();
 
-                        mEventAggregator.PublishOnUIThreadAsync( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
+                        mEventAggregator.PublishOnUIThread( new LightPipe.Events.FrameRendered( mGlControl.WindowInfo.Handle ));
                     }
-                }
-                catch( Exception ex ) {
-                    mLog.LogException( "UpdateVisualization", ex );
+                    catch( Exception ex ) {
+                        mLog.LogException( "UpdateVisualization", ex );
+                    }
                 }
             }
         }
