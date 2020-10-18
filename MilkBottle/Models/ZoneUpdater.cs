@@ -60,17 +60,24 @@ namespace MilkBottle.Models {
 
         public async Task<bool> SetZoneBulbsInactive() {
             var retValue = false;
+            var bulbs = new List<Bulb>();
 
-            if( mBulbStates.Any()) {
+            lock( mBulbStates ) {
+                bulbs.AddRange( from b in mBulbStates select b.Bulb );
+            }
+
+            if( bulbs.Any()) {
                 try {
                     var preferences = mPreferences.Load<MilkPreferences>();
 
                     if( ColorConverter.ConvertFromString( preferences.InactiveBulbColor ) is Color inactiveColor ) {
                         await Task.Delay( 250 );
-                        retValue = await mHubManager.SetBulbState( from b in mBulbStates select b.Bulb, inactiveColor, TimeSpan.FromSeconds( 3 ));
+                        retValue = await mHubManager.SetBulbState( bulbs, inactiveColor, TimeSpan.FromSeconds( 3 ));
 
                         if( retValue ) {
-                            mBulbStates.Clear();
+                            lock( mBulbStates ) {
+                                mBulbStates.Clear();
+                            }
                         }
                     }
                     else {
@@ -196,13 +203,15 @@ namespace MilkBottle.Models {
         }
 
         private void UpdateBulbState( BulbState newState ) {
-            var existing = mBulbStates.FirstOrDefault( b => b.Bulb.Name.Equals( newState.Bulb.Name ));
+            lock( mBulbStates ) {
+                var existing = mBulbStates.FirstOrDefault( b => b.Bulb.Name.Equals( newState.Bulb.Name ));
 
-            if( existing != null ) {
-                mBulbStates.Remove( existing );
+                if( existing != null ) {
+                    mBulbStates.Remove( existing );
+                }
+
+                mBulbStates.Add( newState );
             }
-
-            mBulbStates.Add( newState );
         }
     }
 }
