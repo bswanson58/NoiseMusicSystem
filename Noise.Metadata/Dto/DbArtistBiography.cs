@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LiteDB;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Dto {
-	[DebuggerDisplay("Artist = {ArtistName}")]
-	internal class DbArtistBiography : IArtistMetadata, IMetadataBase {
-		private const string			cStatusKeyPrefix = "bio/";
-		private readonly static			IEnumerable<string>	mEmptyArray = new List<string>();
+	[DebuggerDisplay("Artist = {" + nameof(ArtistName) + "}")]
+	internal class DbArtistBiography : EntityBase, IArtistMetadata {
+        private static readonly			IEnumerable<string>	mEmptyArray = new List<string>();
  
 		public	string					ArtistName { get; set; }
 		public	List<StringMetadata>	Metadata { get; set; }
@@ -18,15 +18,14 @@ namespace Noise.Metadata.Dto {
 			Metadata = new List<StringMetadata>();
 		}
 
-		public static string FormatStatusKey( string artistName ) {
-			return( cStatusKeyPrefix + artistName.ToLower());
-		}
+		[BsonCtor]
+		public DbArtistBiography( ObjectId id, string artistName ) :
+			base( id ) {
+            ArtistName = artistName;
+			Metadata = new List<StringMetadata>();
+        }
 
-		public string Id {
-			get{ return( FormatStatusKey( ArtistName )); }
-		}
-
-		public void ClearMetadata( eMetadataType metadataType ) {
+        public void ClearMetadata( eMetadataType metadataType ) {
 			var metadata = ( from m in Metadata where m.MetadataType == metadataType select m ).FirstOrDefault();
 
 			if( metadata != null ) {

@@ -1,73 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
-using Raven.Abstractions.Smuggler;
-using Raven.Client;
-using Raven.Client.Document;
-using Raven.Client.Embedded;
-using Raven.Database.Smuggler;
 
 namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization, IMetadataManager,
 								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly INoiseLog						mLog;
-		private readonly INoiseEnvironment				mNoiseEnvironment;
 		private readonly IArtistMetadataManager			mArtistMetadataManager;
 		private readonly IArtistProvider				mArtistProvider;
-		private readonly IEnumerable<IMetadataUpdater>	mUpdaters; 
-		private IDocumentStore							mDocumentStore;
+		private readonly IEnumerable<IMetadataUpdater>	mUpdaters;
+		private readonly IDatabaseProvider				mDatabaseProvider;
 
-		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
+		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, IDatabaseProvider databaseProvider,
 								IMetadataUpdater[] updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
-			mNoiseEnvironment = noiseEnvironment;
 			mUpdaters = updaters;
 			mArtistMetadataManager = artistMetadataManager;
 			mArtistProvider = artistProvider;
+			mDatabaseProvider = databaseProvider;
 
-			lifecycleManager.RegisterForInitialize( this );
+            lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
 		}
 
 		public void Initialize() {
-			try {
-				string metaDirectory = Constants.MetadataDirectory;
-#if DEBUG
-				metaDirectory += " (Debug)";
-#endif
-				var libraryPath = Path.Combine( mNoiseEnvironment.LibraryDirectory(), metaDirectory );
-				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
-				mDocumentStore.Conventions.DefaultQueryingConsistency = ConsistencyOptions.AlwaysWaitForNonStaleResultsAsOfLastWrite;
-/*
-				try {
-					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
-					NonAdminHttp.EnsureCanListenToWhenInNonAdminContext( 8080 );
-				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "RavenDB Embedded HTTP Server could not be initialized", ex );
-
-					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = false;
-				}
- */
-				mDocumentStore.Initialize();
-				mArtistMetadataManager.Initialize( mDocumentStore );
-
-				foreach( var updater in mUpdaters ) {
-					updater.Initialize( mDocumentStore );
-				}
-
-				mEventAggregator.Subscribe( this );
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Failed to initialize", ex );
-			}
+            foreach( var updater in mUpdaters ) {
+                updater.Initialize();
+            }
+            
+            mEventAggregator.Subscribe( this );
 		}
 
 		public void Shutdown() {
@@ -75,8 +41,7 @@ namespace Noise.Metadata {
 				updater.Shutdown();
 			}
 
-			mDocumentStore?.Dispose();
-			mDocumentStore = null;
+			mDatabaseProvider.Shutdown();
 		}
 
 		public void Handle( Events.ArtistAdded args ) {
@@ -125,6 +90,7 @@ namespace Noise.Metadata {
         }
 
         public async void ExportMetadata( string exportPath ) {
+			/*
 			try {
 				if( mDocumentStore is EmbeddableDocumentStore ) {
                     var options = new SmugglerOptions();
@@ -142,9 +108,11 @@ namespace Noise.Metadata {
 			catch( Exception ex ) {
 				mLog.LogException( $"Exporting Metadata to \"{exportPath}\"", ex );
 			}
+			*/
 		}
 
 		public async void ImportMetadata( string importPath ) {
+            /*
 			try {
 				if(( mDocumentStore is EmbeddableDocumentStore ) &&
 				   ( File.Exists( importPath ))) {
@@ -162,6 +130,7 @@ namespace Noise.Metadata {
 			catch( Exception ex ) {
 				mLog.LogException( $"Importing Metadata from \"{importPath}\"", ex );
 			}
+			*/
 		}
 	}
 }

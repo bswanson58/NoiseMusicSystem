@@ -26,7 +26,7 @@
 		}
 
 		public override string ToString() {
-			return( string.Format( "Discography Title\"{0}\", Year:{1}", Title, Year ));
+			return $"Discography Title\"{Title}\", Year:{Year}";
 		}
 	}
 }
