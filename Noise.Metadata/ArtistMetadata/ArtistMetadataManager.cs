@@ -30,6 +30,13 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		public void ArtistForgotten( string artistName ) {
+			var status = mStatusProvider.GetStatus( artistName );
+
+			if( status?.IsActive == true ) {
+				status.IsActive = false;
+
+				mStatusProvider.Update( status );
+            }
 		}
 
         public bool ArtistPortfolioAvailable( string forArtist ) {
@@ -73,8 +80,17 @@ namespace Noise.Metadata.ArtistMetadata {
 
         private void InsureArtistStatus( string forArtist ) {
 			try {
-                if( mStatusProvider.GetStatus( forArtist ) == null ) {
+				var status = mStatusProvider.GetStatus( forArtist );
+
+                if( status == null ) {
                     mStatusProvider.Insert( new DbArtistStatus() { ArtistName = forArtist });
+                }
+				else {
+					if(!status.IsActive ) {
+						status.IsActive = true;
+
+						mStatusProvider.Update( status );
+                    }
                 }
             }
 			catch( Exception ex ) {

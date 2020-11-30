@@ -18,7 +18,7 @@ namespace Noise.Metadata.Dto {
 		}
 
 		[BsonCtor]
-		public ProviderStatus( string provider, DateTime lastUpdate, TimeSpan lifetime ) {
+		public ProviderStatus( string provider, DateTime lastUpdate, TimeSpan lifetime, bool isActive ) {
 			Provider = provider;
 			LastUpdate = lastUpdate;
 			Lifetime = lifetime;
@@ -30,18 +30,21 @@ namespace Noise.Metadata.Dto {
 		public	string					ArtistName { get; set; }
 		public	long					FirstMention { get; set; }
 		public	List<ProviderStatus>	ProviderStatus { get; set; }
+        public	bool					IsActive { get; set; }
 
 		public DbArtistStatus() {
 			ArtistName = string.Empty;
 			FirstMention = DateTime.Now.ToUniversalTime().Ticks;
 			ProviderStatus = new List<ProviderStatus>();
+            IsActive = true;
 		}
 
         [BsonCtor]
-        public DbArtistStatus( ObjectId id, string artistName, long firstMention ) :
+        public DbArtistStatus( ObjectId id, string artistName, long firstMention, bool isActive ) :
             base( id ) {
             ArtistName = ArtistName ?? String.Empty;
 			FirstMention = firstMention;
+            IsActive = true;
 
 			ProviderStatus = new List<ProviderStatus>();
         }
