@@ -107,36 +107,36 @@
 		<Feature Id="Complete" Title="Noise Librarian Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
 			<Feature Id="Application" Title="Noise Librarian Application" Level="1">
 				<ComponentGroupRef Id="ApplicationFiles" />
+        <ComponentGroupRef Id="CefSharpFiles"/>
+        <ComponentGroupRef Id="ConfigurationFiles"/>
 				<ComponentGroupRef Id="CoreFiles"/>
 				<ComponentGroupRef Id="BassAudioFiles"/>
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
 				<ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
+        <ComponentGroupRef Id="GongSolutionsFiles"/>
         <ComponentGroupRef Id="LiteDBFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
+        <ComponentGroupRef Id="MahAppsMetroFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>
 				<ComponentGroupRef Id="NewtonsoftJsonFiles"/>
 				<ComponentGroupRef Id="NLogFiles"/>
+        <ComponentGroupRef Id="ObservalFiles"/>
 				<ComponentGroupRef Id="PrismFiles"/>
+        <ComponentGroupRef Id="ReactiveUIFiles"/>
 				<ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="SeriLogFiles"/>
+        <ComponentGroupRef Id="StatelessFiles"/>
+        <ComponentGroupRef Id="TagLibSharpFiles"/>
+        <ComponentGroupRef Id="TinyIpcFiles"/>
         <ComponentGroupRef Id="UnityFiles"/>
 			</Feature>
 		</Feature>
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
-      <ComponentGroupRef Id="CefSharpFiles"/>
-      <ComponentGroupRef Id="ConfigurationFiles"/>
-			<ComponentGroupRef Id="GongSolutionsFiles"/>
-			<ComponentGroupRef Id="MahAppsMetroFiles"/>
-			<ComponentGroupRef Id="ObservalFiles"/>
-      <ComponentGroupRef Id="RefitFiles"/>
-      <ComponentGroupRef Id="ReactiveUIFiles"/>
 			<ComponentGroupRef Id="ReplayGainFiles"/>
-			<ComponentGroupRef Id="StatelessFiles"/>
-      <ComponentGroupRef Id="TagLibSharpFiles"/>
-      <ComponentGroupRef Id="TinyIpcFiles"/>
 		</Feature>
 
 		<UIRef Id="InstallUI" />
