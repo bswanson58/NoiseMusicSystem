@@ -9,11 +9,10 @@ using ReusableBits.Interfaces;
 using ReusableBits.Threading;
 
 namespace Noise.Core.BackgroundTasks {
-	public class BackgroundTaskManager : IBackgroundTaskManager, IRequireConstruction,
+	public class BackgroundTaskManager : IBackgroundTaskManager, IRequireInitialization,
 										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 										 IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		internal const string							cBackgroundTaskName		= "BackgroundTask";
-		internal const string							cBackgroundTaskGroup	= "BackgroundTaskManager";
 
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IRecurringTaskScheduler		mJobScheduler;
@@ -24,15 +23,26 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IEnumerable<IBackgroundTask>	mBackgroundTasks;
 
 		public BackgroundTaskManager( IEventAggregator eventAggregator, IRecurringTaskScheduler recurringTaskScheduler, ILogBackgroundTasks log,
-                                      IBackgroundTask[] backgroundTasks ) {
+                                      IBackgroundTask[] backgroundTasks, ILifecycleManager lifecycleManager ) {
 			mBackgroundTasks = backgroundTasks;
 			mEventAggregator = eventAggregator;
 			mJobScheduler = recurringTaskScheduler;
 			mLog = log;
-
 			mTaskEnum = mBackgroundTasks.GetEnumerator();
-			mEventAggregator.Subscribe( this );
+
+			lifecycleManager.RegisterForInitialize( this );
+			lifecycleManager.RegisterForShutdown( this );
 		}
+
+		public void Initialize() {
+            mEventAggregator.Subscribe( this );
+        }
+
+		public void Shutdown() {
+            mEventAggregator.Unsubscribe( this );
+
+			StopTasks();
+        }
 
 		public void Handle( Events.DatabaseOpened args ) {
 			StartTasks();
@@ -69,7 +79,7 @@ namespace Noise.Core.BackgroundTasks {
 			mLog.LogTasksStopping();
 		}
 
-		public void Execute( RecurringTask job ) {
+		private void Execute( RecurringTask job ) {
 			IBackgroundTask	task = null;
 
 			if(!mRunningTaskFlag ) {
