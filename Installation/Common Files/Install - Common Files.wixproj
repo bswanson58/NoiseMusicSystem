@@ -42,6 +42,7 @@
     <Content Include="DotNetZip.wxi" />
     <Content Include="EntityFramework.wxi" />
     <Content Include="GongSolutions.wxi" />
+    <Content Include="LiteDB.wxi" />
     <Content Include="Lucene.wxi" />
     <Content Include="MahApps.wxi" />
     <Content Include="Microsoft.wxi" />
@@ -50,7 +51,6 @@
     <Content Include="Noise.Core.wxi" />
     <Content Include="Observal.wxi" />
     <Content Include="Prism.wxi" />
-    <Content Include="RavenDB.wxi" />
     <Content Include="ReactiveUI.wxi" />
     <Content Include="recls.wxi" />
     <Content Include="ReFit.wxi" />

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="LiteDB.dll" Guid="ADD68584-9F92-48BB-AEEC-EF2A2A59F15E">
+      <File Id="LiteDB.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)LiteDB.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+	</DirectoryRef>
+
+	<ComponentGroup Id="LiteDBFiles">
+    <ComponentRef Id="LiteDB.dll" />
+	</ComponentGroup>
+</Include>
