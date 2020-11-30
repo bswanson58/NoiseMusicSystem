@@ -48,7 +48,6 @@ namespace Noise.Core {
             containerRegistry.Register<ITagArtworkProvider, TagArtworkProvider>();
 
 			containerRegistry.RegisterSingleton<IAudioController, AudioController>();
-			containerRegistry.RegisterSingleton<IBackgroundTaskManager, BackgroundTaskManager>();
 			containerRegistry.Register<IDataExchangeManager, DataExchangeManager>();
 			containerRegistry.Register<IFolderExplorer, FolderExplorer>();
 			containerRegistry.RegisterSingleton<ILifecycleManager, LifecycleManager>();
@@ -63,6 +62,7 @@ namespace Noise.Core {
 			containerRegistry.RegisterSingleton<IPlayController, PlayController>();
 			containerRegistry.RegisterSingleton<IPlaybackContextManager, PlaybackContextManager>();
 			containerRegistry.Register<IPlaybackContextWriter, PlaybackContextWriter>();
+            containerRegistry.RegisterSingleton<IRecurringTaskScheduler, DefaultTaskScheduler>();
 			containerRegistry.RegisterSingleton<ISearchProvider, LuceneSearchProvider>();
 			containerRegistry.RegisterSingleton<ISidecarBuilder, SidecarBuilder>();
 			containerRegistry.Register<ISidecarCreator, SidecarCreator>();
@@ -96,11 +96,7 @@ namespace Noise.Core {
 			containerRegistry.Register<IPipelineStep, UpdateUndeterminedPipelineStep>( "UpdateUndeterminedPipelineStep" );
             containerRegistry.Register<IList<IPipelineStep>, IPipelineStep[]>();
 
-            containerRegistry.RegisterSingleton<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager" );
-//			containerRegistry.RegisterSingleton<IRequireConstruction, LyricsSearcher>( "LyricsSearcher" );
-			containerRegistry.Register<IList<IRequireConstruction>, IRequireConstruction[]>();
-
-			containerRegistry.RegisterSingleton<IRecurringTaskScheduler, DefaultTaskScheduler>();
+            containerRegistry.RegisterSingleton<IBackgroundTaskManager, BackgroundTaskManager>();
 
             containerRegistry.Register<IBackgroundTask, DiscographyExplorer>( "DiscographyExplorer" );
 			containerRegistry.Register<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );

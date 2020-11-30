@@ -63,6 +63,9 @@ namespace Noise.Infrastructure {
 		public const string				Ef_DatabaseFileExtension = "_noise.mdf";
 		public const string				Ef_DatabaseBackupExtension = ".bak";
 
+		public const string				MetadataDatabaseName = "Noise Metadata.db";
+		public const string				ArtistArtworkStorageName = "ArtistArtwork";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

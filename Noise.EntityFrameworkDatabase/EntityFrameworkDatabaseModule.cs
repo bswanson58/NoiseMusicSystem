@@ -12,6 +12,8 @@ namespace Noise.EntityFrameworkDatabase {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
 			containerRegistry.RegisterSingleton<IDatabaseManager, EntityFrameworkDatabaseManager>();
 			containerRegistry.RegisterSingleton<IContextProvider, ContextProvider>();
+            containerRegistry.RegisterSingleton<IDatabaseInfo, DbVersionProvider>();
+
 #if DEBUG
 			containerRegistry.Register<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
 #else
@@ -36,7 +38,6 @@ namespace Noise.EntityFrameworkDatabase {
 			containerRegistry.Register<ITagAssociationProvider, TagAssociationProvider>();
 			containerRegistry.Register<ITextInfoProvider, TextInfoProvider>();
 			containerRegistry.Register<ITimestampProvider, TimestampProvider>();
-			containerRegistry.Register<IDatabaseInfo, DbVersionProvider>();
 
 			containerRegistry.Register<IDatabaseUtility, SqlDatabaseManager>();
 			

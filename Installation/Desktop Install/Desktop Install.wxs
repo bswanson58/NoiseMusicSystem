@@ -127,6 +127,7 @@
         <ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
+        <ComponentGroupRef Id="LiteDBFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MahAppsMetroFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>
@@ -134,7 +135,6 @@
 				<ComponentGroupRef Id="NLogFiles"/>
 				<ComponentGroupRef Id="ObservalFiles"/>
 				<ComponentGroupRef Id="PrismFiles"/>
-				<ComponentGroupRef Id="RavenDBFiles"/>
         <ComponentGroupRef Id="ReactiveUIFiles"/>
         <ComponentGroupRef Id="ReclsFiles"/>
 				<ComponentGroupRef Id="RefitFiles"/>

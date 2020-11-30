@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LiteDB;
 
 namespace Noise.Metadata.Dto {
-	[DebuggerDisplay("Provider = {Provider}")]
+	[DebuggerDisplay("Provider = {" + nameof(Provider) + "}")]
 	internal class ProviderStatus {
 		public	string		Provider { get; set; }
 		public	DateTime	LastUpdate { get; set; }
@@ -15,29 +16,38 @@ namespace Noise.Metadata.Dto {
 			LastUpdate = DateTime.Now;
 			Lifetime = new TimeSpan( 30, 0, 0, 0 );
 		}
+
+		[BsonCtor]
+		public ProviderStatus( string provider, DateTime lastUpdate, TimeSpan lifetime, bool isActive ) {
+			Provider = provider;
+			LastUpdate = lastUpdate;
+			Lifetime = lifetime;
+        }
 	}
 
-	[DebuggerDisplay("Artist = {ArtistName}")]
-	internal class DbArtistStatus : IMetadataBase {
-		private const string			cStatusKeyPrefix = "status/";
-
+	[DebuggerDisplay("Artist = {" + nameof(ArtistName) + "}")]
+	internal class DbArtistStatus : EntityBase {
 		public	string					ArtistName { get; set; }
 		public	long					FirstMention { get; set; }
 		public	List<ProviderStatus>	ProviderStatus { get; set; }
+        public	bool					IsActive { get; set; }
 
 		public DbArtistStatus() {
 			ArtistName = string.Empty;
 			FirstMention = DateTime.Now.ToUniversalTime().Ticks;
 			ProviderStatus = new List<ProviderStatus>();
+            IsActive = true;
 		}
 
-		public static string FormatStatusKey( string artistName ) {
-			return( cStatusKeyPrefix + artistName.ToLower());
-		}
+        [BsonCtor]
+        public DbArtistStatus( ObjectId id, string artistName, long firstMention, bool isActive ) :
+            base( id ) {
+            ArtistName = ArtistName ?? String.Empty;
+			FirstMention = firstMention;
+            IsActive = true;
 
-		public string Id {
-			get{ return( FormatStatusKey( ArtistName )); }
-		}
+			ProviderStatus = new List<ProviderStatus>();
+        }
 
 		public ProviderStatus GetProviderStatus( string forProvider ) {
 			var retValue = ( from s in ProviderStatus where s.Provider == forProvider select s ).FirstOrDefault();

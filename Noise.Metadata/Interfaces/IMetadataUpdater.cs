@@ -1,8 +1,6 @@
-﻿using Raven.Client;
-
-namespace Noise.Metadata.Interfaces {
+﻿namespace Noise.Metadata.Interfaces {
 	public interface IMetadataUpdater {
-		void	Initialize( IDocumentStore documentStore );
+		void	Initialize();
 		void	Shutdown();
 
 		void	QueueArtistUpdate( string forArtist );

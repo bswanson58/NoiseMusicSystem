@@ -1,33 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
-using Raven.Client;
+using Noise.Metadata.Logging;
 
 namespace Noise.Metadata.ArtistMetadata {
 	class ArtistMetadataManager : IArtistMetadataManager {
-        private readonly IArtistArtworkSelector mArtworkSelector;
-		private IDocumentStore				    mDocumentStore;
+        private readonly IArtistArtworkSelector		mArtworkSelector;
+		private readonly IArtistBiographyProvider	mBiographyProvider;
+		private readonly IArtistDiscographyProvider	mDiscographyProvider;
+		private readonly IArtistStatusProvider		mStatusProvider;
+		private readonly ILogMetadata				mLog;
 
-        public ArtistMetadataManager( IArtistArtworkSelector artworkSelector ) {
+        public ArtistMetadataManager( IArtistArtworkSelector artworkSelector, IArtistBiographyProvider biographyProvider, IArtistDiscographyProvider discographyProvider,
+                                      IArtistStatusProvider statusProvider, ILogMetadata log ) {
             mArtworkSelector = artworkSelector;
+			mBiographyProvider = biographyProvider;
+			mDiscographyProvider = discographyProvider;
+			mStatusProvider = statusProvider;
+			mLog = log;
         }
-
-		public void Initialize( IDocumentStore documentStore ) {
-			mDocumentStore = documentStore;
-		}
-
-		public void Shutdown() {
-			mDocumentStore = null;
-		}
 
 		public void ArtistMentioned( string artistName ) {
 			InsureArtistStatus( artistName );
 		}
 
 		public void ArtistForgotten( string artistName ) {
+			var status = mStatusProvider.GetStatus( artistName );
+
+			if( status?.IsActive == true ) {
+				status.IsActive = false;
+
+				mStatusProvider.Update( status );
+            }
 		}
 
         public bool ArtistPortfolioAvailable( string forArtist ) {
@@ -46,17 +55,23 @@ namespace Noise.Metadata.ArtistMetadata {
 			var	retValue = new Artwork( new DbArtwork( Constants.cDatabaseNullOid, ContentType.ArtistPrimaryImage ));
 
             mArtworkSelector.SelectArtwork( forArtist, retValue );
+
             if(!retValue.HaveValidImage ) {
-                var attachment = mDocumentStore.DatabaseCommands.GetAttachment( "artwork/" + forArtist.ToLower());
+				try {
+                    using( var stream = new MemoryStream()) {
+                        mStatusProvider.GetArtistArtwork( forArtist, stream );
 
-                if( attachment != null ) {
-                    retValue.Image = new byte[attachment.Size];
-
-                    attachment.Data().Read( retValue.Image, 0, attachment.Size );
+						retValue.Image = new byte[stream.Length];
+                        stream.Seek( 0, SeekOrigin.Begin );
+                        stream.Read( retValue.Image, 0, (int)stream.Length );
+                    }
+                }
+				catch( Exception ex ) {
+					mLog.LogException( "GetArtistArtwork: Retrieving image from database", ex );
                 }
             }
 
-			return( retValue );
+			return retValue;
 		}
 
         public IEnumerable<Artwork> GetArtistPortfolio( string forArtist ) {
@@ -64,53 +79,49 @@ namespace Noise.Metadata.ArtistMetadata {
         }
 
         private void InsureArtistStatus( string forArtist ) {
-			if(( mDocumentStore != null ) &&
-			   (!mDocumentStore.WasDisposed )) {
-				using( var session = mDocumentStore.OpenSession()) {
-					var	status = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
+			try {
+				var status = mStatusProvider.GetStatus( forArtist );
 
-					if( status == null ) {
-						status = new DbArtistStatus { ArtistName = forArtist };
+                if( status == null ) {
+                    mStatusProvider.Insert( new DbArtistStatus() { ArtistName = forArtist });
+                }
+				else {
+					if(!status.IsActive ) {
+						status.IsActive = true;
 
-						session.Store( status );
-						session.SaveChanges();
-					}
-				}
-			}
+						mStatusProvider.Update( status );
+                    }
+                }
+            }
+			catch( Exception ex ) {
+				mLog.LogException( nameof( InsureArtistStatus ), ex );
+            }
 		}
 
 		private DbArtistBiography GetOrCreateArtistBiography( string forArtist ) {
 			var retValue = default( DbArtistBiography );
 
-			if(( mDocumentStore != null ) &&
-			   (!mDocumentStore.WasDisposed )) {
-				using( var session = mDocumentStore.OpenSession() ) {
-					retValue = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( forArtist ));
-				}
-			}
+			try {
+                retValue = mBiographyProvider.GetBiography( forArtist ) ?? new DbArtistBiography { ArtistName = forArtist };
+            }
+			catch( Exception ex ) {
+				mLog.LogException( nameof( GetOrCreateArtistBiography ), ex );
+            }
 
-			if( retValue == null ) {
-				retValue = new DbArtistBiography { ArtistName = forArtist };
-			}
-
-			return( retValue );
+			return retValue;
 		}
 
 		private DbArtistDiscography GetOrCreateArtistDiscography( string forArtist ) {
 			var retValue = default( DbArtistDiscography );
 
-			if(( mDocumentStore != null ) &&
-			   (!mDocumentStore.WasDisposed )) {
-				using( var session = mDocumentStore.OpenSession() ) {
-					retValue = session.Load<DbArtistDiscography>( DbArtistDiscography.FormatStatusKey( forArtist ));
-				}
-			}
+            try {
+                retValue = mDiscographyProvider.GetDiscography( forArtist ) ?? new DbArtistDiscography { ArtistName = forArtist };
+            }
+            catch( Exception ex ) {
+                mLog.LogException( nameof( GetOrCreateArtistDiscography ), ex );
+            }
 
-			if( retValue == null ) {
-				retValue = new DbArtistDiscography { ArtistName = forArtist };
-			}
-
-			return( retValue );
+			return retValue;
 		}
 	}
 }

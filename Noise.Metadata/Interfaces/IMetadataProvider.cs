@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Raven.Client;
 
 namespace Noise.Metadata.Interfaces {
 	public interface IArtistMetadataProvider : IMetadataProvider {
@@ -8,8 +7,5 @@ namespace Noise.Metadata.Interfaces {
 
 	public interface IMetadataProvider {
 		string		ProviderKey { get; }
-
-		void		Initialize( IDocumentStore documentStore );
-		void		Shutdown();
 	}
 }

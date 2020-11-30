@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Noise.Core.BackgroundTasks;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
@@ -10,14 +10,16 @@ using ReusableBits.Platform;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-		private	readonly IEventAggregator		mEvents;
-		private readonly INoiseLog				mLog;
-		private readonly ILifecycleManager		mLifecycleManager;
-		private readonly IPreferences			mPreferences;
-		private readonly IRemoteServer			mRemoteServer;
-		private readonly ILibraryBuilder		mLibraryBuilder;
-		private readonly IDatabaseManager		mDatabaseManager;
-		private readonly IPlayController		mPlayController;
+		private	readonly IEventAggregator			mEvents;
+		private readonly INoiseLog					mLog;
+		private readonly ILifecycleManager			mLifecycleManager;
+		private readonly IPreferences				mPreferences;
+		private readonly IRemoteServer				mRemoteServer;
+		private readonly ILibraryBuilder			mLibraryBuilder;
+		private readonly IDatabaseManager			mDatabaseManager;
+		private readonly IPlayController			mPlayController;
+        // ReSharper disable once NotAccessedField.Local
+        private readonly IBackgroundTaskManager		mBackgroundTasks;
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 INoiseLog log,
@@ -27,15 +29,7 @@ namespace Noise.Core {
 							 IRemoteServer remoteServer,
 							 IPreferences preferences,
                              IPlayController playController,
-							 // components that just need to be referenced.
-							 // ReSharper disable UnusedParameter.Local
-							 IAudioController audioController,
-							 ILibraryBackupManager backupManager,
-							 ISearchProvider searchProvider,
-							 ITagManager tagManager,
-							 IMetadataManager metadataManager,
-							 IEnumerable<IRequireConstruction> backgroundComponents ) {
-							 // ReSharper restore UnusedParameter.Local
+                             IBackgroundTaskManager backgroundTaskManager ) {
 			mEvents = eventAggregator;
 			mLog = log;
 			mLifecycleManager = lifecycleManager;
@@ -44,6 +38,7 @@ namespace Noise.Core {
 			mLibraryBuilder = libraryBuilder;
 			mPreferences = preferences;
 			mPlayController = playController;
+			mBackgroundTasks = backgroundTaskManager;
 		}
 
 		public Task<bool> AsyncInitialize() {

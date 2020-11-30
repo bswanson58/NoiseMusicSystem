@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.ArtistMetadata;
+using Noise.Metadata.Database;
 using Noise.Metadata.Interfaces;
 using Noise.Metadata.Logging;
 using Noise.Metadata.MetadataProviders;
@@ -12,6 +13,11 @@ using Prism.Modularity;
 namespace Noise.Metadata {
 	public class NoiseMetadataModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
+			containerRegistry.RegisterSingleton<IDatabaseProvider, DatabaseProvider>();
+			containerRegistry.RegisterSingleton<IArtistBiographyProvider, ArtistBiographyProvider>();
+			containerRegistry.RegisterSingleton<IArtistDiscographyProvider, ArtistDiscographyProvider>();
+			containerRegistry.RegisterSingleton<IArtistStatusProvider, ArtistStatusProvider>();
+
 			containerRegistry.RegisterSingleton<IMetadataManager, MetadataManager>();
 			containerRegistry.Register<IArtistMetadataManager, ArtistMetadataManager>();
 

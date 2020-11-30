@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using LiteDB;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Dto {
-	[DebuggerDisplay("Artist = {ArtistName}")]
-	internal class DbArtistDiscography : IMetadataBase, IArtistDiscography {
-		private const string	cStatusKeyPrefix = "disco/";
-
+	[DebuggerDisplay("Artist = {" + nameof(ArtistName) + "}")]
+	internal class DbArtistDiscography : EntityBase, IArtistDiscography {
 		public	string					ArtistName { get; set; }
 		public	List<DbDiscographyRelease>	Discography { get; set; }
 
@@ -16,12 +15,12 @@ namespace Noise.Metadata.Dto {
 			Discography = new List<DbDiscographyRelease>();
 		}
 
-		public static string FormatStatusKey( string artistName ) {
-			return( cStatusKeyPrefix + artistName.ToLower());
-		}
+		[BsonCtor]
+		public DbArtistDiscography( ObjectId id, string artistName ) :
+			base( id ) {
+			ArtistName = artistName;
 
-		public string Id {
-			get{ return( FormatStatusKey( ArtistName )); }
-		}
+			Discography = new List<DbDiscographyRelease>();
+        }
 	}
 }
