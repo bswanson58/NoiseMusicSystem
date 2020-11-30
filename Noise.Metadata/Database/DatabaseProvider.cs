@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Ionic.Zip;
 using LiteDB;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
@@ -14,7 +15,7 @@ namespace Noise.Metadata.Database {
         }
 
         public LiteDatabase GetDatabase() {
-            return mDatabase ?? ( mDatabase = new LiteDatabase( DatabasePath()));
+            return mDatabase ?? ( mDatabase = new LiteDatabase( DatabaseFile()));
         }
 
         private string DatabasePath() {
@@ -24,7 +25,32 @@ namespace Noise.Metadata.Database {
                 Directory.CreateDirectory( metaDataFolder );
             }
 
-            return Path.Combine( metaDataFolder, Constants.MetadataDatabaseName );
+            return metaDataFolder;
+        }
+
+        private string DatabaseFile() {
+            return Path.Combine( DatabasePath(), Constants.MetadataDatabaseName );
+        }
+
+        public void ExportMetadata( string exportPath ) {
+            Shutdown();
+
+            using( var zipFile = new ZipFile( exportPath )) {
+                zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
+                zipFile.AddDirectory( DatabasePath());
+
+                zipFile.Save();
+            }
+        }
+
+        public void ImportMetadata( string importPath ) {
+            Shutdown();
+
+            using( var zipFile = ZipFile.Read( importPath )) {
+                zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
+
+                zipFile.ExtractAll( DatabasePath(), ExtractExistingFileAction.OverwriteSilently );
+            }
         }
 
         public void Shutdown() {

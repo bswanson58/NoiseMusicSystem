@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -90,47 +93,23 @@ namespace Noise.Metadata {
         }
 
         public async void ExportMetadata( string exportPath ) {
-			/*
 			try {
-				if( mDocumentStore is EmbeddableDocumentStore ) {
-                    var options = new SmugglerOptions();
-
-                    if( mDocumentStore is EmbeddableDocumentStore embeddedStore ) {
-                        var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
-
-                        using( var stream = File.OpenWrite( exportPath )) {
-
-                            await exporter.ExportData( stream, options, false );
-                        }
-                    }
-				}
+				await Task.Run( () => mDatabaseProvider.ExportMetadata( exportPath ));
 			}
 			catch( Exception ex ) {
 				mLog.LogException( $"Exporting Metadata to \"{exportPath}\"", ex );
 			}
-			*/
 		}
 
 		public async void ImportMetadata( string importPath ) {
-            /*
 			try {
-				if(( mDocumentStore is EmbeddableDocumentStore ) &&
-				   ( File.Exists( importPath ))) {
-                    var options = new SmugglerOptions();
-
-                    if( mDocumentStore is EmbeddableDocumentStore embeddedStore ) {
-					    var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
-
-					    using( var stream = File.OpenRead( importPath )) {
-						    await importer.ImportData( stream, options );
-					    }
-					}
+                if( File.Exists( importPath )) {
+					await Task.Run( () => mDatabaseProvider.ImportMetadata( importPath ));
 				}
 			}
 			catch( Exception ex ) {
 				mLog.LogException( $"Importing Metadata from \"{importPath}\"", ex );
 			}
-			*/
 		}
 	}
 }
