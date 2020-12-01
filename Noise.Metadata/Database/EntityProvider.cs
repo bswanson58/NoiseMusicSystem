@@ -6,25 +6,27 @@ namespace Noise.Metadata.Database {
     class EntityProvider<T> where T : EntityBase {
         private readonly IDatabaseProvider  mDatabaseProvider;
         private readonly string             mCollectionName;
-        private LiteDatabase                mDatabase;
+        private bool                        mRequiresInitialization;
 
         protected virtual void InitializeDatabase( LiteDatabase db ) { }
 
         protected EntityProvider( IDatabaseProvider databaseProvider, string collectionName ) {
             mDatabaseProvider = databaseProvider;
             mCollectionName = collectionName;
+
+            mRequiresInitialization = true;
         }
 
         protected LiteDatabase CreateConnection() {
-            if( mDatabase == null ) {
-                mDatabase = mDatabaseProvider.GetDatabase();
+            var retValue = mDatabaseProvider.GetDatabase();
 
-                if( mDatabase != null ) {
-                    InitializeDatabase( mDatabase );
-                }
+            if( mRequiresInitialization ) {
+                InitializeDatabase( retValue );
+
+                mRequiresInitialization = false;
             }
 
-            return mDatabase;
+            return retValue;
         }
 
         protected ILiteCollection<T> CreateCollection() {

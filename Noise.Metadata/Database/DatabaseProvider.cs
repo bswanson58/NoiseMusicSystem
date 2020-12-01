@@ -15,7 +15,13 @@ namespace Noise.Metadata.Database {
         }
 
         public LiteDatabase GetDatabase() {
-            return mDatabase ?? ( mDatabase = new LiteDatabase( DatabaseFile()));
+            lock( this ) {
+                if( mDatabase == null ) {
+                    mDatabase = new LiteDatabase( DatabaseFile());
+                }
+            }
+
+            return mDatabase;
         }
 
         private string DatabasePath() {
