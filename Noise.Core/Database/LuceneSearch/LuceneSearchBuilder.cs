@@ -32,9 +32,11 @@ namespace Noise.Core.Database.LuceneSearch {
 		}
 
 		public void AddSearchItem( eSearchItemType itemType, string searchText ) {
-			using( var searchItem = AddSearchItem( itemType )) {
-				searchItem.AddSearchText( searchText );
-			}
+			if(!string.IsNullOrWhiteSpace( searchText )) {
+                using( var searchItem = AddSearchItem( itemType )) {
+                    searchItem.AddSearchText( searchText );
+                }
+            }
 		}
 
 		public void AddSearchItem( eSearchItemType itemType, IEnumerable<string> searchList ) {
