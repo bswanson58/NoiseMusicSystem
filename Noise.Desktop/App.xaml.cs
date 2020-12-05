@@ -169,7 +169,7 @@ namespace Noise.Desktop {
             RegisterModule( typeof( AudioSupport.AudioSupportModule ));
             RegisterModule( typeof( BlobStorage.BlobStorageModule ));
             RegisterModule( typeof( Metadata.NoiseMetadataModule ));
-            RegisterModule( typeof( RemoteHost.RemoteHostModule ));
+            RegisterModule( typeof( RemoteServer.RemoteServerModule ));
             RegisterModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
             RegisterModule( typeof( UI.NoiseUiModule ));
             RegisterModule( typeof( Guide.GuideModule ));
@@ -187,7 +187,7 @@ namespace Noise.Desktop {
             InitializeModule( typeof( AudioSupport.AudioSupportModule ));
             InitializeModule( typeof( BlobStorage.BlobStorageModule ));
             InitializeModule( typeof( Metadata.NoiseMetadataModule ));
-            InitializeModule( typeof( RemoteHost.RemoteHostModule ));
+            InitializeModule( typeof( RemoteServer.RemoteServerModule ));
             InitializeModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
             InitializeModule( typeof( UI.NoiseUiModule ));
             InitializeModule( typeof( Guide.GuideModule ));

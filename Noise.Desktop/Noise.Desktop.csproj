@@ -324,9 +324,9 @@
       <Project>{983d3c18-8012-48ae-ae21-b6503fc0f5b8}</Project>
       <Name>Noise.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.RemoteHost\Noise.RemoteHost.csproj">
-      <Project>{85472B64-4F49-4182-8709-9229E25E5119}</Project>
-      <Name>Noise.RemoteHost</Name>
+    <ProjectReference Include="..\Noise.RemoteServer\Noise.RemoteServer.csproj">
+      <Project>{86b71b1e-1c46-4e78-8376-e6db55f0253f}</Project>
+      <Name>Noise.RemoteServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
       <Project>{DA31563C-5B51-4072-AF18-57E4FC5DE957}</Project>
