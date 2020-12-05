@@ -14,7 +14,7 @@ namespace Noise.Core {
 		private readonly INoiseLog					mLog;
 		private readonly ILifecycleManager			mLifecycleManager;
 		private readonly IPreferences				mPreferences;
-//		private readonly IRemoteServer				mRemoteServer;
+		private readonly IRemoteServer				mRemoteServer;
 		private readonly ILibraryBuilder			mLibraryBuilder;
 		private readonly IDatabaseManager			mDatabaseManager;
 		private readonly IPlayController			mPlayController;
@@ -26,14 +26,14 @@ namespace Noise.Core {
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
 							 ILibraryBuilder libraryBuilder,
-//							 IRemoteServer remoteServer,
+							 IRemoteServer remoteServer,
 							 IPreferences preferences,
                              IPlayController playController,
                              IBackgroundTaskManager backgroundTaskManager ) {
 			mEvents = eventAggregator;
 			mLog = log;
 			mLifecycleManager = lifecycleManager;
-//			mRemoteServer = remoteServer;
+			mRemoteServer = remoteServer;
 			mDatabaseManager = databaseManager;
 			mLibraryBuilder = libraryBuilder;
 			mPreferences = preferences;
@@ -71,7 +71,7 @@ namespace Noise.Core {
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
 
 				if( preferences.EnableRemoteAccess ) {
-//					mRemoteServer.OpenRemoteServer();
+					mRemoteServer.OpenRemoteServer();
 				}
 
 				mLog.LogMessage( "Noise Music System initialized" );
@@ -103,7 +103,7 @@ namespace Noise.Core {
 		public void Shutdown() {
 			mEvents.PublishOnUIThread( new Events.SystemShutdown());
 
-//			mRemoteServer.CloseRemoteServer();
+			mRemoteServer.CloseRemoteServer();
 			mLibraryBuilder.StopLibraryUpdate();
 
 			mLifecycleManager.Shutdown();
