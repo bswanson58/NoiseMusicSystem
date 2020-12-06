@@ -71,10 +71,10 @@
 		<DirectoryRef Id="INSTALLDIRECTORY">
 			<Component Id="Noise.Desktop.exe" Guid="df0e902d-7c40-4518-b7fb-1c9059a94713">
 				<File Id="Noise.Desktop.exe" DiskId="1" Source="$(var.Noise.Desktop.TargetPath)" KeyPath="yes" Checksum="yes" />
-				<fire:FirewallException Id="Desktop.Firewall.Exception" Name="Noise Music System Desktop" Description="Noise Music System support for remote clients."
-										Port="71" Protocol="tcp" Scope="localSubnet" />
-				<fire:FirewallException Id="Discovery.Firewall.Exception" Name="Noise Music System Discovery" Description="Noise Music System discovery for remote clients."
-										Port="6502" Protocol="udp" Scope="localSubnet" />
+				<fire:FirewallException Id="Discovery.Firewall.Exception.Discovery" Name="Noise Music System Service Discovery" Description="Noise Music System discovery for remote clients."
+                                Port="6502" Protocol="udp" Scope="localSubnet" />
+        <fire:FirewallException Id="Discovery.Firewall.Exception.Service" Name="Noise Music System Service RPC" Description="Noise Music System RPC for remote clients."
+                                Port="6503" Protocol="udp" Scope="localSubnet" />
 			</Component>
 
 			<Component Id="Noise.Desktop.config" Guid="49b5433a-a532-4d5c-86b9-632f60befe01">
@@ -152,17 +152,5 @@
 
 		<UIRef Id="InstallUI" />
 		
-		<!-- Custom action to set WCF namespace reservation -->
-		<CustomAction Id="ListenerServiceAddReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
-					  ExeCommand='[SystemFolder]netsh.exe http add urlacl url=http://+:71/Noise user="NT AUTHORITY\Authenticated Users"' />
-		
-		<CustomAction Id="ListenerServiceDeleteReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
-					  ExeCommand="[SystemFolder]netsh.exe http delete urlacl url=http://+:71/Noise" />
-		
-		<InstallExecuteSequence>        
-			<Custom Action="ListenerServiceAddReservation" Before="InstallFinalize">NOT Installed</Custom>
-			<Custom Action="ListenerServiceDeleteReservation" Before="InstallFinalize">Installed</Custom>
-		</InstallExecuteSequence>
-
 	</Product>
 </Wix>
