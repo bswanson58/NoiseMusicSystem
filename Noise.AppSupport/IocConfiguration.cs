@@ -49,23 +49,17 @@ namespace Noise.AppSupport {
 			mContainer.RegisterFactory<NoiseCorePreferences>( PreferencesFactory<NoiseCorePreferences>.CreatePreferences );
 			mContainer.RegisterFactory<UserInterfacePreferences>( PreferencesFactory<UserInterfacePreferences>.CreatePreferences );
 
-#if DEBUG
-			const int portOffset = 10;
-#else
-			const int portOffset = 0;
-#endif
-
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:
 				case ApplicationUsage.Librarian:
-					mContainer.RegisterInstance( new RemoteHostConfiguration( 71 + portOffset, "Noise Desktop System" ));
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 6503, "Noise Desktop System" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.DesktopPreferencesDirectory ));
 					mContainer.RegisterSingleton<IPreferences, PreferencesManager>();
 
 					break;
 
 				case ApplicationUsage.Server:
-					mContainer.RegisterInstance( new RemoteHostConfiguration( 73 + portOffset, "Noise Headless Service" ));
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 6503, "Noise Headless Service" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.HeadlessPreferencesDirectory ));
 					mContainer.RegisterSingleton<IPreferences, HeadlessPreferences>();
 
@@ -74,7 +68,7 @@ namespace Noise.AppSupport {
 					break;
 
 				case ApplicationUsage.TenFootUi:
-					mContainer.RegisterInstance( new RemoteHostConfiguration( 72 + portOffset, "Noise TenFoot System" ));
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 6503, "Noise TenFoot System" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.TenFootPreferencesDirectory ));
 					mContainer.RegisterSingleton<IPreferences, PreferencesManager>();
 

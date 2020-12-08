@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+package Noise.RemoteServer.Protocol;
+
+message Empty {}
+
+message Version {
+	int32 major = 1;
+	int32 minor = 2;
+	int32 build = 3;
+	int32 revision = 4;
+}
+
+message HostInformationResponse {
+	Version	ApiVersion = 1;
+	Version	HostVersion = 2;
+	string	HostName = 3;
+	string	HostDescription = 4;
+	string	LibraryName = 5;
+}
+
+service HostInformation {
+	rpc GetHostInformation (Empty) returns (HostInformationResponse);
+}

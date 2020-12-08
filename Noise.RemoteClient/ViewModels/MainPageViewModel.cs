@@ -1,16 +1,16 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
+﻿using Noise.RemoteClient.Interfaces;
 using Prism.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Noise.RemoteClient.ViewModels {
     public class MainPageViewModel : ViewModelBase {
-        public MainPageViewModel( INavigationService navigationService )
+        private readonly IServiceLocator    mServiceLocator;
+
+        public MainPageViewModel( IServiceLocator serviceLocator, INavigationService navigationService )
             : base( navigationService ) {
+            mServiceLocator = serviceLocator;
             Title = "Main Page";
+
+            mServiceLocator.StartServiceLocator();
         }
     }
 }
