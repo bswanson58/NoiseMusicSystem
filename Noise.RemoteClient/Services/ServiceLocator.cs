@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
@@ -8,6 +9,7 @@ namespace Noise.RemoteClient.Services {
     class ServiceLocator : IServiceLocator {
         private SsdpDeviceLocator       mDeviceLocator;
         private DiscoveredSsdpDevice    mMusicServer;
+        private Channel                 mServiceChannel;
 
         public void StartServiceLocator() {
             StopServiceLocator();
@@ -31,23 +33,42 @@ namespace Noise.RemoteClient.Services {
             if( e.IsNewlyDiscovered ) {
                 mMusicServer = e.DiscoveredDevice;
 
-                GetServerVersion( e.DiscoveredDevice.DescriptionLocation );
+                CreateServiceChannel( mMusicServer );
+                GetServerVersion();
             }
         }
 
-        private async void GetServerVersion( Uri server ) {
-            try {
-                var serverAddress = $"{server.Host}:{server.Port}";
-                var channel = new Channel( serverAddress, ChannelCredentials.Insecure );
-                var client = new HostInformation.HostInformationClient( channel );
+        private async void CreateServiceChannel( DiscoveredSsdpDevice forDevice ) {
+            await StopServiceChannel();
 
-                var result = await client.GetHostInformationAsync( new Empty());
+            var serverAddress = $"{forDevice.DescriptionLocation.Host}:{forDevice.DescriptionLocation.Port}";
+
+            mServiceChannel = new Channel( serverAddress, ChannelCredentials.Insecure );
+        }
+
+        private async Task StopServiceChannel() {
+            if( mServiceChannel != null ) {
+                await mServiceChannel.ShutdownAsync();
+
+                mServiceChannel = null;
+            }
+        }
+
+        private async void GetServerVersion() {
+            try {
+                if( mServiceChannel != null ) {
+                    var client = new HostInformation.HostInformationClient( mServiceChannel );
+
+                    var result = await client.GetHostInformationAsync( new Empty());
+                }
             }
             catch( Exception ex ) {
                 var str = ex.Message;
             }
         }
 
-        private void OnDeviceUnavailable( object sender, DeviceUnavailableEventArgs e ) { }
+        private async void OnDeviceUnavailable( object sender, DeviceUnavailableEventArgs e ) {
+            await StopServiceChannel();
+        }
     }
 }
