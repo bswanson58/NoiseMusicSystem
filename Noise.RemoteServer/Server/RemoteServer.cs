@@ -3,16 +3,20 @@ using Grpc.Core;
 using Noise.Infrastructure.RemoteHost;
 using Noise.RemoteServer.Interfaces;
 using Noise.RemoteServer.Protocol;
+using Noise.RemoteServer.Services;
 
 namespace Noise.RemoteServer.Server {
     class RemoteServer : IRemoteServer {
         private readonly IDiscoveryService          mDiscoveryService;
+        private readonly HostInformationService     mHostInformationService;
         private readonly RemoteHostConfiguration    mRemoteHostConfiguration;
         private readonly IRemoteServiceFactory      mServiceFactory;
         private Grpc.Core.Server	                mNoiseServer;
 
-        public RemoteServer( IDiscoveryService discoveryService, IRemoteServiceFactory serviceFactory, RemoteHostConfiguration remoteHostConfiguration ) {
+        public RemoteServer( IDiscoveryService discoveryService, HostInformationService hostInformationService,
+                             IRemoteServiceFactory serviceFactory, RemoteHostConfiguration remoteHostConfiguration ) {
             mDiscoveryService = discoveryService;
+            mHostInformationService = hostInformationService;
             mServiceFactory = serviceFactory;
             mRemoteHostConfiguration = remoteHostConfiguration;
         }
@@ -28,13 +32,14 @@ namespace Noise.RemoteServer.Server {
 
             mNoiseServer = mServiceFactory.HostServer;
 
-            mNoiseServer.Services.Add( HostInformation.BindService( mServiceFactory.HostInformationService ));
+            mNoiseServer.Services.Add( HostInformation.BindService( mHostInformationService ));
             mNoiseServer.Ports.Add( new ServerPort( Dns.GetHostName(), mRemoteHostConfiguration.HostPort, ServerCredentials.Insecure ));
             mNoiseServer.Start();
         }
 
         public void CloseRemoteServer() {
             mDiscoveryService.StopDiscoveryService();
+            mHostInformationService.StopHostStatusResponder();
 
             StopRpcServer();
         }

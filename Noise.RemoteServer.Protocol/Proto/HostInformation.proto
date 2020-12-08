@@ -15,9 +15,14 @@ message HostInformationResponse {
 	Version	HostVersion = 2;
 	string	HostName = 3;
 	string	HostDescription = 4;
-	string	LibraryName = 5;
+}
+
+message HostStatusResponse {
+	bool	LibraryOpen = 1;
+	string	LibraryName = 2;
 }
 
 service HostInformation {
 	rpc GetHostInformation (Empty) returns (HostInformationResponse);
+	rpc StartHostStatus(Empty) returns (stream HostStatusResponse);
 }

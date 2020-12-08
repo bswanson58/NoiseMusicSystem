@@ -1,15 +1,22 @@
 ﻿using System;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Noise.RemoteClient.Interfaces;
-using Noise.RemoteServer.Protocol;
 using Rssdp;
 
 namespace Noise.RemoteClient.Services {
     class ServiceLocator : IServiceLocator {
-        private SsdpDeviceLocator       mDeviceLocator;
-        private DiscoveredSsdpDevice    mMusicServer;
-        private Channel                 mServiceChannel;
+        private readonly BehaviorSubject<Channel>   mChannelAcquired;
+        private SsdpDeviceLocator                   mDeviceLocator;
+        private DiscoveredSsdpDevice                mMusicServer;
+        private Channel                             mServiceChannel;
+
+        public  IObservable<Channel>                ChannelAcquired => mChannelAcquired;
+
+        public ServiceLocator() {
+            mChannelAcquired = new BehaviorSubject<Channel>( null );
+        }
 
         public void StartServiceLocator() {
             StopServiceLocator();
@@ -34,7 +41,6 @@ namespace Noise.RemoteClient.Services {
                 mMusicServer = e.DiscoveredDevice;
 
                 CreateServiceChannel( mMusicServer );
-                GetServerVersion();
             }
         }
 
@@ -44,6 +50,8 @@ namespace Noise.RemoteClient.Services {
             var serverAddress = $"{forDevice.DescriptionLocation.Host}:{forDevice.DescriptionLocation.Port}";
 
             mServiceChannel = new Channel( serverAddress, ChannelCredentials.Insecure );
+
+            mChannelAcquired.OnNext( mServiceChannel );
         }
 
         private async Task StopServiceChannel() {
@@ -51,19 +59,6 @@ namespace Noise.RemoteClient.Services {
                 await mServiceChannel.ShutdownAsync();
 
                 mServiceChannel = null;
-            }
-        }
-
-        private async void GetServerVersion() {
-            try {
-                if( mServiceChannel != null ) {
-                    var client = new HostInformation.HostInformationClient( mServiceChannel );
-
-                    var result = await client.GetHostInformationAsync( new Empty());
-                }
-            }
-            catch( Exception ex ) {
-                var str = ex.Message;
             }
         }
 

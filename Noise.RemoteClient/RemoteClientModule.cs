@@ -11,6 +11,7 @@ namespace Noise.RemoteClient {
         public static void RegisterServices( IContainerRegistry container ) {
             container.RegisterSingleton<IClientManager, ClientManager>();
             container.RegisterSingleton<IServiceLocator, ServiceLocator>();
+            container.RegisterSingleton<IHostInformationProvider, HostInformationProvider>();
 
             container.Register<IArtistProvider, ArtistProvider>();
         }

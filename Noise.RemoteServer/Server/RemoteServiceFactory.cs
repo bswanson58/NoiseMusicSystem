@@ -4,13 +4,14 @@ using Noise.RemoteServer.Services;
 
 namespace Noise.RemoteServer.Server {
     class RemoteServiceFactory : IRemoteServiceFactory {
-        private readonly Func<HostInformationService>   mHostInformationCreator;
+        private readonly Func<HostStatusResponder>      mHostStatusResponderCreator;
 
-        public RemoteServiceFactory( Func<HostInformationService> createHostInformationService ) {
-            mHostInformationCreator = createHostInformationService;
+        public RemoteServiceFactory( Func<HostStatusResponder> createHostStatusResponder ) {
+            mHostStatusResponderCreator = createHostStatusResponder;
         }
 
         public Grpc.Core.Server         HostServer => new Grpc.Core.Server();
-        public HostInformationService   HostInformationService => mHostInformationCreator();
+
+        public HostStatusResponder      HostStatusResponder => mHostStatusResponderCreator();
     }
 }
