@@ -18,6 +18,7 @@ namespace Noise.RemoteClient {
 
         public static void RegisterNavigation( IContainerRegistry container ) {
             container.RegisterForNavigation<NavigationPage>();
+            container.RegisterForNavigation<ArtistList, ArtistListViewModel>();
             container.RegisterForNavigation<MainPage, MainPageViewModel>();
         }
     }

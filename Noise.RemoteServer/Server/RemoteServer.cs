@@ -33,6 +33,7 @@ namespace Noise.RemoteServer.Server {
             mNoiseServer = mServiceFactory.HostServer;
 
             mNoiseServer.Services.Add( HostInformation.BindService( mHostInformationService ));
+            mNoiseServer.Services.Add( ArtistInformation.BindService( mServiceFactory.ArtistInformationService ));
             mNoiseServer.Ports.Add( new ServerPort( Dns.GetHostName(), mRemoteHostConfiguration.HostPort, ServerCredentials.Insecure ));
             mNoiseServer.Start();
         }

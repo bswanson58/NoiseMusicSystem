@@ -3,12 +3,14 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Services {
     class HostInformationProvider : IHostInformationProvider, IDisposable {
         private readonly BehaviorSubject<HostStatusResponse>    mHostStatus;
+        private readonly BehaviorSubject<LibraryStatus>         mLibraryStatus;
         private IDisposable                                     mServiceAcquiredSubscription;
         private HostInformation.HostInformationClient           mClient;
         private AsyncServerStreamingCall<HostStatusResponse>    mHostStatusStream;
@@ -16,9 +18,11 @@ namespace Noise.RemoteClient.Services {
         private HostStatusResponse                              mLastHostStatus;
 
         public  IObservable<HostStatusResponse>                 HostStatus => mHostStatus;
+        public  IObservable<LibraryStatus>                      LibraryStatus => mLibraryStatus;
 
         public HostInformationProvider( IServiceLocator serviceLocator ) {
             mHostStatus = new BehaviorSubject<HostStatusResponse>( null );
+            mLibraryStatus = new BehaviorSubject<LibraryStatus>( CreateLibraryStatus());
 
             mServiceAcquiredSubscription = serviceLocator.ChannelAcquired.Subscribe( OnChannelAcquired );
         }
@@ -38,7 +42,7 @@ namespace Noise.RemoteClient.Services {
 
             if( mClient != null ) {
                 mHostStatusStreamCancellation = new CancellationTokenSource();
-                mHostStatusStream = mClient.StartHostStatus( new Empty(), cancellationToken: mHostStatusStreamCancellation.Token );
+                mHostStatusStream = mClient.StartHostStatus( new HostInfoEmpty(), cancellationToken: mHostStatusStreamCancellation.Token );
 
                 using( mHostStatusStream ) {
                     try {
@@ -65,7 +69,13 @@ namespace Noise.RemoteClient.Services {
                 }
 
                 mLastHostStatus = status;
+
+                mLibraryStatus.OnNext( CreateLibraryStatus());
             }
+        }
+
+        private LibraryStatus CreateLibraryStatus() {
+            return new LibraryStatus( mLastHostStatus?.LibraryOpen == true, mLastHostStatus != null ? mLastHostStatus.LibraryName : String.Empty );
         }
 
         public void StopHostStatusRequests() {
@@ -75,7 +85,7 @@ namespace Noise.RemoteClient.Services {
 
         public async Task<HostInformationResponse> GetHostInformation() {
             if( mClient != null ) {
-                return await mClient.GetHostInformationAsync( new Empty());
+                return await mClient.GetHostInformationAsync( new HostInfoEmpty());
             }
 
             return default;

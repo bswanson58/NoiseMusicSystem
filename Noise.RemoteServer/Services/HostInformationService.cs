@@ -17,7 +17,7 @@ namespace Noise.RemoteServer.Services {
             mHostConfiguration = hostConfiguration;
         }
 
-        public override Task<HostInformationResponse> GetHostInformation( Empty request, ServerCallContext context ) {
+        public override Task<HostInformationResponse> GetHostInformation( HostInfoEmpty request, ServerCallContext context ) {
             return Task.Run( () => {
                 var retValue = new HostInformationResponse {
                     HostVersion = new Version { Major = VersionInformation.Version.Major, Minor = VersionInformation.Version.Minor,
@@ -31,7 +31,7 @@ namespace Noise.RemoteServer.Services {
             });
         }
 
-        public override async Task StartHostStatus( Empty _, IServerStreamWriter<HostStatusResponse> responseStream, ServerCallContext context ) {
+        public override async Task StartHostStatus( HostInfoEmpty _, IServerStreamWriter<HostStatusResponse> responseStream, ServerCallContext context ) {
             StopHostStatusResponder();
 
             mHostStatusResponder = mServiceFactory.HostStatusResponder;

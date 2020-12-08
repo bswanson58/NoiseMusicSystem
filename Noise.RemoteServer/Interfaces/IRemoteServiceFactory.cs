@@ -5,5 +5,7 @@ namespace Noise.RemoteServer.Interfaces {
         Grpc.Core.Server            HostServer { get; }
 
         HostStatusResponder         HostStatusResponder { get; }
+
+        ArtistInformationService    ArtistInformationService { get; }
     }
 }

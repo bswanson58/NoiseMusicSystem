@@ -81,6 +81,9 @@
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Protobuf, Version=3.14.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.14.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="Grpc.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
       <HintPath>..\packages\Grpc.Core.2.34.0\lib\net45\Grpc.Core.dll</HintPath>
     </Reference>
@@ -144,6 +147,7 @@
     <Compile Include="RemoteServerModule.cs" />
     <Compile Include="Server\RemoteServer.cs" />
     <Compile Include="Server\RemoteServiceFactory.cs" />
+    <Compile Include="Services\ArtistInformationService.cs" />
     <Compile Include="Services\HostInformationService.cs" />
     <Compile Include="Services\HostStatusResponder.cs" />
   </ItemGroup>

@@ -18,7 +18,7 @@ namespace Noise.RemoteClient {
             mClientManager = Container.Resolve<IClientManager>();
             mClientManager.StartClientManager();
 
-            await NavigationService.NavigateAsync( "NavigationPage/MainPage" );
+            await NavigationService.NavigateAsync( "NavigationPage/ArtistList" );
         }
 
         protected override void CleanUp() {
