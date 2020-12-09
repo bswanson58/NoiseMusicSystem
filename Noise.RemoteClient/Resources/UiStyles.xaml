@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style x:Key="ListItemHeaderStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="Large"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+    </Style>
+    <Style x:Key="ListItemDetailStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="Small"/>
+        <Setter Property="Opacity" Value="0.75"/>
+    </Style>
+
+</ResourceDictionary>

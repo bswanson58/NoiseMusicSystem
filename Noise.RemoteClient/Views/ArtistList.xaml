@@ -9,7 +9,7 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ArtistTemplate" x:DataType="protocol:ArtistInfo">
                 <ViewCell>
-                    <Grid Margin="5,0" RowSpacing="0">
+                    <Grid Margin="5,0,5,3" RowSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -19,10 +19,10 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="Large" FontAttributes="Bold" Text="{Binding ArtistName}"/>
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding ArtistName}"/>
 
-                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" FontSize="Small" Opacity="0.75" Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
-                        <Label Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="End" FontSize="Small" Opacity="0.75" Text="{Binding Genre}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
+                        <Label Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="End" Style="{StaticResource ListItemDetailStyle}" Text="{Binding Genre}"/>
                     </Grid>
                 </ViewCell>
             </DataTemplate>
@@ -30,6 +30,6 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding ArtistList}" RowHeight="56" ItemTemplate="{StaticResource ArtistTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding ArtistList}" HasUnevenRows="True" ItemTemplate="{StaticResource ArtistTemplate}"/>
     </ContentPage.Content>
 </ContentPage>
