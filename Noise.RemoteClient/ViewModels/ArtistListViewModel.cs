@@ -6,7 +6,7 @@ using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.ViewModels {
-    class ArtistListViewModel {
+    class ArtistListViewModel : IDisposable {
         private readonly IArtistProvider    mArtistProvider;
         private IDisposable                 mLibraryStatusSubscription;
 
@@ -24,6 +24,9 @@ namespace Noise.RemoteClient.ViewModels {
             if( status?.LibraryOpen == true ) {
                 LoadArtistList();
             }
+            else {
+                ArtistList.Clear();
+            }
         }
 
         private async void LoadArtistList() {
@@ -36,6 +39,11 @@ namespace Noise.RemoteClient.ViewModels {
                     ArtistList.Add( artist );
                 }
             }
+        }
+
+        public void Dispose() {
+            mLibraryStatusSubscription?.Dispose();
+            mLibraryStatusSubscription = null;
         }
     }
 }
