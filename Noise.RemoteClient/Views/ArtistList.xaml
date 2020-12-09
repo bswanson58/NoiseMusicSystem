@@ -1,12 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Noise.RemoteClient.Views.ArtistList">
+             xmlns:protocol="clr-namespace:Noise.RemoteServer.Protocol;assembly=Noise.RemoteServer.Protocol"
+             x:Class="Noise.RemoteClient.Views.ArtistList"
+             Title="Artist List">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="ArtistTemplate" x:DataType="protocol:ArtistInfo">
+                <ViewCell>
+                    <Grid Margin="5,0" RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="Large" FontAttributes="Bold" Text="{Binding ArtistName}"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" FontSize="Small" Opacity="0.75" Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
+                        <Label Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="End" FontSize="Small" Opacity="0.75" Text="{Binding Genre}"/>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="ArtistList"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <ListView Margin="5" ItemsSource="{Binding ArtistList}" RowHeight="56" ItemTemplate="{StaticResource ArtistTemplate}"/>
     </ContentPage.Content>
 </ContentPage>
