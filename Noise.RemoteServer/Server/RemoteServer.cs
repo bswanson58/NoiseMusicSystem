@@ -34,6 +34,8 @@ namespace Noise.RemoteServer.Server {
 
             mNoiseServer.Services.Add( HostInformation.BindService( mHostInformationService ));
             mNoiseServer.Services.Add( ArtistInformation.BindService( mServiceFactory.ArtistInformationService ));
+            mNoiseServer.Services.Add( AlbumInformation.BindService( mServiceFactory.AlbumInformationService ));
+            mNoiseServer.Services.Add( TrackInformation.BindService( mServiceFactory.TrackInformationService ));
             mNoiseServer.Ports.Add( new ServerPort( Dns.GetHostName(), mRemoteHostConfiguration.HostPort, ServerCredentials.Insecure ));
             mNoiseServer.Start();
         }

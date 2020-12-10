@@ -1,0 +1,31 @@
+﻿syntax = "proto3";
+package Noise.RemoteServer.Protocol;
+
+message AlbumInfoEmpty {}
+
+message AlbumInfo {
+	int64		AlbumId = 1;
+	int64		ArtistId = 2;
+	string		ArtistName = 3;
+	string		AlbumName = 4;
+	int32		TrackCount = 5;
+	int32		PublishedYear = 6;
+	int32		Rating = 7;
+	string		Genre = 8;
+	bool		IsFavorite = 9;
+}
+
+message AlbumListRequest {
+	int64		ArtistId = 1;
+}
+
+message AlbumListResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+	int64		ArtistId = 3;
+	repeated AlbumInfo	AlbumList = 4;
+}
+
+service AlbumInformation {
+	rpc GetAlbumList (AlbumListRequest) returns (AlbumListResponse);
+}

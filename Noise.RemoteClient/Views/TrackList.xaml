@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
              xmlns:protocol="clr-namespace:Noise.RemoteServer.Protocol;assembly=Noise.RemoteServer.Protocol"
-             x:Class="Noise.RemoteClient.Views.ArtistList"
-             Title="Artist List">
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="Noise.RemoteClient.Views.TrackList"
+             Title="Track List">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="ArtistTemplate" x:DataType="protocol:ArtistInfo">
+            <DataTemplate x:Key="TrackTemplate" x:DataType="protocol:TrackInfo">
                 <ViewCell>
                     <Grid Margin="5,0,5,3" RowSpacing="0">
                         <Grid.RowDefinitions>
@@ -19,10 +21,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding ArtistName}"/>
-
-                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
-                        <Label Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="End" Style="{StaticResource ListItemDetailStyle}" Text="{Binding Genre}"/>
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}"/>
                     </Grid>
                 </ViewCell>
             </DataTemplate>
@@ -30,7 +29,6 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding ArtistList}" SelectedItem="{Binding SelectedArtist}"
-                  HasUnevenRows="True" ItemTemplate="{StaticResource ArtistTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding TrackList}" HasUnevenRows="True" ItemTemplate="{StaticResource TrackTemplate}"/>
     </ContentPage.Content>
 </ContentPage>

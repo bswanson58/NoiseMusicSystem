@@ -147,9 +147,11 @@
     <Compile Include="RemoteServerModule.cs" />
     <Compile Include="Server\RemoteServer.cs" />
     <Compile Include="Server\RemoteServiceFactory.cs" />
+    <Compile Include="Services\AlbumInformationService.cs" />
     <Compile Include="Services\ArtistInformationService.cs" />
     <Compile Include="Services\HostInformationService.cs" />
     <Compile Include="Services\HostStatusResponder.cs" />
+    <Compile Include="Services\TrackInformationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

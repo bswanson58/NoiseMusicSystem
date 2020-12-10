@@ -20,6 +20,8 @@
   <ItemGroup>
     <Protobuf Include="Proto\HostInformation.proto" />
     <Protobuf Include="Proto\ArtistInformation.proto" />
+    <Protobuf Include="Proto\AlbumInformation.proto" />
+    <Protobuf Include="Proto\TrackInformation.proto" />
   </ItemGroup>
 
 </Project>

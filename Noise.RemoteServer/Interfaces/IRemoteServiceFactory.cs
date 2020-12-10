@@ -7,5 +7,7 @@ namespace Noise.RemoteServer.Interfaces {
         HostStatusResponder         HostStatusResponder { get; }
 
         ArtistInformationService    ArtistInformationService { get; }
+        AlbumInformationService     AlbumInformationService { get; }
+        TrackInformationService     TrackInformationService { get; }
     }
 }

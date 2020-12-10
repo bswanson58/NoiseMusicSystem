@@ -14,12 +14,16 @@ namespace Noise.RemoteClient {
             container.RegisterSingleton<IHostInformationProvider, HostInformationProvider>();
 
             container.Register<IArtistProvider, ArtistProvider>();
+            container.Register<IAlbumProvider, AlbumProvider>();
+            container.Register<ITrackProvider, TrackProvider>();
         }
 
         public static void RegisterNavigation( IContainerRegistry container ) {
             container.RegisterForNavigation<NavigationPage>();
             container.RegisterForNavigation<ArtistList, ArtistListViewModel>();
+            container.RegisterForNavigation<AlbumList, AlbumListViewModel>();
             container.RegisterForNavigation<MainPage, MainPageViewModel>();
+            container.RegisterForNavigation<TrackList, TrackListViewModel>();
         }
     }
 }

@@ -1,0 +1,35 @@
+﻿syntax = "proto3";
+package Noise.RemoteServer.Protocol;
+
+message TrackInfoEmpty {}
+
+message TrackInfo {
+	int64		TrackId = 1;
+	int64		ArtistId = 2;
+	int64		AlbumId = 3;
+	string		ArtistName = 4;
+	string		AlbumName = 5;
+	string		VolumeName = 6;
+	string		TrackName = 7;
+	int32		TrackNumber = 8;
+	int32		Duration = 9;
+	int32		Rating = 10;
+	bool		IsFavorite = 11;
+}
+
+message TrackListRequest {
+	int64		ArtistId = 1;
+	int64		AlbumId = 2;
+}
+
+message TrackListResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+	int64		ArtistId = 3;
+	int64		AlbumId = 4;
+	repeated TrackInfo	TrackList = 5;
+}
+
+service TrackInformation {
+	rpc GetTrackList (TrackListRequest) returns (TrackListResponse);
+}
