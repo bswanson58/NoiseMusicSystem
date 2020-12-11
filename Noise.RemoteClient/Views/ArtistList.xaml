@@ -30,7 +30,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding ArtistList}" SelectedItem="{Binding SelectedArtist}"
+        <ListView Margin="5" ItemsSource="{Binding ArtistList}" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}"
                   HasUnevenRows="True" ItemTemplate="{StaticResource ArtistTemplate}"/>
     </ContentPage.Content>
 </ContentPage>

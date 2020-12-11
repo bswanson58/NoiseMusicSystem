@@ -33,17 +33,24 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void OnAlbumSelected() {
-            var navigationParameters = new NavigationParameters {
-                { NavigationKeys.ArtistId, mSelectedAlbum.ArtistId },
-                { NavigationKeys.AlbumId, mSelectedAlbum.AlbumId }};
+            if( mSelectedAlbum != null ) {
+                var navigationParameters = new NavigationParameters {
+                    { NavigationKeys.ArtistId, mSelectedAlbum.ArtistId },
+                    { NavigationKeys.AlbumId, mSelectedAlbum.AlbumId }};
 
-            NavigationService.NavigateAsync( nameof( TrackList ), navigationParameters );
+                NavigationService.NavigateAsync( nameof( TrackList ), navigationParameters );
+            }
         }
 
         public override void OnNavigatedTo( INavigationParameters parameters ) {
-            mArtistId = parameters.GetValue<long>( NavigationKeys.ArtistId );
+            if( parameters.GetNavigationMode() == NavigationMode.Back ) {
+                SelectedAlbum = null;
+            }
+            else {
+                mArtistId = parameters.GetValue<long>( NavigationKeys.ArtistId );
 
-            LoadAlbumList( mArtistId );
+                LoadAlbumList( mArtistId );
+            }
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {

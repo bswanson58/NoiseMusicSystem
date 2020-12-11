@@ -30,10 +30,18 @@ namespace Noise.RemoteClient.ViewModels {
             set => SetProperty( ref mSelectedArtist, value, OnArtistSelected );
         }
 
-        private void OnArtistSelected() {
-            var navigationParameters = new NavigationParameters { { NavigationKeys.ArtistId, mSelectedArtist.DbId }};
+        public override void OnNavigatedTo( INavigationParameters parameters ) {
+            if( parameters.GetNavigationMode() == NavigationMode.Back ) {
+                SelectedArtist = null;
+            }
+        }
 
-            NavigationService.NavigateAsync( nameof( AlbumList ), navigationParameters );
+        private void OnArtistSelected() {
+            if( mSelectedArtist != null ) {
+                var navigationParameters = new NavigationParameters { { NavigationKeys.ArtistId, mSelectedArtist.DbId }};
+
+                NavigationService.NavigateAsync( nameof( AlbumList ), navigationParameters );
+            }
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
