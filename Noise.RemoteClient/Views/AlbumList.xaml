@@ -2,14 +2,14 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
-             xmlns:protocol="clr-namespace:Noise.RemoteServer.Protocol;assembly=Noise.RemoteServer.Protocol"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.AlbumList"
              Title="Album List">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="AlbumTemplate" x:DataType="protocol:AlbumInfo">
+            <DataTemplate x:Key="AlbumTemplate" x:DataType="dto:UiAlbum">
                 <ViewCell>
                     <Grid Margin="5,0,5,3" RowSpacing="0">
                         <Grid.RowDefinitions>
@@ -18,13 +18,16 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding AlbumName}"/>
+                        <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Text=">" Command="{Binding Play}"/>
 
-                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding TrackCount, StringFormat='Tracks: {0}'}"/>
-                        <Label Grid.Row="1" Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding PublishedYear, StringFormat='Published: {0}'}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding AlbumName}"/>
+
+                        <Label Grid.Row="1" Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding TrackCount, StringFormat='Tracks: {0}'}"/>
+                        <Label Grid.Row="1" Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding PublishedYear, StringFormat='Published: {0}'}"/>
                     </Grid>
                 </ViewCell>
             </DataTemplate>

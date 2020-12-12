@@ -9,21 +9,24 @@ using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     class AlbumListViewModel : BindableBase, IDisposable {
-        private readonly IAlbumProvider mAlbumProvider;
-        private readonly IClientState   mClientState;
-        private IDisposable             mLibraryStatusSubscription;
-        private IDisposable             mStateSubscription;
-        private ArtistInfo              mCurrentArtist;
-        private bool                    mLibraryOpen;
-        private AlbumInfo               mSelectedAlbum;
+        private readonly IAlbumProvider         mAlbumProvider;
+        private readonly IClientState           mClientState;
+        private readonly IQueuePlayProvider     mPlayProvider;
+        private IDisposable                     mLibraryStatusSubscription;
+        private IDisposable                     mStateSubscription;
+        private ArtistInfo                      mCurrentArtist;
+        private bool                            mLibraryOpen;
+        private UiAlbum                         mSelectedAlbum;
 
-        public  ObservableCollection<AlbumInfo> AlbumList { get; }
+        public  ObservableCollection<UiAlbum>   AlbumList { get; }
 
-        public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
+        public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider,
+                                   IClientState clientState ) {
             mAlbumProvider = albumProvider;
+            mPlayProvider = queuePlayProvider;
             mClientState = clientState;
 
-            AlbumList = new ObservableCollection<AlbumInfo>();
+            AlbumList = new ObservableCollection<UiAlbum>();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
             mStateSubscription = mClientState.CurrentArtist.Subscribe( OnArtistState );
@@ -35,14 +38,14 @@ namespace Noise.RemoteClient.ViewModels {
             LoadAlbumList();
         }
 
-        public AlbumInfo SelectedAlbum {
+        public UiAlbum SelectedAlbum {
             get => mSelectedAlbum;
             set => SetProperty( ref mSelectedAlbum, value, OnAlbumSelected );
         }
 
         private void OnAlbumSelected() {
-            if( mSelectedAlbum != null ) {
-                mClientState.SetCurrentAlbum( mSelectedAlbum );
+            if( mSelectedAlbum?.Album != null ) {
+                mClientState.SetCurrentAlbum( mSelectedAlbum.Album );
 
                 Shell.Current.GoToAsync( "trackList" );
             }
@@ -62,11 +65,15 @@ namespace Noise.RemoteClient.ViewModels {
                 var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
 
                 if( list?.Success == true ) {
-                    foreach( var artist in list.AlbumList.OrderBy( a => a.AlbumName )) {
-                        AlbumList.Add( artist );
+                    foreach( var album in list.AlbumList.OrderBy( a => a.AlbumName )) {
+                        AlbumList.Add( new UiAlbum( album, OnAlbumPlay ));
                     }
                 }
             }
+        }
+
+        private void OnAlbumPlay( UiAlbum album ) {
+            mPlayProvider.QueueAlbum( album.Album );
         }
 
         public void Dispose() {

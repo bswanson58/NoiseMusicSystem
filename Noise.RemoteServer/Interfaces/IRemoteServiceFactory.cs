@@ -9,5 +9,6 @@ namespace Noise.RemoteServer.Interfaces {
         ArtistInformationService    ArtistInformationService { get; }
         AlbumInformationService     AlbumInformationService { get; }
         TrackInformationService     TrackInformationService { get; }
+        QueueService                QueueControlService { get; }
     }
 }

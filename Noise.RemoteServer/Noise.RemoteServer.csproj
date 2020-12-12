@@ -151,6 +151,7 @@
     <Compile Include="Services\ArtistInformationService.cs" />
     <Compile Include="Services\HostInformationService.cs" />
     <Compile Include="Services\HostStatusResponder.cs" />
+    <Compile Include="Services\QueueControlService.cs" />
     <Compile Include="Services\TrackInformationService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,14 +2,14 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
-             xmlns:protocol="clr-namespace:Noise.RemoteServer.Protocol;assembly=Noise.RemoteServer.Protocol"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.TrackList"
              Title="Track List">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="TrackTemplate" x:DataType="protocol:TrackInfo">
+            <DataTemplate x:Key="TrackTemplate" x:DataType="dto:UiTrack">
                 <ViewCell>
                     <Grid Margin="5,0,5,3" RowSpacing="0">
                         <Grid.RowDefinitions>
@@ -18,10 +18,12 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}"/>
+                        <Button Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" VerticalOptions="Center" Text=">" Command="{Binding Play}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}"/>
                     </Grid>
                 </ViewCell>
             </DataTemplate>

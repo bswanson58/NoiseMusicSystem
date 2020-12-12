@@ -1,0 +1,45 @@
+﻿syntax = "proto3";
+package Noise.RemoteServer.Protocol;
+
+message QueueControlEmpty {}
+
+message QueueTrackInfo {
+	int64		QueueId = 1;
+	int64		TrackId = 2;
+	int64		ArtistId = 3;
+	int64		AlbumId = 4;
+	string		ArtistName = 5;
+	string		AlbumName = 6;
+	string		VolumeName = 7;
+	string		TrackName = 8;
+	int32		TrackNumber = 9;
+	int32		Duration = 10;
+	int32		Rating = 11;
+	bool		IsFavorite = 12;
+	bool		IsPlaying = 13;
+	bool		HasPlayed = 14;
+	bool		IsFaulted = 15;
+	bool		IsStrategyQueued = 16;
+}
+
+message QueueListResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+	repeated QueueTrackInfo	QueueList = 3;
+}
+
+message QueueControlResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+}
+
+message AddQueueRequest {
+	int64		ItemId = 1;
+}
+
+service QueueControl {
+	rpc	AddTrack (AddQueueRequest) returns (QueueControlResponse);
+	rpc AddAlbum (AddQueueRequest) returns (QueueControlResponse);
+
+	rpc GetQueueList (QueueControlEmpty) returns (QueueListResponse);
+}

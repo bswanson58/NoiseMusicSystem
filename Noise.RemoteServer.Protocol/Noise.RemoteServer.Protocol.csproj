@@ -22,6 +22,7 @@
     <Protobuf Include="Proto\ArtistInformation.proto" />
     <Protobuf Include="Proto\AlbumInformation.proto" />
     <Protobuf Include="Proto\TrackInformation.proto" />
+    <Protobuf Include="Proto\QueueControl.proto" />
   </ItemGroup>
 
 </Project>

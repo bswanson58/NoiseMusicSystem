@@ -8,23 +8,24 @@ using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
     class TrackListViewModel : BindableBase, IDisposable {
-        private readonly ITrackProvider mTrackProvider;
-        private readonly IClientState   mClientState;
-        private IDisposable             mLibraryStatusSubscription;
-        private IDisposable             mStateSubscription;
-        private bool                    mLibraryOpen;
-        private AlbumInfo               mCurrentAlbum;
+        private readonly ITrackProvider         mTrackProvider;
+        private readonly IQueuePlayProvider     mQueuePlay;
+        private IDisposable                     mLibraryStatusSubscription;
+        private IDisposable                     mStateSubscription;
+        private bool                            mLibraryOpen;
+        private AlbumInfo                       mCurrentAlbum;
 
-        public  ObservableCollection<TrackInfo>    TrackList { get; }
+        public  ObservableCollection<UiTrack>   TrackList { get; }
 
-        public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
+        public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider, 
+                                   IClientState clientState ) {
             mTrackProvider = trackProvider;
-            mClientState = clientState;
+            mQueuePlay = queuePlayProvider;
 
-            TrackList = new ObservableCollection<TrackInfo>();
+            TrackList = new ObservableCollection<UiTrack>();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
-            mStateSubscription = mClientState.CurrentAlbum.Subscribe( OnAlbumState );
+            mStateSubscription = clientState.CurrentAlbum.Subscribe( OnAlbumState );
         }
 
         private void OnAlbumState( AlbumInfo album ) {
@@ -48,10 +49,14 @@ namespace Noise.RemoteClient.ViewModels {
 
                 if( list?.Success == true ) {
                     foreach( var track in list.TrackList.OrderBy( a => a.TrackNumber )) {
-                        TrackList.Add( track );
+                        TrackList.Add( new UiTrack( track, OnTrackPlay ));
                     }
                 }
             }
+        }
+
+        private void OnTrackPlay( UiTrack track ) {
+            mQueuePlay.QueueTrack( track.Track );
         }
 
         public void Dispose() {
