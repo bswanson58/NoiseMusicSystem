@@ -28,6 +28,10 @@ message QueueListResponse {
 	repeated QueueTrackInfo	QueueList = 3;
 }
 
+message QueueStatusResponse {
+	repeated QueueTrackInfo	QueueList = 3;
+}
+
 message QueueControlResponse {
 	bool		Success = 1;
 	string		ErrorMessage = 2;
@@ -42,4 +46,5 @@ service QueueControl {
 	rpc AddAlbum (AddQueueRequest) returns (QueueControlResponse);
 
 	rpc GetQueueList (QueueControlEmpty) returns (QueueListResponse);
+	rpc StartQueueStatus (QueueControlEmpty) returns (stream QueueStatusResponse);
 }

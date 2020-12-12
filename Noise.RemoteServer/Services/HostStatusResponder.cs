@@ -10,13 +10,15 @@ namespace Noise.RemoteServer.Services {
     class HostStatusResponder : IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
         private readonly ILibraryConfiguration          mLibraryConfiguration;
         private readonly IEventAggregator               mEventAggregator;
+        private readonly INoiseLog                      mLog;
         private IServerStreamWriter<HostStatusResponse> mStatusStream;
         private ServerCallContext                       mCallContext;
         private TaskCompletionSource<bool>              mStatusComplete;
 
-        public HostStatusResponder( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator ) {
+        public HostStatusResponder( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator, INoiseLog log ) {
             mLibraryConfiguration = libraryConfiguration;
             mEventAggregator = eventAggregator;
+            mLog = log;
         }
 
         public async Task StartResponder( IServerStreamWriter<HostStatusResponse> stream, ServerCallContext callContext ) {
@@ -47,7 +49,9 @@ namespace Noise.RemoteServer.Services {
                                                 LibraryName = mLibraryConfiguration.Current != null ? mLibraryConfiguration.Current.LibraryName : String.Empty };
                     await mStatusStream.WriteAsync( status );
                 }
-                catch( Exception ex ) { }
+                catch( Exception ex ) {
+                    mLog.LogException( "HostStatusResponder:PublishStatus", ex );
+                }
             }
             else {
                 StopResponder();

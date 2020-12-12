@@ -2,10 +2,36 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.Queue"
              Title="Queue">
 
-    <Label Margin="100" FontSize="Header" Text="Queue"/>
-  
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="QueuedTrackTemplate" x:DataType="dto:UiQueuedTrack">
+                <ViewCell>
+                    <Grid Margin="5,0,5,3" RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}"/>
+
+                        <StackLayout Grid.Row="1" Orientation="Horizontal" Margin="5,0,0,0">
+                            <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
+                            <Label Style="{StaticResource ListItemDetailStyle}" Text="/"/>
+                            <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumName}"/>
+                        </StackLayout>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <ListView Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"/>
+    </ContentPage.Content>
+
 </ContentPage>

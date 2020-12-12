@@ -9,15 +9,17 @@ namespace Noise.RemoteServer.Server {
         private readonly Func<AlbumInformationService>  mAlbumInformationCreator;
         private readonly Func<TrackInformationService>  mTrackInformationCreator;
         private readonly Func<QueueService>             mQueueControlCreator;
+        private readonly Func<QueueStatusResponder>     mQueueStatusResponderCreator;
 
         public RemoteServiceFactory( Func<HostStatusResponder> createHostStatusResponder, Func<ArtistInformationService> artistInformationCreator,
                                      Func<AlbumInformationService> albumInformationCreator, Func<TrackInformationService> trackInformationCreator,
-                                     Func<QueueService> queueControlCreator ) {
+                                     Func<QueueService> queueControlCreator, Func<QueueStatusResponder> queueStatusResponderCreator ) {
             mHostStatusResponderCreator = createHostStatusResponder;
             mAlbumInformationCreator = albumInformationCreator;
             mArtistInformationCreator = artistInformationCreator;
             mTrackInformationCreator = trackInformationCreator;
             mQueueControlCreator = queueControlCreator;
+            mQueueStatusResponderCreator = queueStatusResponderCreator;
         }
 
         public  Grpc.Core.Server            HostServer => new Grpc.Core.Server();
@@ -27,5 +29,6 @@ namespace Noise.RemoteServer.Server {
         public  AlbumInformationService     AlbumInformationService => mAlbumInformationCreator();
         public  TrackInformationService     TrackInformationService => mTrackInformationCreator();
         public  QueueService                QueueControlService => mQueueControlCreator();
+        public  QueueStatusResponder        QueueStatusResponder => mQueueStatusResponderCreator();
     }
 }

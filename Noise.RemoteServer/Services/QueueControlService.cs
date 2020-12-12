@@ -4,18 +4,22 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.RemoteServer.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteServer.Services {
     class QueueService : QueueControl.QueueControlBase {
+        private readonly IRemoteServiceFactory      mServiceFactory;
         private readonly IAlbumProvider			    mAlbumProvider;
         private readonly ITrackProvider			    mTrackProvider;
         private readonly IPlayCommand			    mPlayCommand;
         private readonly IPlayQueue				    mPlayQueue;
         private readonly INoiseLog				    mLog;
+        private QueueStatusResponder                mQueueStatusResponder;
 
-        public QueueService( IAlbumProvider albumProvider, ITrackProvider trackProvider,
+        public QueueService( IRemoteServiceFactory serviceFactory, IAlbumProvider albumProvider, ITrackProvider trackProvider,
                              IPlayQueue playQueue,IPlayCommand playCommand, INoiseLog log ) {
+            mServiceFactory = serviceFactory;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mPlayCommand = playCommand;
@@ -95,6 +99,18 @@ namespace Noise.RemoteServer.Services {
 
                 return retValue;
             });
+        }
+
+        public override async Task StartQueueStatus( QueueControlEmpty request, IServerStreamWriter<QueueStatusResponse> responseStream, ServerCallContext context ) {
+            StopHostStatusResponder();
+
+            mQueueStatusResponder = mServiceFactory.QueueStatusResponder;
+            await mQueueStatusResponder.StartResponder( responseStream, context );
+        }
+
+        public void StopHostStatusResponder() {
+            mQueueStatusResponder?.StopResponder();
+            mQueueStatusResponder = null;
         }
     }
 }
