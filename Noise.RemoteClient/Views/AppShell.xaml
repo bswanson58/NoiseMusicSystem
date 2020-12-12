@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://xamarin.com/schemas/2014/forms"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:Noise.RemoteClient.Views;assembly=Noise.RemoteClient"
+       x:Class="Noise.RemoteClient.Views.AppShell">
+
+    <FlyoutItem Title="Library" Route="library">
+        <ShellContent ContentTemplate="{DataTemplate views:ArtistList}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Queue" Route="queue">
+        <ShellContent ContentTemplate="{DataTemplate views:Queue}"/>
+    </FlyoutItem>
+    <!--    
+    <TabBar>
+        <Tab Title="Library">
+            <ShellContent ContentTemplate="{DataTemplate views:ArtistList}"/>
+        </Tab>
+        <Tab Title="Queue">
+            <ShellContent ContentTemplate="{DataTemplate views:Queue}"/>
+        </Tab>
+    </TabBar>
+-->
+</Shell>

@@ -3,28 +3,36 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
-using Noise.RemoteClient.Support;
-using Noise.RemoteClient.Views;
 using Noise.RemoteServer.Protocol;
-using Prism.Navigation;
+using Prism.Mvvm;
+using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
-    class AlbumListViewModel : ViewModelBase {
+    class AlbumListViewModel : BindableBase, IDisposable {
         private readonly IAlbumProvider mAlbumProvider;
+        private readonly IClientState   mClientState;
         private IDisposable             mLibraryStatusSubscription;
-        private long                    mArtistId;
+        private IDisposable             mStateSubscription;
+        private ArtistInfo              mCurrentArtist;
         private bool                    mLibraryOpen;
         private AlbumInfo               mSelectedAlbum;
 
         public  ObservableCollection<AlbumInfo> AlbumList { get; }
 
-        public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, INavigationService navigationService ) :
-        base( navigationService ) {
+        public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
             mAlbumProvider = albumProvider;
+            mClientState = clientState;
 
             AlbumList = new ObservableCollection<AlbumInfo>();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            mStateSubscription = mClientState.CurrentArtist.Subscribe( OnArtistState );
+        }
+
+        private void OnArtistState( ArtistInfo artist ) {
+            mCurrentArtist = artist;
+
+            LoadAlbumList();
         }
 
         public AlbumInfo SelectedAlbum {
@@ -34,35 +42,24 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnAlbumSelected() {
             if( mSelectedAlbum != null ) {
-                var navigationParameters = new NavigationParameters {
-                    { NavigationKeys.ArtistId, mSelectedAlbum.ArtistId },
-                    { NavigationKeys.AlbumId, mSelectedAlbum.AlbumId }};
+                mClientState.SetCurrentAlbum( mSelectedAlbum );
 
-                NavigationService.NavigateAsync( nameof( TrackList ), navigationParameters );
-            }
-        }
-
-        public override void OnNavigatedTo( INavigationParameters parameters ) {
-            if( parameters.GetNavigationMode() == NavigationMode.Back ) {
-                SelectedAlbum = null;
-            }
-            else {
-                mArtistId = parameters.GetValue<long>( NavigationKeys.ArtistId );
-
-                LoadAlbumList( mArtistId );
+                Shell.Current.GoToAsync( "trackList" );
             }
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
             mLibraryOpen = status.LibraryOpen;
+
+            LoadAlbumList();
         }
 
-        private async void LoadAlbumList( long artistId ) {
+        private async void LoadAlbumList() {
             AlbumList.Clear();
 
             if(( mLibraryOpen ) &&
-               ( artistId != Constants.cNullId )) {
-                var list = await mAlbumProvider.GetAlbumList( artistId );
+               ( mCurrentArtist != null )) {
+                var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
 
                 if( list?.Success == true ) {
                     foreach( var artist in list.AlbumList.OrderBy( a => a.AlbumName )) {
@@ -72,9 +69,12 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
-        public override void Destroy() {
+        public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
+
+            mStateSubscription?.Dispose();
+            mStateSubscription = null;
         }
     }
 }

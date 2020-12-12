@@ -3,22 +3,22 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
-using Noise.RemoteClient.Support;
-using Noise.RemoteClient.Views;
 using Noise.RemoteServer.Protocol;
-using Prism.Navigation;
+using Prism.Mvvm;
+using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
-    class ArtistListViewModel : ViewModelBase {
+    class ArtistListViewModel : BindableBase, IDisposable {
         private readonly IArtistProvider    mArtistProvider;
+        private readonly IClientState       mClientState;
         private IDisposable                 mLibraryStatusSubscription;
         private ArtistInfo                  mSelectedArtist;
 
         public  ObservableCollection<ArtistInfo>    ArtistList { get; }
 
-        public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, INavigationService navigationService ) :
-            base( navigationService ) {
+        public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
             mArtistProvider = artistProvider;
+            mClientState = clientState;
 
             ArtistList = new ObservableCollection<ArtistInfo>();
 
@@ -30,17 +30,11 @@ namespace Noise.RemoteClient.ViewModels {
             set => SetProperty( ref mSelectedArtist, value, OnArtistSelected );
         }
 
-        public override void OnNavigatedTo( INavigationParameters parameters ) {
-            if( parameters.GetNavigationMode() == NavigationMode.Back ) {
-                SelectedArtist = null;
-            }
-        }
-
         private void OnArtistSelected() {
             if( mSelectedArtist != null ) {
-                var navigationParameters = new NavigationParameters { { NavigationKeys.ArtistId, mSelectedArtist.DbId }};
+                mClientState.SetCurrentArtist( mSelectedArtist );
 
-                NavigationService.NavigateAsync( nameof( AlbumList ), navigationParameters );
+                Shell.Current.GoToAsync( "albumList" );
             }
         }
 
@@ -65,7 +59,7 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
-        public override void Destroy() {
+        public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
         }

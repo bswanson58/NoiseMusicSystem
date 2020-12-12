@@ -1,4 +1,5 @@
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Views;
 using Prism;
 using Prism.Ioc;
 using Xamarin.Essentials.Implementation;
@@ -12,13 +13,13 @@ namespace Noise.RemoteClient {
             : base( initializer ) {
         }
 
-        protected override async void OnInitialized() {
+        protected override void OnInitialized() {
             InitializeComponent();
 
             mClientManager = Container.Resolve<IClientManager>();
             mClientManager.StartClientManager();
 
-            await NavigationService.NavigateAsync( "NavigationPage/ArtistList" );
+            MainPage = new AppShell();
         }
 
         protected override void CleanUp() {
@@ -30,8 +31,8 @@ namespace Noise.RemoteClient {
         protected override void RegisterTypes( IContainerRegistry containerRegistry ) {
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
 
-            RemoteClientModule.RegisterNavigation( containerRegistry );
             RemoteClientModule.RegisterServices( containerRegistry );
+            RemoteClientModule.RegisterNavigation( containerRegistry );
         }
     }
 }

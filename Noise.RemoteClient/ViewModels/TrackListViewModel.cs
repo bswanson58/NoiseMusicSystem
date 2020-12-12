@@ -3,48 +3,48 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
-using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
-using Prism.Navigation;
+using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
-    class TrackListViewModel : ViewModelBase {
+    class TrackListViewModel : BindableBase, IDisposable {
         private readonly ITrackProvider mTrackProvider;
+        private readonly IClientState   mClientState;
         private IDisposable             mLibraryStatusSubscription;
+        private IDisposable             mStateSubscription;
         private bool                    mLibraryOpen;
-        private long                    mArtistId;
-        private long                    mAlbumId;
+        private AlbumInfo               mCurrentAlbum;
 
         public  ObservableCollection<TrackInfo>    TrackList { get; }
 
-        public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, INavigationService navigationService ) :
-        base( navigationService ) {
+        public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
             mTrackProvider = trackProvider;
+            mClientState = clientState;
 
             TrackList = new ObservableCollection<TrackInfo>();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            mStateSubscription = mClientState.CurrentAlbum.Subscribe( OnAlbumState );
         }
 
-        public override void OnNavigatedTo( INavigationParameters parameters ) {
-            base.OnNavigatedTo( parameters );
-            mArtistId = parameters.GetValue<long>( NavigationKeys.ArtistId );
-            mAlbumId = parameters.GetValue<long>( NavigationKeys.AlbumId );
+        private void OnAlbumState( AlbumInfo album ) {
+            mCurrentAlbum = album;
 
-            LoadTrackList( mArtistId, mAlbumId );
+            LoadTrackList();
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
             mLibraryOpen = status.LibraryOpen;
+
+            LoadTrackList();
         }
 
-        private async void LoadTrackList( long artistId, long albumId ) {
+        private async void LoadTrackList() {
             TrackList.Clear();
 
             if(( mLibraryOpen ) &&
-               ( artistId != Constants.cNullId ) &&
-               ( albumId != Constants.cNullId )) {
-                var list = await mTrackProvider.GetTrackList( artistId, albumId );
+               ( mCurrentAlbum != null )) {
+                var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
 
                 if( list?.Success == true ) {
                     foreach( var track in list.TrackList.OrderBy( a => a.TrackNumber )) {
@@ -54,9 +54,12 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
-        public override void Destroy() {
+        public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
+
+            mStateSubscription?.Dispose();
+            mStateSubscription = null;
         }
     }
 }
