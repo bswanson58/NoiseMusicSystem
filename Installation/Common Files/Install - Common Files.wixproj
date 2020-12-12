@@ -42,6 +42,7 @@
     <Content Include="DotNetZip.wxi" />
     <Content Include="EntityFramework.wxi" />
     <Content Include="GongSolutions.wxi" />
+    <Content Include="gRpc.wxi" />
     <Content Include="LiteDB.wxi" />
     <Content Include="Lucene.wxi" />
     <Content Include="MahApps.wxi" />
@@ -138,6 +139,22 @@
     <ProjectReference Include="..\..\Noise.RemoteHost\Noise.RemoteHost.csproj">
       <Name>Noise.RemoteHost</Name>
       <Project>{85472b64-4f49-4182-8709-9229e25e5119}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.RemoteServer.Protocol\Noise.RemoteServer.Protocol.csproj">
+      <Name>Noise.RemoteServer.Protocol</Name>
+      <Project>{12773c19-ad23-40ca-8ab7-d75aa9354df3}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.RemoteServer\Noise.RemoteServer.csproj">
+      <Name>Noise.RemoteServer</Name>
+      <Project>{86b71b1e-1c46-4e78-8376-e6db55f0253f}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

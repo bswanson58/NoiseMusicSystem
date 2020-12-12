@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Google.Protobuf.dll" Guid="83422C4B-13DB-4EC7-AE92-D00D0F7CAE90">
+      <File Id="Google.Protobuf.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Google.Protobuf.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Grpc.Core.dll" Guid="443D78C1-FD3F-4855-ACC7-8F19B90CED7F">
+      <File Id="Grpc.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Grpc.Core.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Grpc.Core.Api.dll" Guid="88E8F7D2-4BD7-4411-AB66-7B998DAB8666">
+      <File Id="Grpc.Core.Api.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Grpc.Core.Api.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Rssdp.dll" Guid="8E3E3586-1989-40A3-AAEA-D18DC03D4419">
+      <File Id="Rssdp.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Rssdp.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="grpc_csharp_ext.x64.dll" Guid="ACA96F1B-7C75-48E2-B54F-211D5BDFFE36">
+      <File Id="grpc_csharp_ext.x64.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)grpc_csharp_ext.x64.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="grpc_csharp_ext.x86.dll" Guid="C45E7BC6-39F5-406E-8063-1CDA6C5F0480">
+      <File Id="grpc_csharp_ext.x86.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)grpc_csharp_ext.x86.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="System.Buffers.dll" Guid="4B963756-A37C-40B4-B87D-7946D4A73952">
+      <File Id="System.Buffers.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Buffers.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="System.Memory.dll" Guid="8D047443-E6AA-4B7A-902F-A63DB96CE36A">
+      <File Id="System.Memory.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Memory.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="gRpcFiles">
+    <ComponentRef Id="Google.Protobuf.dll" />
+    <ComponentRef Id="Grpc.Core.dll" />
+    <ComponentRef Id="Grpc.Core.Api.dll" />
+    <ComponentRef Id="Rssdp.dll" />
+    <ComponentRef Id="grpc_csharp_ext.x64.dll" />
+    <ComponentRef Id="grpc_csharp_ext.x86.dll" />
+    <ComponentRef Id="System.Buffers.dll" />
+    <ComponentRef Id="System.Memory.dll" />
+  </ComponentGroup>
+</Include>

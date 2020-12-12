@@ -28,6 +28,12 @@
     <Component Id="Noise.RemoteHost" Guid="f82346d0-3331-4e4d-8a9f-be8b3f149ef8">
       <File Id="Noise.RemoteHost.dll" DiskId="10" Source="$(var.Noise.RemoteHost.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Noise.RemoteServer" Guid="4287F710-CBAE-4B89-BCAC-907E71C24E0F">
+      <File Id="Noise.RemoteServer.dll" DiskId="10" Source="$(var.Noise.RemoteServer.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.RemoteServer.Protocol" Guid="97C85A9A-9ACB-447E-A001-6B78E12533F8">
+      <File Id="Noise.RemoteServer.Protocol.dll" DiskId="10" Source="$(var.Noise.RemoteServer.Protocol.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Noise.UI" Guid="382bd861-7acc-4da5-b170-67d12ad72ad3">
       <File Id="Noise.UI.dll" DiskId="10" Source="$(var.Noise.UI.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -52,6 +58,8 @@
     <ComponentRef Id="Noise.Infrastructure" />
     <ComponentRef Id="Noise.Metadata"/>
     <ComponentRef Id="Noise.RemoteHost" />
+    <ComponentRef Id="Noise.RemoteServer" />
+    <ComponentRef Id="Noise.RemoteServer.Protocol" />
     <ComponentRef Id="Noise.UI" />
     <ComponentRef Id="ReusableBits" />
     <ComponentRef Id="ReusableBits.Mvvm" />

@@ -127,6 +127,7 @@
         <ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
+        <ComponentGroupRef Id="gRpcFiles"/>
         <ComponentGroupRef Id="LiteDBFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MahAppsMetroFiles"/>
