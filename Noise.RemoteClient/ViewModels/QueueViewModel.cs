@@ -4,21 +4,38 @@ using System.Collections.ObjectModel;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
     class QueueViewModel : BindableBase, IDisposable {
         private readonly IQueueListProvider mQueueListProvider;
+        private readonly ITransportProvider mTransportProvider;
         private IDisposable                 mLibraryStatusSubscription;
         private IDisposable                 mQueueSubscription;
 
         public  ObservableCollection<UiQueuedTrack> QueueList { get; }
 
-        public QueueViewModel( IQueueListProvider queueListProvider, IHostInformationProvider hostInformationProvider ) {
+        public  DelegateCommand                     Play { get; }
+        public  DelegateCommand                     Pause { get; }
+        public  DelegateCommand                     Stop { get; }
+        public  DelegateCommand                     PlayNext { get; }
+        public  DelegateCommand                     PlayPrevious { get; }
+        public  DelegateCommand                     ReplayTrack { get; }
+
+        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, IHostInformationProvider hostInformationProvider ) {
             mQueueListProvider = queueListProvider;
+            mTransportProvider = transportProvider;
 
             QueueList = new ObservableCollection<UiQueuedTrack>();
             Xamarin.Forms.BindingBase.EnableCollectionSynchronization( QueueList, null, ObservableCollectionCallback);
+
+            Play = new DelegateCommand( OnPlay );
+            Pause = new DelegateCommand( OnPause );
+            Stop = new DelegateCommand( OnStop );
+            PlayPrevious = new DelegateCommand( OnPlayPrevious );
+            PlayNext = new DelegateCommand( OnPlayNext );
+            ReplayTrack = new DelegateCommand( OnReplayTrack );
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
         }
@@ -52,6 +69,30 @@ namespace Noise.RemoteClient.ViewModels {
                     QueueList.Add( new UiQueuedTrack( track ));
                 }
             }
+        }
+
+        private void OnPlay() {
+            mTransportProvider.Play();
+        }
+
+        private void OnPause() {
+            mTransportProvider.Pause();
+        }
+
+        private void OnStop() {
+            mTransportProvider.Stop();
+        }
+
+        private void OnPlayNext() {
+            mTransportProvider.PlayNext();
+        }
+
+        private void OnPlayPrevious() {
+            mTransportProvider.PlayPrevious();
+        }
+
+        private void OnReplayTrack() {
+            mTransportProvider.ReplayTrack();
         }
 
         public void Dispose() {

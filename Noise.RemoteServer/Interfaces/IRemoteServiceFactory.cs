@@ -11,5 +11,6 @@ namespace Noise.RemoteServer.Interfaces {
         TrackInformationService     TrackInformationService { get; }
         QueueService                QueueControlService { get; }
         QueueStatusResponder        QueueStatusResponder { get; }
+        TransportControlService     TransportControlService { get; }
     }
 }

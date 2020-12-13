@@ -163,6 +163,7 @@
     <Compile Include="Services\QueueControlService.cs" />
     <Compile Include="Services\QueueStatusResponder.cs" />
     <Compile Include="Services\TrackInformationService.cs" />
+    <Compile Include="Services\TransportControlService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

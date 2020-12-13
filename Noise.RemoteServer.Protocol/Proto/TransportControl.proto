@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+package Noise.RemoteServer.Protocol;
+
+message TransportControlEmpty {}
+
+message TransportCommandResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+}
+
+service TransportControl {
+	rpc StartPlay (TransportControlEmpty) returns (TransportCommandResponse);
+	rpc StopPlay (TransportControlEmpty) returns (TransportCommandResponse);
+	rpc PausePlay (TransportControlEmpty) returns (TransportCommandResponse);
+	rpc PlayPrevious (TransportControlEmpty) returns (TransportCommandResponse);
+	rpc PlayNext (TransportControlEmpty) returns (TransportCommandResponse);
+	rpc ReplayTrack (TransportControlEmpty) returns (TransportCommandResponse);
+}

@@ -69,7 +69,23 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ListView Grid.Row="0" Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"/>
+
+            <StackLayout Grid.Row="1" Margin="10,0,0,5" Orientation="Horizontal">
+                <Button Margin="3,0" Text="Play" Command="{Binding Play}"/>
+                <Button Margin="3,0" Text="Pause" Command="{Binding Pause}"/>
+                <Button Margin="3,0" Text="Stop" Command="{Binding Stop}"/>
+                <Button Margin="3,0" Text="Previous" Command="{Binding PlayPrevious}"/>
+                <Button Margin="3,0" Text="Next" Command="{Binding PlayNext}"/>
+                <Button Margin="3,0" Text="Replay" Command="{Binding ReplayTrack}"/>
+            </StackLayout>
+        </Grid>
     </ContentPage.Content>
 
 </ContentPage>

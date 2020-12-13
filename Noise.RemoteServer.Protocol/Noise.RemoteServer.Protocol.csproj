@@ -18,11 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Proto\HostInformation.proto" />
     <Protobuf Include="Proto\ArtistInformation.proto" />
     <Protobuf Include="Proto\AlbumInformation.proto" />
-    <Protobuf Include="Proto\TrackInformation.proto" />
+    <Protobuf Include="Proto\HostInformation.proto" />
     <Protobuf Include="Proto\QueueControl.proto" />
+    <Protobuf Include="Proto\TrackInformation.proto" />
+    <Protobuf Include="Proto\TransportControl.proto" />
   </ItemGroup>
 
 </Project>

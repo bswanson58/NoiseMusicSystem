@@ -10,16 +10,19 @@ namespace Noise.RemoteServer.Server {
         private readonly Func<TrackInformationService>  mTrackInformationCreator;
         private readonly Func<QueueService>             mQueueControlCreator;
         private readonly Func<QueueStatusResponder>     mQueueStatusResponderCreator;
+        private readonly Func<TransportControlService>  mTransportControlServiceCreator;
 
         public RemoteServiceFactory( Func<HostStatusResponder> createHostStatusResponder, Func<ArtistInformationService> artistInformationCreator,
                                      Func<AlbumInformationService> albumInformationCreator, Func<TrackInformationService> trackInformationCreator,
-                                     Func<QueueService> queueControlCreator, Func<QueueStatusResponder> queueStatusResponderCreator ) {
+                                     Func<QueueService> queueControlCreator, Func<QueueStatusResponder> queueStatusResponderCreator,
+                                     Func<TransportControlService> transportControlServiceCreator) {
             mHostStatusResponderCreator = createHostStatusResponder;
             mAlbumInformationCreator = albumInformationCreator;
             mArtistInformationCreator = artistInformationCreator;
             mTrackInformationCreator = trackInformationCreator;
             mQueueControlCreator = queueControlCreator;
             mQueueStatusResponderCreator = queueStatusResponderCreator;
+            mTransportControlServiceCreator = transportControlServiceCreator;
         }
 
         public  Grpc.Core.Server            HostServer => new Grpc.Core.Server();
@@ -30,5 +33,6 @@ namespace Noise.RemoteServer.Server {
         public  TrackInformationService     TrackInformationService => mTrackInformationCreator();
         public  QueueService                QueueControlService => mQueueControlCreator();
         public  QueueStatusResponder        QueueStatusResponder => mQueueStatusResponderCreator();
+        public  TransportControlService     TransportControlService => mTransportControlServiceCreator();
     }
 }
