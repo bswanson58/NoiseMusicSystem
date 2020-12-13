@@ -12,6 +12,7 @@ namespace Noise.RemoteClient.ViewModels {
     class QueueViewModel : BindableBase, IDisposable {
         private readonly IQueueListProvider mQueueListProvider;
         private readonly ITransportProvider mTransportProvider;
+        private readonly IClientState       mClientState;
         private IDisposable                 mLibraryStatusSubscription;
         private IDisposable                 mQueueSubscription;
 
@@ -26,9 +27,11 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     PlayPrevious { get; }
         public  DelegateCommand                     ReplayTrack { get; }
 
-        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, IHostInformationProvider hostInformationProvider ) {
+        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, 
+                               IHostInformationProvider hostInformationProvider, IClientState clientState ) {
             mQueueListProvider = queueListProvider;
             mTransportProvider = transportProvider;
+            mClientState = clientState;
 
             QueueList = new ObservableCollection<UiQueuedTrack>();
             BindingBase.EnableCollectionSynchronization( QueueList, null, ObservableCollectionCallback);
@@ -77,6 +80,8 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private async void OnSuggestions( UiQueuedTrack forTrack ) {
+            mClientState.SetSuggestionState( forTrack );
+
             // route to the shell content page, do push it on the navigation stack.
             await Shell.Current.GoToAsync( "///suggestions" );
         }
