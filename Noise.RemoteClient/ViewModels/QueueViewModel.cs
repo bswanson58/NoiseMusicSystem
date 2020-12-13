@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -17,8 +18,15 @@ namespace Noise.RemoteClient.ViewModels {
             mQueueListProvider = queueListProvider;
 
             QueueList = new ObservableCollection<UiQueuedTrack>();
+            Xamarin.Forms.BindingBase.EnableCollectionSynchronization( QueueList, null, ObservableCollectionCallback);
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
+        }
+
+        void ObservableCollectionCallback( IEnumerable collection, object context, Action accessMethod, bool writeAccess ) {
+            lock( collection ) {
+                accessMethod?.Invoke();
+            }
         }
 
         private void OnHostStatus( LibraryStatus status ) {
