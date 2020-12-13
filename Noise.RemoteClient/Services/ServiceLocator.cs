@@ -48,8 +48,9 @@ namespace Noise.RemoteClient.Services {
             await StopServiceChannel();
 
             var serverAddress = $"{forDevice.DescriptionLocation.Host}:{forDevice.DescriptionLocation.Port}";
+//            var options = new [] {new ChannelOption( "grpc.max_receive_message_length", 16 * 1024 * 1024) };
 
-            mServiceChannel = new Channel( serverAddress, ChannelCredentials.Insecure );
+            mServiceChannel = new Channel( serverAddress, ChannelCredentials.Insecure ); //, options );
 
             mChannelAcquired.OnNext( mServiceChannel );
         }
