@@ -25,6 +25,8 @@ namespace Noise.RemoteClient {
             Routing.RegisterRoute( "artistList", typeof( ArtistList ));
             Routing.RegisterRoute( "albumList", typeof( AlbumList ));
             Routing.RegisterRoute( "trackList", typeof( TrackList ));
+
+            // do not register fly out content...
         }
     }
 }

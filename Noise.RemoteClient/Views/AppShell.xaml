@@ -4,11 +4,14 @@
        xmlns:views="clr-namespace:Noise.RemoteClient.Views;assembly=Noise.RemoteClient"
        x:Class="Noise.RemoteClient.Views.AppShell">
 
-    <FlyoutItem Title="Library" Route="library">
-        <ShellContent ContentTemplate="{DataTemplate views:ArtistList}"/>
+    <FlyoutItem Title="Library">
+        <ShellContent Route="library" ContentTemplate="{DataTemplate views:ArtistList}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Queue" Route="queue">
-        <ShellContent ContentTemplate="{DataTemplate views:Queue}"/>
+    <FlyoutItem Title="Queue">
+        <ShellContent Route="queue" ContentTemplate="{DataTemplate views:Queue}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Suggestions">
+        <ShellContent Route="suggestions" ContentTemplate="{DataTemplate views:Suggestions}"/>
     </FlyoutItem>
     <!--    
     <TabBar>

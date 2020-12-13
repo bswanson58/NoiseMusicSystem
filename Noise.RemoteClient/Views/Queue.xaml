@@ -6,6 +6,7 @@
              xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.Queue"
+             x:Name="_queueView"
              Title="Queue">
 
     <ContentPage.Resources>
@@ -14,56 +15,66 @@
 
             <DataTemplate x:Key="QueuedTrackTemplate" x:DataType="dto:UiQueuedTrack">
                 <ViewCell>
-                    <Grid Margin="5,0,5,3" RowSpacing="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                    <SwipeView>
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItemView Command="{Binding Path=BindingContext.Suggestions, Source={x:Reference Name=_queueView}}" 
+                                               CommandParameter="{Binding .}">
+                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="Suggestions" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </SwipeItemView>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
 
-                        <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
-                            <Label.Triggers>
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                    <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsStrategyQueued}" Value="True" TargetType="Label">
-                                    <Setter Property="FontAttributes" Value="Bold, Italic"></Setter>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="Label">
-                                    <Setter Property="Opacity" Value="0.4"/>
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
+                        <Grid Margin="5,0,5,3" RowSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" 
+                            <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
+                                <Label.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                        <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsStrategyQueued}" Value="True" TargetType="Label">
+                                        <Setter Property="FontAttributes" Value="Bold, Italic"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="Label">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <Label Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" 
                                Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}">
-                            <Label.Triggers>
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                    <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="Label">
-                                    <Setter Property="Opacity" Value="0.4"/>
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
+                                <Label.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                        <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="Label">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
 
-                        <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0">
-                            <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
-                            <Label Style="{StaticResource ListItemDetailStyle}" Text="/"/>
-                            <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumName}"/>
+                            <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0">
+                                <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
+                                <Label Style="{StaticResource ListItemDetailStyle}" Text="/"/>
+                                <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumName}"/>
 
-                            <StackLayout.Triggers>
-                                <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="StackLayout">
-                                    <Setter Property="Opacity" Value="0.6"/>
-                                </DataTrigger>
-                            </StackLayout.Triggers>
-                        </StackLayout>
-                    </Grid>
+                                <StackLayout.Triggers>
+                                    <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="StackLayout">
+                                        <Setter Property="Opacity" Value="0.6"/>
+                                    </DataTrigger>
+                                </StackLayout.Triggers>
+                            </StackLayout>
+                        </Grid>
+                    </SwipeView>
                 </ViewCell>
-
             </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>

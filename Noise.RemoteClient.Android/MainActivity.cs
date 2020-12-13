@@ -6,6 +6,7 @@ using Android.OS;
 using Noise.RemoteClient.Droid.Support;
 using Prism;
 using Prism.Ioc;
+using Xamarin.Forms;
 
 namespace Noise.RemoteClient.Droid {
     [Activity(Theme = "@style/MainTheme",
@@ -19,8 +20,10 @@ namespace Noise.RemoteClient.Droid {
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException; 
-            
-            Xamarin.Forms.Forms.Init( this, savedInstanceState );
+
+            Forms.SetFlags("SwipeView_Experimental");
+
+            Forms.Init( this, savedInstanceState );
             LoadApplication(new App(new AndroidInitializer()));
         }
 

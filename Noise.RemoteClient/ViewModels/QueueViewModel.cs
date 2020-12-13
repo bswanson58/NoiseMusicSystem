@@ -6,6 +6,7 @@ using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
+using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     class QueueViewModel : BindableBase, IDisposable {
@@ -15,6 +16,8 @@ namespace Noise.RemoteClient.ViewModels {
         private IDisposable                 mQueueSubscription;
 
         public  ObservableCollection<UiQueuedTrack> QueueList { get; }
+
+        public  DelegateCommand<UiQueuedTrack>      Suggestions { get; }
 
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
@@ -28,7 +31,9 @@ namespace Noise.RemoteClient.ViewModels {
             mTransportProvider = transportProvider;
 
             QueueList = new ObservableCollection<UiQueuedTrack>();
-            Xamarin.Forms.BindingBase.EnableCollectionSynchronization( QueueList, null, ObservableCollectionCallback);
+            BindingBase.EnableCollectionSynchronization( QueueList, null, ObservableCollectionCallback);
+
+            Suggestions = new DelegateCommand<UiQueuedTrack>( OnSuggestions );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -69,6 +74,11 @@ namespace Noise.RemoteClient.ViewModels {
                     QueueList.Add( new UiQueuedTrack( track ));
                 }
             }
+        }
+
+        private async void OnSuggestions( UiQueuedTrack forTrack ) {
+            // route to the shell content page, do push it on the navigation stack.
+            await Shell.Current.GoToAsync( "///suggestions" );
         }
 
         private void OnPlay() {
