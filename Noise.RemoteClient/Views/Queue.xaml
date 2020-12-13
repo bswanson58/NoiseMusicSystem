@@ -27,7 +27,7 @@
                         <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
                             <Label.Triggers>
                                 <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                    <Setter Property="TextColor" Value="#FF68BB68"/>
+                                    <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsStrategyQueued}" Value="True" TargetType="Label">
                                     <Setter Property="FontAttributes" Value="Bold, Italic"></Setter>
@@ -37,8 +37,18 @@
                                 </DataTrigger>
                             </Label.Triggers>
                         </Label>
-                        <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" 
-                               Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
+
+                        <Label Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" 
+                               Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}">
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                    <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="Label">
+                                    <Setter Property="Opacity" Value="0.4"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
 
                         <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0">
                             <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
