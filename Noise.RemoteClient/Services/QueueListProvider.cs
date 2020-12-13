@@ -38,7 +38,10 @@ namespace Noise.RemoteClient.Services {
 
         private void PublishQueueStatus( QueueStatusResponse status ) {
             if( status != null ) {
-                mQueueListStatus.OnNext( status );
+                try {
+                    mQueueListStatus.OnNext( status );
+                }
+                catch( Exception ex ) { }
             }
         }
 

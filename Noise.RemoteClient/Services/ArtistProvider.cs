@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 
@@ -12,7 +13,14 @@ namespace Noise.RemoteClient.Services {
             var client = Client;
 
             if( client != null ) {
-                return await client.GetArtistListAsync( new ArtistInfoEmpty());
+                try {
+                    return await client.GetArtistListAsync( new ArtistInfoEmpty());
+                }
+                catch( Exception ex ) {
+
+                }
+
+                return default;
             }
 
             return default;
