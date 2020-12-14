@@ -12,6 +12,7 @@ namespace Noise.RemoteClient.Dto {
         public  bool            IsPlaying => Track.IsPlaying;
         public  bool            IsStrategyQueued => Track.IsStrategyQueued;
         public  bool            HasPlayed => Track.HasPlayed;
+        public  bool            IsFavorite => Track.IsFavorite;
 
         public UiQueuedTrack( QueueTrackInfo track ) {
             Track = track;

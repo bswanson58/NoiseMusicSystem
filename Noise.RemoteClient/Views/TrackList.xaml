@@ -29,7 +29,7 @@
 
                         <Label Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center" Text="{Binding TrackName}"/>
                         
-                        <controls:SvgButton Grid.Column="3" VerticalOptions="Center" Opacity="0.5" Padding="10,0" IsVisible="{Binding IsFavorite}"
+                        <controls:SvgButton Grid.Column="3" VerticalOptions="Center" Padding="10,0" IsVisible="{Binding IsFavorite}"
                                             Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
 
                         <Label Grid.Column="4" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
