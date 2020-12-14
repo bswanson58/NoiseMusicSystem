@@ -68,6 +68,10 @@ namespace Noise.RemoteClient.Controls {
                     canvas.Translate( info.Width / 2f, info.Height / 2f );
 
                     var bounds = svg.ViewBox;
+
+                    bounds.Inflate( (float)( Padding.Left + Padding.Right ), (float)( Padding.Top + Padding.Bottom ));
+                    bounds.Offset( (float)( Padding.Left - Padding.Right ), (float)( Padding.Top - Padding.Bottom ));
+
                     float xRatio = info.Width / bounds.Width;
                     float yRatio = info.Height / bounds.Height;
 
