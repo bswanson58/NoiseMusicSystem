@@ -22,6 +22,17 @@ message TrackListRequest {
 	int64		AlbumId = 2;
 }
 
+message TrackRatingRequest {
+	int64		ArtistId = 1;
+	bool		IncludeFavorites = 2;
+	int32		IncludeRatingsOver = 3;
+}
+
+message TrackTagsRequest {
+	int64		TrackId = 1;
+	bool		IncludeAnyTag = 2;
+}
+
 message TrackListResponse {
 	bool		Success = 1;
 	string		ErrorMessage = 2;
@@ -32,4 +43,6 @@ message TrackListResponse {
 
 service TrackInformation {
 	rpc GetTrackList (TrackListRequest) returns (TrackListResponse);
+	rpc GetRatedTracks (TrackRatingRequest) returns (TrackListResponse);
+	rpc GetTaggedTracks (TrackTagsRequest) returns (TrackListResponse);
 }

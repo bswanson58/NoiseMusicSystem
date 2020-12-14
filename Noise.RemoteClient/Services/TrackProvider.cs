@@ -18,5 +18,26 @@ namespace Noise.RemoteClient.Services {
 
             return default;
         }
+
+        public async Task<TrackListResponse> GetRatedTracks( long artistId, int includeRatingsOver, bool includeFavorites ) {
+            var client = Client;
+
+            if( client != null ) {
+                return await client.GetRatedTracksAsync( 
+                    new TrackRatingRequest { ArtistId = artistId, IncludeFavorites = includeFavorites, IncludeRatingsOver = includeRatingsOver});
+            }
+
+            return default;
+        }
+
+        public async Task<TrackListResponse> GetTaggedTracks( long trackId ) {
+            var client = Client;
+
+            if( client != null ) {
+                return await client.GetTaggedTracksAsync( new TrackTagsRequest{ TrackId = trackId });
+            }
+
+            return default;
+        }
     }
 }
