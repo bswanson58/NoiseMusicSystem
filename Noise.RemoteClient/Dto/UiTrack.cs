@@ -12,6 +12,7 @@ namespace Noise.RemoteClient.Dto {
         public  string                      AlbumName => Track.AlbumName;
         public  string                      ArtistName => Track.ArtistName;
         public  TimeSpan                    TrackDuration => TimeSpan.FromMilliseconds( Track.Duration );
+        public  bool                        IsFavorite => Track.IsFavorite;
 
         public  DelegateCommand Play { get; }
 

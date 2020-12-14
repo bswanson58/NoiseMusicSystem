@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Favorite.svg" />
     <EmbeddedResource Include="Resources\Images\PlayButton.svg" />
   </ItemGroup>
 
