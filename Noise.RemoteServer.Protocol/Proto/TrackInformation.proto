@@ -33,6 +33,10 @@ message TrackTagsRequest {
 	bool		IncludeAnyTag = 2;
 }
 
+message TrackSimilarRequest {
+	int64		TrackId = 1;
+}
+
 message TrackListResponse {
 	bool		Success = 1;
 	string		ErrorMessage = 2;
@@ -45,4 +49,5 @@ service TrackInformation {
 	rpc GetTrackList (TrackListRequest) returns (TrackListResponse);
 	rpc GetRatedTracks (TrackRatingRequest) returns (TrackListResponse);
 	rpc GetTaggedTracks (TrackTagsRequest) returns (TrackListResponse);
+	rpc GetSimilarTracks (TrackSimilarRequest) returns (TrackListResponse);
 }

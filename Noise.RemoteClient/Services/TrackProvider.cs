@@ -39,5 +39,15 @@ namespace Noise.RemoteClient.Services {
 
             return default;
         }
+
+        public async Task<TrackListResponse> GetSimilarTracks( long trackId ) {
+            var client = Client;
+
+            if( client != null ) {
+                return await client.GetSimilarTracksAsync( new TrackSimilarRequest{ TrackId = trackId });
+            }
+
+            return default;
+        }
     }
 }

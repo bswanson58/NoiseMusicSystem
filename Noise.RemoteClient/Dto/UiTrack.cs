@@ -9,6 +9,8 @@ namespace Noise.RemoteClient.Dto {
 
         public  TrackInfo                   Track {  get; }
         public  string                      TrackName => Track.TrackName;
+        public  string                      AlbumName => Track.AlbumName;
+        public  string                      ArtistName => Track.ArtistName;
 
         public  DelegateCommand Play { get; }
 

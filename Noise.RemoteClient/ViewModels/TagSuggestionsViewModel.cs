@@ -7,49 +7,49 @@ using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
     class TagSuggestionsViewModel : BindableBase, IDisposable {
-            private readonly ITrackProvider     mTrackProvider;
-            private readonly IQueuePlayProvider mQueuePlay;
-            private SuggestionState             mSuggestionState;
-            private IDisposable                 mClientStateSubscription;
+        private readonly ITrackProvider     mTrackProvider;
+        private readonly IQueuePlayProvider mQueuePlay;
+        private SuggestionState             mSuggestionState;
+        private IDisposable                 mClientStateSubscription;
 
-            public  ObservableCollection<UiTrack>   TrackList { get; }
+        public  ObservableCollection<UiTrack>   TrackList { get; }
 
-            public TagSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState ) {
-                mTrackProvider = trackProvider;
-                mQueuePlay = playProvider;
+        public TagSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState ) {
+            mTrackProvider = trackProvider;
+            mQueuePlay = playProvider;
 
-                TrackList = new ObservableCollection<UiTrack>();
+            TrackList = new ObservableCollection<UiTrack>();
 
-                mClientStateSubscription = clientState.CurrentSuggestion.Subscribe( OnSuggestion );
-            }
+            mClientStateSubscription = clientState.CurrentSuggestion.Subscribe( OnSuggestion );
+        }
 
-            private void OnSuggestion( SuggestionState state ) {
-                mSuggestionState = state;
+        private void OnSuggestion( SuggestionState state ) {
+            mSuggestionState = state;
 
-                LoadTracks();
-            }
+            LoadTracks();
+        }
 
-            private async void LoadTracks() {
-                TrackList.Clear();
+        private async void LoadTracks() {
+            TrackList.Clear();
 
-                if( mSuggestionState != null ) {
-                    var list = await mTrackProvider.GetTaggedTracks( mSuggestionState.TrackId );
+            if( mSuggestionState != null ) {
+                var list = await mTrackProvider.GetTaggedTracks( mSuggestionState.TrackId );
 
-                    if( list?.Success == true ) {
-                        foreach( var track in list.TrackList.OrderBy( a => a.TrackNumber )) {
-                            TrackList.Add( new UiTrack( track, OnTrackPlay ));
-                        }
+                if( list?.Success == true ) {
+                    foreach( var track in list.TrackList.OrderBy( a => a.TrackNumber )) {
+                        TrackList.Add( new UiTrack( track, OnTrackPlay ));
                     }
                 }
             }
+        }
 
-            private void OnTrackPlay( UiTrack track) {
-                mQueuePlay.QueueTrack( track.Track );
-            }
+        private void OnTrackPlay( UiTrack track) {
+            mQueuePlay.QueueTrack( track.Track );
+        }
 
-            public void Dispose() {
-                mClientStateSubscription?.Dispose();
-                mClientStateSubscription = null;
-            }
+        public void Dispose() {
+            mClientStateSubscription?.Dispose();
+            mClientStateSubscription = null;
+        }
     }
 }

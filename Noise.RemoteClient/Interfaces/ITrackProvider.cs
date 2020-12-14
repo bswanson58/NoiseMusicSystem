@@ -6,5 +6,6 @@ namespace Noise.RemoteClient.Interfaces {
         Task<TrackListResponse>     GetTrackList( long artistId, long albumId );
         Task<TrackListResponse>     GetRatedTracks( long artistId, int includeRatingsOver, bool includeFavorites );
         Task<TrackListResponse>     GetTaggedTracks( long trackId );
+        Task<TrackListResponse>     GetSimilarTracks( long trackId );
     }
 }

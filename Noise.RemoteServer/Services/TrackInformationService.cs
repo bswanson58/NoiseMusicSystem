@@ -14,15 +14,17 @@ namespace Noise.RemoteServer.Services {
         private readonly ITrackProvider     mTrackProvider;
         private readonly IAlbumProvider     mAlbumProvider;
         private readonly IArtistProvider    mArtistProvider;
+        private readonly ISearchProvider    mSearchProvider;
         private readonly IUserTagManager    mTagManager;
         private readonly INoiseLog          mLog;
 
         public TrackInformationService( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-                                        IUserTagManager userTagManager, INoiseLog log ) {
+                                        IUserTagManager userTagManager, ISearchProvider searchProvider, INoiseLog log ) {
             mArtistProvider = artistProvider;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mTagManager = userTagManager;
+            mSearchProvider = searchProvider;
             mLog = log;
         }
 
@@ -52,7 +54,7 @@ namespace Noise.RemoteServer.Services {
                     }
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( $"GetTrackList for {request.AlbumId}", ex );
+                    mLog.LogException( $"GetTrackList for album: {request.AlbumId}", ex );
 
                     retValue.ErrorMessage = ex.Message;
                 }
@@ -99,7 +101,7 @@ namespace Noise.RemoteServer.Services {
                     }
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( $"GetRatedTracks for {request.ArtistId}", ex );
+                    mLog.LogException( $"GetRatedTracks for artist: {request.ArtistId}", ex );
 
                     retValue.ErrorMessage = ex.Message;
                 }
@@ -119,7 +121,7 @@ namespace Noise.RemoteServer.Services {
                     tags.ForEach( tag => {
                         var associations = mTagManager.GetAssociations( tag.DbId );
 
-                        associatedTracks.AddRange( from a in associations select CreateTrackInfo( a ));
+                        associatedTracks.AddRange( from a in associations let t = CreateTrackInfo( a ) where t != null select t );
                     });
 
                     // eliminate duplicate tracks
@@ -127,20 +129,96 @@ namespace Noise.RemoteServer.Services {
                     retValue.Success = true;
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( $"GetTaggedTracks for {request.TrackId}", ex );
+                    mLog.LogException( $"GetTaggedTracks for track: {request.TrackId}", ex );
 
                     retValue.ErrorMessage = ex.Message;
                 }
+
                 return retValue;
             });
         }
 
         private TrackInfo CreateTrackInfo( DbTagAssociation fromTag ) {
             var track = mTrackProvider.GetTrack( fromTag.ArtistId );
-            var artist = mArtistProvider.GetArtist( track.Artist );
-            var album = mAlbumProvider.GetAlbum( track.Album );
 
-            return TransformTrack( artist, album, track );
+            if( track != null ) {
+                var artist = mArtistProvider.GetArtist( track.Artist );
+                var album = mAlbumProvider.GetAlbum( track.Album );
+
+                if(( artist != null ) &&
+                   ( album != null )) {
+                    return TransformTrack( artist, album, track );
+                }
+            }
+
+            return default;
+        }
+
+        public override Task<TrackListResponse> GetSimilarTracks( TrackSimilarRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new TrackListResponse { ArtistId = Constants.cDatabaseNullOid, AlbumId = Constants.cDatabaseNullOid };
+
+                try {
+                    var track = mTrackProvider.GetTrack( request.TrackId );
+
+                    if( track != null ) {
+                        var searchItem = mSearchProvider.Search( eSearchItemType.Track, CreateSearchTerm( track.Name ), 1000 );
+
+                        retValue.TrackList.AddRange( from item in searchItem let t = CreateTrackInfo( item ) where t != null select t );
+                        retValue.Success = true;
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( $"GetSimilarTracks for track: {request.TrackId}", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+
+                return retValue;
+            });
+        }
+
+        private TrackInfo CreateTrackInfo( SearchResultItem searchItem ) {
+            if(( searchItem.Artist != null ) &&
+               ( searchItem.Album != null ) &&
+               ( searchItem.Track != null )) {
+                return TransformTrack( searchItem.Artist, searchItem.Album, searchItem.Track );
+            }
+
+            return default;
+        }
+
+        // from PlaybackRelatedViewModel:
+        private string CreateSearchTerm( string input ) {
+            var retValue = DeleteText( input, '(', ')' );
+
+            retValue = DeleteText( retValue, '[', ']' );
+            retValue = retValue.Trim();
+            retValue = $"\"{retValue}\"";
+
+            return String.IsNullOrWhiteSpace( retValue ) ? input : retValue;
+        }
+
+        private string DeleteText( string source, char startCharacter, char endCharacter ) {
+            var     retValue = source;
+            bool    textDeleted;
+
+            do {
+                var startPosition = retValue.IndexOf( startCharacter );
+                var endPosition = retValue.IndexOf( endCharacter );
+
+                if(( startPosition >= 0 ) &&
+                   ( endPosition > startPosition )) {
+                    retValue = retValue.Remove( startPosition, endPosition - startPosition + 1 );
+
+                    textDeleted = true;
+                }
+                else {
+                    textDeleted = false;
+                }
+            } while( textDeleted );
+
+            return retValue;
         }
     }
 }
