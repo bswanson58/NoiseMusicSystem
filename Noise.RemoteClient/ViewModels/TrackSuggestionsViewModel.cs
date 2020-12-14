@@ -36,7 +36,7 @@ namespace Noise.RemoteClient.ViewModels {
                 var list = await mTrackProvider.GetSimilarTracks( mSuggestionState.TrackId );
 
                 if( list?.Success == true ) {
-                    foreach( var track in list.TrackList.OrderBy( a => a.TrackNumber )) {
+                    foreach( var track in list.TrackList.OrderBy( t => t.TrackName ).ThenBy( t => t.ArtistName ).ThenBy( t => t.AlbumName )) {
                         TrackList.Add( new UiTrack( track, OnTrackPlay ));
                     }
                 }
