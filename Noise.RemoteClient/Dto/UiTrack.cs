@@ -11,6 +11,7 @@ namespace Noise.RemoteClient.Dto {
         public  string                      TrackName => Track.TrackName;
         public  string                      AlbumName => Track.AlbumName;
         public  string                      ArtistName => Track.ArtistName;
+        public  TimeSpan                    TrackDuration => TimeSpan.FromMilliseconds( Track.Duration );
 
         public  DelegateCommand Play { get; }
 
