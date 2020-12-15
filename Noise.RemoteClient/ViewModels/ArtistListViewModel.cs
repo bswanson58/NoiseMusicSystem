@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Noise.RemoteClient.Dto;
@@ -6,11 +7,14 @@ using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class ArtistListViewModel : BindableBase, IDisposable {
         private readonly IArtistProvider    mArtistProvider;
         private readonly IClientState       mClientState;
+        private readonly List<ArtistInfo>   mArtistList;
+        private string                      mFilterText;
         private IDisposable                 mLibraryStatusSubscription;
         private ArtistInfo                  mSelectedArtist;
 
@@ -20,7 +24,10 @@ namespace Noise.RemoteClient.ViewModels {
             mArtistProvider = artistProvider;
             mClientState = clientState;
 
+            mArtistList = new List<ArtistInfo>();
             ArtistList = new ObservableCollection<ArtistInfo>();
+
+            FilterText = String.Empty;
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
         }
@@ -38,25 +45,52 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
+        public string FilterText {
+            get => mFilterText;
+            set => SetProperty( ref mFilterText, value, OnFilterChanged );
+        }
+
+        private void OnFilterChanged() {
+            RefreshArtistList();
+        }
+
         private void OnLibraryStatus( LibraryStatus status ) {
             if( status?.LibraryOpen == true ) {
                 LoadArtistList();
             }
             else {
-                ArtistList.Clear();
+                mArtistList.Clear();
+
+                RefreshArtistList();
             }
         }
 
         private async void LoadArtistList() {
-            ArtistList.Clear();
+            mArtistList.Clear();
 
             var list = await mArtistProvider.GetArtistList();
 
             if( list?.Success == true ) {
-                foreach( var artist in list.ArtistList.OrderBy( a => a.ArtistName )) {
-                    ArtistList.Add( artist );
-                }
+                mArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select a );
             }
+
+            RefreshArtistList();
+        }
+
+        private void RefreshArtistList() {
+            ArtistList.Clear();
+
+            mArtistList.Where( FilterArtist ).ForEach( a => ArtistList.Add( a ));
+        }
+
+        private bool FilterArtist( ArtistInfo artist ) {
+            var retValue = true;
+
+            if(!String.IsNullOrWhiteSpace( FilterText )) {
+                retValue = artist.ArtistName.ToLower().Contains( FilterText.ToLower());
+            }
+
+            return retValue;
         }
 
         public void Dispose() {
