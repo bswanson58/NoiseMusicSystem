@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Support;
 using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
@@ -36,7 +37,10 @@ namespace Noise.RemoteClient.ViewModels {
                 var list = await mTrackProvider.GetRatedTracks( mSuggestionState.ArtistId, 3, true );
 
                 if( list?.Success == true ) {
-                    foreach( var track in list.TrackList.OrderBy( a => a.TrackName ).ThenBy( t => t.ArtistName ).ThenBy( t => t.AlbumName )) {
+                    foreach( var track in list.TrackList.OrderByDescending( a=> a.GetRatingSort())
+                                                                    .ThenBy( a => a.TrackName )
+                                                                    .ThenBy( t => t.ArtistName )
+                                                                    .ThenBy( t => t.AlbumName )) {
                         TrackList.Add( new UiTrack( track, OnTrackPlay ));
                     }
                 }
