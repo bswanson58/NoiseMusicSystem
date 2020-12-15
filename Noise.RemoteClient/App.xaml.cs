@@ -17,7 +17,6 @@ namespace Noise.RemoteClient {
             InitializeComponent();
 
             mClientManager = Container.Resolve<IClientManager>();
-            mClientManager.StartClientManager();
 
             MainPage = new AppShell();
         }
@@ -26,6 +25,24 @@ namespace Noise.RemoteClient {
             mClientManager.StopClientManager();
 
             base.CleanUp();
+        }
+
+        protected override void OnStart() {
+            mClientManager?.OnApplicationStarting();
+
+            base.OnStart();
+        }
+
+        protected override void OnSleep() {
+            mClientManager?.OnApplicationStopping();
+
+            base.OnSleep();
+        }
+
+        protected override void OnResume() {
+            mClientManager?.OnApplicationStarting();
+
+            base.OnResume();
         }
 
         protected override void RegisterTypes( IContainerRegistry containerRegistry ) {

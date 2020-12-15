@@ -18,5 +18,13 @@ namespace Noise.RemoteClient.Models {
             mServiceLocator.StopServiceLocator();
             mHostInformationProvider.StopHostStatusRequests();
         }
+
+        public void OnApplicationStarting() {
+            StartClientManager();
+        }
+
+        public void OnApplicationStopping() {
+            StopClientManager();
+        }
     }
 }
