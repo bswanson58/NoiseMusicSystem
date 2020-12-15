@@ -15,7 +15,6 @@ namespace Noise.RemoteServer.Services {
         private readonly IPlayCommand			    mPlayCommand;
         private readonly IPlayQueue				    mPlayQueue;
         private readonly INoiseLog				    mLog;
-        private QueueStatusResponder                mQueueStatusResponder;
 
         public QueueService( IRemoteServiceFactory serviceFactory, IAlbumProvider albumProvider, ITrackProvider trackProvider,
                              IPlayQueue playQueue,IPlayCommand playCommand, INoiseLog log ) {
@@ -102,15 +101,68 @@ namespace Noise.RemoteServer.Services {
         }
 
         public override async Task StartQueueStatus( QueueControlEmpty request, IServerStreamWriter<QueueStatusResponse> responseStream, ServerCallContext context ) {
-            StopHostStatusResponder();
+            var queueStatusResponder = mServiceFactory.QueueStatusResponder;
 
-            mQueueStatusResponder = mServiceFactory.QueueStatusResponder;
-            await mQueueStatusResponder.StartResponder( responseStream, context );
+            await queueStatusResponder.StartResponder( responseStream, context );
+
+            queueStatusResponder.StopResponder();
         }
 
-        public void StopHostStatusResponder() {
-            mQueueStatusResponder?.StopResponder();
-            mQueueStatusResponder = null;
+        public override Task<QueueControlResponse> ClearQueue( QueueControlEmpty request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    mPlayQueue.ClearQueue();
+
+                    retValue.Success = true;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "ClearQueue", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+
+                return retValue;
+            });
+        }
+
+        public override Task<QueueControlResponse> ClearPlayedTracks( QueueControlEmpty request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    mPlayQueue.RemovePlayedTracks();
+
+                    retValue.Success = true;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "ClearPlayedTracks", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+
+                return retValue;
+            });
+        }
+
+        public override Task<QueueControlResponse> StartStrategyPlay( QueueControlEmpty request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    mPlayQueue.StartPlayStrategy();
+
+                    retValue.Success = true;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "StartStrategyPlay", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+
+                return retValue;
+            });
         }
     }
 }

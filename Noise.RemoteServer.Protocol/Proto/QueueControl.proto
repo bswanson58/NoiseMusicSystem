@@ -47,4 +47,8 @@ service QueueControl {
 
 	rpc GetQueueList (QueueControlEmpty) returns (QueueListResponse);
 	rpc StartQueueStatus (QueueControlEmpty) returns (stream QueueStatusResponse);
+
+	rpc ClearQueue (QueueControlEmpty) returns (QueueControlResponse);
+	rpc	ClearPlayedTracks (QueueControlEmpty) returns (QueueControlResponse);
+	rpc StartStrategyPlay (QueueControlEmpty) returns (QueueControlResponse);
 }

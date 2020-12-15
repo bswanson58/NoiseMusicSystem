@@ -101,6 +101,10 @@
                 <Button Margin="3,0" Text="Next" Command="{Binding PlayNext}"/>
                 <Button Margin="3,0" Text="Replay" Command="{Binding ReplayTrack}"/>
             </StackLayout>
+            <StackLayout Grid.Row="1" Margin="0,0,10,5" Orientation="Horizontal" HorizontalOptions="End">
+                <Button Margin="3,0" Text="Clear" Command="{Binding ClearQueue}"/>
+                <Button Margin="3,0" Text="Clear Played" Command="{Binding ClearPlayedTracks}"/>
+            </StackLayout>
         </Grid>
     </ContentPage.Content>
 

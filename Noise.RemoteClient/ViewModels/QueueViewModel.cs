@@ -26,6 +26,8 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     PlayNext { get; }
         public  DelegateCommand                     PlayPrevious { get; }
         public  DelegateCommand                     ReplayTrack { get; }
+        public  DelegateCommand                     ClearQueue { get; }
+        public  DelegateCommand                     ClearPlayedTracks { get; }
 
         public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, 
                                IHostInformationProvider hostInformationProvider, IClientState clientState ) {
@@ -44,6 +46,8 @@ namespace Noise.RemoteClient.ViewModels {
             PlayPrevious = new DelegateCommand( OnPlayPrevious );
             PlayNext = new DelegateCommand( OnPlayNext );
             ReplayTrack = new DelegateCommand( OnReplayTrack );
+            ClearQueue = new DelegateCommand( OnClearQueue );
+            ClearPlayedTracks = new DelegateCommand( OnClearPlayedTracks );
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
         }
@@ -108,6 +112,14 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnReplayTrack() {
             mTransportProvider.ReplayTrack();
+        }
+
+        private void OnClearQueue() {
+            mQueueListProvider.ClearQueue();
+        }
+
+        private void OnClearPlayedTracks() {
+            mQueueListProvider.ClearPlayedTracks();
         }
 
         public void Dispose() {
