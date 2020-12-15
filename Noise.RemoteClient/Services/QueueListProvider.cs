@@ -32,7 +32,18 @@ namespace Noise.RemoteClient.Services {
                             PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
                         }
                     }
-                    catch( Exception ex ) { }
+                    catch( RpcException ex ) {
+                        if( ex.StatusCode != StatusCode.Cancelled ) {
+                            var s = ex.Message;
+
+                            // log this
+                        }
+                    }
+                    catch( Exception ex ) {
+                        var s = ex.Message;
+
+                        // log this
+                    }
                 }
             }
         }
@@ -42,7 +53,11 @@ namespace Noise.RemoteClient.Services {
                 try {
                     mQueueListStatus.OnNext( status );
                 }
-                catch( Exception ex ) { }
+                catch( Exception ex ) {
+                    var s = ex.Message;
+
+                    // log this
+                }
             }
         }
 

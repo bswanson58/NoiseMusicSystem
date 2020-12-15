@@ -50,7 +50,18 @@ namespace Noise.RemoteClient.Services {
                             PublishHostStatus( mHostStatusStream.ResponseStream.Current );
                         }
                     }
-                    catch( Exception ex ) { }
+                    catch( RpcException ex ) {
+                        if( ex.StatusCode != StatusCode.Cancelled ) {
+                            var s = ex.Message;
+
+                            // log this
+                        }
+                    }
+                    catch( Exception ex ) {
+                        var s = ex.Message;
+
+                        // log this
+                    }
                 }
             }
         }
