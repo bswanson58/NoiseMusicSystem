@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
              xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
+             xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.AlbumList"
              Title="Album List">
@@ -22,7 +23,8 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Text=">" Command="{Binding Play}"/>
+                        <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
+                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
 
                         <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding AlbumName}"/>
 

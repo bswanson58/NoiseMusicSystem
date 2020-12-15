@@ -26,7 +26,8 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,5,0" VerticalOptions="Center" Text=">" Command="{Binding Play}"/>
+                        <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
+                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
 
                         <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}"/>
                         <controls:SvgButton Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HeightRequest="20" IsVisible="{Binding IsFavorite}"
