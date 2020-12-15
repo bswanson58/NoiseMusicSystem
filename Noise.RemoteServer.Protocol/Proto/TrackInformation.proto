@@ -50,4 +50,5 @@ service TrackInformation {
 	rpc GetRatedTracks (TrackRatingRequest) returns (TrackListResponse);
 	rpc GetTaggedTracks (TrackTagsRequest) returns (TrackListResponse);
 	rpc GetSimilarTracks (TrackSimilarRequest) returns (TrackListResponse);
+	rpc GetFavoriteTracks (TrackInfoEmpty) returns (TrackListResponse);
 }

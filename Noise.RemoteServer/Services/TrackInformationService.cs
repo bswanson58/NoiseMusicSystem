@@ -138,6 +138,43 @@ namespace Noise.RemoteServer.Services {
             });
         }
 
+        public override Task<TrackListResponse> GetFavoriteTracks( TrackInfoEmpty request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new TrackListResponse { ArtistId = Constants.cDatabaseNullOid, AlbumId = Constants.cDatabaseNullOid };
+
+                try {
+                    using( var fileList = mTrackProvider.GetFavoriteTracks()) {
+                        retValue.TrackList.AddRange( from file in fileList.List let track = TransformTrack( file ) where track != null select track );
+                    }
+                    retValue.Success = true;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "GetFavoriteTracks", ex );
+
+                    retValue.Success = false;
+                    retValue.ErrorMessage = ex.Message;
+                }
+
+                return retValue;
+            });
+        }
+
+        private TrackInfo TransformTrack( DbTrack track ) {
+            var retValue = default( TrackInfo );
+
+            if( track != null ) {
+                var artist = mArtistProvider.GetArtist( track.Artist );
+                var album = mAlbumProvider.GetAlbum( track.Album );
+
+                if(( artist != null ) &&
+                   ( album != null )) {
+                    retValue = TransformTrack( artist, album, track );
+                }
+            }
+
+            return retValue;
+        }
+
         private TrackInfo CreateTrackInfo( DbTagAssociation fromTag ) {
             var track = mTrackProvider.GetTrack( fromTag.ArtistId );
 

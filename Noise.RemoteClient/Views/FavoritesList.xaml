@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
+             xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="Noise.RemoteClient.Views.FavoritesList"
+             Title="Favorites">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+
+            <DataTemplate x:Key="TrackTemplate" x:DataType="dto:UiTrack">
+                <ViewCell>
+                    <Grid Margin="5,0,5,3" RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
+                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
+
+                        <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}"/>
+                        <controls:SvgButton Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HeightRequest="20" IsVisible="{Binding IsFavorite}"
+                                            Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
+                        <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Margin="0,0,15,0" 
+                               Text="{Binding Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
+
+                        <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="10,0,0,0">
+                            <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
+                            <Label Style="{StaticResource ListItemDetailStyle}" Text="/"/>
+                            <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumName}"/>
+                        </StackLayout>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <ListView Margin="5" ItemsSource="{Binding TrackList}" HasUnevenRows="True" ItemTemplate="{StaticResource TrackTemplate}"/>
+    </ContentPage.Content>
+
+</ContentPage>

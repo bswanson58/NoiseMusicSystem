@@ -49,5 +49,15 @@ namespace Noise.RemoteClient.Services {
 
             return default;
         }
+
+        public async Task<TrackListResponse> GetFavoriteTracks() {
+            var client = Client;
+
+            if( client != null ) {
+                return await client.GetFavoriteTracksAsync( new TrackInfoEmpty());
+            }
+
+            return default;
+        }
     }
 }

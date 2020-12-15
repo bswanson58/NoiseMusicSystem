@@ -7,6 +7,9 @@
     <FlyoutItem Title="Library">
         <ShellContent Route="library" ContentTemplate="{DataTemplate views:ArtistList}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Favorites">
+        <ShellContent Route="favorites" ContentTemplate="{DataTemplate views:FavoritesList}"/>
+    </FlyoutItem>
     <FlyoutItem Title="Queue">
         <ShellContent Route="queue" ContentTemplate="{DataTemplate views:Queue}"/>
     </FlyoutItem>
