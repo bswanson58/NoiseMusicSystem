@@ -10,6 +10,12 @@
     <FlyoutItem Title="Favorites">
         <ShellContent Route="favorites" ContentTemplate="{DataTemplate views:FavoritesList}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Tags">
+        <ShellContent Route="tags" ContentTemplate="{DataTemplate views:TagList}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Search">
+        <ShellContent Route="search" ContentTemplate="{DataTemplate views:Search}"/>
+    </FlyoutItem>
     <FlyoutItem Title="Queue">
         <ShellContent Route="queue" ContentTemplate="{DataTemplate views:Queue}"/>
     </FlyoutItem>
