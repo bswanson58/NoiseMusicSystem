@@ -7,6 +7,20 @@
              x:Class="Noise.RemoteClient.Views.ArtistList"
              Title="Artist List">
 
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Artist List"/>
+
+            <SearchBar Grid.Column="2" TextColor="White" PlaceholderColor="WhiteSmoke" Placeholder="artist list filter" Text="{Binding FilterText}"/>
+        </Grid>
+    </Shell.TitleView>
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="ArtistTemplate" x:DataType="protocol:ArtistInfo">
