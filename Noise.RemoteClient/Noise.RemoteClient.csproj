@@ -16,6 +16,12 @@
     <None Remove="Resources\Images\RemoveItem.svg" />
     <None Remove="Resources\Images\ReplayTrack.svg" />
     <None Remove="Resources\Images\SkipTrack.svg" />
+    <None Remove="Resources\Images\Transport_Next.svg" />
+    <None Remove="Resources\Images\Transport_Pause.svg" />
+    <None Remove="Resources\Images\Transport_Play.svg" />
+    <None Remove="Resources\Images\Transport_Previous.svg" />
+    <None Remove="Resources\Images\Transport_Repeat.svg" />
+    <None Remove="Resources\Images\Transport_Stop.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +38,12 @@
     <EmbeddedResource Include="Resources\Images\RemoveItem.svg" />
     <EmbeddedResource Include="Resources\Images\ReplayTrack.svg" />
     <EmbeddedResource Include="Resources\Images\SkipTrack.svg" />
+    <EmbeddedResource Include="Resources\Images\Transport_Next.svg" />
+    <EmbeddedResource Include="Resources\Images\Transport_Pause.svg" />
+    <EmbeddedResource Include="Resources\Images\Transport_Play.svg" />
+    <EmbeddedResource Include="Resources\Images\Transport_Previous.svg" />
+    <EmbeddedResource Include="Resources\Images\Transport_Repeat.svg" />
+    <EmbeddedResource Include="Resources\Images\Transport_Stop.svg" />
   </ItemGroup>
 
   <ItemGroup>
