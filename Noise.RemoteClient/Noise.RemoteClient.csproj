@@ -5,8 +5,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Images\0_Star.svg" />
+    <None Remove="Resources\Images\1_Star.svg" />
+    <None Remove="Resources\Images\2_Star.svg" />
+    <None Remove="Resources\Images\3_Star.svg" />
+    <None Remove="Resources\Images\4_Star.svg" />
+    <None Remove="Resources\Images\5_Star.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Resources\Images\Favorite.svg" />
+    <EmbeddedResource Include="Resources\Images\5_Star.svg" />
+    <EmbeddedResource Include="Resources\Images\4_Star.svg" />
+    <EmbeddedResource Include="Resources\Images\1_Star.svg" />
     <EmbeddedResource Include="Resources\Images\PlayButton.svg" />
+    <EmbeddedResource Include="Resources\Images\3_Star.svg" />
+    <EmbeddedResource Include="Resources\Images\2_Star.svg" />
+    <EmbeddedResource Include="Resources\Images\0_Star.svg" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,8 @@ namespace Noise.RemoteClient.Dto {
         public  string                      ArtistName => Track.ArtistName;
         public  TimeSpan                    TrackDuration => TimeSpan.FromMilliseconds( Track.Duration );
         public  bool                        IsFavorite => Track.IsFavorite;
+        public  Int32                       Rating => Track.Rating;
+        public  bool                        HasRating => Rating != 0;
 
         public  DelegateCommand Play { get; }
 
@@ -21,6 +23,19 @@ namespace Noise.RemoteClient.Dto {
             mPlayAction = onPlay;
 
             Play = new DelegateCommand( OnPlay );
+        }
+
+        public string RatingSource {
+            get {
+                var retValue = "0_Star";
+
+                if(( Rating > 0 ) &&
+                   ( Rating < 6 )) {
+                    retValue = $"{Rating:D1}_Star";
+                }
+
+                return retValue;
+            }
         }
 
         private void OnPlay() {

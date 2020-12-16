@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
@@ -9,12 +10,12 @@ namespace Noise.RemoteClient.Controls {
         private readonly SKCanvasView           mCanvasView;
         private readonly TapGestureRecognizer   mTapGestureRecognizer;
 
-        public static readonly BindableProperty ResourceIdProperty = 
+        public static readonly BindableProperty SourceProperty = 
             BindableProperty.Create( nameof( Source ), typeof( string ), typeof( SvgButton ), default( string ), propertyChanged: RedrawCanvas );
 
         public string Source {
-            get => (string)GetValue( ResourceIdProperty );
-            set => SetValue( ResourceIdProperty, value );
+            get => (string)GetValue( SourceProperty );
+            set => SetValue( SourceProperty, value );
         }
 
         public static readonly BindableProperty CommandProperty = 
@@ -58,7 +59,7 @@ namespace Noise.RemoteClient.Controls {
                 return;
             }
 
-            using( var stream = GetType().Assembly.GetManifestResourceStream( Source )) {
+            using( var stream = GetType().Assembly.GetManifestResourceStream( ResourceName( Source ))) {
                 if( stream != null ) {
                     var svg = new SKSvg();
 
@@ -83,6 +84,23 @@ namespace Noise.RemoteClient.Controls {
                     canvas.DrawPicture( svg.Picture );
                 }
             }
+        }
+
+        private string ResourceName( string sourceName ) {
+            var retValue = sourceName;
+
+            if(!String.IsNullOrWhiteSpace( sourceName )) {
+                if(!sourceName.ToLower().EndsWith( ".svg" )) {
+                    var allResources = GetType().Assembly.GetManifestResourceNames();
+                    var matchedResource = allResources.FirstOrDefault( r => r.EndsWith( sourceName + ".svg" ));
+
+                    if( matchedResource != null ) {
+                        retValue = matchedResource;
+                    }
+                }
+            }
+
+            return retValue;
         }
     }
 }
