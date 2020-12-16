@@ -7,7 +7,7 @@
              Title="Favorites">
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding TrackList}" HasUnevenRows="True" ItemTemplate="{StaticResource TrackTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding TrackList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"/>
     </ContentPage.Content>
 
 </ContentPage>
