@@ -30,23 +30,33 @@
                             <SwipeItems>
                                 <SwipeItemView Command="{Binding Path=BindingContext.PromoteTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}" IsVisible="{Binding IsStrategyQueued}">
-                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="^" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                        <controls:SvgButton Source="PromoteTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                    </StackLayout>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.RemoveTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}">
-                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="X" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                        <controls:SvgButton Source="RemoveItem" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                    </StackLayout>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.ReplayTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}" IsVisible="{Binding CanReplay}">
-                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="+" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                        <controls:SvgButton Source="ReplayTrack" HeightRequest="25" WidthRequest="25" HorizontalOptions="Center"/>
+                                    </StackLayout>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.SkipTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}" IsVisible="{Binding CanSkip}">
-                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="-" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                        <controls:SvgButton Source="SkipTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                    </StackLayout>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.PlayFromTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}">
-                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text=">>" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                        <controls:SvgButton Source="ContinueFromTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                    </StackLayout>
                                 </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.RightItems>

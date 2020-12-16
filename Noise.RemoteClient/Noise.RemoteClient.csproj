@@ -11,9 +11,15 @@
     <None Remove="Resources\Images\3_Star.svg" />
     <None Remove="Resources\Images\4_Star.svg" />
     <None Remove="Resources\Images\5_Star.svg" />
+    <None Remove="Resources\Images\ContinueFromTrack.svg" />
+    <None Remove="Resources\Images\PromoteTrack.svg" />
+    <None Remove="Resources\Images\RemoveItem.svg" />
+    <None Remove="Resources\Images\ReplayTrack.svg" />
+    <None Remove="Resources\Images\SkipTrack.svg" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\ContinueFromTrack.svg" />
     <EmbeddedResource Include="Resources\Images\Favorite.svg" />
     <EmbeddedResource Include="Resources\Images\5_Star.svg" />
     <EmbeddedResource Include="Resources\Images\4_Star.svg" />
@@ -22,6 +28,10 @@
     <EmbeddedResource Include="Resources\Images\3_Star.svg" />
     <EmbeddedResource Include="Resources\Images\2_Star.svg" />
     <EmbeddedResource Include="Resources\Images\0_Star.svg" />
+    <EmbeddedResource Include="Resources\Images\PromoteTrack.svg" />
+    <EmbeddedResource Include="Resources\Images\RemoveItem.svg" />
+    <EmbeddedResource Include="Resources\Images\ReplayTrack.svg" />
+    <EmbeddedResource Include="Resources\Images\SkipTrack.svg" />
   </ItemGroup>
 
   <ItemGroup>
