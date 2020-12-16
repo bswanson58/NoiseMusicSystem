@@ -138,7 +138,6 @@ namespace Noise.Metadata.ArtistMetadata {
 			return( retValue );
 		}
 
-
 		private async void UpdateArtist( DbArtistStatus artistStatus ) {
 			bool	updated = false;
 
@@ -148,13 +147,11 @@ namespace Noise.Metadata.ArtistMetadata {
 									 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
 
 				if( shouldUpdate ) {
-					if( await provider.UpdateArtist( artistStatus.ArtistName )) {
-                        artistStatus.SetLastUpdate( provider.ProviderKey );
+					updated = await provider.UpdateArtist( artistStatus.ArtistName );
 
-                        mStatusProvider.Update( artistStatus );
-
-						updated = true;
-					}
+					// update the time for the next update, regardless of whether this one was successful.
+                    artistStatus.SetLastUpdate( provider.ProviderKey );
+                    mStatusProvider.Update( artistStatus );
 				}
 			}
 
