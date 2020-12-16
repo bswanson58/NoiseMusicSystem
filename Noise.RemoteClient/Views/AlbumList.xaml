@@ -16,7 +16,11 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName, StringFormat='Albums for: {0}'}"/>
+            <StackLayout Grid.Column="0" Orientation="Horizontal">
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumCount}"/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text=" Albums for: "/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
+            </StackLayout>
 
             <SearchBar Grid.Column="2" TextColor="White" PlaceholderColor="WhiteSmoke" Placeholder="album list filter" Text="{Binding FilterText}"/>
         </Grid>

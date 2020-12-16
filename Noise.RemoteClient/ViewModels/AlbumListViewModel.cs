@@ -23,6 +23,7 @@ namespace Noise.RemoteClient.ViewModels {
         private UiAlbum                         mSelectedAlbum;
 
         public  string                          ArtistName { get; private set; }
+        public  Int32                           AlbumCount { get; private set; }
         public  ObservableCollection<UiAlbum>   AlbumList { get; }
 
         public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider,
@@ -104,6 +105,9 @@ namespace Noise.RemoteClient.ViewModels {
             AlbumList.Clear();
 
             mAlbumList.Where( FilterAlbum ).ForEach( a => AlbumList.Add( a ));
+
+            AlbumCount = AlbumList.Count;
+            RaisePropertyChanged( nameof( AlbumCount ));
         }
 
         private bool FilterAlbum( UiAlbum album ) {
