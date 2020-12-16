@@ -6,6 +6,22 @@
              x:Class="Noise.RemoteClient.Views.TrackList"
              Title="Track List">
 
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" Orientation="Horizontal">
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text=" Tracks for: "/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumName}"/>
+            </StackLayout>
+        </Grid>
+    </Shell.TitleView>
+
     <ContentPage.Content>
         <ListView Margin="5" ItemsSource="{Binding TrackList}" HasUnevenRows="True" ItemTemplate="{StaticResource TrackTemplate}"/>
     </ContentPage.Content>

@@ -15,6 +15,8 @@ namespace Noise.RemoteClient.ViewModels {
         private bool                            mLibraryOpen;
         private AlbumInfo                       mCurrentAlbum;
 
+        public  string                          ArtistName { get; private set; }
+        public  string                          AlbumName { get; private set; }
         public  ObservableCollection<UiTrack>   TrackList { get; }
 
         public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider, 
@@ -30,6 +32,14 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnAlbumState( AlbumInfo album ) {
             mCurrentAlbum = album;
+
+            if( mCurrentAlbum != null ) {
+                ArtistName = mCurrentAlbum.ArtistName;
+                AlbumName = mCurrentAlbum.AlbumName;
+
+                RaisePropertyChanged( nameof( ArtistName ));
+                RaisePropertyChanged( nameof( AlbumName ));
+            }
 
             LoadTrackList();
         }
