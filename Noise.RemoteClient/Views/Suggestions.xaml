@@ -3,7 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:Noise.RemoteClient.Views;assembly=Noise.RemoteClient"
              x:Class="Noise.RemoteClient.Views.Suggestions"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
              Title="Suggestions">
+
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" Orientation="Horizontal">
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="Suggestions for: "/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding TrackName}"/>
+            </StackLayout>
+        </Grid>
+    </Shell.TitleView>
 
     <TabbedPage.Children>
         <views:AlbumSuggestions Title="From Album"/>

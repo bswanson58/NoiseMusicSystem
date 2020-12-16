@@ -14,7 +14,7 @@
             </Grid.ColumnDefinitions>
 
             <StackLayout Grid.Column="0" Orientation="Horizontal">
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text=" Tracks for: "/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="Tracks for: "/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumName}"/>
