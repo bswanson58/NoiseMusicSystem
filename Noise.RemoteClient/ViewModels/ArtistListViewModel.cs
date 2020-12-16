@@ -14,6 +14,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IArtistProvider    mArtistProvider;
         private readonly IClientState       mClientState;
         private readonly List<ArtistInfo>   mArtistList;
+        private bool                        mLibraryOpen;
         private string                      mFilterText;
         private IDisposable                 mLibraryStatusSubscription;
         private ArtistInfo                  mSelectedArtist;
@@ -55,7 +56,9 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
-            if( status?.LibraryOpen == true ) {
+            mLibraryOpen = status?.LibraryOpen == true;
+
+            if( mLibraryOpen ) {
                 LoadArtistList();
             }
             else {
@@ -68,10 +71,12 @@ namespace Noise.RemoteClient.ViewModels {
         private async void LoadArtistList() {
             mArtistList.Clear();
 
-            var list = await mArtistProvider.GetArtistList();
+            if( mLibraryOpen ) {
+                var list = await mArtistProvider.GetArtistList();
 
-            if( list?.Success == true ) {
-                mArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select a );
+                if( list?.Success == true ) {
+                    mArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select a );
+                }
             }
 
             RefreshArtistList();

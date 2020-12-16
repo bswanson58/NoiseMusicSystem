@@ -8,6 +8,20 @@
              x:Class="Noise.RemoteClient.Views.AlbumList"
              Title="Album List">
 
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName, StringFormat='Albums for: {0}'}"/>
+
+            <SearchBar Grid.Column="2" TextColor="White" PlaceholderColor="WhiteSmoke" Placeholder="album list filter" Text="{Binding FilterText}"/>
+        </Grid>
+    </Shell.TitleView>
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="AlbumTemplate" x:DataType="dto:UiAlbum">
