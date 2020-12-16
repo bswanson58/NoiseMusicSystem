@@ -65,11 +65,11 @@ namespace Noise.UI.Dto {
         public void NotifyPlayStrategyChanged() {
             RaisePropertyChanged( () => IsStrategyQueued );
         }
+
 	    public bool IsDeleting {
 			get{ return( Get( () => IsDeleting )); }
 			set{ Set( () => IsDeleting, value ); }
 		}
-
 
 	    private void OnDisplayInfo() {
 	        mDisplayInfo?.Invoke( this );
@@ -109,6 +109,9 @@ namespace Noise.UI.Dto {
 
         private void OnPromoteSuggestion() {
             mPromoteSuggestion?.Invoke( this );
+
+			mTrack?.PromoteStrategy();
+			RaisePropertyChanged( () => IsStrategyQueued );
         }
 	}
 }

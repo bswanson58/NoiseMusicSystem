@@ -11,6 +11,12 @@ namespace Noise.RemoteClient.Interfaces {
         Task<bool>      ClearPlayedTracks();
         Task<bool>      StartStrategyPlay();
 
+        Task<bool>      RemoveQueueItem( QueueTrackInfo track );
+        Task<bool>      PromoteQueueItem( QueueTrackInfo track );
+        Task<bool>      ReplayQueueItem( QueueTrackInfo track );
+        Task<bool>      SkipQueueItem( QueueTrackInfo track );
+        Task<bool>      PlayFromQueueItem( QueueTrackInfo track );
+
         IObservable<QueueStatusResponse>    QueueListStatus { get; }
     }
 }

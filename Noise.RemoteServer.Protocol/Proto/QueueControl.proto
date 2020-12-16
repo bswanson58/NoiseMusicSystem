@@ -41,6 +41,10 @@ message AddQueueRequest {
 	int64		ItemId = 1;
 }
 
+message QueueItemRequest {
+	int64		ItemId = 1;
+}
+
 service QueueControl {
 	rpc	AddTrack (AddQueueRequest) returns (QueueControlResponse);
 	rpc AddAlbum (AddQueueRequest) returns (QueueControlResponse);
@@ -51,4 +55,10 @@ service QueueControl {
 	rpc ClearQueue (QueueControlEmpty) returns (QueueControlResponse);
 	rpc	ClearPlayedTracks (QueueControlEmpty) returns (QueueControlResponse);
 	rpc StartStrategyPlay (QueueControlEmpty) returns (QueueControlResponse);
+
+	rpc RemoveQueueItem (QueueItemRequest) returns (QueueControlResponse);
+	rpc PromoteQueueItem (QueueItemRequest) returns (QueueControlResponse);
+	rpc ReplayQueueItem (QueueItemRequest) returns (QueueControlResponse);
+	rpc SkipQueueItem (QueueItemRequest) returns (QueueControlResponse);
+	rpc PlayFromQueueItem (QueueItemRequest) returns (QueueControlResponse);
 }

@@ -164,5 +164,87 @@ namespace Noise.RemoteServer.Services {
                 return retValue;
             });
         }
+
+        public override Task<QueueControlResponse> PlayFromQueueItem( QueueItemRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    retValue.Success = mPlayQueue.ContinuePlayFromTrack( request.ItemId );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "PlayFromQueueItem", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
+        }
+
+        public override Task<QueueControlResponse> PromoteQueueItem( QueueItemRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    mPlayQueue.PromoteTrackFromStrategy( request.ItemId );
+
+                    retValue.Success = true;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "PromoteQueueItem", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
+        }
+
+        public override Task<QueueControlResponse> RemoveQueueItem( QueueItemRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    retValue.Success = mPlayQueue.RemoveTrack( request.ItemId );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "RemoveQueueItem", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
+        }
+
+        public override Task<QueueControlResponse> ReplayQueueItem( QueueItemRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    retValue.Success = mPlayQueue.ReplayTrack( request.ItemId );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "ReplayQueueItem", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
+        }
+
+        public override Task<QueueControlResponse> SkipQueueItem( QueueItemRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new QueueControlResponse();
+
+                try {
+                    retValue.Success = mPlayQueue.SkipTrack( request.ItemId );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "SkipQueueItem", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
+        }
     }
 }

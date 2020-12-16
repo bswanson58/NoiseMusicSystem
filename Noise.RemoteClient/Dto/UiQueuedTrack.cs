@@ -14,6 +14,9 @@ namespace Noise.RemoteClient.Dto {
         public  bool            HasPlayed => Track.HasPlayed;
         public  bool            IsFavorite => Track.IsFavorite;
 
+        public  bool            CanReplay => Track.HasPlayed && !Track.IsPlaying;
+        public  bool            CanSkip => !Track.HasPlayed && !Track.IsPlaying;
+
         public UiQueuedTrack( QueueTrackInfo track ) {
             Track = track;
         }

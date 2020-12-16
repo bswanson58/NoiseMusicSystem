@@ -26,6 +26,31 @@
                             </SwipeItems>
                         </SwipeView.LeftItems>
 
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItemView Command="{Binding Path=BindingContext.PromoteTrack, Source={x:Reference Name=_queueView}}"
+                                               CommandParameter="{Binding .}" IsVisible="{Binding IsStrategyQueued}">
+                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="^" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </SwipeItemView>
+                                <SwipeItemView Command="{Binding Path=BindingContext.RemoveTrack, Source={x:Reference Name=_queueView}}"
+                                               CommandParameter="{Binding .}">
+                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="X" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </SwipeItemView>
+                                <SwipeItemView Command="{Binding Path=BindingContext.ReplayTrack, Source={x:Reference Name=_queueView}}"
+                                               CommandParameter="{Binding .}" IsVisible="{Binding CanReplay}">
+                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="+" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </SwipeItemView>
+                                <SwipeItemView Command="{Binding Path=BindingContext.SkipTrack, Source={x:Reference Name=_queueView}}"
+                                               CommandParameter="{Binding .}" IsVisible="{Binding CanSkip}">
+                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text="-" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </SwipeItemView>
+                                <SwipeItemView Command="{Binding Path=BindingContext.PlayFromTrack, Source={x:Reference Name=_queueView}}"
+                                               CommandParameter="{Binding .}">
+                                    <Label Margin="15,0" HorizontalTextAlignment="Center" Text=">>" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </SwipeItemView>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
                         <Grid Margin="5,0,5,3" RowSpacing="0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -99,7 +124,7 @@
                 <Button Margin="3,0" Text="Stop" Command="{Binding Stop}"/>
                 <Button Margin="3,0" Text="Previous" Command="{Binding PlayPrevious}"/>
                 <Button Margin="3,0" Text="Next" Command="{Binding PlayNext}"/>
-                <Button Margin="3,0" Text="Replay" Command="{Binding ReplayTrack}"/>
+                <Button Margin="3,0" Text="Replay" Command="{Binding RepeatTrack}"/>
             </StackLayout>
             <StackLayout Grid.Row="1" Margin="0,0,10,5" Orientation="Horizontal" HorizontalOptions="End">
                 <Button Margin="3,0" Text="Clear" Command="{Binding ClearQueue}"/>

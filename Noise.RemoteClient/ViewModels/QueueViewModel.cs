@@ -25,9 +25,15 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     Stop { get; }
         public  DelegateCommand                     PlayNext { get; }
         public  DelegateCommand                     PlayPrevious { get; }
-        public  DelegateCommand                     ReplayTrack { get; }
+        public  DelegateCommand                     RepeatTrack { get; }
         public  DelegateCommand                     ClearQueue { get; }
         public  DelegateCommand                     ClearPlayedTracks { get; }
+
+        public  DelegateCommand<UiQueuedTrack>      PlayFromTrack { get; }
+        public  DelegateCommand<UiQueuedTrack>      ReplayTrack { get; }
+        public  DelegateCommand<UiQueuedTrack>      SkipTrack { get; }
+        public  DelegateCommand<UiQueuedTrack>      RemoveTrack { get; }
+        public  DelegateCommand<UiQueuedTrack>      PromoteTrack { get; }
 
         public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, 
                                IHostInformationProvider hostInformationProvider, IClientState clientState ) {
@@ -45,9 +51,15 @@ namespace Noise.RemoteClient.ViewModels {
             Stop = new DelegateCommand( OnStop );
             PlayPrevious = new DelegateCommand( OnPlayPrevious );
             PlayNext = new DelegateCommand( OnPlayNext );
-            ReplayTrack = new DelegateCommand( OnReplayTrack );
+            RepeatTrack = new DelegateCommand( OnRepeatTrack );
             ClearQueue = new DelegateCommand( OnClearQueue );
             ClearPlayedTracks = new DelegateCommand( OnClearPlayedTracks );
+
+            ReplayTrack = new DelegateCommand<UiQueuedTrack>( OnReplayTrack );
+            SkipTrack = new DelegateCommand<UiQueuedTrack>( OnSkipTrack );
+            RemoveTrack = new DelegateCommand<UiQueuedTrack>( OnRemoveTrack );
+            PromoteTrack = new DelegateCommand<UiQueuedTrack>( OnPromoteTrack );
+            PlayFromTrack = new DelegateCommand<UiQueuedTrack>( OnPlayFromTrack );
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
         }
@@ -110,7 +122,7 @@ namespace Noise.RemoteClient.ViewModels {
             mTransportProvider.PlayPrevious();
         }
 
-        private void OnReplayTrack() {
+        private void OnRepeatTrack() {
             mTransportProvider.ReplayTrack();
         }
 
@@ -120,6 +132,26 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnClearPlayedTracks() {
             mQueueListProvider.ClearPlayedTracks();
+        }
+
+        private void OnReplayTrack( UiQueuedTrack track ) {
+            mQueueListProvider.ReplayQueueItem( track.Track );
+        }
+
+        private void OnSkipTrack( UiQueuedTrack track ) {
+            mQueueListProvider.SkipQueueItem( track.Track );
+        }
+
+        private void OnPromoteTrack( UiQueuedTrack track ) {
+            mQueueListProvider.PromoteQueueItem( track.Track );
+        }
+
+        private void OnRemoveTrack( UiQueuedTrack track ) {
+            mQueueListProvider.RemoveQueueItem( track.Track );
+        }
+
+        private void OnPlayFromTrack( UiQueuedTrack track ) {
+            mQueueListProvider.PlayFromQueueItem( track.Track );
         }
 
         public void Dispose() {

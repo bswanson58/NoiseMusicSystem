@@ -101,5 +101,65 @@ namespace Noise.RemoteClient.Services {
 
             return retValue;
         }
+
+        public async Task<bool> RemoveQueueItem( QueueTrackInfo track ) {
+            var retValue = false;
+
+            if( Client != null ) {
+                var result = await Client.RemoveQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+
+                retValue = result.Success;
+            }
+
+            return retValue;
+        }
+
+        public async Task<bool>	PromoteQueueItem( QueueTrackInfo track ) {
+            var retValue = false;
+
+            if( Client != null ) {
+                var result = await Client.PromoteQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+
+                retValue = result.Success;
+            }
+
+            return retValue;
+        }
+
+        public async Task<bool> ReplayQueueItem( QueueTrackInfo track ) {
+            var retValue = false;
+
+            if( Client != null ) {
+                var result = await Client.ReplayQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+
+                retValue = result.Success;
+            }
+
+            return retValue;
+        }
+
+        public async Task<bool> SkipQueueItem( QueueTrackInfo track ) {
+            var retValue = false;
+
+            if( Client != null ) {
+                var result = await Client.SkipQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+
+                retValue = result.Success;
+            }
+
+            return retValue;
+        }
+
+        public async Task<bool> PlayFromQueueItem( QueueTrackInfo track ) {
+            var retValue = false;
+
+            if( Client != null ) {
+                var result = await Client.PlayFromQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+
+                retValue = result.Success;
+            }
+
+            return retValue;
+        }
     }
 }

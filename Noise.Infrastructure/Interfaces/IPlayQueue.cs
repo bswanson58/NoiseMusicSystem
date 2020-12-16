@@ -29,6 +29,8 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ContinuePlayFromTrack( PlayQueueTrack track );
 		bool			ContinuePlayFromTrack( long trackId );
 		bool			ReplayTrack( long trackId );
+		bool			SkipTrack( long trackId );
+        void            PromoteTrackFromStrategy( long trackId );
         void            PromoteTrackFromStrategy( PlayQueueTrack track );
 
 		PlayQueueTrack	NextTrack { get; }

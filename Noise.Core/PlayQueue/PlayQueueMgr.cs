@@ -418,6 +418,29 @@ namespace Noise.Core.PlayQueue {
 			return( retValue );
 		}
 
+		public bool SkipTrack( long itemId ) {
+            var retValue = false;
+            var	track = PlayList.FirstOrDefault( item => item.Uid == itemId );
+
+            if( track != null ) {
+                track.HasPlayed = true;
+
+                FirePlayQueueChanged();
+                mLog.StatusChanged( track );
+
+                retValue = true;
+            }
+
+            return retValue;
+        }
+
+		public void PromoteTrackFromStrategy( long itemId ) {
+            var queuedTrack = PlayList.FirstOrDefault( t => t.Uid.Equals( itemId ));
+
+            queuedTrack?.PromoteStrategy();
+            FirePlayQueueChanged();
+        }
+
 	    public void PromoteTrackFromStrategy( PlayQueueTrack track ) {
             var queuedTrack = PlayList.FirstOrDefault( t => t.Uid.Equals( track.Uid ));
 
