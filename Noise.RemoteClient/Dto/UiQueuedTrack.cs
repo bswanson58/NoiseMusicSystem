@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
 
@@ -13,6 +14,7 @@ namespace Noise.RemoteClient.Dto {
         public  bool            IsStrategyQueued => Track.IsStrategyQueued;
         public  bool            HasPlayed => Track.HasPlayed;
         public  bool            IsFavorite => Track.IsFavorite;
+        public  string          Tags => String.Join( " | ", from t in Track.Tags select t.TagName );
 
         public  bool            CanReplay => Track.HasPlayed && !Track.IsPlaying;
         public  bool            CanSkip => !Track.HasPlayed && !Track.IsPlaying;

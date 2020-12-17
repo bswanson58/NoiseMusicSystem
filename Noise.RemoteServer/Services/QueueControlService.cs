@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
@@ -12,15 +13,17 @@ namespace Noise.RemoteServer.Services {
         private readonly IRemoteServiceFactory      mServiceFactory;
         private readonly IAlbumProvider			    mAlbumProvider;
         private readonly ITrackProvider			    mTrackProvider;
+        private readonly IUserTagManager            mTagManager;
         private readonly IPlayCommand			    mPlayCommand;
         private readonly IPlayQueue				    mPlayQueue;
         private readonly INoiseLog				    mLog;
 
         public QueueService( IRemoteServiceFactory serviceFactory, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-                             IPlayQueue playQueue,IPlayCommand playCommand, INoiseLog log ) {
+                             IUserTagManager tagManager, IPlayQueue playQueue,IPlayCommand playCommand, INoiseLog log ) {
             mServiceFactory = serviceFactory;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
+            mTagManager = tagManager;
             mPlayCommand = playCommand;
             mPlayQueue = playQueue;
             mLog = log;
@@ -73,12 +76,25 @@ namespace Noise.RemoteServer.Services {
         }
 
         private QueueTrackInfo TransformQueueTrack( PlayQueueTrack track ) {
-            return new QueueTrackInfo {
+            var retValue = new QueueTrackInfo {
                 QueueId = track.Uid, ArtistId = track.Artist.DbId, AlbumId = track.Album.DbId, TrackId = track.Track.DbId,
                 ArtistName = track.Artist.Name, AlbumName = track.Album.Name, VolumeName = track.Track.VolumeName, TrackName = track.Track.Name,
                 TrackNumber = track.Track.TrackNumber, Duration = track.Track.DurationMilliseconds, Rating = track.Track.Rating, IsFavorite = track.Track.IsFavorite,
                 IsPlaying = track.IsPlaying, HasPlayed = track.HasPlayed, IsFaulted = track.IsFaulted, IsStrategyQueued = track.IsStrategyQueued
             };
+
+            retValue.Tags.AddRange( GetTrackTags( track.Track ));
+
+            return retValue;
+        }
+
+        private IEnumerable<QueueTagInfo> GetTrackTags( DbTrack track ) {
+            var retValue = new List<QueueTagInfo>();
+            var tags = mTagManager.GetAssociatedTags( track.DbId );
+
+            retValue.AddRange( from t in tags select new QueueTagInfo{ TagId = t.DbId, TagName = t.Name });
+
+            return retValue;
         }
 
         public override Task<QueueListResponse> GetQueueList( QueueControlEmpty request, ServerCallContext context ) {

@@ -28,12 +28,25 @@ namespace Noise.RemoteServer.Services {
             mLog = log;
         }
 
-        private TrackInfo TransformTrack( DbArtist artist, DbAlbum album, DbTrack track ) {
-            return new TrackInfo {
+        private TrackInfo TransformTrack( DbArtist artist, DbAlbum album, DbTrack track ) { 
+            var retValue = new TrackInfo {
                 TrackId = track.DbId, AlbumId = album.DbId, ArtistId = artist.DbId,
                 TrackName = track.Name, AlbumName = album.Name, ArtistName = artist.Name, VolumeName = track.VolumeName,
-                TrackNumber = track.TrackNumber, Duration = track.DurationMilliseconds, Rating = track.Rating, IsFavorite = track.IsFavorite
+                TrackNumber = track.TrackNumber, Duration = track.DurationMilliseconds, Rating = track.Rating, IsFavorite = track.IsFavorite,
             };
+
+            retValue.Tags.AddRange( GetTrackTags( track ));
+
+            return retValue;
+        }
+
+        private IEnumerable<TrackTagInfo> GetTrackTags( DbTrack track ) {
+            var retValue = new List<TrackTagInfo>();
+            var tags = mTagManager.GetAssociatedTags( track.DbId );
+
+            retValue.AddRange( from t in tags select new TrackTagInfo{ TagId = t.DbId, TagName = t.Name });
+
+            return retValue;
         }
 
         public override Task<TrackListResponse> GetTrackList( TrackListRequest request, ServerCallContext context ) {

@@ -3,6 +3,11 @@ package Noise.RemoteServer.Protocol;
 
 message TrackInfoEmpty {}
 
+message TrackTagInfo {
+	int64		TagId = 1;
+	string		TagName = 2;
+}
+
 message TrackInfo {
 	int64		TrackId = 1;
 	int64		ArtistId = 2;
@@ -15,6 +20,7 @@ message TrackInfo {
 	int32		Duration = 9;
 	int32		Rating = 10;
 	bool		IsFavorite = 11;
+	repeated TrackTagInfo Tags = 12;
 }
 
 message TrackListRequest {

@@ -3,6 +3,11 @@ package Noise.RemoteServer.Protocol;
 
 message QueueControlEmpty {}
 
+message QueueTagInfo {
+	int64		TagId = 1;
+	string		TagName = 2;
+}
+
 message QueueTrackInfo {
 	int64		QueueId = 1;
 	int64		TrackId = 2;
@@ -20,6 +25,7 @@ message QueueTrackInfo {
 	bool		HasPlayed = 14;
 	bool		IsFaulted = 15;
 	bool		IsStrategyQueued = 16;
+	repeated QueueTagInfo Tags = 17;
 }
 
 message QueueListResponse {

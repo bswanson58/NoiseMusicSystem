@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -15,6 +16,7 @@ namespace Noise.RemoteClient.Dto {
         public  bool                        IsFavorite => Track.IsFavorite;
         public  Int32                       Rating => Track.Rating;
         public  bool                        HasRating => Rating != 0;
+        public  string                      Tags => String.Join( " | ", from t in Track.Tags select t.TagName );
 
         public  DelegateCommand Play { get; }
 
