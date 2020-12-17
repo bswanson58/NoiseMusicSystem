@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using System;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	public class SearchResultItem {
@@ -16,7 +17,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public string ItemDescription {
 			get {
-				var retValue = "";
+				var retValue = String.Empty;
 
 				switch( ItemType ) {
 					case eSearchItemType.Artist:
@@ -60,7 +61,7 @@ namespace Noise.Infrastructure.Dto {
 						break;
 				}
 
-				return( retValue );
+				return retValue;
 
 			}
 		}

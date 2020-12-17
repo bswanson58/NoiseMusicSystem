@@ -121,7 +121,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void OnAlbumPlay( UiAlbum album ) {
-            mPlayProvider.QueueAlbum( album.Album );
+            mPlayProvider.Queue( album.Album );
         }
 
         public void Dispose() {

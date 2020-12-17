@@ -42,6 +42,8 @@ namespace Noise.RemoteServer.Server {
                 mNoiseServer.Services.Add( AlbumInformation.BindService( mServiceFactory.AlbumInformationService ));
                 mNoiseServer.Services.Add( TrackInformation.BindService( mServiceFactory.TrackInformationService ));
                 mNoiseServer.Services.Add( QueueControl.BindService( mServiceFactory.QueueControlService ));
+                mNoiseServer.Services.Add( SearchInformation.BindService( mServiceFactory.SearchService ));
+                mNoiseServer.Services.Add( TagInformation.BindService( mServiceFactory.TagInformationService ));
                 mNoiseServer.Services.Add( TransportControl.BindService( mServiceFactory.TransportControlService ));
                 mNoiseServer.Ports.Add( new ServerPort( Dns.GetHostName(), mRemoteHostConfiguration.HostPort, ServerCredentials.Insecure ));
                 mNoiseServer.Start();

@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+package Noise.RemoteServer.Protocol;
+
+message TagInfo {
+	int64	TagId = 1;
+	string	TagName = 2;
+}
+
+message TagInformationEmpty {}
+
+message TagListResponse {
+	bool	Success = 1;
+	string	ErrorMessage = 2;
+	repeated TagInfo TagList = 3;
+}
+
+service TagInformation {
+	rpc GetUserTags (TagInformationEmpty) returns (TagListResponse);
+}

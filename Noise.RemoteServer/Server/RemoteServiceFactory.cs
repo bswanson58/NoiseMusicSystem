@@ -11,11 +11,14 @@ namespace Noise.RemoteServer.Server {
         private readonly Func<QueueService>             mQueueControlCreator;
         private readonly Func<QueueStatusResponder>     mQueueStatusResponderCreator;
         private readonly Func<TransportControlService>  mTransportControlServiceCreator;
+        private readonly Func<SearchService>            mSearchServiceCreator;
+        private readonly Func<TagInformationService>    mTagInformationCreator;
 
         public RemoteServiceFactory( Func<HostStatusResponder> createHostStatusResponder, Func<ArtistInformationService> artistInformationCreator,
                                      Func<AlbumInformationService> albumInformationCreator, Func<TrackInformationService> trackInformationCreator,
                                      Func<QueueService> queueControlCreator, Func<QueueStatusResponder> queueStatusResponderCreator,
-                                     Func<TransportControlService> transportControlServiceCreator) {
+                                     Func<TransportControlService> transportControlServiceCreator, Func<SearchService> searchServiceCreator,
+                                     Func<TagInformationService> tagInformationCreator ) {
             mHostStatusResponderCreator = createHostStatusResponder;
             mAlbumInformationCreator = albumInformationCreator;
             mArtistInformationCreator = artistInformationCreator;
@@ -23,6 +26,8 @@ namespace Noise.RemoteServer.Server {
             mQueueControlCreator = queueControlCreator;
             mQueueStatusResponderCreator = queueStatusResponderCreator;
             mTransportControlServiceCreator = transportControlServiceCreator;
+            mTagInformationCreator = tagInformationCreator;
+            mSearchServiceCreator = searchServiceCreator;
         }
 
         public  Grpc.Core.Server            HostServer => new Grpc.Core.Server();
@@ -33,6 +38,8 @@ namespace Noise.RemoteServer.Server {
         public  TrackInformationService     TrackInformationService => mTrackInformationCreator();
         public  QueueService                QueueControlService => mQueueControlCreator();
         public  QueueStatusResponder        QueueStatusResponder => mQueueStatusResponderCreator();
+        public  SearchService               SearchService => mSearchServiceCreator();
+        public  TagInformationService       TagInformationService => mTagInformationCreator();
         public  TransportControlService     TransportControlService => mTransportControlServiceCreator();
     }
 }

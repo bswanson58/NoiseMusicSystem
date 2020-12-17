@@ -46,7 +46,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void OnTrackPlay( UiTrack track ) {
-            mQueuePlay.QueueTrack( track.Track );
+            mQueuePlay.Queue( track.Track );
         }
 
         public void Dispose() {

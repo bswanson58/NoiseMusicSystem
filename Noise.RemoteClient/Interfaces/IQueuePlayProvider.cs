@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Interfaces {
     interface IQueuePlayProvider {
-        Task<QueueControlResponse>  QueueTrack( TrackInfo track );
-        Task<QueueControlResponse>  QueueAlbum( AlbumInfo album );
+        Task<QueueControlResponse>  QueueTrack( Int64 trackId );
+
+        Task<QueueControlResponse>  Queue( TrackInfo track );
+        Task<QueueControlResponse>  Queue( AlbumInfo album );
     }
 }

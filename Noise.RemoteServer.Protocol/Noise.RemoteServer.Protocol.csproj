@@ -22,6 +22,8 @@
     <Protobuf Include="Proto\AlbumInformation.proto" />
     <Protobuf Include="Proto\HostInformation.proto" />
     <Protobuf Include="Proto\QueueControl.proto" />
+    <Protobuf Include="Proto\SearchInformation.proto" />
+    <Protobuf Include="Proto\TagInformation.proto" />
     <Protobuf Include="Proto\TrackInformation.proto" />
     <Protobuf Include="Proto\TransportControl.proto" />
   </ItemGroup>

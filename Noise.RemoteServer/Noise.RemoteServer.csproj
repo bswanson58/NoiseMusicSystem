@@ -162,6 +162,8 @@
     <Compile Include="Services\HostStatusResponder.cs" />
     <Compile Include="Services\QueueControlService.cs" />
     <Compile Include="Services\QueueStatusResponder.cs" />
+    <Compile Include="Services\SearchService.cs" />
+    <Compile Include="Services\TagInformationService.cs" />
     <Compile Include="Services\TrackInformationService.cs" />
     <Compile Include="Services\TransportControlService.cs" />
   </ItemGroup>
