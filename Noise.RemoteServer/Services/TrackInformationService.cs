@@ -100,7 +100,7 @@ namespace Noise.RemoteServer.Services {
                             using( var favoriteList = mTrackProvider.GetFavoriteTracks()) {
                                 var favoriteTracks = from t in favoriteList.List where t.Artist.Equals( request.ArtistId ) select t;
 
-                                favoriteTracks.ForEach( track => {
+                                favoriteTracks.Where( t1 => retValue.TrackList.FirstOrDefault( t2 => t1.DbId.Equals( t2.TrackId )) == null ).ForEach( track => {
                                     var album = mAlbumProvider.GetAlbum( track.Album );
 
                                     if( album != null ) {
