@@ -70,6 +70,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
@@ -86,10 +87,13 @@
                                 </Label.Triggers>
                             </Label>
 
-                            <controls:SvgButton Grid.Row="0" Grid.Column="1" VerticalOptions="Center" HeightRequest="20" IsVisible="{Binding IsFavorite}"
+                            <controls:SvgButton Grid.Row="0" Grid.Column="1" VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="0,0,5,0"
+                                                IsVisible="{Binding HasRating}" Source="{Binding RatingSource}"/>
+
+                            <controls:SvgButton Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HeightRequest="20" IsVisible="{Binding IsFavorite}"
                                                 Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
 
-                            <Label Grid.Row="0" Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" 
+                            <Label Grid.Row="0" Grid.Column="3" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" 
                                    Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}">
                                 <Label.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
