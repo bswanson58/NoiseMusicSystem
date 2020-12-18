@@ -6,7 +6,25 @@ message TagInfo {
 	string	TagName = 2;
 }
 
+message TagAssociationInfo {
+	int64		TrackId = 1;
+	int64		ArtistId = 2;
+	int64		AlbumId = 3;
+	string		ArtistName = 4;
+	string		AlbumName = 5;
+	string		VolumeName = 6;
+	string		TrackName = 7;
+	int32		TrackNumber = 8;
+	int32		Duration = 9;
+	int32		Rating = 10;
+	bool		IsFavorite = 11;
+}
+
 message TagInformationEmpty {}
+
+message TagAssociationRequest {
+	int64		TagId = 1;
+}
 
 message TagListResponse {
 	bool	Success = 1;
@@ -14,6 +32,13 @@ message TagListResponse {
 	repeated TagInfo TagList = 3;
 }
 
+message TagAssociationsResponse {
+	bool	Success = 1;
+	string	ErrorMessage = 2;
+	repeated TagAssociationInfo	TagAssociations = 3;
+}
+
 service TagInformation {
 	rpc GetUserTags (TagInformationEmpty) returns (TagListResponse);
+	rpc GetTagAssociations (TagAssociationRequest) returns (TagAssociationsResponse);
 }

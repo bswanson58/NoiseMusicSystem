@@ -18,6 +18,7 @@ namespace Noise.RemoteClient {
             container.Register<IArtistProvider, ArtistProvider>();
             container.Register<IAlbumProvider, AlbumProvider>();
             container.Register<ISearchProvider, SearchProvider>();
+            container.Register<ITagInformationProvider, TagInformationProvider>();
             container.Register<ITrackProvider, TrackProvider>();
             container.Register<ITransportProvider, TransportProvider>();
         }

@@ -2,8 +2,72 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                   xmlns:prism="http://prismlibrary.com"
+                  xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+                  xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
                   prism:ViewModelLocator.AutowireViewModel="True"
                   x:Class="Noise.RemoteClient.Views.TagList"
                   Title="Tags">
 
+    <ContentPage.Resources>
+        <DataTemplate x:Key="TagAssociationTemplate" x:DataType="dto:UiTagAssociation">
+            <ViewCell>
+                <Grid Margin="5,0,5,3" RowSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
+                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
+
+                    <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}"/>
+
+                    <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="0,0,5,0"
+                                    IsVisible="{Binding HasRating}" Source="{Binding RatingSource}"/>
+
+                    <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="0,0,5,0" 
+                                    IsVisible="{Binding IsFavorite}" Source="Favorite"/>
+
+                    <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center" WidthRequest="60" 
+                       HorizontalTextAlignment="End" Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
+
+                    <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="10,0,0,0">
+                        <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
+                        <Label Style="{StaticResource ListItemDetailStyle}" Text="/"/>
+                        <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumName}"/>
+                    </StackLayout>
+                </Grid>
+            </ViewCell>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Tags"/>
+
+            <StackLayout Grid.Column="2" Orientation="Horizontal" VerticalOptions="Center" Margin="0,0,10,0">
+                <Label Margin="0,0,5,0" Style="{StaticResource TitleViewTitleStyle}" VerticalOptions="Center" Text="Display Tracks Tagged With:"/>
+                <Picker WidthRequest="200" ItemsSource="{Binding TagList}" SelectedItem="{Binding CurrentTag}" 
+                        ItemDisplayBinding="{Binding TagName}" Title="select a tag"/>
+            </StackLayout>
+        </Grid>
+    </Shell.TitleView>
+
+    <ContentPage.Content>
+        <ListView Margin="5" ItemsSource="{Binding TaggedItemsList}" HasUnevenRows="True" ItemTemplate="{StaticResource TagAssociationTemplate}"/>
+    </ContentPage.Content>
 </ContentPage>

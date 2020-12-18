@@ -8,7 +8,7 @@ namespace Noise.RemoteClient.Dto {
     class UiTrack : BindableBase {
         private readonly Action<UiTrack>    mPlayAction;
 
-        public  TrackInfo                   Track {  get; }
+        public  TrackInfo                   Track { get; }
         public  string                      TrackName => Track.TrackName;
         public  string                      AlbumName => Track.AlbumName;
         public  string                      ArtistName => Track.ArtistName;
