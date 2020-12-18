@@ -65,6 +65,7 @@
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding SearchItems}" HasUnevenRows="True" ItemTemplate="{StaticResource SearchItemTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding SearchItems}" HasUnevenRows="True" ItemTemplate="{StaticResource SearchItemTemplate}"
+                  CachingStrategy="RecycleElement"/>
     </ContentPage.Content>
 </ContentPage>

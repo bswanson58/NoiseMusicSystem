@@ -23,6 +23,7 @@
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource TrackTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource TrackTemplate}"
+                  CachingStrategy="RecycleElement"/>
     </ContentPage.Content>
 </ContentPage>

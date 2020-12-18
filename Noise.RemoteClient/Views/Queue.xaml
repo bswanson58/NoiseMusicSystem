@@ -167,7 +167,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ListView Grid.Row="0" Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"/>
+            <ListView Grid.Row="0" Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"
+                      CachingStrategy="RecycleElement"/>
 
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>

@@ -6,6 +6,7 @@
              x:Class="Noise.RemoteClient.Views.TrackSuggestions">
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"
+                  CachingStrategy="RecycleElement"/>
     </ContentPage.Content>
 </ContentPage>

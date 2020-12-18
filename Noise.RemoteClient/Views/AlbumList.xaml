@@ -63,7 +63,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding AlbumList}" SelectedItem="{Binding SelectedAlbum, Mode=TwoWay}"
+        <ListView Margin="5" ItemsSource="{Binding AlbumList}" SelectedItem="{Binding SelectedAlbum, Mode=TwoWay}" CachingStrategy="RecycleElement"
                   HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTemplate}"/>
     </ContentPage.Content>
 </ContentPage>

@@ -68,6 +68,7 @@
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding TaggedItemsList}" HasUnevenRows="True" ItemTemplate="{StaticResource TagAssociationTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding TaggedItemsList}" HasUnevenRows="True" ItemTemplate="{StaticResource TagAssociationTemplate}"
+                  CachingStrategy="RecycleElement"/>
     </ContentPage.Content>
 </ContentPage>
