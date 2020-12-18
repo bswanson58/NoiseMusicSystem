@@ -18,6 +18,9 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  ObservableCollection<UiQueuedTrack> QueueList { get; }
 
+        public  TimeSpan                            TotalTime { get; private set; }
+        public  TimeSpan                            RemainingTime { get; private set; }
+
         public  DelegateCommand<UiQueuedTrack>      Suggestions { get; }
 
         public  DelegateCommand                     Play { get; }
@@ -92,6 +95,12 @@ namespace Noise.RemoteClient.ViewModels {
                 foreach( var track in queueList.QueueList ) {
                     QueueList.Add( new UiQueuedTrack( track ));
                 }
+
+                TotalTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
+                RemainingTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
+
+                RaisePropertyChanged( nameof( TotalTime ));
+                RaisePropertyChanged( nameof( RemainingTime ));
             }
         }
 

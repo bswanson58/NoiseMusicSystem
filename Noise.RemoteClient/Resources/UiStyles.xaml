@@ -9,6 +9,10 @@
         <Setter Property="VerticalOptions" Value="Center"/>
     </Style>
 
+    <Style x:Key="TitleViewSubtitleStyle" TargetType="Label" BasedOn="{StaticResource TitleViewTitleStyle}">
+        <Setter Property="FontSize" Value="Medium"/>
+    </Style>
+
     <Style x:Key="ListItemHeaderStyle" TargetType="Label">
         <Setter Property="FontSize" Value="Large"/>
         <Setter Property="FontAttributes" Value="Bold"/>

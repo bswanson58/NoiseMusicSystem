@@ -11,6 +11,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RemoteServer.Protocol;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.RemoteServer.Services {
     class QueueStatusResponder : IHandle<Events.PlaybackStatusChanged> {
@@ -80,8 +81,25 @@ namespace Noise.RemoteServer.Services {
             if(!mCallContext.CancellationToken.IsCancellationRequested ) {
                 try {
                     var status = new QueueStatusResponse();
+                    var totalTime = new TimeSpan();
+                    var remainingTime = new TimeSpan();
+                    var playList = mPlayQueue.PlayList.ToList();
 
-                    status.QueueList.AddRange( from track in mPlayQueue.PlayList select TransformQueueTrack( track ));
+                    status.QueueList.AddRange( from track in playList select TransformQueueTrack( track ));
+
+                    playList.ForEach( track => {
+                        var	trackTime = track.Track?.Duration ?? new TimeSpan();
+
+                        totalTime = totalTime.Add( trackTime );
+
+                        if((!track.HasPlayed ) ||
+                           ( track.IsPlaying )) {
+                            remainingTime = remainingTime.Add( trackTime );
+                        }
+                    });
+
+                    status.TotalPlayMilliseconds = (Int32)totalTime.TotalMilliseconds;
+                    status.RemainingPlayMilliseconds = (Int32)remainingTime.TotalMilliseconds;
 
                     await mStatusStream.WriteAsync( status );
                 }

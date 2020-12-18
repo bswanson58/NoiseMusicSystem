@@ -127,6 +127,39 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Queue"/>
+
+            <Grid Grid.Column="2" VerticalOptions="Center" RowSpacing="0" Opacity="0.5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" HorizontalOptions="End" 
+                       Style="{StaticResource TitleViewSubtitleStyle}" Margin="0,0,5,0" Text="Total Time:"/>
+                <Label Grid.Row="0" Grid.Column="1" HorizontalOptions="End"
+                       Style="{StaticResource TitleViewSubtitleStyle}" Text="{Binding TotalTime, Converter={StaticResource TimeSpanConverter}}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" HorizontalOptions="End"
+                       Style="{StaticResource TitleViewSubtitleStyle}" Margin="0,0,5,0" Text="Remaining Time:"/>
+                <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="End"
+                       Style="{StaticResource TitleViewSubtitleStyle}" Text="{Binding RemainingTime, Converter={StaticResource TimeSpanConverter}}"/>
+            </Grid>
+        </Grid>
+    </Shell.TitleView>
+
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>

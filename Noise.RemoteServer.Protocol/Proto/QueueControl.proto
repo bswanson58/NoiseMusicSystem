@@ -35,6 +35,8 @@ message QueueListResponse {
 }
 
 message QueueStatusResponse {
+	int32		TotalPlayMilliseconds = 1;
+	int32		RemainingPlayMilliseconds = 2;
 	repeated QueueTrackInfo	QueueList = 3;
 }
 
