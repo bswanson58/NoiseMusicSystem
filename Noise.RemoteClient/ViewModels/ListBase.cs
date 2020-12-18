@@ -12,6 +12,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IHostInformationProvider   mHostInformationProvider;
         private IDisposable                         mLibraryStatusSubscription;
         private bool                                mLibraryOpen;
+        private bool                                mIsBusy;
         private T                                   mCurrentItem;
 
         public  ObservableCollectionExtended<T>     DisplayList { get; }
@@ -25,6 +26,11 @@ namespace Noise.RemoteClient.ViewModels {
 
         protected void InitializeLibrarySubscription() {
             mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+        }
+
+        public bool IsBusy {
+            get => mIsBusy;
+            set => SetProperty( ref mIsBusy, value );
         }
 
         public T CurrentItem {
@@ -46,10 +52,13 @@ namespace Noise.RemoteClient.ViewModels {
 
         protected async void LoadList() {
             DisplayList.Clear();
+            IsBusy = true;
 
             if( mLibraryOpen ) {
                 DisplayList.AddRange( await RetrieveList());
             }
+
+            IsBusy = false;
         }
 
         protected void OnPlay( UiTrack track ) {

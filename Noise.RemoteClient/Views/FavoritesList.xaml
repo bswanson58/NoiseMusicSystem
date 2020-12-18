@@ -7,8 +7,12 @@
              Title="Favorites">
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"
-                  CachingStrategy="RecycleElement"/>
+        <Grid>
+            <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"
+                      CachingStrategy="RecycleElement"/>
+
+            <ActivityIndicator VerticalOptions="Center" HorizontalOptions="Center" IsRunning="{Binding IsBusy}"/>
+        </Grid>
     </ContentPage.Content>
 
 </ContentPage>

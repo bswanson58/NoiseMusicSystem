@@ -11,6 +11,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly ITagInformationProvider    mTagProvider;
         private readonly IQueuePlayProvider         mPlayProvider;
         private bool                                mLibraryOpen;
+        private bool                                mIsBusy;
         private TagInfo                             mCurrentTag;
         private IDisposable                         mLibraryStatusSubscription;
 
@@ -32,6 +33,11 @@ namespace Noise.RemoteClient.ViewModels {
             set => SetProperty( ref mCurrentTag, value, OnTagChanged );
         }
 
+        public bool IsBusy {
+            get => mIsBusy;
+            set => SetProperty( ref mIsBusy, value );
+        }
+
         private void OnLibraryStatus( LibraryStatus status ) {
             mLibraryOpen = status?.LibraryOpen == true;
 
@@ -44,6 +50,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         private async void LoadTagList() {
             TagList.Clear();
+            IsBusy = true;
 
             if( mLibraryOpen ) {
                 var tagList = await mTagProvider.GetUserTags();
@@ -52,10 +59,13 @@ namespace Noise.RemoteClient.ViewModels {
                     TagList.AddRange( from tag in tagList.TagList orderby tag.TagName select tag );
                 }
             }
+
+            IsBusy = false;
         }
 
         private async void LoadTagAssociations() {
             TaggedItemsList.Clear();
+            IsBusy = true;
 
             if(( mLibraryOpen ) &&
                ( mCurrentTag != null )) {
@@ -67,6 +77,8 @@ namespace Noise.RemoteClient.ViewModels {
                                               select new UiTagAssociation( association, OnPlay ));
                 }
             }
+
+            IsBusy = false;
         }
 
         private void OnPlay( TagAssociationInfo tag ) {

@@ -16,6 +16,7 @@ namespace Noise.RemoteClient.ViewModels {
         private IDisposable                         mLibraryStatusSubscription;
         private IDisposable                         mListSubscription;
         private bool                                mLibraryOpen;
+        private bool                                mIsBusy;
         private string                              mSearchTerm;
 
         public  DelegateCommand                     Search { get; }
@@ -39,6 +40,11 @@ namespace Noise.RemoteClient.ViewModels {
             set => SetProperty( ref mSearchTerm, value );
         }
 
+        public bool IsBusy {
+            get => mIsBusy;
+            set => SetProperty( ref mIsBusy, value );
+        }
+
         private void OnSearch() {
             LoadSearchItems( SearchTerm );
         }
@@ -49,6 +55,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         private async void LoadSearchItems( string searchTerm ) {
             mSearchItems.Clear();
+            IsBusy = true;
 
             if(( mLibraryOpen ) &&
                (!String.IsNullOrWhiteSpace( searchTerm ))) {
@@ -58,6 +65,8 @@ namespace Noise.RemoteClient.ViewModels {
                     mSearchItems.AddRange( from item in searchResults.SearchResults orderby item.TrackName, item.ArtistName select new UiSearchItem( item, OnPlay ));
                 }
             }
+
+            IsBusy = false;
         }
 
         private void OnPlay( SearchItemInfo searchItem ) {
