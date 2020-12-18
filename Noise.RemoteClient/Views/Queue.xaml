@@ -19,7 +19,7 @@
                     <SwipeView>
                         <SwipeView.LeftItems>
                             <SwipeItems>
-                                <SwipeItemView Command="{Binding Path=BindingContext.Suggestions, Source={x:Reference Name=_queueView}}" 
+                                <SwipeItemView Command="{Binding Path=BindingContext.Suggestions, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}">
                                     <Label Margin="15,0" HorizontalTextAlignment="Center" Text="Suggestions" FontSize="Medium" VerticalTextAlignment="Center"/>
                                 </SwipeItemView>
@@ -28,31 +28,31 @@
 
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItemView Command="{Binding Path=BindingContext.PromoteTrack, Source={x:Reference Name=_queueView}}"
+                                <SwipeItemView Command="{Binding Path=BindingContext.PromoteTrack, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}" IsVisible="{Binding IsStrategyQueued}">
                                     <StackLayout Orientation="Horizontal" WidthRequest="50">
                                         <controls:SvgButton Source="PromoteTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
                                     </StackLayout>
                                 </SwipeItemView>
-                                <SwipeItemView Command="{Binding Path=BindingContext.RemoveTrack, Source={x:Reference Name=_queueView}}"
+                                <SwipeItemView Command="{Binding Path=BindingContext.RemoveTrack, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}">
                                     <StackLayout Orientation="Horizontal" WidthRequest="50">
                                         <controls:SvgButton Source="RemoveItem" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
                                     </StackLayout>
                                 </SwipeItemView>
-                                <SwipeItemView Command="{Binding Path=BindingContext.ReplayTrack, Source={x:Reference Name=_queueView}}"
+                                <SwipeItemView Command="{Binding Path=BindingContext.ReplayTrack, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}" IsVisible="{Binding CanReplay}">
                                     <StackLayout Orientation="Horizontal" WidthRequest="50">
                                         <controls:SvgButton Source="ReplayTrack" HeightRequest="25" WidthRequest="25" HorizontalOptions="Center"/>
                                     </StackLayout>
                                 </SwipeItemView>
-                                <SwipeItemView Command="{Binding Path=BindingContext.SkipTrack, Source={x:Reference Name=_queueView}}"
+                                <SwipeItemView Command="{Binding Path=BindingContext.SkipTrack, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}" IsVisible="{Binding CanSkip}">
                                     <StackLayout Orientation="Horizontal" WidthRequest="50">
                                         <controls:SvgButton Source="SkipTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
                                     </StackLayout>
                                 </SwipeItemView>
-                                <SwipeItemView Command="{Binding Path=BindingContext.PlayFromTrack, Source={x:Reference Name=_queueView}}"
+                                <SwipeItemView Command="{Binding Path=BindingContext.PlayFromTrack, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}">
                                     <StackLayout Orientation="Horizontal" WidthRequest="50">
                                         <controls:SvgButton Source="ContinueFromTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
@@ -61,7 +61,7 @@
                             </SwipeItems>
                         </SwipeView.RightItems>
 
-                        <Grid Margin="5,0,5,3" RowSpacing="0">
+                        <Grid RowSpacing="0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -73,7 +73,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
+                            <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
                                 <Label.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
                                         <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
@@ -105,7 +105,7 @@
                                 </Label.Triggers>
                             </Label>
 
-                            <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="5,0,0,0">
+                            <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="10,0,0,0">
                                 <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding ArtistName}"/>
                                 <Label Style="{StaticResource ListItemDetailStyle}" Text="/"/>
                                 <Label Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumName}"/>
@@ -117,7 +117,7 @@
                                 </StackLayout.Triggers>
                             </StackLayout>
 
-                            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,5,0" Style="{StaticResource ListItemDetailStyle}"
+                            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,0,5,0" Style="{StaticResource ListItemDetailStyle}"
                                    HorizontalOptions="End" Text="{Binding Tags}"/>
 
                         </Grid>

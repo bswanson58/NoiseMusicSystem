@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:protocol="clr-namespace:Noise.RemoteServer.Protocol;assembly=Noise.RemoteServer.Protocol"
              xmlns:mvvm="http://prismlibrary.com"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.ArtistList"
              Title="Artist List">
@@ -23,7 +23,7 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="ArtistTemplate" x:DataType="protocol:ArtistInfo">
+            <DataTemplate x:Key="ArtistTemplate" x:DataType="dto:UiArtist">
                 <ViewCell>
                     <Grid Margin="5,0,5,3" RowSpacing="0">
                         <Grid.RowDefinitions>

@@ -6,6 +6,6 @@
              x:Class="Noise.RemoteClient.Views.TagSuggestions">
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding TrackList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"/>
+        <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTrackTemplate}"/>
     </ContentPage.Content>
 </ContentPage>

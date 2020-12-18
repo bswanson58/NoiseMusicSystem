@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using DynamicData;
+using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class AlbumListViewModel : BindableBase, IDisposable {
         private readonly IAlbumProvider         mAlbumProvider;
         private readonly IClientState           mClientState;
         private readonly IQueuePlayProvider     mPlayProvider;
-        private readonly List<UiAlbum>          mAlbumList;
+        private readonly List<UiAlbum>          mCompleteAlbumList;
+        private readonly SourceList<UiAlbum>    mAlbumList;
         private IDisposable                     mLibraryStatusSubscription;
         private IDisposable                     mStateSubscription;
+        private IDisposable                     mListSubscription;
         private ArtistInfo                      mCurrentArtist;
         private string                          mFilterText;
         private bool                            mLibraryOpen;
         private UiAlbum                         mSelectedAlbum;
 
-        public  string                          ArtistName { get; private set; }
-        public  Int32                           AlbumCount { get; private set; }
-        public  ObservableCollection<UiAlbum>   AlbumList { get; }
+        public  string                                  ArtistName { get; private set; }
+        public  Int32                                   AlbumCount { get; private set; }
+        public  ObservableCollectionExtended<UiAlbum>   AlbumList { get; }
 
         public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider,
                                    IClientState clientState ) {
@@ -32,8 +34,10 @@ namespace Noise.RemoteClient.ViewModels {
             mPlayProvider = queuePlayProvider;
             mClientState = clientState;
 
-            mAlbumList = new List<UiAlbum>();
-            AlbumList = new ObservableCollection<UiAlbum>();
+            mCompleteAlbumList = new List<UiAlbum>();
+            mAlbumList = new SourceList<UiAlbum>();
+            AlbumList = new ObservableCollectionExtended<UiAlbum>();
+            mListSubscription = mAlbumList.Connect().Bind( AlbumList ).Subscribe();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
             mStateSubscription = mClientState.CurrentArtist.Subscribe( OnArtistState );
@@ -87,14 +91,14 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private async void LoadAlbumList() {
-            mAlbumList.Clear();
+            mCompleteAlbumList.Clear();
 
             if(( mLibraryOpen ) &&
                ( mCurrentArtist != null )) {
                 var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
 
                 if( list?.Success == true ) {
-                    mAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
+                    mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
                 }
             }
 
@@ -102,9 +106,11 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void RefreshAlbumList() {
-            AlbumList.Clear();
+            mAlbumList.Clear();
 
-            mAlbumList.Where( FilterAlbum ).ForEach( a => AlbumList.Add( a ));
+            mAlbumList.Edit( list => {
+                list.AddRange( from a in mCompleteAlbumList where FilterAlbum( a ) select a );
+            });
 
             AlbumCount = AlbumList.Count;
             RaisePropertyChanged( nameof( AlbumCount ));
@@ -130,6 +136,9 @@ namespace Noise.RemoteClient.ViewModels {
 
             mStateSubscription?.Dispose();
             mStateSubscription = null;
+
+            mListSubscription?.Dispose();
+            mListSubscription = null;
         }
     }
 }

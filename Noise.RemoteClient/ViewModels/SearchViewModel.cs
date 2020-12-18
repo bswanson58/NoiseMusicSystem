@@ -1,31 +1,35 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
+using DynamicData;
+using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
-using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class SearchViewModel : BindableBase, IDisposable {
         private readonly ISearchProvider            mSearchProvider;
         private readonly IQueuePlayProvider         mPlayProvider;
+        private readonly SourceList<UiSearchItem>   mSearchItems;
         private IDisposable                         mLibraryStatusSubscription;
+        private IDisposable                         mListSubscription;
         private bool                                mLibraryOpen;
         private string                              mSearchTerm;
 
         public  DelegateCommand                     Search { get; }
 
-        public  ObservableCollection<UiSearchItem>  SearchItems { get; }
+        public  ObservableCollectionExtended<UiSearchItem>  SearchItems { get; }
 
         public SearchViewModel( ISearchProvider searchProvider, IQueuePlayProvider playProvider, IHostInformationProvider hostInformationProvider ) {
             mSearchProvider = searchProvider;
             mPlayProvider = playProvider;
 
             Search = new DelegateCommand( OnSearch );
-            SearchItems = new ObservableCollection<UiSearchItem>();
+            SearchItems = new ObservableCollectionExtended<UiSearchItem>();
+            mSearchItems = new SourceList<UiSearchItem>();
+            mListSubscription = mSearchItems.Connect().Bind( SearchItems ).Subscribe();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
         }
@@ -44,17 +48,14 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private async void LoadSearchItems( string searchTerm ) {
-            SearchItems.Clear();
+            mSearchItems.Clear();
 
             if(( mLibraryOpen ) &&
                (!String.IsNullOrWhiteSpace( searchTerm ))) {
                 var searchResults = await mSearchProvider.Search( searchTerm );
 
                 if( searchResults.Success ) {
-                    searchResults.SearchResults
-                        .OrderBy( s => s.TrackName )
-                        .ThenBy( s => s.ArtistName )
-                        .ForEach( r => SearchItems.Add( new UiSearchItem( r, OnPlay )));
+                    mSearchItems.AddRange( from item in searchResults.SearchResults orderby item.TrackName, item.ArtistName select new UiSearchItem( item, OnPlay ));
                 }
             }
         }
@@ -66,6 +67,9 @@ namespace Noise.RemoteClient.ViewModels {
         public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
+
+            mListSubscription?.Dispose();
+            mListSubscription = null;
         }
     }
 }

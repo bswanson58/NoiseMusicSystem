@@ -1,32 +1,26 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
-using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
-    class TrackListViewModel : BindableBase, IDisposable {
+    class TrackListViewModel : ListBase<UiTrack> {
         private readonly ITrackProvider         mTrackProvider;
-        private readonly IQueuePlayProvider     mQueuePlay;
-        private IDisposable                     mLibraryStatusSubscription;
         private IDisposable                     mStateSubscription;
-        private bool                            mLibraryOpen;
         private AlbumInfo                       mCurrentAlbum;
 
         public  string                          ArtistName { get; private set; }
         public  string                          AlbumName { get; private set; }
-        public  ObservableCollection<UiTrack>   TrackList { get; }
 
         public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider, 
-                                   IClientState clientState ) {
+                                   IClientState clientState ) :
+            base( queuePlayProvider, hostInformationProvider ){
             mTrackProvider = trackProvider;
-            mQueuePlay = queuePlayProvider;
 
-            TrackList = new ObservableCollection<UiTrack>();
-
-            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            InitializeLibrarySubscription();
             mStateSubscription = clientState.CurrentAlbum.Subscribe( OnAlbumState );
         }
 
@@ -41,38 +35,24 @@ namespace Noise.RemoteClient.ViewModels {
                 RaisePropertyChanged( nameof( AlbumName ));
             }
 
-            LoadTrackList();
+            LoadList();
         }
 
-        private void OnLibraryStatus( LibraryStatus status ) {
-            mLibraryOpen = status.LibraryOpen;
-
-            LoadTrackList();
-        }
-
-        private async void LoadTrackList() {
-            TrackList.Clear();
-
-            if(( mLibraryOpen ) &&
-               ( mCurrentAlbum != null )) {
+        protected override async Task<IEnumerable<UiTrack>> RetrieveList() {
+            IEnumerable<UiTrack> retValue = new List<UiTrack>();
+            
+            if( mCurrentAlbum != null ) {
                 var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
 
                 if( list?.Success == true ) {
-                    foreach( var track in list.TrackList.OrderBy( a => a.TrackNumber )) {
-                        TrackList.Add( new UiTrack( track, OnTrackPlay ));
-                    }
+                    retValue = from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay );
                 }
             }
+
+            return retValue;
         }
 
-        private void OnTrackPlay( UiTrack track ) {
-            mQueuePlay.Queue( track.Track );
-        }
-
-        public void Dispose() {
-            mLibraryStatusSubscription?.Dispose();
-            mLibraryStatusSubscription = null;
-
+        public override void Dispose() {
             mStateSubscription?.Dispose();
             mStateSubscription = null;
         }

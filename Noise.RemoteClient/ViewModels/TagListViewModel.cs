@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
+using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
-using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class TagListViewModel : BindableBase, IDisposable {
@@ -15,15 +14,15 @@ namespace Noise.RemoteClient.ViewModels {
         private TagInfo                             mCurrentTag;
         private IDisposable                         mLibraryStatusSubscription;
 
-        public  ObservableCollection<TagInfo>           TagList { get; }
-        public  ObservableCollection<UiTagAssociation>  TaggedItemsList { get; }
+        public  ObservableCollectionExtended<TagInfo>           TagList { get; }
+        public  ObservableCollectionExtended<UiTagAssociation>  TaggedItemsList { get; }
 
         public TagListViewModel( ITagInformationProvider tagProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider ) {
             mTagProvider = tagProvider;
             mPlayProvider = queuePlayProvider;
 
-            TagList = new ObservableCollection<TagInfo>();
-            TaggedItemsList = new ObservableCollection<UiTagAssociation>();
+            TagList = new ObservableCollectionExtended<TagInfo>();
+            TaggedItemsList = new ObservableCollectionExtended<UiTagAssociation>();
 
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
         }
@@ -50,7 +49,7 @@ namespace Noise.RemoteClient.ViewModels {
                 var tagList = await mTagProvider.GetUserTags();
 
                 if( tagList.Success ) {
-                    tagList.TagList.OrderBy( t => t.TagName ).ForEach( t => TagList.Add( t ));
+                    TagList.AddRange( from tag in tagList.TagList orderby tag.TagName select tag );
                 }
             }
         }
@@ -63,7 +62,9 @@ namespace Noise.RemoteClient.ViewModels {
                 var associations = await mTagProvider.GetAssociations( mCurrentTag );
 
                 if( associations.Success ) {
-                    associations.TagAssociations.OrderBy( a => a.TrackName ).ForEach( a => TaggedItemsList.Add( new UiTagAssociation( a, OnPlay )));
+                    TaggedItemsList.AddRange( from association in associations.TagAssociations 
+                                              orderby association.TrackName 
+                                              select new UiTagAssociation( association, OnPlay ));
                 }
             }
         }

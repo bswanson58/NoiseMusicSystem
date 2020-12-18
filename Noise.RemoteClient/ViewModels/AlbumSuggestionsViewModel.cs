@@ -1,53 +1,46 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
-using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
-    class AlbumSuggestionsViewModel : BindableBase, IDisposable {
-        private readonly ITrackProvider     mTrackProvider;
-        private readonly IQueuePlayProvider mQueuePlay;
-        private SuggestionState             mSuggestionState;
-        private IDisposable                 mClientStateSubscription;
+    class AlbumSuggestionsViewModel : ListBase<UiTrack> {
+        private readonly ITrackProvider                 mTrackProvider;
+        private SuggestionState                         mSuggestionState;
+        private IDisposable                             mClientStateSubscription;
 
-        public  ObservableCollection<UiTrack>   TrackList { get; }
-
-        public AlbumSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState ) {
+        public AlbumSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState, 
+                                          IHostInformationProvider hostInformationProvider ) :
+        base( playProvider, hostInformationProvider ) {
             mTrackProvider = trackProvider;
-            mQueuePlay = playProvider;
 
-            TrackList = new ObservableCollection<UiTrack>();
-
+            InitializeLibrarySubscription();
             mClientStateSubscription = clientState.CurrentSuggestion.Subscribe( OnSuggestion );
         }
 
         private void OnSuggestion( SuggestionState state ) {
             mSuggestionState = state;
 
-            LoadTracks();
+            LoadList();
         }
 
-        private async void LoadTracks() {
-            TrackList.Clear();
+        protected override async Task<IEnumerable<UiTrack>> RetrieveList() {
+            IEnumerable<UiTrack> retValue = new List<UiTrack>();
 
             if( mSuggestionState != null ) {
                 var list = await mTrackProvider.GetTrackList( mSuggestionState.ArtistId, mSuggestionState.AlbumId );
 
                 if( list?.Success == true ) {
-                    foreach( var track in list.TrackList.OrderBy( t => t.VolumeName ).ThenBy( t => t.TrackNumber )) {
-                        TrackList.Add( new UiTrack( track, OnTrackPlay ));
-                    }
+                    retValue = from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay );
                 }
             }
+
+            return retValue;
         }
 
-        private void OnTrackPlay( UiTrack track) {
-            mQueuePlay.Queue( track.Track );
-        }
-
-        public void Dispose() {
+        public override void Dispose() {
             mClientStateSubscription?.Dispose();
             mClientStateSubscription = null;
         }

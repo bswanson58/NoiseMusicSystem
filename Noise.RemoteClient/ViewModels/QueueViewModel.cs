@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.ObjectModel;
+using System.Linq;
+using DynamicData;
+using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
@@ -10,13 +11,15 @@ using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     class QueueViewModel : BindableBase, IDisposable {
-        private readonly IQueueListProvider mQueueListProvider;
-        private readonly ITransportProvider mTransportProvider;
-        private readonly IClientState       mClientState;
-        private IDisposable                 mLibraryStatusSubscription;
-        private IDisposable                 mQueueSubscription;
+        private readonly IQueueListProvider         mQueueListProvider;
+        private readonly ITransportProvider         mTransportProvider;
+        private readonly IClientState               mClientState;
+        private readonly SourceList<UiQueuedTrack>  mQueueList;
+        private IDisposable                         mLibraryStatusSubscription;
+        private IDisposable                         mQueueSubscription;
+        private IDisposable                         mListSubscription;
 
-        public  ObservableCollection<UiQueuedTrack> QueueList { get; }
+        public  ObservableCollectionExtended<UiQueuedTrack> QueueList { get; }
 
         public  TimeSpan                            TotalTime { get; private set; }
         public  TimeSpan                            RemainingTime { get; private set; }
@@ -44,8 +47,9 @@ namespace Noise.RemoteClient.ViewModels {
             mTransportProvider = transportProvider;
             mClientState = clientState;
 
-            QueueList = new ObservableCollection<UiQueuedTrack>();
-            BindingBase.EnableCollectionSynchronization( QueueList, null, ObservableCollectionCallback);
+            QueueList = new ObservableCollectionExtended<UiQueuedTrack>();
+            mQueueList = new SourceList<UiQueuedTrack>();
+            mListSubscription = mQueueList.Connect().Bind( QueueList ).Subscribe();
 
             Suggestions = new DelegateCommand<UiQueuedTrack>( OnSuggestions );
 
@@ -67,12 +71,6 @@ namespace Noise.RemoteClient.ViewModels {
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
         }
 
-        void ObservableCollectionCallback( IEnumerable collection, object context, Action accessMethod, bool writeAccess ) {
-            lock( collection ) {
-                accessMethod?.Invoke();
-            }
-        }
-
         private void OnHostStatus( LibraryStatus status ) {
             if( status?.LibraryOpen == true ) {
                 mQueueSubscription = mQueueListProvider.QueueListStatus.Subscribe( OnQueueChanged );
@@ -89,12 +87,10 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void OnQueueChanged( QueueStatusResponse queueList ) {
-            QueueList.Clear();
+            mQueueList.Clear();
 
             if( queueList?.QueueList != null ) {
-                foreach( var track in queueList.QueueList ) {
-                    QueueList.Add( new UiQueuedTrack( track ));
-                }
+                mQueueList.AddRange( from q in queueList.QueueList select new UiQueuedTrack( q ));
 
                 TotalTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
                 RemainingTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
@@ -169,6 +165,9 @@ namespace Noise.RemoteClient.ViewModels {
 
             mQueueSubscription?.Dispose();
             mQueueSubscription = null;
+
+            mListSubscription?.Dispose();
+            mListSubscription = null;
         }
     }
 }

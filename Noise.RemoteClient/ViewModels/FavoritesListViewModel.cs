@@ -1,60 +1,36 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
-using Noise.RemoteServer.Protocol;
-using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
-    class FavoritesListViewModel : BindableBase, IDisposable {
-        private readonly ITrackProvider         mTrackProvider;
-        private readonly IQueuePlayProvider     mQueuePlay;
-        private IDisposable                     mLibraryStatusSubscription;
-        private IDisposable                     mStateSubscription;
-        private bool                            mLibraryOpen;
+    class FavoritesListViewModel : ListBase<UiTrack> {
+        private readonly ITrackProvider     mTrackProvider;
 
-        public  ObservableCollection<UiTrack>   TrackList { get; }
-
-        public FavoritesListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider ) {
+        public FavoritesListViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IHostInformationProvider hostInformationProvider ) :
+            base( queuePlayProvider, hostInformationProvider ) {
             mTrackProvider = trackProvider;
-            mQueuePlay = queuePlayProvider;
 
-            TrackList = new ObservableCollection<UiTrack>();
-
-            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            InitializeLibrarySubscription();
         }
 
-        private void OnLibraryStatus( LibraryStatus status ) {
-            mLibraryOpen = status.LibraryOpen;
-
-            LoadTrackList();
-        }
-
-        private async void LoadTrackList() {
-            TrackList.Clear();
-
-            if( mLibraryOpen ) {
-                var list = await mTrackProvider.GetFavoriteTracks();
-
-                if( list?.Success == true ) {
-                    foreach( var track in list.TrackList.OrderBy( t => t.TrackName ).ThenBy( t => t.ArtistName ).ThenBy( t => t.AlbumName )) {
-                        TrackList.Add( new UiTrack( track, OnTrackPlay ));
-                    }
-                }
+        protected override void OnLibraryStatusChanged( LibraryStatus status ) {
+            if( status?.LibraryOpen == true ) {
+                LoadList();
             }
         }
 
-        private void OnTrackPlay( UiTrack track ) {
-            mQueuePlay.Queue( track.Track );
-        }
+        protected override async Task<IEnumerable<UiTrack>> RetrieveList() {
+            IEnumerable<UiTrack> retValue = new List<UiTrack>();
 
-        public void Dispose() {
-            mLibraryStatusSubscription?.Dispose();
-            mLibraryStatusSubscription = null;
+            var list = await mTrackProvider.GetFavoriteTracks();
 
-            mStateSubscription?.Dispose();
-            mStateSubscription = null;
+            if( list?.Success == true ) {
+                retValue = from track in list.TrackList orderby track.TrackName, track.ArtistName, track.AlbumName select new UiTrack( track, OnPlay );
+            }
+
+            return retValue;
         }
     }
 }
