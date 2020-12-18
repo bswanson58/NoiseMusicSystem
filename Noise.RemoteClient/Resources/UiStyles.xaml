@@ -7,6 +7,7 @@
         <Setter Property="FontSize" Value="Large"/>
         <Setter Property="TextColor" Value="White"/>
         <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
     <Style x:Key="TitleViewSubtitleStyle" TargetType="Label" BasedOn="{StaticResource TitleViewTitleStyle}">
@@ -16,10 +17,12 @@
     <Style x:Key="ListItemHeaderStyle" TargetType="Label">
         <Setter Property="FontSize" Value="Large"/>
         <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
     <Style x:Key="ListItemDetailStyle" TargetType="Label">
         <Setter Property="FontSize" Value="Small"/>
         <Setter Property="Opacity" Value="0.75"/>
+        <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
 </ResourceDictionary>
