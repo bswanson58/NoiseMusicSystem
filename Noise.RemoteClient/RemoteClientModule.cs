@@ -1,5 +1,6 @@
 ﻿using Noise.RemoteClient.Interfaces;
 using Noise.RemoteClient.Models;
+using Noise.RemoteClient.Platform;
 using Noise.RemoteClient.Services;
 using Noise.RemoteClient.Views;
 using Prism.Ioc;
@@ -10,6 +11,7 @@ namespace Noise.RemoteClient {
         public static void RegisterServices( IContainerRegistry container ) {
             container.RegisterSingleton<IClientManager, ClientManager>();
             container.RegisterSingleton<IClientState, ClientState>();
+            container.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
             container.RegisterSingleton<IServiceLocator, ServiceLocator>();
             container.RegisterSingleton<IHostInformationProvider, HostInformationProvider>();
             container.RegisterSingleton<IQueueListProvider, QueueListProvider>();
