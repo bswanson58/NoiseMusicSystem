@@ -49,16 +49,14 @@ namespace Noise.RemoteClient.ViewModels {
             LoadAlbums();
         }
 
-        private void LoadAlbums() {
-            Task.Run( async () => {
-                if( mCurrentAlbum != null ) {
-                    var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
+        private async void LoadAlbums() {
+            if( mCurrentAlbum != null ) {
+                var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
 
-                    if( list?.Success == true ) {
-                        mTrackList.AddRange( from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay ));
-                    }
+                if( list?.Success == true ) {
+                    mTrackList.AddRange( from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay ));
                 }
-            });
+            }
         }
 
         private void OnPlay( UiTrack track ) {

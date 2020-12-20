@@ -82,20 +82,18 @@ namespace Noise.RemoteClient.ViewModels {
             RefreshArtistList();
         }
 
-        private void LoadArtistList() {
-            Task.Run( async () => {
-                mCompleteArtistList.Clear();
+        private async void LoadArtistList() {
+            mCompleteArtistList.Clear();
 
-                if( mLibraryOpen ) {
-                    var list = await mArtistProvider.GetArtistList();
+            if( mLibraryOpen ) {
+                var list = await mArtistProvider.GetArtistList();
 
-                    if( list?.Success == true ) {
-                        mCompleteArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select new UiArtist( a ));
-                    }
+                if( list?.Success == true ) {
+                    mCompleteArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select new UiArtist( a ));
                 }
+            }
 
-                RefreshArtistList();
-            });
+            RefreshArtistList();
         }
 
         private void RefreshArtistList() {

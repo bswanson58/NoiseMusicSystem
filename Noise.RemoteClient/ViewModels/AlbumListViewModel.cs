@@ -73,20 +73,18 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
-        private void LoadAlbumList() {
-            Task.Run( async () => {
-                mCompleteAlbumList.Clear();
+        private async void LoadAlbumList() {
+            mCompleteAlbumList.Clear();
 
-                if( mCurrentArtist != null ) {
-                    var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
+            if( mCurrentArtist != null ) {
+                var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
 
-                    if( list?.Success == true ) {
-                        mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
-                    }
+                if( list?.Success == true ) {
+                    mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
                 }
+            }
 
-                RefreshAlbumList();
-            });
+            RefreshAlbumList();
         }
 
         private void RefreshAlbumList() {
