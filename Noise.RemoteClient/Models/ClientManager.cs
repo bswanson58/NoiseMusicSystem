@@ -1,29 +1,63 @@
-﻿using Noise.RemoteClient.Interfaces;
+﻿using System;
+using System.Reactive.Subjects;
+using Noise.RemoteClient.Dto;
+using Noise.RemoteClient.Interfaces;
 
 namespace Noise.RemoteClient.Models {
     class ClientManager : IClientManager {
-        private readonly IServiceLocator            mServiceLocator;
-        private readonly IHostInformationProvider   mHostInformationProvider;
+        private readonly IServiceLocator                mServiceLocator;
+        private readonly IHostInformationProvider       mHostInformationProvider;
+        private readonly IPlatformLog                   mLog;
+        private readonly BehaviorSubject<ClientStatus>  mClientStatus;
 
-        public ClientManager( IServiceLocator serviceLocator, IHostInformationProvider hostInformationProvider ) {
+        public  IObservable<ClientStatus>               ClientStatus => mClientStatus;
+
+        public ClientManager( IServiceLocator serviceLocator, IHostInformationProvider hostInformationProvider, IPlatformLog log ) {
             mServiceLocator = serviceLocator;
             mHostInformationProvider = hostInformationProvider;
+            mLog = log;
+
+            mClientStatus = new BehaviorSubject<ClientStatus>( new ClientStatus( eClientState.Unknown ));
         }
 
         public void StartClientManager() {
-            mServiceLocator.StartServiceLocator();
+            try {
+                mServiceLocator.StartServiceLocator();
+            }
+            catch( Exception ex ) {
+                mLog.LogException( nameof( StartClientManager ), ex );
+            }
         }
 
         public void StopClientManager() {
-            mServiceLocator.StopServiceLocator();
-            mHostInformationProvider.StopHostStatusRequests();
+            try {
+                mServiceLocator.StopServiceLocator();
+                mHostInformationProvider.StopHostStatusRequests();
+            }
+            catch( Exception ex ) {
+                mLog.LogException( nameof( StopClientManager ), ex );
+            }
         }
 
         public void OnApplicationStarting() {
             StartClientManager();
+
+            try {
+                mClientStatus.OnNext( new ClientStatus( eClientState.Starting ));
+            }
+            catch( Exception ex ) {
+                mLog.LogException( nameof( OnApplicationStarting ), ex );
+            }
         }
 
         public void OnApplicationStopping() {
+            try {
+                mClientStatus.OnNext( new ClientStatus( eClientState.Sleeping ));
+            }
+            catch( Exception ex ) {
+                mLog.LogException( nameof( OnApplicationStopping ), ex );
+            }
+
             StopClientManager();
         }
     }

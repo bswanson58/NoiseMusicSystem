@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using DynamicData;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -11,15 +10,19 @@ using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     class QueueViewModel : BindableBase, IDisposable {
+        private readonly IHostInformationProvider   mHostInformationProvider;
+        private readonly IClientManager             mClientManager;
         private readonly IQueueListProvider         mQueueListProvider;
         private readonly ITransportProvider         mTransportProvider;
         private readonly IClientState               mClientState;
-        private readonly SourceList<UiQueuedTrack>  mQueueList;
+        private readonly IPlatformLog               mLog;
+        private bool                                mClientAwake;
+        private bool                                mLibraryOpen;
         private IDisposable                         mLibraryStatusSubscription;
         private IDisposable                         mQueueSubscription;
-        private IDisposable                         mListSubscription;
+        private IDisposable                         mClientStatusSubscription;
 
-        public  ObservableCollectionExtended<UiQueuedTrack> QueueList { get; }
+        private ObservableCollectionExtended<UiQueuedTrack> mQueueList;
 
         public  TimeSpan                            TotalTime { get; private set; }
         public  TimeSpan                            RemainingTime { get; private set; }
@@ -41,15 +44,14 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand<UiQueuedTrack>      RemoveTrack { get; }
         public  DelegateCommand<UiQueuedTrack>      PromoteTrack { get; }
 
-        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, 
-                               IHostInformationProvider hostInformationProvider, IClientState clientState ) {
+        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, IHostInformationProvider hostInformationProvider,
+                               IClientState clientState, IClientManager clientManager, IPlatformLog log ) {
             mQueueListProvider = queueListProvider;
             mTransportProvider = transportProvider;
+            mHostInformationProvider = hostInformationProvider;
+            mClientManager = clientManager;
             mClientState = clientState;
-
-            QueueList = new ObservableCollectionExtended<UiQueuedTrack>();
-            mQueueList = new SourceList<UiQueuedTrack>();
-            mListSubscription = mQueueList.Connect().Bind( QueueList ).Subscribe();
+            mLog = log;
 
             Suggestions = new DelegateCommand<UiQueuedTrack>( OnSuggestions );
 
@@ -67,36 +69,76 @@ namespace Noise.RemoteClient.ViewModels {
             RemoveTrack = new DelegateCommand<UiQueuedTrack>( OnRemoveTrack );
             PromoteTrack = new DelegateCommand<UiQueuedTrack>( OnPromoteTrack );
             PlayFromTrack = new DelegateCommand<UiQueuedTrack>( OnPlayFromTrack );
+        }
 
-            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
+        public ObservableCollectionExtended<UiQueuedTrack> QueueList {
+            get {
+                if( mQueueList == null ) {
+                    mQueueList = new ObservableCollectionExtended<UiQueuedTrack>();
+
+                    Initialize();
+                }
+
+                return mQueueList;
+            }
+        }
+
+        private void Initialize() {
+            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
+            mClientStatusSubscription = mClientManager.ClientStatus.Subscribe( OnClientStatus );
+        }
+
+        private void OnClientStatus( ClientStatus status ) {
+            mClientAwake = status?.ClientState == eClientState.Starting;
+
+            StartQueue();
         }
 
         private void OnHostStatus( LibraryStatus status ) {
-            if( status?.LibraryOpen == true ) {
-                mQueueSubscription = mQueueListProvider.QueueListStatus.Subscribe( OnQueueChanged );
-                mQueueListProvider.StartQueueStatusRequests();
+            mLibraryOpen = status?.LibraryOpen == true;
+
+            StartQueue();
+        }
+
+        private void StartQueue() {
+            try {
+                if(( mLibraryOpen ) &&
+                   ( mClientAwake )) {
+                    mQueueSubscription = mQueueListProvider.QueueListStatus.Subscribe( OnQueueChanged );
+                    mQueueListProvider.StartQueueStatusRequests();
+                }
+                else {
+                    mQueueListProvider.StopQueueStatusRequests();
+
+                    mQueueSubscription?.Dispose();
+                    mQueueSubscription = null;
+
+                    mQueueList.Clear();
+                }
             }
-            else {
-                mQueueListProvider.StopQueueStatusRequests();
-
-                mQueueSubscription?.Dispose();
-                mQueueSubscription = null;
-
-                QueueList.Clear();
+            catch( Exception ex ) {
+                mLog.LogException( "StartQueue",ex );
             }
         }
 
         private void OnQueueChanged( QueueStatusResponse queueList ) {
-            mQueueList.Clear();
+            try {
+                Device.BeginInvokeOnMainThread(() => {
+                    mQueueList.Clear();
 
-            if( queueList?.QueueList != null ) {
-                mQueueList.AddRange( from q in queueList.QueueList select new UiQueuedTrack( q ));
+                    if( queueList?.QueueList != null ) {
+                        mQueueList.AddRange( from q in queueList.QueueList select new UiQueuedTrack( q ));
 
-                TotalTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
-                RemainingTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
+                        TotalTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
+                        RemainingTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
 
-                RaisePropertyChanged( nameof( TotalTime ));
-                RaisePropertyChanged( nameof( RemainingTime ));
+                        RaisePropertyChanged( nameof( TotalTime ));
+                        RaisePropertyChanged( nameof( RemainingTime ));
+                    }
+                });
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "OnQueueChanged", ex );
             }
         }
 
@@ -163,11 +205,11 @@ namespace Noise.RemoteClient.ViewModels {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
 
+            mClientStatusSubscription?.Dispose();
+            mClientStatusSubscription = null;
+
             mQueueSubscription?.Dispose();
             mQueueSubscription = null;
-
-            mListSubscription?.Dispose();
-            mListSubscription = null;
         }
     }
 }
