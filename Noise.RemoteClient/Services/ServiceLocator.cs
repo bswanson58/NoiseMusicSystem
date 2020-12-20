@@ -8,27 +8,35 @@ using Rssdp;
 namespace Noise.RemoteClient.Services {
     class ServiceLocator : IServiceLocator {
         private readonly BehaviorSubject<Channel>   mChannelAcquired;
+        private readonly IPlatformLog               mLog;
         private SsdpDeviceLocator                   mDeviceLocator;
         private DiscoveredSsdpDevice                mMusicServer;
         private Channel                             mServiceChannel;
 
         public  IObservable<Channel>                ChannelAcquired => mChannelAcquired;
 
-        public ServiceLocator() {
+        public ServiceLocator( IPlatformLog log ) {
+            mLog = log;
+
             mChannelAcquired = new BehaviorSubject<Channel>( null );
         }
 
         public void StartServiceLocator() {
             StopServiceLocator();
 
-            mDeviceLocator = new SsdpDeviceLocator { NotificationFilter = "uuid:NoiseMusicServer" };
+            try {
+                mDeviceLocator = new SsdpDeviceLocator { NotificationFilter = "uuid:NoiseMusicServer" };
 
-            mDeviceLocator.DeviceAvailable += OnDeviceAvailable;
-            mDeviceLocator.DeviceUnavailable += OnDeviceUnavailable;
+                mDeviceLocator.DeviceAvailable += OnDeviceAvailable;
+                mDeviceLocator.DeviceUnavailable += OnDeviceUnavailable;
 
-            mDeviceLocator.StartListeningForNotifications();
+                mDeviceLocator.StartListeningForNotifications();
 
-            mDeviceLocator.SearchAsync();
+                mDeviceLocator.SearchAsync();
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "StartServiceLocator", ex );
+            }
         }
 
         public void StopServiceLocator() {
@@ -47,19 +55,29 @@ namespace Noise.RemoteClient.Services {
         private async void CreateServiceChannel( DiscoveredSsdpDevice forDevice ) {
             await StopServiceChannel();
 
-            var serverAddress = $"{forDevice.DescriptionLocation.Host}:{forDevice.DescriptionLocation.Port}";
-//            var options = new [] {new ChannelOption( "grpc.max_receive_message_length", 16 * 1024 * 1024) };
+            try {
+                var serverAddress = $"{forDevice.DescriptionLocation.Host}:{forDevice.DescriptionLocation.Port}";
+//              var options = new [] {new ChannelOption( "grpc.max_receive_message_length", 16 * 1024 * 1024) };
 
-            mServiceChannel = new Channel( serverAddress, ChannelCredentials.Insecure ); //, options );
+                mServiceChannel = new Channel( serverAddress, ChannelCredentials.Insecure ); //, options );
 
-            mChannelAcquired.OnNext( mServiceChannel );
+                mChannelAcquired.OnNext( mServiceChannel );
+            }
+            catch( Exception ex ) {
+                mLog.LogException( "CreateServiceChannel", ex );
+            }
         }
 
         private async Task StopServiceChannel() {
             if( mServiceChannel != null ) {
-                await mServiceChannel.ShutdownAsync();
+                try {
+                    await mServiceChannel.ShutdownAsync();
 
-                mServiceChannel = null;
+                    mServiceChannel = null;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "StopServiceChannel", ex );
+                }
             }
         }
 
