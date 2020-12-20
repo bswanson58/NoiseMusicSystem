@@ -11,6 +11,7 @@ namespace Noise.RemoteClient.Services {
     class HostInformationProvider : IHostInformationProvider, IDisposable {
         private readonly BehaviorSubject<HostStatusResponse>    mHostStatus;
         private readonly BehaviorSubject<LibraryStatus>         mLibraryStatus;
+        private readonly IPlatformLog                           mLog;
         private IDisposable                                     mServiceAcquiredSubscription;
         private HostInformation.HostInformationClient           mClient;
         private AsyncServerStreamingCall<HostStatusResponse>    mHostStatusStream;
@@ -20,7 +21,9 @@ namespace Noise.RemoteClient.Services {
         public  IObservable<HostStatusResponse>                 HostStatus => mHostStatus;
         public  IObservable<LibraryStatus>                      LibraryStatus => mLibraryStatus;
 
-        public HostInformationProvider( IServiceLocator serviceLocator ) {
+        public HostInformationProvider( IServiceLocator serviceLocator, IPlatformLog log ) {
+            mLog = log;
+
             mHostStatus = new BehaviorSubject<HostStatusResponse>( null );
             mLibraryStatus = new BehaviorSubject<LibraryStatus>( CreateLibraryStatus());
 
@@ -52,15 +55,11 @@ namespace Noise.RemoteClient.Services {
                     }
                     catch( RpcException ex ) {
                         if( ex.StatusCode != StatusCode.Cancelled ) {
-                            var s = ex.Message;
-
-                            // log this
+                            mLog.LogException( "StartHostStatusRequest:RpcException", ex );
                         }
                     }
                     catch( Exception ex ) {
-                        var s = ex.Message;
-
-                        // log this
+                        mLog.LogException( "StartHostStatusRequest", ex );
                     }
                 }
             }
@@ -96,7 +95,12 @@ namespace Noise.RemoteClient.Services {
 
         public async Task<HostInformationResponse> GetHostInformation() {
             if( mClient != null ) {
-                return await mClient.GetHostInformationAsync( new HostInfoEmpty());
+                try {
+                    return await mClient.GetHostInformationAsync( new HostInfoEmpty());
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "GetHostInformation", ex );
+                }
             }
 
             return default;

@@ -9,13 +9,16 @@ using Noise.RemoteServer.Protocol;
 namespace Noise.RemoteClient.Services {
     class QueueListProvider : BaseProvider<QueueControl.QueueControlClient>, IQueueListProvider  {
         private readonly BehaviorSubject<QueueStatusResponse>   mQueueListStatus;
+        private readonly IPlatformLog                           mLog;
         private AsyncServerStreamingCall<QueueStatusResponse>   mQueueStatusStream;
         private CancellationTokenSource                         mQueueStatusStreamCancellation;
 
         public  IObservable<QueueStatusResponse>                QueueListStatus => mQueueListStatus;
 
-        public QueueListProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider ) :
+        public QueueListProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider, IPlatformLog log ) :
             base( serviceLocator, hostProvider ) {
+            mLog = log;
+
             mQueueListStatus = new BehaviorSubject<QueueStatusResponse>( new QueueStatusResponse());
         }
 
@@ -34,15 +37,11 @@ namespace Noise.RemoteClient.Services {
                     }
                     catch( RpcException ex ) {
                         if( ex.StatusCode != StatusCode.Cancelled ) {
-                            var s = ex.Message;
-
-                            // log this
+                            mLog.LogException( "StartQueueStatusRequests:RpcException", ex );
                         }
                     }
                     catch( Exception ex ) {
-                        var s = ex.Message;
-
-                        // log this
+                        mLog.LogException( "StartQueueStatusRequest", ex );
                     }
                 }
             }
@@ -54,9 +53,7 @@ namespace Noise.RemoteClient.Services {
                     mQueueListStatus.OnNext( status );
                 }
                 catch( Exception ex ) {
-                    var s = ex.Message;
-
-                    // log this
+                    mLog.LogException( "PublishQueueStatus", ex );
                 }
             }
         }
@@ -70,9 +67,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.ClearQueueAsync( new QueueControlEmpty());
+                try {
+                    var result = await Client.ClearQueueAsync( new QueueControlEmpty());
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                } 
+                catch( Exception ex ) {
+                    mLog.LogException( "ClearQueue", ex );
+                }
             }
 
             return retValue;
@@ -82,9 +84,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.ClearPlayedTracksAsync( new QueueControlEmpty());
+                try {
+                    var result = await Client.ClearPlayedTracksAsync( new QueueControlEmpty());
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                } 
+                catch( Exception ex ) {
+                    mLog.LogException( "ClearPlayedTracks", ex );
+                }
             }
 
             return retValue;
@@ -94,9 +101,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.StartStrategyPlayAsync( new QueueControlEmpty());
+                try {
+                    var result = await Client.StartStrategyPlayAsync( new QueueControlEmpty());
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                } 
+                catch( Exception ex ) {
+                    mLog.LogException( "StartStrategyPlay", ex );
+                }
             }
 
             return retValue;
@@ -106,9 +118,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.RemoveQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+                try {
+                    var result = await Client.RemoveQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "RemoveQueueItem", ex );
+                }
             }
 
             return retValue;
@@ -118,9 +135,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.PromoteQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+                try {
+                    var result = await Client.PromoteQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "PromoteQueueItem", ex );
+                }
             }
 
             return retValue;
@@ -130,9 +152,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.ReplayQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+                try {
+                    var result = await Client.ReplayQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "ReplayQueueItem", ex );
+                }
             }
 
             return retValue;
@@ -142,9 +169,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.SkipQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+                try {
+                    var result = await Client.SkipQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "SkipQueueItem", ex );
+                }
             }
 
             return retValue;
@@ -154,9 +186,14 @@ namespace Noise.RemoteClient.Services {
             var retValue = false;
 
             if( Client != null ) {
-                var result = await Client.PlayFromQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
+                try {
+                    var result = await Client.PlayFromQueueItemAsync( new QueueItemRequest{ ItemId = track.QueueId });
 
-                retValue = result.Success;
+                    retValue = result.Success;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "PlayFromQueueItem", ex );
+                }
             }
 
             return retValue;

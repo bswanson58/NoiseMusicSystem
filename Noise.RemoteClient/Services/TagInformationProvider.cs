@@ -1,18 +1,27 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Services {
     class TagInformationProvider : BaseProvider<TagInformation.TagInformationClient>, ITagInformationProvider {
-        public TagInformationProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider )
-            : base( serviceLocator, hostProvider ) {
+        private readonly IPlatformLog   mLog;
+
+        public TagInformationProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider, IPlatformLog log ) :
+            base( serviceLocator, hostProvider ) {
+            mLog = log;
         }
 
         public async Task<TagListResponse> GetUserTags() {
             var client = Client;
 
             if( client != null ) {
-                return await client.GetUserTagsAsync( new TagInformationEmpty());
+                try {
+                    return await client.GetUserTagsAsync( new TagInformationEmpty());
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "GetUserTags", ex );
+                }
             }
 
             return default;
@@ -22,7 +31,12 @@ namespace Noise.RemoteClient.Services {
             var client = Client;
 
             if( client != null ) {
-                return await client.GetTagAssociationsAsync( new TagAssociationRequest { TagId = forTag.TagId });
+                try {
+                    return await client.GetTagAssociationsAsync( new TagAssociationRequest { TagId = forTag.TagId });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "GetAssociations", ex );
+                }
             }
 
             return default;

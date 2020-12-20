@@ -1,18 +1,27 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Services {
     class AlbumProvider : BaseProvider<AlbumInformation.AlbumInformationClient>, IAlbumProvider {
-        public AlbumProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider ) :
+        private readonly IPlatformLog   mLog;
+
+        public AlbumProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider, IPlatformLog log ) :
             base( serviceLocator, hostProvider ) {
+            mLog = log;
         }
 
         public async Task<AlbumListResponse> GetAlbumList( long artistId ) {
             var client = Client;
 
             if( client != null ) {
-                return await client.GetAlbumListAsync( new AlbumListRequest { ArtistId = artistId });
+                try {
+                    return await client.GetAlbumListAsync( new AlbumListRequest { ArtistId = artistId });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "GetAlbumList", ex );
+                }
             }
 
             return default;
