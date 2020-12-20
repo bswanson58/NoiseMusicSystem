@@ -26,22 +26,29 @@ namespace Noise.RemoteClient.Services {
             StopQueueStatusRequests();
 
             if( Client != null ) {
-                mQueueStatusStreamCancellation = new CancellationTokenSource();
-                mQueueStatusStream = Client.StartQueueStatus( new QueueControlEmpty(), cancellationToken: mQueueStatusStreamCancellation.Token );
+                try {
+                    mQueueStatusStreamCancellation = new CancellationTokenSource();
+                    mQueueStatusStream = Client.StartQueueStatus( new QueueControlEmpty(), cancellationToken: mQueueStatusStreamCancellation.Token );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "Client.StartQueueStatus", ex );
+                }
 
-                using( mQueueStatusStream ) {
-                    try {
-                        while( await mQueueStatusStream.ResponseStream.MoveNext()) {
-                            PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
+                if( mQueueStatusStream != null ) {
+                    using( mQueueStatusStream ) {
+                        try {
+                            while( await mQueueStatusStream.ResponseStream.MoveNext( mQueueStatusStreamCancellation.Token )) {
+                                PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
+                            }
                         }
-                    }
-                    catch( RpcException ex ) {
-                        if( ex.StatusCode != StatusCode.Cancelled ) {
-                            mLog.LogException( "StartQueueStatusRequests:RpcException", ex );
+                        catch( RpcException ex ) {
+                            if( ex.StatusCode != StatusCode.Cancelled ) {
+                                mLog.LogException( "StartQueueStatusRequests:RpcException", ex );
+                            }
                         }
-                    }
-                    catch( Exception ex ) {
-                        mLog.LogException( "StartQueueStatusRequest", ex );
+                        catch( Exception ex ) {
+                            mLog.LogException( nameof( StartQueueStatusRequests ), ex );
+                        }
                     }
                 }
             }
@@ -53,7 +60,7 @@ namespace Noise.RemoteClient.Services {
                     mQueueListStatus.OnNext( status );
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "PublishQueueStatus", ex );
+                    mLog.LogException( nameof( PublishQueueStatus ), ex );
                 }
             }
         }
@@ -61,6 +68,8 @@ namespace Noise.RemoteClient.Services {
         public void StopQueueStatusRequests() {
             mQueueStatusStreamCancellation?.Cancel();
             mQueueStatusStreamCancellation = null;
+
+            PublishQueueStatus( new QueueStatusResponse());
         }
 
         public async Task<bool> ClearQueue() {
@@ -73,7 +82,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 } 
                 catch( Exception ex ) {
-                    mLog.LogException( "ClearQueue", ex );
+                    mLog.LogException( nameof( ClearQueue ), ex );
                 }
             }
 
@@ -90,7 +99,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 } 
                 catch( Exception ex ) {
-                    mLog.LogException( "ClearPlayedTracks", ex );
+                    mLog.LogException( nameof( ClearPlayedTracks ), ex );
                 }
             }
 
@@ -107,7 +116,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 } 
                 catch( Exception ex ) {
-                    mLog.LogException( "StartStrategyPlay", ex );
+                    mLog.LogException( nameof( StartStrategyPlay ), ex );
                 }
             }
 
@@ -124,7 +133,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "RemoveQueueItem", ex );
+                    mLog.LogException( nameof( RemoveQueueItem ), ex );
                 }
             }
 
@@ -141,7 +150,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "PromoteQueueItem", ex );
+                    mLog.LogException( nameof( PromoteQueueItem ), ex );
                 }
             }
 
@@ -158,7 +167,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "ReplayQueueItem", ex );
+                    mLog.LogException( nameof( ReplayQueueItem ), ex );
                 }
             }
 
@@ -175,7 +184,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "SkipQueueItem", ex );
+                    mLog.LogException( nameof( SkipQueueItem ), ex );
                 }
             }
 
@@ -192,7 +201,7 @@ namespace Noise.RemoteClient.Services {
                     retValue = result.Success;
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "PlayFromQueueItem", ex );
+                    mLog.LogException( nameof( PlayFromQueueItem ), ex );
                 }
             }
 
