@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
+using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
-    class UiTagAssociation {
+    [DebuggerDisplay("Track = {" + nameof(TrackName) + "}")]
+    class UiTagAssociation : BindableBase {
         private readonly TagAssociationInfo         mTag;
         private readonly Action<TagAssociationInfo> mPlayAction;
+        private bool                                mIsPlaying;
 
         public  string                              ArtistName => mTag.ArtistName;
         public  string                              AlbumName => mTag.AlbumName;
@@ -16,6 +20,11 @@ namespace Noise.RemoteClient.Dto {
         public  bool                                HasRating => Rating != 0;
 
         public  DelegateCommand                     Play {  get; }
+
+        public UiTagAssociation( TagAssociationInfo tag, Action<TagAssociationInfo> onPlay, PlayingState state  ) :
+            this( tag, onPlay ) { 
+            SetIsPlaying( state );
+        }
 
         public UiTagAssociation( TagAssociationInfo tag, Action<TagAssociationInfo> onPlay  ) {
             mTag = tag;
@@ -35,6 +44,15 @@ namespace Noise.RemoteClient.Dto {
 
                 return retValue;
             }
+        }
+
+        public bool IsPlaying {
+            get => mIsPlaying;
+            set => SetProperty( ref mIsPlaying, value );
+        }
+
+        public void SetIsPlaying( PlayingState state ) {
+            IsPlaying = mTag.TrackId.Equals( state?.TrackId );
         }
 
         private void OnPlay() {

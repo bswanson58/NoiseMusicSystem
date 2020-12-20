@@ -28,7 +28,13 @@
                     <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
                                             Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
 
-                    <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}"/>
+                    <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}">
+                        <Label.Triggers>
+                            <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
 
                     <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="0,0,5,0"
                                     IsVisible="{Binding HasRating}" Source="{Binding RatingSource}"/>

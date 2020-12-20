@@ -5,6 +5,7 @@ using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
+using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class TagListViewModel : BindableBase, IDisposable {
@@ -12,20 +13,30 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IQueuePlayProvider         mPlayProvider;
         private bool                                mLibraryOpen;
         private bool                                mIsBusy;
+        private PlayingState                        mPlayingState;
         private TagInfo                             mCurrentTag;
         private IDisposable                         mLibraryStatusSubscription;
+        private IDisposable                         mPlayingStateSubscription;
 
         public  ObservableCollectionExtended<TagInfo>           TagList { get; }
         public  ObservableCollectionExtended<UiTagAssociation>  TaggedItemsList { get; }
 
-        public TagListViewModel( ITagInformationProvider tagProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider ) {
+        public TagListViewModel( ITagInformationProvider tagProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider,
+                                 IClientState clientState ) {
             mTagProvider = tagProvider;
             mPlayProvider = queuePlayProvider;
 
             TagList = new ObservableCollectionExtended<TagInfo>();
             TaggedItemsList = new ObservableCollectionExtended<UiTagAssociation>();
 
+            mPlayingStateSubscription = clientState.CurrentlyPlaying.Subscribe( OnPlaying );
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+        }
+
+        private void OnPlaying( PlayingState state ) {
+            mPlayingState = state;
+
+            TaggedItemsList.ForEach( i => i.SetIsPlaying( mPlayingState ));
         }
 
         public TagInfo CurrentTag {
@@ -74,7 +85,7 @@ namespace Noise.RemoteClient.ViewModels {
                 if( associations.Success ) {
                     TaggedItemsList.AddRange( from association in associations.TagAssociations 
                                               orderby association.TrackName 
-                                              select new UiTagAssociation( association, OnPlay ));
+                                              select new UiTagAssociation( association, OnPlay, mPlayingState ));
                 }
             }
 
@@ -88,6 +99,9 @@ namespace Noise.RemoteClient.ViewModels {
         public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
+
+            mPlayingStateSubscription?.Dispose();
+            mPlayingStateSubscription = null;
         }
     }
 }
