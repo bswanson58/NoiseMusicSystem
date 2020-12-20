@@ -59,7 +59,7 @@ namespace Noise.RemoteClient.Services {
                         }
                     }
                     catch( Exception ex ) {
-                        mLog.LogException( "StartHostStatusRequest", ex );
+                        mLog.LogException( nameof( StartHostStatusRequests ), ex );
                     }
                 }
             }
@@ -68,19 +68,24 @@ namespace Noise.RemoteClient.Services {
         private void PublishHostStatus( HostStatusResponse status ) {
             // only publish status changes
             if( status != null ) {
-                if( mLastHostStatus != null ) {
-                    if(( mLastHostStatus.LibraryOpen != status.LibraryOpen ) ||
-                       (!mLastHostStatus.LibraryName.Equals( status.LibraryName ))) {
+                try {
+                    if( mLastHostStatus != null ) {
+                        if(( mLastHostStatus.LibraryOpen != status.LibraryOpen ) ||
+                           (!mLastHostStatus.LibraryName.Equals( status.LibraryName ))) {
+                            mHostStatus.OnNext( status );
+                        }
+                    }
+                    else {
                         mHostStatus.OnNext( status );
                     }
-                }
-                else {
-                    mHostStatus.OnNext( status );
-                }
 
-                mLastHostStatus = status;
+                    mLastHostStatus = status;
 
-                mLibraryStatus.OnNext( CreateLibraryStatus());
+                    mLibraryStatus.OnNext( CreateLibraryStatus());
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( PublishHostStatus ), ex );
+                }
             }
         }
 

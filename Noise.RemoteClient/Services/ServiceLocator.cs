@@ -35,13 +35,15 @@ namespace Noise.RemoteClient.Services {
                 mDeviceLocator.SearchAsync();
             }
             catch( Exception ex ) {
-                mLog.LogException( "StartServiceLocator", ex );
+                mLog.LogException( nameof( StartServiceLocator ), ex );
             }
         }
 
-        public void StopServiceLocator() {
+        public async void StopServiceLocator() {
             mDeviceLocator?.Dispose();
             mDeviceLocator = null;
+
+            await StopServiceChannel();
         }
 
         private void OnDeviceAvailable( object sender, DeviceAvailableEventArgs e ) {
@@ -64,7 +66,7 @@ namespace Noise.RemoteClient.Services {
                 mChannelAcquired.OnNext( mServiceChannel );
             }
             catch( Exception ex ) {
-                mLog.LogException( "CreateServiceChannel", ex );
+                mLog.LogException( nameof( CreateServiceChannel ), ex );
             }
         }
 
@@ -74,15 +76,24 @@ namespace Noise.RemoteClient.Services {
                     await mServiceChannel.ShutdownAsync();
 
                     mServiceChannel = null;
+
+                    mChannelAcquired.OnNext( mServiceChannel );
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "StopServiceChannel", ex );
+                    mLog.LogException( nameof( StopServiceChannel ), ex );
                 }
             }
         }
 
-        private async void OnDeviceUnavailable( object sender, DeviceUnavailableEventArgs e ) {
-            await StopServiceChannel();
+        private void OnDeviceUnavailable( object sender, DeviceUnavailableEventArgs e ) {
+            mServiceChannel = null;
+
+            try {
+                mChannelAcquired.OnNext( mServiceChannel );
+            }
+            catch( Exception ex ) {
+                mLog.LogException( nameof( OnDeviceUnavailable ), ex );
+            }
         }
     }
 }
