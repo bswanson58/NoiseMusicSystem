@@ -120,8 +120,6 @@ namespace Noise.RemoteServer.Services {
             var queueStatusResponder = mServiceFactory.QueueStatusResponder;
 
             await queueStatusResponder.StartResponder( responseStream, context );
-
-            queueStatusResponder.StopResponder();
         }
 
         public override Task<QueueControlResponse> ClearQueue( QueueControlEmpty request, ServerCallContext context ) {

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using DynamicData;
@@ -11,19 +13,23 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RemoteServer.Protocol;
-using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.RemoteServer.Services {
+    internal class PublishStatusInfo { }
+
     class QueueStatusResponder : IHandle<Events.PlaybackStatusChanged> {
-        private readonly IPlayQueue		                        mPlayQueue;
-        private readonly IUserTagManager                        mTagManager;
-        private readonly INoiseLog                              mLog;
-        private readonly IEventAggregator                       mEventAggregator;
-        private IServerStreamWriter<QueueStatusResponse>        mStatusStream;
-        private ServerCallContext                               mCallContext;
-        private TaskCompletionSource<bool>                      mStatusComplete;
-        private ObservableCollectionExtended<PlayQueueTrack>    mQueueList;
-        private IDisposable                                     mQueueSubscription;
+        private readonly IPlayQueue		                                mPlayQueue;
+        private readonly IUserTagManager                                mTagManager;
+        private readonly INoiseLog                                      mLog;
+        private readonly IEventAggregator                               mEventAggregator;
+        private readonly ObservableCollectionExtended<PlayQueueTrack>   mQueueList;
+        private BlockingCollection<PublishStatusInfo>                   mPublishQueue;
+        private TaskCompletionSource<bool>                              mStatusComplete;
+        private CancellationTokenSource                                 mCancellationTokenSource;
+        private IServerStreamWriter<QueueStatusResponse>                mStatusStream;
+        private Task                                                    mPublishTask;
+        private ServerCallContext                                       mCallContext;
+        private IDisposable                                             mQueueSubscription;
 
         public QueueStatusResponder( IPlayQueue playQueue, IUserTagManager tagManager, IEventAggregator eventAggregator, INoiseLog log ) {
             mPlayQueue = playQueue;
@@ -38,21 +44,57 @@ namespace Noise.RemoteServer.Services {
         public async Task StartResponder( IServerStreamWriter<QueueStatusResponse> stream, ServerCallContext callContext ) {
             mStatusStream = stream;
             mCallContext = callContext;
+            mPublishQueue = new BlockingCollection<PublishStatusInfo>();
             mStatusComplete = new TaskCompletionSource<bool>( false );
 
+            mQueueList.Clear();
             mQueueSubscription = mPlayQueue.PlayQueue.AsObservableList().Connect().Bind( mQueueList ).Subscribe();
+
+            mCancellationTokenSource = new CancellationTokenSource();
+            mPublishTask = Task.Run(() => CaptureConsumer( mCancellationTokenSource.Token ), mCancellationTokenSource.Token );
 
             mEventAggregator.Subscribe( this );
 
             await mStatusComplete.Task;
         }
 
-        public async void Handle( Events.PlaybackStatusChanged eventArgs ) {
-            await PublishStatus();
+        private async void CaptureConsumer( CancellationToken cancelToken ) {
+            while(!mPublishQueue.IsCompleted ) {
+                try {
+                    if( mPublishQueue.TryTake( out var _, 500, cancelToken )) {
+                        while( mPublishQueue.Count > 0 ) {
+                            mPublishQueue.Take();
+                        }
+
+                        await PublishStatus();
+                    }
+
+                    if( mCallContext.CancellationToken.IsCancellationRequested ) {
+                        break;
+                    }
+
+                    if( cancelToken.IsCancellationRequested ) {
+                        break;
+                    }
+                }
+                catch( OperationCanceledException ) {
+                    break;
+                }
+            }
+
+            StopResponder();
+        }
+
+        public void Handle( Events.PlaybackStatusChanged eventArgs ) {
+            if( mPublishQueue?.IsCompleted == false ) {
+                mPublishQueue.Add( new PublishStatusInfo());
+            }
         }
         
-        private async void OnQueueChanged( object sender, NotifyCollectionChangedEventArgs args ) {
-            await PublishStatus();
+        private void OnQueueChanged( object sender, NotifyCollectionChangedEventArgs args ) {
+            if( mPublishQueue?.IsCompleted == false ) {
+                mPublishQueue.Add( new PublishStatusInfo());
+            }
         }
 
         private QueueTrackInfo TransformQueueTrack( PlayQueueTrack track ) {
@@ -101,7 +143,9 @@ namespace Noise.RemoteServer.Services {
                     status.TotalPlayMilliseconds = (Int32)totalTime.TotalMilliseconds;
                     status.RemainingPlayMilliseconds = (Int32)remainingTime.TotalMilliseconds;
 
-                    await mStatusStream.WriteAsync( status );
+                    if(!mCallContext.CancellationToken.IsCancellationRequested ) {
+                        await mStatusStream.WriteAsync( status );
+                    }
                 }
                 catch( Exception ex ) {
                     mLog.LogException( "QueueStatusResponder:PublishStatus", ex );
@@ -112,12 +156,21 @@ namespace Noise.RemoteServer.Services {
             }
         }
 
-        public void StopResponder() {
+        private void StopResponder() {
             mQueueSubscription?.Dispose();
             mQueueSubscription = null;
 
+            mCancellationTokenSource?.Cancel();
+            mCancellationTokenSource = null;
+
+            mPublishQueue?.CompleteAdding();
+
+            mPublishTask?.Wait( 200 );
+            mPublishTask = null;
+
             mEventAggregator.Unsubscribe( this );
-            mStatusComplete.SetResult( true );
+
+            mStatusComplete?.SetResult( true );
         }
     }
 }
