@@ -7,6 +7,7 @@ using Prism.Mvvm;
 namespace Noise.RemoteClient.Dto {
     class UiTrack : BindableBase {
         private readonly Action<UiTrack>    mPlayAction;
+        private bool                        mIsPlaying;
 
         public  TrackInfo                   Track { get; }
         public  string                      TrackName => Track.TrackName;
@@ -38,6 +39,15 @@ namespace Noise.RemoteClient.Dto {
 
                 return retValue;
             }
+        }
+
+        public bool IsPlaying {
+            get => mIsPlaying;
+            set => SetProperty( ref mIsPlaying, value );
+        }
+
+        public void SetIsPlaying( PlayingState state ) {
+            IsPlaying = Track.TrackId.Equals( state?.TrackId );
         }
 
         private void OnPlay() {

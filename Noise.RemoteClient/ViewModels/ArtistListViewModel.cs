@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Prism.Mvvm;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class ArtistListViewModel : BindableBase, IDisposable {
@@ -16,7 +16,9 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly List<UiArtist>             mCompleteArtistList;
         private bool                                mLibraryOpen;
         private string                              mFilterText;
+        private PlayingState                        mPlayingState;
         private IDisposable                         mLibraryStatusSubscription;
+        private IDisposable                         mPlayingStateSubscription;
         private UiArtist                            mSelectedArtist;
 
         private ObservableCollectionExtended<UiArtist>  mArtistList;
@@ -33,6 +35,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void Initialize() {
             mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            mPlayingStateSubscription = mClientState.CurrentlyPlaying.Subscribe( OnPlaying );
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
@@ -46,6 +49,17 @@ namespace Noise.RemoteClient.ViewModels {
 
                 RefreshArtistList();
             }
+        }
+
+        private void OnPlaying( PlayingState state ) {
+            mPlayingState = state;
+
+            UpdatePlayingState();
+        }
+
+        private void UpdatePlayingState() {
+            mCompleteArtistList.ForEach( a => a.SetIsPlaying( mPlayingState ));
+            mArtistList?.ForEach( a => a.SetIsPlaying( mPlayingState ));
         }
 
         public ObservableCollectionExtended<UiArtist> ArtistList {
@@ -90,6 +104,7 @@ namespace Noise.RemoteClient.ViewModels {
 
                 if( list?.Success == true ) {
                     mCompleteArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select new UiArtist( a ));
+                    mCompleteArtistList.ForEach( a => a.SetIsPlaying( mPlayingState ));
                 }
             }
 
@@ -117,6 +132,9 @@ namespace Noise.RemoteClient.ViewModels {
         public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
+
+            mPlayingStateSubscription?.Dispose();
+            mPlayingStateSubscription = null;
         }
     }
 }

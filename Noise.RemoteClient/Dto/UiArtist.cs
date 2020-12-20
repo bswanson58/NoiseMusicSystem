@@ -1,7 +1,10 @@
 ﻿using Noise.RemoteServer.Protocol;
+using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
-    class UiArtist {
+    class UiArtist : BindableBase {
+        private bool                mIsPlaying;
+
         public  ArtistInfo          Artist { get; }
         public  long                ArtistId => Artist.DbId;
         public  string              ArtistName => Artist.ArtistName;
@@ -27,5 +30,15 @@ namespace Noise.RemoteClient.Dto {
                 return retValue;
             }
         }
+
+        public bool IsPlaying {
+            get => mIsPlaying;
+            set => SetProperty( ref mIsPlaying, value );
+        }
+
+        public void SetIsPlaying( PlayingState state ) {
+            IsPlaying = ArtistId.Equals( state?.ArtistId );
+        }
+
     }
 }

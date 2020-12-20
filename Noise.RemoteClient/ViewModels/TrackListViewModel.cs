@@ -1,16 +1,19 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
+using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
-    class TrackListViewModel : BindableBase {
+    class TrackListViewModel : BindableBase, IDisposable {
         private readonly ITrackProvider         mTrackProvider;
         private readonly IClientState           mClientState;
         private readonly IQueuePlayProvider     mPlayProvider;
+        private PlayingState                    mPlayingState;
+        private IDisposable                     mPlayingStateSubscription;
         private AlbumInfo                       mCurrentAlbum;
         private ObservableCollectionExtended<UiTrack>   mTrackList;
 
@@ -36,6 +39,8 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void Initialize() {
+            mPlayingStateSubscription = mClientState.CurrentlyPlaying.Subscribe( OnPlayingState );
+
             mCurrentAlbum = mClientState.CurrentAlbum;
 
             if( mCurrentAlbum != null ) {
@@ -49,18 +54,31 @@ namespace Noise.RemoteClient.ViewModels {
             LoadAlbums();
         }
 
+        private void OnPlayingState( PlayingState state ) {
+            mPlayingState = state;
+
+            DisplayList.ForEach( t => t.SetIsPlaying( mPlayingState ));
+        }
+
         private async void LoadAlbums() {
             if( mCurrentAlbum != null ) {
                 var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
 
                 if( list?.Success == true ) {
                     mTrackList.AddRange( from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay ));
+
+                    mTrackList.ForEach( t => t.SetIsPlaying( mPlayingState ));
                 }
             }
         }
 
         private void OnPlay( UiTrack track ) {
             mPlayProvider.Queue( track.Track );
+        }
+
+        public void Dispose() {
+            mPlayingStateSubscription?.Dispose();
+            mPlayingStateSubscription = null;
         }
     }
 }

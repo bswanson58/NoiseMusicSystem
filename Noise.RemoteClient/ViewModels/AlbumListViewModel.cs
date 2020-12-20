@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class AlbumListViewModel : BindableBase {
@@ -18,6 +18,8 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly ArtistInfo                 mCurrentArtist;
         private string                              mFilterText;
         private UiAlbum                             mSelectedAlbum;
+        private PlayingState                        mPlayingState;
+        private IDisposable                         mPlayingTrackSubscription;
         private  ObservableCollectionExtended<UiAlbum>  mAlbumList;
 
         public  string                                  ArtistName { get; private set; }
@@ -49,6 +51,19 @@ namespace Noise.RemoteClient.ViewModels {
             RaisePropertyChanged( nameof( ArtistName ));
 
             LoadAlbumList();
+
+            mPlayingTrackSubscription = mClientState.CurrentlyPlaying.Subscribe( OnPlaying );
+        }
+
+        private void OnPlaying( PlayingState state ) {
+            mPlayingState = state;
+
+            UpdatePlayStates();
+        }
+
+        private void UpdatePlayStates() {
+            mCompleteAlbumList.ForEach( a => a.SetIsPlaying( mPlayingState ));
+            mAlbumList?.ForEach( a => a.SetIsPlaying( mPlayingState ));
         }
 
         public string FilterText {
@@ -81,6 +96,7 @@ namespace Noise.RemoteClient.ViewModels {
 
                 if( list?.Success == true ) {
                     mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
+                    mCompleteAlbumList.ForEach( a => a.SetIsPlaying( mPlayingState ));
                 }
             }
 

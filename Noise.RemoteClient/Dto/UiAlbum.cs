@@ -1,10 +1,12 @@
 ﻿using System;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
+using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
-    class UiAlbum {
+    class UiAlbum : BindableBase {
         private readonly Action<UiAlbum>    mPlayAction;
+        private bool                        mIsPlaying;
 
         public  AlbumInfo                   Album { get; }
         public  string                      AlbumName => Album.AlbumName;
@@ -35,6 +37,15 @@ namespace Noise.RemoteClient.Dto {
 
                 return retValue;
             }
+        }
+
+        public bool IsPlaying {
+            get => mIsPlaying;
+            set => SetProperty( ref mIsPlaying, value );
+        }
+
+        public void SetIsPlaying( PlayingState state ) {
+            IsPlaying = Album.AlbumId.Equals( state?.AlbumId );
         }
 
         private void OnPlay() {

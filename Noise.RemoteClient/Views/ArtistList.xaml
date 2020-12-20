@@ -35,7 +35,13 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding ArtistName}"/>
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding ArtistName}">
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                    <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
 
                         <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
                         <Label Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="End" Style="{StaticResource ListItemDetailStyle}" Text="{Binding Genre}"/>

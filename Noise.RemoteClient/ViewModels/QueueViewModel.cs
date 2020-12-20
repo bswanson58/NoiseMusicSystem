@@ -134,6 +134,8 @@ namespace Noise.RemoteClient.ViewModels {
 
                         RaisePropertyChanged( nameof( TotalTime ));
                         RaisePropertyChanged( nameof( RemainingTime ));
+
+                        mClientState.SetPlayingTrack( mQueueList.FirstOrDefault( t => t.IsPlaying ));
                     }
                 });
             }
