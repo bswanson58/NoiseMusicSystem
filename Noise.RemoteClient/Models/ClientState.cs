@@ -6,32 +6,23 @@ using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Models {
     class ClientState : IClientState {
-        private readonly BehaviorSubject<ArtistInfo>        mArtistSubject;
-        private readonly BehaviorSubject<AlbumInfo>         mAlbumSubject;
         private readonly BehaviorSubject<SuggestionState>   mSuggestionSubject;
-        private ArtistInfo                                  mCurrentArtist;
-        private AlbumInfo                                   mCurrentAlbum;
 
-        public  IObservable<ArtistInfo>                     CurrentArtist => mArtistSubject;
-        public  IObservable<AlbumInfo>                      CurrentAlbum => mAlbumSubject;
+        public  ArtistInfo                                  CurrentArtist { get; private set; }
+        public  AlbumInfo                                   CurrentAlbum { get; private set; }
+
         public  IObservable<SuggestionState>                CurrentSuggestion => mSuggestionSubject;
 
         public ClientState() {
-            mArtistSubject = new BehaviorSubject<ArtistInfo>( null );
-            mAlbumSubject = new BehaviorSubject<AlbumInfo>( null );
             mSuggestionSubject = new BehaviorSubject<SuggestionState>( null );
         }
 
         public void SetCurrentArtist( ArtistInfo artist ) {
-            mCurrentArtist = artist;
-
-            mArtistSubject.OnNext( mCurrentArtist );
+            CurrentArtist = artist;
         }
 
         public void SetCurrentAlbum( AlbumInfo album ) {
-            mCurrentAlbum = album;
-
-            mAlbumSubject.OnNext( mCurrentAlbum );
+            CurrentAlbum = album;
         }
 
         public void SetSuggestionState( UiQueuedTrack forTrack ) {

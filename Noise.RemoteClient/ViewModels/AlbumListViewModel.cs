@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DynamicData;
+using System.Threading.Tasks;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -10,47 +10,43 @@ using Prism.Mvvm;
 using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
-    class AlbumListViewModel : BindableBase, IDisposable {
-        private readonly IAlbumProvider         mAlbumProvider;
-        private readonly IClientState           mClientState;
-        private readonly IQueuePlayProvider     mPlayProvider;
-        private readonly List<UiAlbum>          mCompleteAlbumList;
-        private readonly SourceList<UiAlbum>    mAlbumList;
-        private IDisposable                     mLibraryStatusSubscription;
-        private IDisposable                     mStateSubscription;
-        private IDisposable                     mListSubscription;
-        private ArtistInfo                      mCurrentArtist;
-        private string                          mFilterText;
-        private bool                            mLibraryOpen;
-        private UiAlbum                         mSelectedAlbum;
+    class AlbumListViewModel : BindableBase {
+        private readonly IClientState               mClientState;
+        private readonly IAlbumProvider             mAlbumProvider;
+        private readonly IQueuePlayProvider         mPlayProvider;
+        private readonly List<UiAlbum>              mCompleteAlbumList;
+        private readonly ArtistInfo                 mCurrentArtist;
+        private string                              mFilterText;
+        private UiAlbum                             mSelectedAlbum;
+        private  ObservableCollectionExtended<UiAlbum>  mAlbumList;
 
         public  string                                  ArtistName { get; private set; }
         public  Int32                                   AlbumCount { get; private set; }
-        public  ObservableCollectionExtended<UiAlbum>   AlbumList { get; }
 
-        public AlbumListViewModel( IAlbumProvider albumProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider,
-                                   IClientState clientState ) {
+        public AlbumListViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState ) {
             mAlbumProvider = albumProvider;
             mPlayProvider = queuePlayProvider;
             mClientState = clientState;
 
+            mCurrentArtist = clientState.CurrentArtist;
             mCompleteAlbumList = new List<UiAlbum>();
-            mAlbumList = new SourceList<UiAlbum>();
-            AlbumList = new ObservableCollectionExtended<UiAlbum>();
-            mListSubscription = mAlbumList.Connect().Bind( AlbumList ).Subscribe();
-
-            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
-            mStateSubscription = mClientState.CurrentArtist.Subscribe( OnArtistState );
         }
 
-        private void OnArtistState( ArtistInfo artist ) {
-            mCurrentArtist = artist;
+        public ObservableCollectionExtended<UiAlbum> AlbumList {
+            get {
+                if( mAlbumList == null ) {
+                    mAlbumList = new ObservableCollectionExtended<UiAlbum>();
 
-            if( mCurrentArtist != null ) {
-                ArtistName = mCurrentArtist.ArtistName;
+                    Initialize();
+                }
 
-                RaisePropertyChanged( nameof( ArtistName ));
+                return mAlbumList;
             }
+        }
+
+        private void Initialize() {
+            ArtistName = mCurrentArtist?.ArtistName;
+            RaisePropertyChanged( nameof( ArtistName ));
 
             LoadAlbumList();
         }
@@ -77,43 +73,31 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
-        private void OnLibraryStatus( LibraryStatus status ) {
-            mLibraryOpen = status?.LibraryOpen == true;
+        private void LoadAlbumList() {
+            Task.Run( async () => {
+                mCompleteAlbumList.Clear();
 
-            if( mLibraryOpen ) {
-                LoadAlbumList();
-            }
-            else {
-                mAlbumList.Clear();
+                if( mCurrentArtist != null ) {
+                    var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
+
+                    if( list?.Success == true ) {
+                        mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
+                    }
+                }
 
                 RefreshAlbumList();
-            }
-        }
-
-        private async void LoadAlbumList() {
-            mCompleteAlbumList.Clear();
-
-            if(( mLibraryOpen ) &&
-               ( mCurrentArtist != null )) {
-                var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
-
-                if( list?.Success == true ) {
-                    mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
-                }
-            }
-
-            RefreshAlbumList();
+            });
         }
 
         private void RefreshAlbumList() {
-            mAlbumList.Clear();
+            if( mAlbumList != null ) {
+                mAlbumList.Clear();
 
-            mAlbumList.Edit( list => {
-                list.AddRange( from a in mCompleteAlbumList where FilterAlbum( a ) select a );
-            });
+                mAlbumList.AddRange( from a in mCompleteAlbumList where FilterAlbum( a ) select a );
 
-            AlbumCount = AlbumList.Count;
-            RaisePropertyChanged( nameof( AlbumCount ));
+                AlbumCount = AlbumList.Count;
+                RaisePropertyChanged( nameof( AlbumCount ));
+            }
         }
 
         private bool FilterAlbum( UiAlbum album ) {
@@ -128,17 +112,6 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnAlbumPlay( UiAlbum album ) {
             mPlayProvider.Queue( album.Album );
-        }
-
-        public void Dispose() {
-            mLibraryStatusSubscription?.Dispose();
-            mLibraryStatusSubscription = null;
-
-            mStateSubscription?.Dispose();
-            mStateSubscription = null;
-
-            mListSubscription?.Dispose();
-            mListSubscription = null;
         }
     }
 }

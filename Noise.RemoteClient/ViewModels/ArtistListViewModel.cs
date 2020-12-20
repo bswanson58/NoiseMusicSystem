@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DynamicData;
+using System.Threading.Tasks;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -12,28 +12,52 @@ namespace Noise.RemoteClient.ViewModels {
     class ArtistListViewModel : BindableBase, IDisposable {
         private readonly IArtistProvider            mArtistProvider;
         private readonly IClientState               mClientState;
+        private readonly IHostInformationProvider   mHostInformationProvider;
         private readonly List<UiArtist>             mCompleteArtistList;
-        private readonly SourceList<UiArtist>       mArtistList;
         private bool                                mLibraryOpen;
         private string                              mFilterText;
         private IDisposable                         mLibraryStatusSubscription;
-        private IDisposable                         mSourceSubscription;
         private UiArtist                            mSelectedArtist;
 
-        public  ObservableCollectionExtended<UiArtist>  ArtistList { get; }
+        private ObservableCollectionExtended<UiArtist>  mArtistList;
 
         public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
             mArtistProvider = artistProvider;
             mClientState = clientState;
+            mHostInformationProvider = hostInformationProvider;
 
-            ArtistList = new ObservableCollectionExtended<UiArtist>();
             mCompleteArtistList = new List<UiArtist>();
-            mArtistList = new SourceList<UiArtist>();
-            mSourceSubscription = mArtistList.Connect().Bind( ArtistList ).Subscribe();
 
-            FilterText = String.Empty;
+            mFilterText = String.Empty;
+        }
 
-            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+        private void Initialize() {
+            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+        }
+
+        private void OnLibraryStatus( LibraryStatus status ) {
+            mLibraryOpen = status?.LibraryOpen == true;
+
+            if( mLibraryOpen ) {
+                LoadArtistList();
+            }
+            else {
+                mCompleteArtistList.Clear();
+
+                RefreshArtistList();
+            }
+        }
+
+        public ObservableCollectionExtended<UiArtist> ArtistList {
+            get {
+                if( mArtistList == null ) {
+                    mArtistList = new ObservableCollectionExtended<UiArtist>();
+
+                    Initialize();
+                }
+
+                return mArtistList;
+            }
         }
 
         public UiArtist SelectedArtist {
@@ -58,39 +82,28 @@ namespace Noise.RemoteClient.ViewModels {
             RefreshArtistList();
         }
 
-        private void OnLibraryStatus( LibraryStatus status ) {
-            mLibraryOpen = status?.LibraryOpen == true;
+        private void LoadArtistList() {
+            Task.Run( async () => {
+                mCompleteArtistList.Clear();
 
-            if( mLibraryOpen ) {
-                LoadArtistList();
-            }
-            else {
-                mArtistList.Clear();
+                if( mLibraryOpen ) {
+                    var list = await mArtistProvider.GetArtistList();
+
+                    if( list?.Success == true ) {
+                        mCompleteArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select new UiArtist( a ));
+                    }
+                }
 
                 RefreshArtistList();
-            }
-        }
-
-        private async void LoadArtistList() {
-            mCompleteArtistList.Clear();
-
-            if( mLibraryOpen ) {
-                var list = await mArtistProvider.GetArtistList();
-
-                if( list?.Success == true ) {
-                    mCompleteArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select new UiArtist( a ));
-                }
-            }
-
-            RefreshArtistList();
+            });
         }
 
         private void RefreshArtistList() {
-            mArtistList.Clear();
+            if( mArtistList != null ) {
+                mArtistList.Clear();
 
-            mArtistList.Edit( list => {
-                list.AddRange( from artist in mCompleteArtistList where FilterArtist( artist ) select artist );
-            });
+                mArtistList.AddRange( from artist in mCompleteArtistList where FilterArtist( artist ) select artist );
+            }
         }
 
         private bool FilterArtist( UiArtist artist ) {
@@ -106,9 +119,6 @@ namespace Noise.RemoteClient.ViewModels {
         public void Dispose() {
             mLibraryStatusSubscription?.Dispose();
             mLibraryStatusSubscription = null;
-
-            mSourceSubscription?.Dispose();
-            mSourceSubscription = null;
         }
     }
 }

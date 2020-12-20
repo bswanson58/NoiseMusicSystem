@@ -1,31 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
+using Prism.Mvvm;
 
 namespace Noise.RemoteClient.ViewModels {
-    class TrackListViewModel : ListBase<UiTrack> {
+    class TrackListViewModel : BindableBase {
         private readonly ITrackProvider         mTrackProvider;
-        private IDisposable                     mStateSubscription;
+        private readonly IClientState           mClientState;
+        private readonly IQueuePlayProvider     mPlayProvider;
         private AlbumInfo                       mCurrentAlbum;
+        private ObservableCollectionExtended<UiTrack>   mTrackList;
 
         public  string                          ArtistName { get; private set; }
         public  string                          AlbumName { get; private set; }
 
-        public TrackListViewModel( ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider, 
-                                   IClientState clientState ) :
-            base( queuePlayProvider, hostInformationProvider ){
+        public TrackListViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState ) {
             mTrackProvider = trackProvider;
-
-            InitializeLibrarySubscription();
-            mStateSubscription = clientState.CurrentAlbum.Subscribe( OnAlbumState );
+            mPlayProvider = queuePlayProvider;
+            mClientState = clientState;
         }
 
-        private void OnAlbumState( AlbumInfo album ) {
-            mCurrentAlbum = album;
+        public ObservableCollectionExtended<UiTrack> DisplayList {
+            get {
+                if( mTrackList == null ) {
+                    mTrackList = new ObservableCollectionExtended<UiTrack>();
+
+                    Initialize();
+                }
+
+                return mTrackList;
+            }
+        }
+
+        private void Initialize() {
+            mCurrentAlbum = mClientState.CurrentAlbum;
 
             if( mCurrentAlbum != null ) {
                 ArtistName = mCurrentAlbum.ArtistName;
@@ -35,26 +46,23 @@ namespace Noise.RemoteClient.ViewModels {
                 RaisePropertyChanged( nameof( AlbumName ));
             }
 
-            LoadList();
+            LoadAlbums();
         }
 
-        protected override async Task<IEnumerable<UiTrack>> RetrieveList() {
-            IEnumerable<UiTrack> retValue = new List<UiTrack>();
-            
-            if( mCurrentAlbum != null ) {
-                var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
+        private void LoadAlbums() {
+            Task.Run( async () => {
+                if( mCurrentAlbum != null ) {
+                    var list = await mTrackProvider.GetTrackList( mCurrentAlbum.ArtistId, mCurrentAlbum.AlbumId );
 
-                if( list?.Success == true ) {
-                    retValue = from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay );
+                    if( list?.Success == true ) {
+                        mTrackList.AddRange( from track in list.TrackList orderby track.VolumeName, track.TrackNumber select new UiTrack( track, OnPlay ));
+                    }
                 }
-            }
-
-            return retValue;
+            });
         }
 
-        public override void Dispose() {
-            mStateSubscription?.Dispose();
-            mStateSubscription = null;
+        private void OnPlay( UiTrack track ) {
+            mPlayProvider.Queue( track.Track );
         }
     }
 }
