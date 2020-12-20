@@ -1,7 +1,9 @@
-﻿using Noise.RemoteServer.Protocol;
+﻿using System.Diagnostics;
+using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
+    [DebuggerDisplay("Track = {" + nameof(ArtistName) + "}")]
     class UiArtist : BindableBase {
         private bool                mIsPlaying;
 

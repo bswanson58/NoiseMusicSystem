@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
+    [DebuggerDisplay("Track = {" + nameof(TrackName) + "}")]
     class UiTrack : BindableBase {
         private readonly Action<UiTrack>    mPlayAction;
         private bool                        mIsPlaying;
@@ -20,6 +22,11 @@ namespace Noise.RemoteClient.Dto {
         public  string                      Tags => String.Join( " | ", from t in Track.Tags select t.TagName );
 
         public  DelegateCommand Play { get; }
+
+        public UiTrack( TrackInfo track, Action<UiTrack> onPlay, PlayingState state ) :
+            this( track, onPlay ) {
+            SetIsPlaying( state );
+        }
 
         public UiTrack( TrackInfo track, Action<UiTrack> onPlay ) {
             Track = track;

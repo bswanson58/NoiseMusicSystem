@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
+    [DebuggerDisplay("Track = {" + nameof(AlbumName) + "}")]
     class UiAlbum : BindableBase {
         private readonly Action<UiAlbum>    mPlayAction;
         private bool                        mIsPlaying;

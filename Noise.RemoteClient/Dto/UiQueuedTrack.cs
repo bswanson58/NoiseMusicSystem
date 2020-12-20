@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
 
 namespace Noise.RemoteClient.Dto {
+    [DebuggerDisplay("Track = {" + nameof(TrackName) + "}")]
     class UiQueuedTrack : BindableBase {
         public  QueueTrackInfo  Track { get; }
         public  string          TrackName => Track.TrackName;
