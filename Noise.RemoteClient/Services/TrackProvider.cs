@@ -102,5 +102,20 @@ namespace Noise.RemoteClient.Services {
 
             return default;
         }
+
+        public async Task<TrackUpdateResponse> UpdateTrackTags( TrackInfo track ) {
+            var client = Client;
+
+            if( client != null ) {
+                try {
+                    return await client.UpdateTrackTagsAsync( new TrackUpdateRequest { Track = track });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( UpdateTrackTags ), ex );
+                }
+            }
+
+            return default;
+        }
     }
 }

@@ -19,10 +19,16 @@
                     <SwipeView>
                         <SwipeView.LeftItems>
                             <SwipeItems>
-                                <SwipeItemView Command="{Binding Path=BindingContext.EditTrack, Source={x:Reference Name=_queueView}}" Background="White"
+                                <SwipeItemView Command="{Binding Path=BindingContext.EditTrackRatings, Source={x:Reference Name=_queueView}}" Background="White"
                                                CommandParameter="{Binding .}">
                                     <StackLayout Orientation="Horizontal" WidthRequest="50">
                                         <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                    </StackLayout>
+                                </SwipeItemView>
+                                <SwipeItemView Command="{Binding Path=BindingContext.EditTrackTags, Source={x:Reference Name=_queueView}}" Background="White"
+                                               CommandParameter="{Binding .}">
+                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                        <controls:SvgButton Source="EditTags" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
                                     </StackLayout>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.Suggestions, Source={x:Reference Name=_queueView}}" Background="White"

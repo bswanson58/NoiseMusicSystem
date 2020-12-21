@@ -68,4 +68,5 @@ service TrackInformation {
 	rpc GetSimilarTracks (TrackSimilarRequest) returns (TrackListResponse);
 	rpc GetFavoriteTracks (TrackInfoEmpty) returns (TrackListResponse);
 	rpc UpdateTrackRatings (TrackUpdateRequest) returns (TrackUpdateResponse);
+	rpc UpdateTrackTags (TrackUpdateRequest) returns (TrackUpdateResponse);
 }

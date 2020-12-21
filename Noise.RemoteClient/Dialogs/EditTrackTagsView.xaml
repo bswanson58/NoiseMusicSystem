@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
+      x:Class="Noise.RemoteClient.Dialogs.EditTrackTagsView"
+      BackgroundColor="White"
+      RowSpacing="0">
+
+    <Grid.Resources>
+        <DataTemplate x:Key="UiTag" x:DataType="dto:UiTag">
+            <ViewCell>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox Margin="10,3" VerticalOptions="Center" IsChecked="{Binding IsTagged}"/>
+                    <Label VerticalOptions="Center" Style="{StaticResource DialogTextStyle}" Text="{Binding TagName}"/>
+                </StackLayout>
+            </ViewCell>
+        </DataTemplate>
+    </Grid.Resources>
+
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0" Margin="10,10,0,5" Style="{StaticResource DialogTextStyle}" Text="Edit Tags for:"/>
+    <Label Grid.Row="1" Margin="10,0" HorizontalOptions="Center" Style="{StaticResource DialogTextStyle}" Text="{Binding TrackName}"/>
+
+    <ListView Grid.Row="2" Margin="10" HeightRequest="200" WidthRequest="450" HasUnevenRows="True" 
+              ItemsSource="{Binding TagList}" ItemTemplate="{StaticResource UiTag}"/>
+
+    <StackLayout Grid.Row="3" Margin="0,20,10,10" Orientation="Horizontal" HorizontalOptions="End">
+        <Button Command="{Binding Ok}" Text="OK"/>
+        <Button Command="{Binding Cancel}" Text="Cancel"/>
+    </StackLayout>
+</Grid>

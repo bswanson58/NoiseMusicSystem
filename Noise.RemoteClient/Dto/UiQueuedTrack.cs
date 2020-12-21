@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
+using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.Dto {
     [DebuggerDisplay("Track = {" + nameof(TrackName) + "}")]
@@ -48,6 +49,16 @@ namespace Noise.RemoteClient.Dto {
             RaisePropertyChanged( nameof( Rating ));
             RaisePropertyChanged( nameof( HasRating ));
             RaisePropertyChanged( nameof( RatingSource ));
+        }
+
+        public void UpdateTags( TrackInfo fromTrack ) {
+            Track.Tags.Clear();
+
+            fromTrack.Tags.ForEach( t => {
+                Track.Tags.Add( new QueueTagInfo{ TagId = t.TagId, TagName = t.TagName });
+            });
+
+            RaisePropertyChanged( nameof( Tags ));
         }
     }
 }

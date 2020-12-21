@@ -275,6 +275,39 @@ namespace Noise.RemoteServer.Services {
             return retValue;
         }
 
+        public override Task<TrackUpdateResponse> UpdateTrackTags( TrackUpdateRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new TrackUpdateResponse();
+
+                try {
+                    var track = mTrackProvider.GetTrack( request.Track.TrackId );
+
+                    if( track != null ) {
+                        var tags = new List<DbTag>();
+                        var tagList = mTagManager.GetUserTagList();
+
+                        request.Track.Tags.ForEach( t => {
+                            var dbTag = tagList.FirstOrDefault( tag => tag.DbId.Equals( t.TagId ));
+
+                            if( dbTag != null ) {
+                                tags.Add( dbTag );
+                            }
+                        });
+
+                        mTagManager.UpdateAssociations( track, tags );
+
+                        retValue.Success = true;
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( UpdateTrackTags ), ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
+        }
+
         public override Task<TrackUpdateResponse> UpdateTrackRatings( TrackUpdateRequest request, ServerCallContext context ) {
             return Task.Run( () => {
                 var retValue = new TrackUpdateResponse();
@@ -290,12 +323,12 @@ namespace Noise.RemoteServer.Services {
                             retValue.Track = request.Track;
                             retValue.Success = true;
 
-                            mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( updater.Item ));
+                            mEventAggregator.PublishOnUIThread( new Events.UserTagsChanged());
                         }
                     }
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "UpdateTrack", ex );
+                    mLog.LogException( nameof( UpdateTrackRatings ), ex );
 
                     retValue.ErrorMessage = ex.Message;
                 }

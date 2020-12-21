@@ -14,6 +14,7 @@
     <None Remove="Resources\Images\ClearRating.svg" />
     <None Remove="Resources\Images\ContinueFromTrack.svg" />
     <None Remove="Resources\Images\Edit.svg" />
+    <None Remove="Resources\Images\EditTags.svg" />
     <None Remove="Resources\Images\Empty_Star.svg" />
     <None Remove="Resources\Images\Full_Star.svg" />
     <None Remove="Resources\Images\Negative_Rating.svg" />
@@ -35,6 +36,7 @@
     <EmbeddedResource Include="Resources\Images\ClearRating.svg" />
     <EmbeddedResource Include="Resources\Images\ContinueFromTrack.svg" />
     <EmbeddedResource Include="Resources\Images\Edit.svg" />
+    <EmbeddedResource Include="Resources\Images\EditTags.svg" />
     <EmbeddedResource Include="Resources\Images\Empty_Star.svg" />
     <EmbeddedResource Include="Resources\Images\Favorite.svg" />
     <EmbeddedResource Include="Resources\Images\5_Star.svg" />
@@ -82,6 +84,9 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Dialogs\EditTrackRatingsView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Dialogs\EditTrackTagsView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\AlbumList.xaml">

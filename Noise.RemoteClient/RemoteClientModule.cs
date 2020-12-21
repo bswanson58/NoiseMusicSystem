@@ -34,6 +34,7 @@ namespace Noise.RemoteClient {
             // do not register fly out content...
 
             container.RegisterDialog<EditTrackRatingsView, EditTrackRatingsViewModel>();
+            container.RegisterDialog<EditTrackTagsView, EditTrackTagsViewModel>();
         }
     }
 }

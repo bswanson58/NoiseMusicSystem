@@ -33,6 +33,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  DelegateCommand<UiQueuedTrack>      Suggestions { get; }
         public  DelegateCommand<UiQueuedTrack>      EditTrackRatings { get; }
+        public  DelegateCommand<UiQueuedTrack>      EditTrackTags { get; }
 
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
@@ -63,6 +64,7 @@ namespace Noise.RemoteClient.ViewModels {
 
             Suggestions = new DelegateCommand<UiQueuedTrack>( OnSuggestions );
             EditTrackRatings = new DelegateCommand<UiQueuedTrack>( OnEditTrackRatings );
+            EditTrackTags = new DelegateCommand<UiQueuedTrack>( OnEditTrackTags );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -161,12 +163,16 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private TrackInfo CreateTrackInfo( UiQueuedTrack fromQueuedTrack ) {
-            return new TrackInfo {
+            var retValue = new TrackInfo {
                 TrackId = fromQueuedTrack.Track.TrackId, AlbumId = fromQueuedTrack.Track.AlbumId, ArtistId = fromQueuedTrack.Track.ArtistId,
                 TrackName = fromQueuedTrack.TrackName, AlbumName = fromQueuedTrack.AlbumName, VolumeName = fromQueuedTrack.Track.VolumeName, 
                 ArtistName = fromQueuedTrack.ArtistName, Duration = fromQueuedTrack.Track.Duration,
-                TrackNumber = fromQueuedTrack.Track.TrackNumber, IsFavorite = fromQueuedTrack.IsFavorite, Rating = fromQueuedTrack.Rating
+                TrackNumber = fromQueuedTrack.Track.TrackNumber, IsFavorite = fromQueuedTrack.IsFavorite, Rating = fromQueuedTrack.Rating,
             };
+
+            retValue.Tags.AddRange( from t in fromQueuedTrack.Track.Tags select new TrackTagInfo{ TagId = t.TagId, TagName = t.TagName });
+
+            return retValue;
         }
 
         private void OnEditTrackRatings( UiQueuedTrack forTrack ) {
@@ -183,6 +189,25 @@ namespace Noise.RemoteClient.ViewModels {
 
                         var queueTrack = QueueList.FirstOrDefault( t => t.Track.TrackId.Equals( track.TrackId ));
                         queueTrack?.UpdateRatings( track );
+                    }
+                }
+            });
+        }
+
+        private void OnEditTrackTags( UiQueuedTrack forTrack ) {
+            var parameters = new DialogParameters {{ EditTrackTagsViewModel.cTrackParameter, CreateTrackInfo( forTrack ) }};
+
+            mDialogService.ShowDialog( nameof( EditTrackTagsView ), parameters, async result => {
+                var accepted = result.Parameters.GetValue<bool>( EditTrackTagsViewModel.cDialogAccepted );
+
+                if( accepted ) {
+                    var track = parameters.GetValue<TrackInfo>( EditTrackTagsViewModel.cTrackParameter );
+
+                    if( track != null ) {
+                        await mTrackProvider.UpdateTrackTags( track );
+
+                        var queueTrack = QueueList.FirstOrDefault( t => t.Track.TrackId.Equals( track.TrackId ));
+                        queueTrack?.UpdateTags( track );
                     }
                 }
             });
