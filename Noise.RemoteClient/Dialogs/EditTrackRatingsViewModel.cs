@@ -10,8 +10,8 @@ namespace Noise.RemoteClient.Dialogs {
         public  const string        cDialogAccepted = "dialogAccepted";
 
         private TrackInfo           mTrack;
-        private bool                mIsFavorite;
-        private int                 mRating;
+        protected bool              mIsFavorite;
+        protected int               mRating;
 
         public  string              TrackName => mTrack?.TrackName;
 
@@ -52,7 +52,7 @@ namespace Noise.RemoteClient.Dialogs {
             Cancel = new DelegateCommand( OnCancel );
         }
 
-        public void OnDialogOpened( IDialogParameters parameters ) {
+        public virtual void OnDialogOpened( IDialogParameters parameters ) {
             mTrack = parameters.GetValue<TrackInfo>( cTrackParameter );
 
             if( mTrack != null ) {
@@ -80,7 +80,7 @@ namespace Noise.RemoteClient.Dialogs {
         private void OnSetRating5() => UpdateRating( 5 );
         private void OnClearRating() => UpdateRating( 0 );
 
-        private void UpdateRating( int rating ) {
+        protected void UpdateRating( int rating ) {
             mRating = rating;
 
             RaisePropertyChanged( nameof( Rating0Source ));
@@ -91,7 +91,7 @@ namespace Noise.RemoteClient.Dialogs {
             RaisePropertyChanged( nameof( Rating5Source ));
         }
 
-        private void OnOk() {
+        protected virtual void OnOk() {
             mTrack.IsFavorite = mIsFavorite;
             mTrack.Rating = mRating;
 
@@ -105,7 +105,7 @@ namespace Noise.RemoteClient.Dialogs {
         public bool CanCloseDialog() => true;
         public void OnDialogClosed() { }
 
-        private void RaiseRequestClose( IDialogParameters parameters ) {
+        protected void RaiseRequestClose( IDialogParameters parameters ) {
             RequestClose?.Invoke( parameters );
         }
     }

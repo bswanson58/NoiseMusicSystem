@@ -50,6 +50,16 @@ namespace Noise.RemoteClient.Dto {
             IsPlaying = Album.AlbumId.Equals( state?.AlbumId );
         }
 
+        public void UpdateRatings( AlbumInfo fromAlbum ) {
+            Album.IsFavorite = fromAlbum.IsFavorite;
+            Album.Rating = fromAlbum.Rating;
+
+            RaisePropertyChanged( nameof( IsFavorite ));
+            RaisePropertyChanged( nameof( Rating ));
+            RaisePropertyChanged( nameof( HasRating ));
+            RaisePropertyChanged( nameof( RatingSource ));
+        }
+
         private void OnPlay() {
             mPlayAction?.Invoke( this );
         }

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using DynamicData.Binding;
+using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
+using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
@@ -14,6 +17,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IClientState               mClientState;
         private readonly IAlbumProvider             mAlbumProvider;
         private readonly IQueuePlayProvider         mPlayProvider;
+        private readonly IDialogService             mDialogService;
         private readonly List<UiAlbum>              mCompleteAlbumList;
         private readonly ArtistInfo                 mCurrentArtist;
         private string                              mFilterText;
@@ -25,10 +29,15 @@ namespace Noise.RemoteClient.ViewModels {
         public  string                                  ArtistName { get; private set; }
         public  Int32                                   AlbumCount { get; private set; }
 
-        public AlbumListViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState ) {
+        public  DelegateCommand<UiAlbum>                EditAlbumRatings { get; }
+
+        public AlbumListViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IDialogService dialogService ) {
             mAlbumProvider = albumProvider;
             mPlayProvider = queuePlayProvider;
             mClientState = clientState;
+            mDialogService = dialogService;
+
+            EditAlbumRatings = new DelegateCommand<UiAlbum>( OnEditAlbumRatings );
 
             mCurrentArtist = clientState.CurrentArtist;
             mCompleteAlbumList = new List<UiAlbum>();
@@ -126,6 +135,25 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnAlbumPlay( UiAlbum album ) {
             mPlayProvider.Queue( album.Album );
+        }
+
+        private void OnEditAlbumRatings( UiAlbum forAlbum ) {
+            var parameters = new DialogParameters {{ EditAlbumRatingsViewModel.cAlbumParameter, forAlbum.Album }};
+
+            mDialogService.ShowDialog( nameof( EditAlbumRatingsView ), parameters, async result => {
+                var accepted = result.Parameters.GetValue<bool>( EditTrackRatingsViewModel.cDialogAccepted );
+
+                if( accepted ) {
+                    var album = parameters.GetValue<AlbumInfo>( EditAlbumRatingsViewModel.cAlbumParameter );
+
+                    if( album != null ) {
+                        await mAlbumProvider.UpdateAlbumRatings( album );
+
+                        var uiAlbum = AlbumList.FirstOrDefault( a => a.Album.AlbumId.Equals( album.AlbumId ));
+                        uiAlbum?.UpdateRatings( album );
+                    }
+                }
+            });
         }
 
         public void Dispose() {
