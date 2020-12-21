@@ -8,5 +8,6 @@ namespace Noise.RemoteClient.Interfaces {
         Task<TrackListResponse>     GetTaggedTracks( long trackId );
         Task<TrackListResponse>     GetSimilarTracks( long trackId );
         Task<TrackListResponse>     GetFavoriteTracks();
+        Task<TrackUpdateResponse>   UpdateTrackRatings( TrackInfo track );
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
 using DynamicData.Binding;
+using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
@@ -14,8 +16,10 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IClientManager             mClientManager;
         private readonly IQueueListProvider         mQueueListProvider;
         private readonly ITransportProvider         mTransportProvider;
+        private readonly ITrackProvider             mTrackProvider;
         private readonly IClientState               mClientState;
         private readonly IPlatformLog               mLog;
+        private readonly IDialogService             mDialogService;
         private bool                                mClientAwake;
         private bool                                mLibraryOpen;
         private IDisposable                         mLibraryStatusSubscription;
@@ -28,6 +32,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  TimeSpan                            RemainingTime { get; private set; }
 
         public  DelegateCommand<UiQueuedTrack>      Suggestions { get; }
+        public  DelegateCommand<UiQueuedTrack>      EditTrackRatings { get; }
 
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
@@ -44,16 +49,20 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand<UiQueuedTrack>      RemoveTrack { get; }
         public  DelegateCommand<UiQueuedTrack>      PromoteTrack { get; }
 
-        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, IHostInformationProvider hostInformationProvider,
-                               IClientState clientState, IClientManager clientManager, IPlatformLog log ) {
+        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, ITrackProvider trackProvider,
+                               IHostInformationProvider hostInformationProvider, IClientState clientState, IClientManager clientManager,
+                               IPlatformLog log, IDialogService dialogService ) {
             mQueueListProvider = queueListProvider;
             mTransportProvider = transportProvider;
+            mTrackProvider = trackProvider;
             mHostInformationProvider = hostInformationProvider;
             mClientManager = clientManager;
             mClientState = clientState;
+            mDialogService = dialogService;
             mLog = log;
 
             Suggestions = new DelegateCommand<UiQueuedTrack>( OnSuggestions );
+            EditTrackRatings = new DelegateCommand<UiQueuedTrack>( OnEditTrackRatings );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -149,6 +158,34 @@ namespace Noise.RemoteClient.ViewModels {
 
             // route to the shell content page, do push it on the navigation stack.
             await Shell.Current.GoToAsync( "///suggestions" );
+        }
+
+        private TrackInfo CreateTrackInfo( UiQueuedTrack fromQueuedTrack ) {
+            return new TrackInfo {
+                TrackId = fromQueuedTrack.Track.TrackId, AlbumId = fromQueuedTrack.Track.AlbumId, ArtistId = fromQueuedTrack.Track.ArtistId,
+                TrackName = fromQueuedTrack.TrackName, AlbumName = fromQueuedTrack.AlbumName, VolumeName = fromQueuedTrack.Track.VolumeName, 
+                ArtistName = fromQueuedTrack.ArtistName, Duration = fromQueuedTrack.Track.Duration,
+                TrackNumber = fromQueuedTrack.Track.TrackNumber, IsFavorite = fromQueuedTrack.IsFavorite, Rating = fromQueuedTrack.Rating
+            };
+        }
+
+        private void OnEditTrackRatings( UiQueuedTrack forTrack ) {
+            var parameters = new DialogParameters {{ EditTrackRatingsViewModel.cTrackParameter, CreateTrackInfo( forTrack ) }};
+
+            mDialogService.ShowDialog( nameof( EditTrackRatingsView ), parameters, async result => {
+                var accepted = result.Parameters.GetValue<bool>( EditTrackRatingsViewModel.cDialogAccepted );
+
+                if( accepted ) {
+                    var track = parameters.GetValue<TrackInfo>( EditTrackRatingsViewModel.cTrackParameter );
+
+                    if( track != null ) {
+                        await mTrackProvider.UpdateTrackRatings( track );
+
+                        var queueTrack = QueueList.FirstOrDefault( t => t.Track.TrackId.Equals( track.TrackId ));
+                        queueTrack?.UpdateRatings( track );
+                    }
+                }
+            });
         }
 
         private void OnPlay() {

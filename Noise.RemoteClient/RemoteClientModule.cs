@@ -1,4 +1,5 @@
-﻿using Noise.RemoteClient.Interfaces;
+﻿using Noise.RemoteClient.Dialogs;
+using Noise.RemoteClient.Interfaces;
 using Noise.RemoteClient.Models;
 using Noise.RemoteClient.Platform;
 using Noise.RemoteClient.Services;
@@ -31,6 +32,8 @@ namespace Noise.RemoteClient {
             Routing.RegisterRoute( "trackList", typeof( TrackList ));
 
             // do not register fly out content...
+
+            container.RegisterDialog<EditTrackRatingsView, EditTrackRatingsViewModel>();
         }
     }
 }

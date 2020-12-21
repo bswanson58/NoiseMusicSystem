@@ -51,10 +51,21 @@ message TrackListResponse {
 	repeated TrackInfo	TrackList = 5;
 }
 
+message TrackUpdateRequest {
+	TrackInfo	Track = 1;
+}
+
+message TrackUpdateResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+	TrackInfo	Track = 3;
+}
+
 service TrackInformation {
 	rpc GetTrackList (TrackListRequest) returns (TrackListResponse);
 	rpc GetRatedTracks (TrackRatingRequest) returns (TrackListResponse);
 	rpc GetTaggedTracks (TrackTagsRequest) returns (TrackListResponse);
 	rpc GetSimilarTracks (TrackSimilarRequest) returns (TrackListResponse);
 	rpc GetFavoriteTracks (TrackInfoEmpty) returns (TrackListResponse);
+	rpc UpdateTrackRatings (TrackUpdateRequest) returns (TrackUpdateResponse);
 }

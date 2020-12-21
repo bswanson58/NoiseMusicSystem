@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using Grpc.Core;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -11,6 +12,7 @@ using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.RemoteServer.Services {
     class TrackInformationService : TrackInformation.TrackInformationBase {
+        private readonly IEventAggregator   mEventAggregator;
         private readonly ITrackProvider     mTrackProvider;
         private readonly IAlbumProvider     mAlbumProvider;
         private readonly IArtistProvider    mArtistProvider;
@@ -19,12 +21,14 @@ namespace Noise.RemoteServer.Services {
         private readonly INoiseLog          mLog;
 
         public TrackInformationService( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-                                        IUserTagManager userTagManager, ISearchProvider searchProvider, INoiseLog log ) {
+                                        IUserTagManager userTagManager, ISearchProvider searchProvider, INoiseLog log,
+                                        IEventAggregator eventAggregator ) {
             mArtistProvider = artistProvider;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mTagManager = userTagManager;
             mSearchProvider = searchProvider;
+            mEventAggregator = eventAggregator;
             mLog = log;
         }
 
@@ -269,6 +273,34 @@ namespace Noise.RemoteServer.Services {
             } while( textDeleted );
 
             return retValue;
+        }
+
+        public override Task<TrackUpdateResponse> UpdateTrackRatings( TrackUpdateRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new TrackUpdateResponse();
+
+                try {
+                    using( var updater = mTrackProvider.GetTrackForUpdate( request.Track.TrackId )) {
+                        if( updater.Item != null ) {
+                            updater.Item.IsFavorite = request.Track.IsFavorite;
+                            updater.Item.Rating = (short)request.Track.Rating;
+
+                            updater.Update();
+
+                            retValue.Track = request.Track;
+                            retValue.Success = true;
+
+                            mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( updater.Item ));
+                        }
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "UpdateTrack", ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+                return retValue;
+            });
         }
     }
 }

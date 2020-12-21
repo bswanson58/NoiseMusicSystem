@@ -20,7 +20,7 @@ namespace Noise.RemoteClient.Services {
                     return await client.GetTrackListAsync( new TrackListRequest { ArtistId = artistId, AlbumId = albumId });
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "GetTrackList", ex );
+                    mLog.LogException( nameof( GetTrackList ), ex );
                 }
             }
 
@@ -36,7 +36,7 @@ namespace Noise.RemoteClient.Services {
                         new TrackRatingRequest { ArtistId = artistId, IncludeFavorites = includeFavorites, IncludeRatingsOver = includeRatingsOver});
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "GetRatedTracks", ex );
+                    mLog.LogException( nameof( GetRatedTracks ), ex );
                 }
             }
 
@@ -51,7 +51,7 @@ namespace Noise.RemoteClient.Services {
                     return await client.GetTaggedTracksAsync( new TrackTagsRequest{ TrackId = trackId });
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "GetTaggedTracks", ex );
+                    mLog.LogException( nameof( GetTaggedTracks ), ex );
                 }
             }
 
@@ -66,7 +66,7 @@ namespace Noise.RemoteClient.Services {
                     return await client.GetSimilarTracksAsync( new TrackSimilarRequest{ TrackId = trackId });
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "GetSimilarTracks", ex );
+                    mLog.LogException( nameof( GetSimilarTracks ), ex );
                 }
             }
 
@@ -81,7 +81,22 @@ namespace Noise.RemoteClient.Services {
                     return await client.GetFavoriteTracksAsync( new TrackInfoEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "GetFavoriteTracks", ex );
+                    mLog.LogException( nameof( GetFavoriteTracks ), ex );
+                }
+            }
+
+            return default;
+        }
+
+        public async Task<TrackUpdateResponse> UpdateTrackRatings( TrackInfo track ) {
+            var client = Client;
+
+            if( client != null ) {
+                try {
+                    return await client.UpdateTrackRatingsAsync( new TrackUpdateRequest { Track = track });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( UpdateTrackRatings ), ex );
                 }
             }
 

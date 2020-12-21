@@ -25,4 +25,8 @@
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
+    <Style x:Key="DialogTextStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="Medium"/>
+        <Setter Property="LineBreakMode" Value="NoWrap"/>
+    </Style>
 </ResourceDictionary>

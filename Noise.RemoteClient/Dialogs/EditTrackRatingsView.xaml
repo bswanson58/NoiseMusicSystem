@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+      x:Class="Noise.RemoteClient.Dialogs.EditTrackRatingsView"
+      BackgroundColor="White"
+      RowSpacing="0">
+
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0" Margin="10,10,0,5" Style="{StaticResource DialogTextStyle}" Text="Edit Ratings for:"/>
+    <Label Grid.Row="1" HorizontalOptions="Center" Style="{StaticResource DialogTextStyle}" Text="{Binding TrackName}"/>
+
+    <controls:SvgButton Grid.Row="2" Margin="0,10" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" Source="{Binding FavoriteSource}" Command="{Binding ToggleFavorite}"/>
+
+    <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center" Margin="20,10">
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating0Source}" Command="{Binding Set0Star}"/>
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating1Source}" Command="{Binding Set1Star}"/>
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating2Source}" Command="{Binding Set2Star}"/>
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating3Source}" Command="{Binding Set3Star}"/>
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating4Source}" Command="{Binding Set4Star}"/>
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating5Source}" Command="{Binding Set5Star}"/>
+        <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="ClearRating" Command="{Binding ClearRating}"/>
+    </StackLayout>
+
+    <StackLayout Grid.Row="4" Margin="0,20,10,10" Orientation="Horizontal" HorizontalOptions="End">
+        <Button Command="{Binding Ok}" Text="OK"/>
+        <Button Command="{Binding Cancel}" Text="Cancel"/>
+    </StackLayout>
+</Grid>

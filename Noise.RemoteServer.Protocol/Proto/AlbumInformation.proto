@@ -26,6 +26,17 @@ message AlbumListResponse {
 	repeated AlbumInfo	AlbumList = 4;
 }
 
+message AlbumUpdateRequest {
+	AlbumInfo	Album = 1;
+}
+
+message AlbumUpdateResponse {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+	AlbumInfo	Album = 3;
+}
+
 service AlbumInformation {
 	rpc GetAlbumList (AlbumListRequest) returns (AlbumListResponse);
+	rpc UpdateAlbumRatings (AlbumUpdateRequest) returns (AlbumUpdateResponse);
 }

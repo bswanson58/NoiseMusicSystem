@@ -20,7 +20,22 @@ namespace Noise.RemoteClient.Services {
                     return await client.GetAlbumListAsync( new AlbumListRequest { ArtistId = artistId });
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "GetAlbumList", ex );
+                    mLog.LogException( nameof( GetAlbumList ), ex );
+                }
+            }
+
+            return default;
+        }
+
+        public async Task<AlbumUpdateResponse> UpdateAlbumRatings( AlbumInfo album ) {
+            var client = Client;
+
+            if( client != null ) {
+                try {
+                    return await client.UpdateAlbumRatingsAsync( new AlbumUpdateRequest { Album = album });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( UpdateAlbumRatings ), ex );
                 }
             }
 

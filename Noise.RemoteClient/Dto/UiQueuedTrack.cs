@@ -39,5 +39,15 @@ namespace Noise.RemoteClient.Dto {
                 return retValue;
             }
         }
+
+        public void UpdateRatings( TrackInfo fromTrack ) {
+            Track.IsFavorite = fromTrack.IsFavorite;
+            Track.Rating = fromTrack.Rating;
+
+            RaisePropertyChanged( nameof( IsFavorite ));
+            RaisePropertyChanged( nameof( Rating ));
+            RaisePropertyChanged( nameof( HasRating ));
+            RaisePropertyChanged( nameof( RatingSource ));
+        }
     }
 }
