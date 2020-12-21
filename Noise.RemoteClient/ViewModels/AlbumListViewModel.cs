@@ -10,7 +10,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
-    class AlbumListViewModel : BindableBase {
+    class AlbumListViewModel : BindableBase, IDisposable {
         private readonly IClientState               mClientState;
         private readonly IAlbumProvider             mAlbumProvider;
         private readonly IQueuePlayProvider         mPlayProvider;
@@ -126,6 +126,11 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnAlbumPlay( UiAlbum album ) {
             mPlayProvider.Queue( album.Album );
+        }
+
+        public void Dispose() {
+            mPlayingTrackSubscription?.Dispose();
+            mPlayingTrackSubscription = null;
         }
     }
 }
