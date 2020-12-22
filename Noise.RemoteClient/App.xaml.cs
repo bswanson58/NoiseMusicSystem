@@ -4,7 +4,6 @@ using Prism;
 using Prism.Ioc;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace Noise.RemoteClient {
     public partial class App {

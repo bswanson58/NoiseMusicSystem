@@ -21,6 +21,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IQueuePlayProvider         mPlayProvider;
         private readonly IDialogService             mDialogService;
         private readonly IPrefixedNameHandler       mPrefixedNameHandler;
+        private readonly IPreferences               mPreferences;
         private readonly List<UiAlbum>              mCompleteAlbumList;
         private readonly ArtistInfo                 mCurrentArtist;
         private SortTypes                           mSortOrder;
@@ -33,6 +34,10 @@ namespace Noise.RemoteClient.ViewModels {
         public  string                                  ArtistName { get; private set; }
         public  Int32                                   AlbumCount { get; private set; }
 
+        public  DelegateCommand                         SortByName { get; }
+        public  DelegateCommand                         SortByUnprefixedName { get; }
+        public  DelegateCommand                         SortByRating { get; }
+
         public  DelegateCommand<UiAlbum>                EditAlbumRatings { get; }
 
         public AlbumListViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IDialogService dialogService,
@@ -41,11 +46,16 @@ namespace Noise.RemoteClient.ViewModels {
             mPlayProvider = queuePlayProvider;
             mClientState = clientState;
             mDialogService = dialogService;
+            mPreferences = preferences;
             mPrefixedNameHandler = prefixedNameHandler;
+
+            SortByName = new DelegateCommand( OnSortByName );
+            SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
+            SortByRating = new DelegateCommand( OnSortByRating );
 
             EditAlbumRatings = new DelegateCommand<UiAlbum>( OnEditAlbumRatings );
 
-            if(!Enum.TryParse( preferences.Get( PreferenceNames.AlbumListSorting, SortTypes.Rating.ToString()), out mSortOrder )) {
+            if(!Enum.TryParse( mPreferences.Get( PreferenceNames.AlbumListSorting, SortTypes.Rating.ToString()), out mSortOrder )) {
                 mSortOrder = SortTypes.Rating;
             }
 
@@ -194,6 +204,25 @@ namespace Noise.RemoteClient.ViewModels {
                     }
                 }
             });
+        }
+
+        private void OnSortByName() {
+            SetSortTo( SortTypes.Name );
+        }
+
+        private void OnSortByUnprefixedName() {
+            SetSortTo( SortTypes.UnprefixedName );
+        }
+
+        private void OnSortByRating() {
+            SetSortTo( SortTypes.Rating );
+        }
+
+        private void SetSortTo( SortTypes sort ) {
+            mSortOrder = sort;
+            mPreferences.Set( PreferenceNames.AlbumListSorting, mSortOrder.ToString());
+
+            LoadAlbumList();
         }
 
         public void Dispose() {

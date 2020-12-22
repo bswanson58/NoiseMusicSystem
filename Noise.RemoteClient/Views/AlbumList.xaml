@@ -81,6 +81,12 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByName}" Text="Sort by Name"/>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByUnprefixedName}" Text="Sort by Unprefixed Name"/>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByRating}" Text="Sort by Rating"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <ListView Margin="5" ItemsSource="{Binding AlbumList}" SelectedItem="{Binding SelectedAlbum, Mode=TwoWay}" CachingStrategy="RecycleElement"
                   HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTemplate}"/>

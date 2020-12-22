@@ -6,6 +6,7 @@ using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
+using Prism.Commands;
 using Prism.Mvvm;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -18,6 +19,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IHostInformationProvider   mHostInformationProvider;
         private readonly IPrefixedNameHandler       mPrefixedNameHandler;
         private readonly List<UiArtist>             mCompleteArtistList;
+        private readonly IPreferences               mPreferences;
         private bool                                mLibraryOpen;
         private SortTypes                           mSortOrder;
         private string                              mFilterText;
@@ -28,14 +30,23 @@ namespace Noise.RemoteClient.ViewModels {
 
         private ObservableCollectionExtended<UiArtist>  mArtistList;
 
+        public  DelegateCommand                     SortByName { get; }
+        public  DelegateCommand                     SortByUnprefixedName { get; }
+        public  DelegateCommand                     SortByRating { get; }
+
         public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, IClientState clientState,
                                     IPrefixedNameHandler prefixedNameHandler, IPreferences preferences ) {
             mArtistProvider = artistProvider;
             mClientState = clientState;
             mHostInformationProvider = hostInformationProvider;
             mPrefixedNameHandler = prefixedNameHandler;
+            mPreferences = preferences;
 
-            if(!Enum.TryParse( preferences.Get( PreferenceNames.ArtistListSorting, SortTypes.UnprefixedName.ToString()), out mSortOrder )) {
+            SortByName = new DelegateCommand( OnSortByName );
+            SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
+            SortByRating = new DelegateCommand( OnSortByRating );
+
+            if(!Enum.TryParse( mPreferences.Get( PreferenceNames.ArtistListSorting, SortTypes.UnprefixedName.ToString()), out mSortOrder )) {
                 mSortOrder = SortTypes.UnprefixedName;
             }
 
@@ -168,6 +179,25 @@ namespace Noise.RemoteClient.ViewModels {
             }
 
             return retValue;
+        }
+
+        private void OnSortByName() {
+            SetSortTo( SortTypes.Name );
+        }
+
+        private void OnSortByUnprefixedName() {
+            SetSortTo( SortTypes.UnprefixedName );
+        }
+
+        private void OnSortByRating() {
+            SetSortTo( SortTypes.Rating );
+        }
+
+        private void SetSortTo( SortTypes sort ) {
+            mSortOrder = sort;
+            mPreferences.Set( PreferenceNames.ArtistListSorting, mSortOrder.ToString());
+
+            LoadArtistList();
         }
 
         public void Dispose() {
