@@ -119,7 +119,7 @@ namespace Noise.UI.Dto {
 		public bool UseAlternateRating => (!IsUserRating );
 
 	    // used to sort albums by rating in the album list.
-	    public int SortRating => IsFavorite ? 10 : Rating;
+        public int SortRating => ( IsFavorite ? 6 : 0 ) + UserRating;
 
         public bool IsPlaying {
             get { return( Get( () => IsPlaying )); }
