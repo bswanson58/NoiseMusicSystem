@@ -4,7 +4,10 @@ using System.Linq;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Support;
+using Noise.RemoteServer.Protocol;
 using Prism.Mvvm;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
@@ -13,8 +16,10 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IArtistProvider            mArtistProvider;
         private readonly IClientState               mClientState;
         private readonly IHostInformationProvider   mHostInformationProvider;
+        private readonly IPrefixedNameHandler       mPrefixedNameHandler;
         private readonly List<UiArtist>             mCompleteArtistList;
         private bool                                mLibraryOpen;
+        private SortTypes                           mSortOrder;
         private string                              mFilterText;
         private PlayingState                        mPlayingState;
         private IDisposable                         mLibraryStatusSubscription;
@@ -23,10 +28,16 @@ namespace Noise.RemoteClient.ViewModels {
 
         private ObservableCollectionExtended<UiArtist>  mArtistList;
 
-        public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, IClientState clientState ) {
+        public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, IClientState clientState,
+                                    IPrefixedNameHandler prefixedNameHandler, IPreferences preferences ) {
             mArtistProvider = artistProvider;
             mClientState = clientState;
             mHostInformationProvider = hostInformationProvider;
+            mPrefixedNameHandler = prefixedNameHandler;
+
+            if(!Enum.TryParse( preferences.Get( PreferenceNames.ArtistListSorting, SortTypes.UnprefixedName.ToString()), out mSortOrder )) {
+                mSortOrder = SortTypes.UnprefixedName;
+            }
 
             mCompleteArtistList = new List<UiArtist>();
 
@@ -103,12 +114,42 @@ namespace Noise.RemoteClient.ViewModels {
                 var list = await mArtistProvider.GetArtistList();
 
                 if( list?.Success == true ) {
-                    mCompleteArtistList.AddRange( from a in list.ArtistList orderby a.ArtistName select new UiArtist( a ));
-                    mCompleteArtistList.ForEach( a => a.SetIsPlaying( mPlayingState ));
+                    mCompleteArtistList.AddRange( SortArtists( list.ArtistList.Select( CreateArtist )));
                 }
             }
 
             RefreshArtistList();
+        }
+
+        private IEnumerable<UiArtist> SortArtists( IEnumerable<UiArtist> list ) {
+            var retValue = list;
+
+            switch( mSortOrder ) {
+
+                case SortTypes.Name:
+                    retValue = retValue.OrderBy( a => a.ArtistName );
+                    break;
+
+                case SortTypes.UnprefixedName:
+                    retValue = retValue.OrderBy( a => a.SortName );
+                    break;
+
+                case SortTypes.Rating:
+                    retValue = retValue.OrderByDescending( a => a.SortRating ).ThenBy( a => a.SortName );
+                    break;
+            }
+
+            return retValue;
+        }
+
+        private UiArtist CreateArtist( ArtistInfo fromArtist ) {
+            var retValue = new UiArtist( fromArtist );
+
+            retValue.SetDisplayName( mPrefixedNameHandler.FormatPrefixedName( retValue.ArtistName ));
+            retValue.SetSortName( mPrefixedNameHandler.FormatSortingName( retValue.ArtistName ));
+            retValue.SetIsPlaying( mPlayingState );
+
+            return retValue;
         }
 
         private void RefreshArtistList() {

@@ -3,13 +3,18 @@ using Noise.RemoteClient.Interfaces;
 using Noise.RemoteClient.Models;
 using Noise.RemoteClient.Platform;
 using Noise.RemoteClient.Services;
+using Noise.RemoteClient.Support;
 using Noise.RemoteClient.Views;
 using Prism.Ioc;
+using Xamarin.Essentials.Implementation;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace Noise.RemoteClient {
     static class RemoteClientModule {
         public static void RegisterServices( IContainerRegistry container ) {
+            container.RegisterSingleton<IPreferences, PreferencesImplementation>();
+
             container.RegisterSingleton<IClientManager, ClientManager>();
             container.RegisterSingleton<IClientState, ClientState>();
             container.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
@@ -20,6 +25,7 @@ namespace Noise.RemoteClient {
 
             container.Register<IArtistProvider, ArtistProvider>();
             container.Register<IAlbumProvider, AlbumProvider>();
+            container.Register<IPrefixedNameHandler, PrefixedNameHandler>();
             container.Register<ISearchProvider, SearchProvider>();
             container.Register<ITagInformationProvider, TagInformationProvider>();
             container.Register<ITrackProvider, TrackProvider>();

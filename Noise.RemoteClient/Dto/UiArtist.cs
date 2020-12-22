@@ -16,6 +16,10 @@ namespace Noise.RemoteClient.Dto {
         public  int                 Rating => Artist.Rating;
         public  bool                HasRating => Rating != 0;
 
+        public  string              DisplayName { get; private set; }
+        public  string              SortName { get; private set; }
+        public  int                 SortRating => ( IsFavorite ? 6 : 0 ) + Rating;
+
         public UiArtist( ArtistInfo artist ) {
             Artist = artist;
         }
@@ -42,5 +46,16 @@ namespace Noise.RemoteClient.Dto {
             IsPlaying = ArtistId.Equals( state?.ArtistId );
         }
 
+        public void SetDisplayName( string displayName ) {
+            DisplayName = displayName;
+
+            RaisePropertyChanged( nameof( DisplayName ));
+        }
+
+        public void SetSortName( string sortName ) {
+            SortName = sortName;
+
+            RaisePropertyChanged( nameof( SortName ));
+        }
     }
 }

@@ -19,6 +19,10 @@ namespace Noise.RemoteClient.Dto {
         public  Int32                       Rating => Album.Rating;
         public  bool                        HasRating => Rating != 0;
 
+        public  string                      DisplayName { get; private set; }
+        public  string                      SortName { get; private set; }
+        public  int                         SortRating => ( IsFavorite ? 6 : 0 ) + Rating;
+
         public  DelegateCommand             Play { get; }
 
         public UiAlbum( AlbumInfo album, Action<UiAlbum> onPlay ) {
@@ -58,6 +62,18 @@ namespace Noise.RemoteClient.Dto {
             RaisePropertyChanged( nameof( Rating ));
             RaisePropertyChanged( nameof( HasRating ));
             RaisePropertyChanged( nameof( RatingSource ));
+        }
+
+        public void SetDisplayName( string displayName ) {
+            DisplayName = displayName;
+
+            RaisePropertyChanged( nameof( DisplayName ));
+        }
+
+        public void SetSortName( string sortName ) {
+            SortName = sortName;
+
+            RaisePropertyChanged( nameof( SortName ));
         }
 
         private void OnPlay() {

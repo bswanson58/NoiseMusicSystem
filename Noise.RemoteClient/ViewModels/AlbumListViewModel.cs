@@ -5,10 +5,12 @@ using DynamicData.Binding;
 using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
@@ -18,8 +20,10 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IAlbumProvider             mAlbumProvider;
         private readonly IQueuePlayProvider         mPlayProvider;
         private readonly IDialogService             mDialogService;
+        private readonly IPrefixedNameHandler       mPrefixedNameHandler;
         private readonly List<UiAlbum>              mCompleteAlbumList;
         private readonly ArtistInfo                 mCurrentArtist;
+        private SortTypes                           mSortOrder;
         private string                              mFilterText;
         private UiAlbum                             mSelectedAlbum;
         private PlayingState                        mPlayingState;
@@ -31,13 +35,19 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  DelegateCommand<UiAlbum>                EditAlbumRatings { get; }
 
-        public AlbumListViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IDialogService dialogService ) {
+        public AlbumListViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IDialogService dialogService,
+                                   IPrefixedNameHandler prefixedNameHandler, IPreferences preferences ) {
             mAlbumProvider = albumProvider;
             mPlayProvider = queuePlayProvider;
             mClientState = clientState;
             mDialogService = dialogService;
+            mPrefixedNameHandler = prefixedNameHandler;
 
             EditAlbumRatings = new DelegateCommand<UiAlbum>( OnEditAlbumRatings );
+
+            if(!Enum.TryParse( preferences.Get( PreferenceNames.AlbumListSorting, SortTypes.Rating.ToString()), out mSortOrder )) {
+                mSortOrder = SortTypes.Rating;
+            }
 
             mCurrentArtist = clientState.CurrentArtist;
             mCompleteAlbumList = new List<UiAlbum>();
@@ -104,12 +114,42 @@ namespace Noise.RemoteClient.ViewModels {
                 var list = await mAlbumProvider.GetAlbumList( mCurrentArtist.DbId );
 
                 if( list?.Success == true ) {
-                    mCompleteAlbumList.AddRange( from a in list.AlbumList orderby a.AlbumName select new UiAlbum( a, OnAlbumPlay ));
-                    mCompleteAlbumList.ForEach( a => a.SetIsPlaying( mPlayingState ));
+                    mCompleteAlbumList.AddRange( SortAlbums( list.AlbumList.Select( CreateAlbum )));
                 }
             }
 
             RefreshAlbumList();
+        }
+
+        private UiAlbum CreateAlbum( AlbumInfo fromAlbum ) {
+            var retValue = new UiAlbum( fromAlbum, OnAlbumPlay );
+
+            retValue.SetDisplayName( mPrefixedNameHandler.FormatPrefixedName( retValue.AlbumName ));
+            retValue.SetSortName( mPrefixedNameHandler.FormatSortingName( retValue.AlbumName ));
+            retValue.SetIsPlaying( mPlayingState );
+
+            return retValue;
+        }
+
+        private IEnumerable<UiAlbum> SortAlbums( IEnumerable<UiAlbum> list ) {
+            var retValue = list;
+
+            switch( mSortOrder ) {
+
+                case SortTypes.Name:
+                    retValue = retValue.OrderBy( a => a.AlbumName );
+                    break;
+
+                case SortTypes.UnprefixedName:
+                    retValue = retValue.OrderBy( a => a.SortName );
+                    break;
+
+                case SortTypes.Rating:
+                    retValue = retValue.OrderByDescending( a => a.SortRating ).ThenBy( a => a.SortName );
+                    break;
+            }
+
+            return retValue;
         }
 
         private void RefreshAlbumList() {
