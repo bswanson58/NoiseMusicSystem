@@ -37,6 +37,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  UiAlbum                                 PlayingAlbum { get; private set; }
         public  bool                                    HavePlayingAlbum => PlayingAlbum != null;
         public  DelegateCommand                         SelectPlayingAlbum { get; }
+        public  DelegateCommand                         EditPlayingAlbumRatings { get; }
 
         public  DelegateCommand                         SortByName { get; }
         public  DelegateCommand                         SortByUnprefixedName { get; }
@@ -54,6 +55,8 @@ namespace Noise.RemoteClient.ViewModels {
             mPrefixedNameHandler = prefixedNameHandler;
 
             SelectPlayingAlbum = new DelegateCommand( OnSelectPlayingAlbum );
+            EditPlayingAlbumRatings = new DelegateCommand( OnEditPlayingAlbumRatings );
+
             SortByName = new DelegateCommand( OnSortByName );
             SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
             SortByRating = new DelegateCommand( OnSortByRating );
@@ -209,6 +212,12 @@ namespace Noise.RemoteClient.ViewModels {
             mPlayProvider.Queue( album.Album );
         }
 
+        private void OnEditPlayingAlbumRatings() {
+            if( PlayingAlbum != null ) {
+                OnEditAlbumRatings( PlayingAlbum );
+            }
+        }
+
         private void OnEditAlbumRatings( UiAlbum forAlbum ) {
             var parameters = new DialogParameters {{ EditAlbumRatingsViewModel.cAlbumParameter, forAlbum.Album }};
 
@@ -221,7 +230,7 @@ namespace Noise.RemoteClient.ViewModels {
                     if( album != null ) {
                         await mAlbumProvider.UpdateAlbumRatings( album );
 
-                        var uiAlbum = AlbumList.FirstOrDefault( a => a.Album.AlbumId.Equals( album.AlbumId ));
+                        var uiAlbum = mCompleteAlbumList.FirstOrDefault( a => a.Album.AlbumId.Equals( album.AlbumId ));
                         uiAlbum?.UpdateRatings( album );
                     }
                 }

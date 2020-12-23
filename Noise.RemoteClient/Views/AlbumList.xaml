@@ -94,11 +94,23 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" IsVisible="{Binding HavePlayingAlbum}">
-                <StackLayout Margin="20,12,0,10" Orientation="Horizontal" VerticalOptions="Center">
-                    <Label Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
-                    <Label TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding PlayingAlbum.AlbumName}"/>
-                </StackLayout>
+            <Grid Grid.Row="0" IsVisible="{Binding HavePlayingAlbum}" RowSpacing="0">
+                <SwipeView>
+                    <SwipeView.LeftItems>
+                        <SwipeItems>
+                            <SwipeItemView Command="{Binding Path=BindingContext.EditPlayingAlbumRatings, Source={x:Reference Name=_albumList}}" Background="White">
+                                <StackLayout Orientation="Horizontal" WidthRequest="50">
+                                    <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                </StackLayout>
+                            </SwipeItemView>
+                        </SwipeItems>
+                    </SwipeView.LeftItems>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Label Margin="20,15,0,15" VerticalOptions="Center" Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
+                        <Label VerticalOptions="Center" TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding PlayingAlbum.AlbumName}"/>
+                    </StackLayout>
+                </SwipeView>
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding SelectPlayingAlbum}"/>
                 </Grid.GestureRecognizers>
