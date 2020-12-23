@@ -30,6 +30,10 @@ namespace Noise.RemoteClient.ViewModels {
 
         private ObservableCollectionExtended<UiArtist>  mArtistList;
 
+        public  UiArtist                            PlayingArtist { get; private set; }
+        public  bool                                HavePlayingArtist => PlayingArtist != null;
+        public  DelegateCommand                     SelectPlayingArtist { get; }
+
         public  DelegateCommand                     SortByName { get; }
         public  DelegateCommand                     SortByUnprefixedName { get; }
         public  DelegateCommand                     SortByRating { get; }
@@ -42,6 +46,7 @@ namespace Noise.RemoteClient.ViewModels {
             mPrefixedNameHandler = prefixedNameHandler;
             mPreferences = preferences;
 
+            SelectPlayingArtist = new DelegateCommand( OnSelectPlayingArtist );
             SortByName = new DelegateCommand( OnSortByName );
             SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
             SortByRating = new DelegateCommand( OnSortByRating );
@@ -75,6 +80,10 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnPlaying( PlayingState state ) {
             mPlayingState = state;
+            PlayingArtist = ArtistList.FirstOrDefault( a => a.ArtistId.Equals( state?.ArtistId ));
+
+            RaisePropertyChanged( nameof( PlayingArtist ));
+            RaisePropertyChanged( nameof( HavePlayingArtist ));
 
             UpdatePlayingState();
         }
@@ -99,6 +108,14 @@ namespace Noise.RemoteClient.ViewModels {
         public UiArtist SelectedArtist {
             get => mSelectedArtist;
             set => SetProperty( ref mSelectedArtist, value, OnArtistSelected );
+        }
+
+        private void OnSelectPlayingArtist() {
+            if( PlayingArtist != null ) {
+                mClientState.SetCurrentArtist( PlayingArtist.Artist );
+
+                Shell.Current.GoToAsync( "albumList" );
+            }
         }
 
         private void OnArtistSelected() {

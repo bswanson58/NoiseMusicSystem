@@ -11,6 +11,7 @@ namespace Noise.RemoteClient.Dto {
         private bool                        mIsPlaying;
 
         public  AlbumInfo                   Album { get; }
+        public  long                        AlbumId => Album.AlbumId;
         public  string                      AlbumName => Album.AlbumName;
         public  Int32                       TrackCount => Album.TrackCount;
         public  Int32                       PublishedYear => Album.PublishedYear;

@@ -58,7 +58,24 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <ListView Margin="5" ItemsSource="{Binding ArtistList}" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}" CachingStrategy="RecycleElement"
-                  HasUnevenRows="True" ItemTemplate="{StaticResource ArtistTemplate}"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" IsVisible="{Binding HavePlayingArtist}">
+                <StackLayout Margin="20,12,0,10" Orientation="Horizontal" VerticalOptions="Center">
+                    <Label Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
+                    <Label TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding PlayingArtist.ArtistName}"/>
+                </StackLayout>
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectPlayingArtist}"/>
+                </Grid.GestureRecognizers>
+            </Grid>
+
+            <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding ArtistList}" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}" 
+                      CachingStrategy="RecycleElement" HasUnevenRows="True" ItemTemplate="{StaticResource ArtistTemplate}"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

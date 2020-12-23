@@ -34,6 +34,10 @@ namespace Noise.RemoteClient.ViewModels {
         public  string                                  ArtistName { get; private set; }
         public  Int32                                   AlbumCount { get; private set; }
 
+        public  UiAlbum                                 PlayingAlbum { get; private set; }
+        public  bool                                    HavePlayingAlbum => PlayingAlbum != null;
+        public  DelegateCommand                         SelectPlayingAlbum { get; }
+
         public  DelegateCommand                         SortByName { get; }
         public  DelegateCommand                         SortByUnprefixedName { get; }
         public  DelegateCommand                         SortByRating { get; }
@@ -49,6 +53,7 @@ namespace Noise.RemoteClient.ViewModels {
             mPreferences = preferences;
             mPrefixedNameHandler = prefixedNameHandler;
 
+            SelectPlayingAlbum = new DelegateCommand( OnSelectPlayingAlbum );
             SortByName = new DelegateCommand( OnSortByName );
             SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
             SortByRating = new DelegateCommand( OnSortByRating );
@@ -87,7 +92,15 @@ namespace Noise.RemoteClient.ViewModels {
         private void OnPlaying( PlayingState state ) {
             mPlayingState = state;
 
+            SetPlayingAlbum();
             UpdatePlayStates();
+        }
+
+        private void SetPlayingAlbum() {
+            PlayingAlbum = mCompleteAlbumList.FirstOrDefault( a => a.AlbumId.Equals( mPlayingState?.AlbumId ));
+
+            RaisePropertyChanged( nameof( PlayingAlbum ));
+            RaisePropertyChanged( nameof( HavePlayingAlbum ));
         }
 
         private void UpdatePlayStates() {
@@ -117,6 +130,14 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
+        private void OnSelectPlayingAlbum() {
+            if( PlayingAlbum != null ) {
+                mClientState.SetCurrentAlbum( PlayingAlbum.Album );
+
+                Shell.Current.GoToAsync( "trackList" );
+            }
+        }
+
         private async void LoadAlbumList() {
             mCompleteAlbumList.Clear();
 
@@ -128,6 +149,7 @@ namespace Noise.RemoteClient.ViewModels {
                 }
             }
 
+            SetPlayingAlbum();
             RefreshAlbumList();
         }
 
