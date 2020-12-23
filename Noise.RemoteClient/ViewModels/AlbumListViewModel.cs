@@ -36,8 +36,10 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  UiAlbum                                 PlayingAlbum { get; private set; }
         public  bool                                    HavePlayingAlbum => PlayingAlbum != null;
-        public  DelegateCommand                         SelectPlayingAlbum { get; }
         public  DelegateCommand                         EditPlayingAlbumRatings { get; }
+
+        public  DelegateCommand                         SelectPlayingAlbum { get; }
+        public  DelegateCommand<UiAlbum>                SelectAlbum { get; }
 
         public  DelegateCommand                         SortByName { get; }
         public  DelegateCommand                         SortByUnprefixedName { get; }
@@ -55,6 +57,8 @@ namespace Noise.RemoteClient.ViewModels {
             mPrefixedNameHandler = prefixedNameHandler;
 
             SelectPlayingAlbum = new DelegateCommand( OnSelectPlayingAlbum );
+            SelectAlbum = new DelegateCommand<UiAlbum>( OnSelectAlbum );
+
             EditPlayingAlbumRatings = new DelegateCommand( OnEditPlayingAlbumRatings );
 
             SortByName = new DelegateCommand( OnSortByName );
@@ -123,6 +127,12 @@ namespace Noise.RemoteClient.ViewModels {
         public UiAlbum SelectedAlbum {
             get => mSelectedAlbum;
             set => SetProperty( ref mSelectedAlbum, value, OnAlbumSelected );
+        }
+
+        private void OnSelectAlbum( UiAlbum album ) {
+            mSelectedAlbum = album;
+
+            OnAlbumSelected();
         }
 
         private void OnAlbumSelected() {

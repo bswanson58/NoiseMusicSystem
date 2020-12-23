@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mvvm="http://prismlibrary.com"
              xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
+             xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.ArtistList"
+             x:Name="_artistList"
              Title="Artist List">
 
     <Shell.TitleView>
@@ -25,7 +27,9 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ArtistTemplate" x:DataType="dto:UiArtist">
                 <ViewCell>
-                    <Grid Margin="5,0,5,3" RowSpacing="0">
+                    <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}" 
+                          touchEffect:TouchEff.Command="{Binding BindingContext.SelectArtist, Source={x:Reference Name=_artistList}}"
+                          touchEffect:TouchEff.CommandParameter="{Binding .}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -64,17 +68,16 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" IsVisible="{Binding HavePlayingArtist}">
+            <Grid Grid.Row="0" IsVisible="{Binding HavePlayingArtist}" Style="{StaticResource ListItemTouchEffect}"
+                  touchEffect:TouchEff.Command="{Binding SelectPlayingArtist}">
+
                 <StackLayout Margin="20,12,0,10" Orientation="Horizontal" VerticalOptions="Center">
                     <Label Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
                     <Label TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding PlayingArtist.ArtistName}"/>
                 </StackLayout>
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SelectPlayingArtist}"/>
-                </Grid.GestureRecognizers>
             </Grid>
 
-            <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding ArtistList}" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}" 
+            <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding ArtistList}" SelectionMode="None"
                       CachingStrategy="RecycleElement" HasUnevenRows="True" ItemTemplate="{StaticResource ArtistTemplate}"/>
         </Grid>
     </ContentPage.Content>

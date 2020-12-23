@@ -4,6 +4,7 @@
              xmlns:prism="http://prismlibrary.com"
              xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.AlbumList"
              x:Name="_albumList"
@@ -42,7 +43,10 @@
                                 </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.LeftItems>
-                        <Grid Margin="5,0,5,3" RowSpacing="0">
+
+                        <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
+                              touch:TouchEff.Command="{Binding BindingContext.SelectAlbum, Source={x:Reference Name=_albumList}}"
+                              touch:TouchEff.CommandParameter="{Binding .}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -55,8 +59,11 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
-                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
+                            <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
+                                         touch:TouchEff.Command="{Binding Play}">
+                                <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5"
+                                                    Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                            </ContentView>
 
                             <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">
                                 <Label.Triggers>
@@ -106,17 +113,16 @@
                         </SwipeItems>
                     </SwipeView.LeftItems>
 
-                    <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Horizontal" Style="{StaticResource ListItemTouchEffect}"
+                                 touch:TouchEff.Command="{Binding SelectPlayingAlbum}">
+
                         <Label Margin="20,15,0,15" VerticalOptions="Center" Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
                         <Label VerticalOptions="Center" TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding PlayingAlbum.AlbumName}"/>
                     </StackLayout>
                 </SwipeView>
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SelectPlayingAlbum}"/>
-                </Grid.GestureRecognizers>
             </Grid>
 
-            <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding AlbumList}" SelectedItem="{Binding SelectedAlbum, Mode=TwoWay}" CachingStrategy="RecycleElement"
+            <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding AlbumList}" SelectionMode="None" CachingStrategy="RecycleElement"
                       HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTemplate}"/>
         </Grid>
     </ContentPage.Content>

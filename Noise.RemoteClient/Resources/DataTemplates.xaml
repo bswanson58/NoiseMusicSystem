@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
                     xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
-                    xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient">
+                    xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+                    xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect">
 
     <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
 
@@ -22,8 +23,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0.5"
-                                    Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
+                <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
+                             touchEffect:TouchEff.Command="{Binding Play}">
+                    <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                </ContentView>
 
                 <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center" 
                        Text="{Binding TrackName}">
@@ -65,8 +68,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
-                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
+                <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
+                             touchEffect:TouchEff.Command="{Binding Play}">
+                    <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                </ContentView>
 
                 <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}">
                     <Label.Triggers>

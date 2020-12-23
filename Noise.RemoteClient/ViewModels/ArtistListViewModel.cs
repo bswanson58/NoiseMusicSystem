@@ -33,6 +33,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  UiArtist                            PlayingArtist { get; private set; }
         public  bool                                HavePlayingArtist => PlayingArtist != null;
         public  DelegateCommand                     SelectPlayingArtist { get; }
+        public  DelegateCommand<UiArtist>           SelectArtist { get; }
 
         public  DelegateCommand                     SortByName { get; }
         public  DelegateCommand                     SortByUnprefixedName { get; }
@@ -47,6 +48,8 @@ namespace Noise.RemoteClient.ViewModels {
             mPreferences = preferences;
 
             SelectPlayingArtist = new DelegateCommand( OnSelectPlayingArtist );
+            SelectArtist = new DelegateCommand<UiArtist>( OnSelectArtist );
+
             SortByName = new DelegateCommand( OnSortByName );
             SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
             SortByRating = new DelegateCommand( OnSortByRating );
@@ -103,6 +106,12 @@ namespace Noise.RemoteClient.ViewModels {
 
                 return mArtistList;
             }
+        }
+
+        private void OnSelectArtist( UiArtist artist ) {
+            mSelectedArtist = artist;
+
+            OnArtistSelected();
         }
 
         public UiArtist SelectedArtist {

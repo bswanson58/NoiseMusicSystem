@@ -4,6 +4,7 @@
              xmlns:prism="http://prismlibrary.com"
              xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.Search"
              Title="Search">
@@ -25,8 +26,10 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="5,0" VerticalOptions="Center" Opacity="0.5"
-                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg" Command="{Binding Play}"/>
+                    <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
+                                 touchEffect:TouchEff.Command="{Binding Play}">
+                    <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                    </ContentView>
 
                     <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}"/>
 
@@ -66,8 +69,8 @@
 
     <ContentPage.Content>
         <Grid>
-            <ListView Margin="5" ItemsSource="{Binding SearchItems}" HasUnevenRows="True" ItemTemplate="{StaticResource SearchItemTemplate}"
-                      CachingStrategy="RecycleElement"/>
+            <ListView Margin="5" ItemsSource="{Binding SearchItems}" HasUnevenRows="True" SelectionMode="None" CachingStrategy="RecycleElement"
+                      ItemTemplate="{StaticResource SearchItemTemplate}"/>
 
             <ActivityIndicator VerticalOptions="Center" HorizontalOptions="Center" IsRunning="{Binding IsBusy}"/>
         </Grid>

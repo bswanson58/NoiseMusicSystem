@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect">
 
     <Color x:Key="PlayColor">#FF00D000</Color>
 
@@ -29,4 +30,15 @@
         <Setter Property="FontSize" Value="Medium"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
+
+    <Style x:Key="PlayButtonTouchEffect" TargetType="VisualElement">
+        <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LawnGreen"/>
+    </Style>
+
+    <Style x:Key="ListItemTouchEffect" TargetType="VisualElement">
+        <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LightSkyBlue"/>
+    </Style>
+
 </ResourceDictionary>
