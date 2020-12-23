@@ -7,13 +7,16 @@ namespace Noise.RemoteClient.Models {
     class ClientManager : IClientManager {
         private readonly IServiceLocator                mServiceLocator;
         private readonly IHostInformationProvider       mHostInformationProvider;
+        private readonly IQueuedItemNotifier            mPlayNotifier;
         private readonly IPlatformLog                   mLog;
         private readonly BehaviorSubject<ClientStatus>  mClientStatus;
 
         public  IObservable<ClientStatus>               ClientStatus => mClientStatus;
 
-        public ClientManager( IServiceLocator serviceLocator, IHostInformationProvider hostInformationProvider, IPlatformLog log ) {
+        public ClientManager( IServiceLocator serviceLocator, IHostInformationProvider hostInformationProvider, IQueuedItemNotifier playNotifier,
+                              IPlatformLog log ) {
             mServiceLocator = serviceLocator;
+            mPlayNotifier = playNotifier;
             mHostInformationProvider = hostInformationProvider;
             mLog = log;
 
@@ -23,6 +26,7 @@ namespace Noise.RemoteClient.Models {
         public void StartClientManager() {
             try {
                 mServiceLocator.StartServiceLocator();
+                mPlayNotifier.StartNotifications();
             }
             catch( Exception ex ) {
                 mLog.LogException( nameof( StartClientManager ), ex );
@@ -33,6 +37,7 @@ namespace Noise.RemoteClient.Models {
             try {
                 mServiceLocator.StopServiceLocator();
                 mHostInformationProvider.StopHostStatusRequests();
+                mPlayNotifier.StopNotifications();
             }
             catch( Exception ex ) {
                 mLog.LogException( nameof( StopClientManager ), ex );

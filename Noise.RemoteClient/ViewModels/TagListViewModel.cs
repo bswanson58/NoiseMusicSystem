@@ -92,8 +92,16 @@ namespace Noise.RemoteClient.ViewModels {
             IsBusy = false;
         }
 
+        private TrackInfo CreateTrack( TagAssociationInfo fromTag ) {
+            return new TrackInfo {
+                TrackId = fromTag.TrackId, ArtistId = fromTag.ArtistId, AlbumId = fromTag.AlbumId,
+                TrackName = fromTag.TrackName, ArtistName = fromTag.ArtistName, AlbumName = fromTag.AlbumName, VolumeName = fromTag.VolumeName,
+                TrackNumber = fromTag.TrackNumber, Duration = fromTag.Duration, IsFavorite = fromTag.IsFavorite, Rating = fromTag.Rating
+            };
+        }
+
         private void OnPlay( TagAssociationInfo tag ) {
-            mPlayProvider.QueueTrack( tag.TrackId );
+            mPlayProvider.Queue( CreateTrack( tag ));
         }
 
         public void Dispose() {

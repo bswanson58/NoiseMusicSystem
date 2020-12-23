@@ -69,8 +69,16 @@ namespace Noise.RemoteClient.ViewModels {
             IsBusy = false;
         }
 
+        private TrackInfo CreateTrack( SearchItemInfo fromSearchItem ) {
+            return new TrackInfo {
+                TrackId = fromSearchItem.TrackId, ArtistId = fromSearchItem.ArtistId, AlbumId = fromSearchItem.AlbumId,
+                TrackName = fromSearchItem.TrackName, ArtistName = fromSearchItem.ArtistName, AlbumName = fromSearchItem.AlbumName, VolumeName = fromSearchItem.VolumeName,
+                TrackNumber = fromSearchItem.TrackNumber, Duration = fromSearchItem.Duration, IsFavorite = fromSearchItem.IsFavorite, Rating = fromSearchItem.Rating
+            };
+        }
+
         private void OnPlay( SearchItemInfo searchItem ) {
-            mPlayProvider.QueueTrack( searchItem.TrackId );
+            mPlayProvider.Queue( CreateTrack( searchItem ));
         }
 
         public void Dispose() {

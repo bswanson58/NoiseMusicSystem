@@ -6,6 +6,7 @@ using Noise.RemoteClient.Services;
 using Noise.RemoteClient.Support;
 using Noise.RemoteClient.Views;
 using Prism.Ioc;
+using Rg.Plugins.Popup.Services;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -15,9 +16,12 @@ namespace Noise.RemoteClient {
         public static void RegisterServices( IContainerRegistry container ) {
             container.RegisterSingleton<IPreferences, PreferencesImplementation>();
 
+            container.RegisterInstance( PopupNavigation.Instance );
+
             container.RegisterSingleton<IClientManager, ClientManager>();
             container.RegisterSingleton<IClientState, ClientState>();
             container.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
+            container.RegisterSingleton<IQueuedItemNotifier, QueuedItemNotifier>();
             container.RegisterSingleton<IServiceLocator, ServiceLocator>();
             container.RegisterSingleton<IHostInformationProvider, HostInformationProvider>();
             container.RegisterSingleton<IQueueListProvider, QueueListProvider>();

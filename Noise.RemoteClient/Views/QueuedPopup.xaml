@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 xmlns:animations="http://rotorgames.com"
+                 x:Class="Noise.RemoteClient.Views.QueuedPopup">
+
+    <pages:PopupPage.Animation>
+        <animations:ScaleAnimation
+            PositionIn="Center"
+            PositionOut="Center"
+            ScaleIn="1.2"
+            ScaleOut="0.8"
+            DurationIn="800"
+            DurationOut="400"
+            EasingIn="Linear"
+            EasingOut="Linear"/>
+    </pages:PopupPage.Animation> 
+
+    <Frame CornerRadius="10"  
+           HeightRequest="40"
+           VerticalOptions="End"
+           HorizontalOptions="Fill"
+           HasShadow="False"
+           Padding="0" Margin="40,30"
+           BorderColor="DarkGray">
+
+        <StackLayout Opacity="0.4" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="White">
+            <Label LineBreakMode="NoWrap" VerticalOptions="CenterAndExpand" TextColor="Black" FontSize="Medium" Text="Queued for play: "/>
+            <Label x:Name="_itemName" LineBreakMode="WordWrap" VerticalOptions="CenterAndExpand" TextColor="Black" FontSize="Medium"/>
+        </StackLayout>
+    </Frame>
+</pages:PopupPage>

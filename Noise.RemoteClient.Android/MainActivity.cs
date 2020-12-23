@@ -22,8 +22,10 @@ namespace Noise.RemoteClient.Droid {
             TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException; 
 
             Forms.SetFlags("SwipeView_Experimental");
-
             Forms.Init( this, savedInstanceState );
+
+            Rg.Plugins.Popup.Popup.Init( this );
+
             LoadApplication(new App(new AndroidInitializer()));
         }
 
