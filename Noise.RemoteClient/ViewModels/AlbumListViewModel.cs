@@ -130,6 +130,8 @@ namespace Noise.RemoteClient.ViewModels {
                 mClientState.SetCurrentAlbum( mSelectedAlbum.Album );
 
                 Shell.Current.GoToAsync( "trackList" );
+
+                SelectedAlbum = null;
             }
         }
 

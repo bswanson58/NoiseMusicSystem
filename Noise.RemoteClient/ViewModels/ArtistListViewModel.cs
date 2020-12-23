@@ -110,17 +110,19 @@ namespace Noise.RemoteClient.ViewModels {
             set => SetProperty( ref mSelectedArtist, value, OnArtistSelected );
         }
 
-        private void OnSelectPlayingArtist() {
-            if( PlayingArtist != null ) {
-                mClientState.SetCurrentArtist( PlayingArtist.Artist );
-
-                Shell.Current.GoToAsync( "albumList" );
-            }
-        }
-
         private void OnArtistSelected() {
             if( mSelectedArtist != null ) {
                 mClientState.SetCurrentArtist( mSelectedArtist.Artist );
+
+                Shell.Current.GoToAsync( "albumList" );
+
+                SelectedArtist = null;
+            }
+        }
+
+        private void OnSelectPlayingArtist() {
+            if( PlayingArtist != null ) {
+                mClientState.SetCurrentArtist( PlayingArtist.Artist );
 
                 Shell.Current.GoToAsync( "albumList" );
             }
