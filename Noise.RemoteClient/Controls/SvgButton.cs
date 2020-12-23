@@ -7,8 +7,8 @@ using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
 namespace Noise.RemoteClient.Controls {
     public class SvgButton : Frame {
-        private readonly SKCanvasView           mCanvasView;
-        private readonly TapGestureRecognizer   mTapGestureRecognizer;
+        private readonly SKCanvasView   mCanvasView;
+        private TapGestureRecognizer    mTapGestureRecognizer;
 
         public static readonly BindableProperty SourceProperty = 
             BindableProperty.Create( nameof( Source ), typeof( string ), typeof( SvgButton ), default( string ), propertyChanged: RedrawCanvas );
@@ -28,7 +28,6 @@ namespace Noise.RemoteClient.Controls {
 
         public SvgButton() {
             mCanvasView = new SKCanvasView();
-            mTapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
 
             Padding = new Thickness( 0 );
             BackgroundColor = Color.Transparent;
@@ -36,12 +35,19 @@ namespace Noise.RemoteClient.Controls {
             Content = mCanvasView;
 
             mCanvasView.PaintSurface += CanvasViewOnPaintSurface;
-            mCanvasView.GestureRecognizers.Add( mTapGestureRecognizer );
         }
 
         private static void OnCommandChanged( BindableObject sender, object oldValue, object newValue ) {
             if( sender is SvgButton svgImage ) {
-                svgImage.mTapGestureRecognizer.Command = svgImage.Command;
+                if(( svgImage.Command != null ) &&
+                   ( svgImage.mTapGestureRecognizer == null )) {
+                    svgImage.mTapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+                    svgImage.mCanvasView.GestureRecognizers.Add( svgImage.mTapGestureRecognizer );
+                }
+
+                if( svgImage.mTapGestureRecognizer != null ) {
+                    svgImage.mTapGestureRecognizer.Command = svgImage.Command;
+                }
             }
         }
 
