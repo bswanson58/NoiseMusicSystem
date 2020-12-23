@@ -41,4 +41,8 @@
         <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LightSkyBlue"/>
     </Style>
 
+    <Style x:Key="TransportButtonTouchEffect" TargetType="VisualElement">
+        <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="DarkGray"/>
+    </Style>
 </ResourceDictionary>

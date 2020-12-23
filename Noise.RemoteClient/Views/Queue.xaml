@@ -5,6 +5,7 @@
              xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.Queue"
              x:Name="_queueView"
@@ -182,19 +183,31 @@
             <ListView Grid.Row="0" Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"
                       CachingStrategy="RecycleElement"/>
 
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" RowSpacing="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <StackLayout Grid.Column="0" Margin="0,0,0,5" Orientation="Horizontal" HorizontalOptions="Center">
-                    <controls:SvgButton Margin="10,0" Source="Transport_Play" Command="{Binding Play}"/>
-                    <controls:SvgButton Margin="10,0" Source="Transport_Pause" Command="{Binding Pause}"/>
-                    <controls:SvgButton Margin="10,0" Source="Transport_Stop" Command="{Binding Stop}"/>
-                    <controls:SvgButton Margin="10,0" Source="Transport_Previous" Command="{Binding PlayPrevious}"/>
-                    <controls:SvgButton Margin="10,0" Source="Transport_Next" Command="{Binding PlayNext}"/>
-                    <controls:SvgButton Margin="10,0" Source="Transport_Repeat" Command="{Binding RepeatTrack}"/>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
+                        <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Play"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Pause}">
+                        <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Pause"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Stop}">
+                        <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Stop"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding PlayPrevious}">
+                        <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Previous"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding PlayNext}">
+                        <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Next"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding RepeatTrack}">
+                        <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Repeat"/>
+                    </ContentView>
                 </StackLayout>
 
                 <StackLayout Grid.Column="1" Margin="0,0,10,5" Orientation="Horizontal" HorizontalOptions="End">
