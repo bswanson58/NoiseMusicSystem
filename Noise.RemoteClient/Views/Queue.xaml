@@ -74,7 +74,10 @@
                             </SwipeItems>
                         </SwipeView.RightItems>
 
-                        <Grid RowSpacing="0">
+                        <Grid RowSpacing="0" Style="{StaticResource ListItemTouchEffect}" 
+                              touchEffect:TouchEff.Command="{Binding BindingContext.Suggestions, Source={x:Reference Name=_queueView}}"
+                              touchEffect:TouchEff.CommandParameter="{Binding .}">
+
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
