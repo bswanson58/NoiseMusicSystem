@@ -103,11 +103,11 @@
                                 </Label.Triggers>
                             </Label>
 
-                            <controls:SvgButton Grid.Row="0" Grid.Column="1" VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="0,0,5,0"
+                            <controls:SvgButton Grid.Row="0" Grid.Column="1" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
                                                 IsVisible="{Binding HasRating}" Source="{Binding RatingSource}"/>
 
-                            <controls:SvgButton Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HeightRequest="20" IsVisible="{Binding IsFavorite}"
-                                                Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
+                            <controls:SvgButton Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0"
+                                                IsVisible="{Binding IsFavorite}" Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
 
                             <Label Grid.Row="0" Grid.Column="3" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" 
                                    Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}">
