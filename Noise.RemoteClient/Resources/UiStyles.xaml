@@ -20,6 +20,7 @@
         <Setter Property="FontAttributes" Value="Bold"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
+
     <Style x:Key="ListItemDetailStyle" TargetType="Label">
         <Setter Property="FontSize" Value="Small"/>
         <Setter Property="Opacity" Value="0.75"/>
@@ -37,6 +38,11 @@
     </Style>
 
     <Style x:Key="ListItemTouchEffect" TargetType="VisualElement">
+        <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LightSkyBlue"/>
+    </Style>
+
+    <Style x:Key="ListItemDetailTouchStyle" TargetType="Label" BasedOn="{StaticResource ListItemDetailStyle}">
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
         <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LightSkyBlue"/>
     </Style>

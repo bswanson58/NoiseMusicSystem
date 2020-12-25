@@ -14,6 +14,8 @@ using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
     class ArtistListViewModel : BindableBase, IDisposable {
+        private const string                        cGenre = "Genre:";
+
         private readonly IArtistProvider            mArtistProvider;
         private readonly IClientState               mClientState;
         private readonly IHostInformationProvider   mHostInformationProvider;
@@ -34,7 +36,9 @@ namespace Noise.RemoteClient.ViewModels {
         public  UiArtist                            PlayingArtist { get; private set; }
         public  bool                                HavePlayingArtist => PlayingArtist != null;
         public  DelegateCommand                     SelectPlayingArtist { get; }
+
         public  DelegateCommand<UiArtist>           SelectArtist { get; }
+        public  DelegateCommand<UiArtist>           SelectGenre { get; }
 
         public  DelegateCommand                     SortByName { get; }
         public  DelegateCommand                     SortByUnprefixedName { get; }
@@ -50,6 +54,7 @@ namespace Noise.RemoteClient.ViewModels {
 
             SelectPlayingArtist = new DelegateCommand( OnSelectPlayingArtist );
             SelectArtist = new DelegateCommand<UiArtist>( OnSelectArtist );
+            SelectGenre = new DelegateCommand<UiArtist>( OnSelectGenre );
 
             SortByName = new DelegateCommand( OnSortByName );
             SortByUnprefixedName = new DelegateCommand( OnSortByUnprefixedName );
@@ -147,6 +152,10 @@ namespace Noise.RemoteClient.ViewModels {
             RefreshArtistList();
         }
 
+        private void OnSelectGenre( UiArtist artist ) {
+            FilterText = $"{cGenre} {artist.Genre}";
+        }
+
         public bool IsBusy {
             get => mIsBusy;
             set => SetProperty( ref mIsBusy, value );
@@ -203,7 +212,12 @@ namespace Noise.RemoteClient.ViewModels {
             if( mArtistList != null ) {
                 mArtistList.Clear();
 
-                mArtistList.AddRange( from artist in mCompleteArtistList where FilterArtist( artist ) select artist );
+                if( FilterText.StartsWith( cGenre )) {
+                    mArtistList.AddRange( from artist in mCompleteArtistList where FilterGenre( artist ) select artist );
+                }
+                else {
+                    mArtistList.AddRange( from artist in mCompleteArtistList where FilterArtist( artist ) select artist );
+                }
             }
         }
 
@@ -212,6 +226,18 @@ namespace Noise.RemoteClient.ViewModels {
 
             if(!String.IsNullOrWhiteSpace( FilterText )) {
                 retValue = artist.ArtistName.ToLower().Contains( FilterText.ToLower());
+            }
+
+            return retValue;
+        }
+
+        private bool FilterGenre( UiArtist artist ) {
+            var retValue = true;
+
+            if(!String.IsNullOrWhiteSpace( FilterText )) {
+                var genre = FilterText.Replace( cGenre, String.Empty ).ToLower().Trim();
+
+                retValue = artist.Genre.ToLower().Equals( genre );
             }
 
             return retValue;

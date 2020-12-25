@@ -37,6 +37,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">
@@ -47,8 +48,12 @@
                             </Label.Triggers>
                         </Label>
 
-                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
-                        <Label Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="End" Style="{StaticResource ListItemDetailStyle}" Text="{Binding Genre}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Margin="12,0,0,0" Padding="2" Style="{StaticResource ListItemDetailStyle}" 
+                               Text="{Binding AlbumCount, StringFormat='Albums: {0}'}"/>
+                        <Label Grid.Row="1" Grid.Column="2" Padding="10,2" HorizontalTextAlignment="End" Style="{StaticResource ListItemDetailTouchStyle}" 
+                               Text="{Binding Genre}"
+                               touchEffect:TouchEff.Command="{Binding BindingContext.SelectGenre, Source={x:Reference Name=_artistList}}"
+                               touchEffect:TouchEff.CommandParameter="{Binding .}"/>
                     </Grid>
                 </ViewCell>
             </DataTemplate>
