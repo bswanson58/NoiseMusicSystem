@@ -21,6 +21,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly List<UiArtist>             mCompleteArtistList;
         private readonly IPreferences               mPreferences;
         private bool                                mLibraryOpen;
+        private bool                                mIsBusy;
         private SortTypes                           mSortOrder;
         private string                              mFilterText;
         private PlayingState                        mPlayingState;
@@ -146,7 +147,13 @@ namespace Noise.RemoteClient.ViewModels {
             RefreshArtistList();
         }
 
+        public bool IsBusy {
+            get => mIsBusy;
+            set => SetProperty( ref mIsBusy, value );
+        }
+
         private async void LoadArtistList() {
+            IsBusy = true;
             mCompleteArtistList.Clear();
 
             if( mLibraryOpen ) {
@@ -158,6 +165,7 @@ namespace Noise.RemoteClient.ViewModels {
             }
 
             RefreshArtistList();
+            IsBusy = false;
         }
 
         private IEnumerable<UiArtist> SortArtists( IEnumerable<UiArtist> list ) {
