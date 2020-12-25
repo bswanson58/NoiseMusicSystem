@@ -30,7 +30,7 @@ namespace Noise.RemoteClient.Models {
         private async void OnItemPlayed( QueuedItem item ) {
             try {
                 await mNavigation.PushAsync( new QueuedPopup( item ));
-                await Task.Delay( 2000 );
+                await Task.Delay( 700 );
                 await mNavigation.PopAsync();
             }
             catch( Exception ex ) {
