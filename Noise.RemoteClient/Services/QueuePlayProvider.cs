@@ -19,12 +19,12 @@ namespace Noise.RemoteClient.Services {
             mItemQueued = new Subject<QueuedItem>();
         }
 
-        public async Task<QueueControlResponse> Queue( TrackInfo track ) {
+        public async Task<QueueControlResponse> Queue( TrackInfo track, bool playNext ) {
             var client = Client;
 
             if( client != null ) {
                 try {
-                    var retValue = await client.AddTrackAsync( new AddQueueRequest{ ItemId = track.TrackId });
+                    var retValue = await client.AddTrackAsync( new AddQueueRequest{ ItemId = track.TrackId, PlayNext = playNext });
 
                     if( retValue.Success ) {
                         mItemQueued.OnNext( new QueuedItem( track ));

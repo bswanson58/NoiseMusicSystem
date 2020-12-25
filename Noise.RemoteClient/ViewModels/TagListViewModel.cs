@@ -100,8 +100,8 @@ namespace Noise.RemoteClient.ViewModels {
             };
         }
 
-        private void OnPlay( TagAssociationInfo tag ) {
-            mPlayProvider.Queue( CreateTrack( tag ));
+        private void OnPlay( TagAssociationInfo tag, bool playNext ) {
+            mPlayProvider.Queue( CreateTrack( tag ), playNext );
         }
 
         public void Dispose() {

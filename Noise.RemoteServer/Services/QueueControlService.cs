@@ -37,7 +37,12 @@ namespace Noise.RemoteServer.Services {
                     var track = mTrackProvider.GetTrack( request.ItemId );
 
                     if( track != null ) {
-                        mPlayCommand.Play( track );
+                        if( request.PlayNext ) {
+                            mPlayCommand.PlayNext( track );
+                        }
+                        else {
+                            mPlayCommand.Play( track );
+                        }
 
                         retValue.Success = true;
                     }

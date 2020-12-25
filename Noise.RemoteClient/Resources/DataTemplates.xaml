@@ -24,7 +24,8 @@
                 </Grid.ColumnDefinitions>
 
                 <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
-                             touchEffect:TouchEff.Command="{Binding Play}">
+                             touchEffect:TouchEff.Command="{Binding Play}" 
+                             touchEffect:TouchEff.LongPressCommand="{Binding PlayNext}">
                     <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                 </ContentView>
 
@@ -69,7 +70,8 @@
                 </Grid.ColumnDefinitions>
 
                 <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
-                             touchEffect:TouchEff.Command="{Binding Play}">
+                             touchEffect:TouchEff.Command="{Binding Play}"
+                             touchEffect:TouchEff.LongPressCommand="{Binding PlayNext}">
                     <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                 </ContentView>
 

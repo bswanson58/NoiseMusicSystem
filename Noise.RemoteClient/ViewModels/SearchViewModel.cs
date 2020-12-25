@@ -77,8 +77,8 @@ namespace Noise.RemoteClient.ViewModels {
             };
         }
 
-        private void OnPlay( SearchItemInfo searchItem ) {
-            mPlayProvider.Queue( CreateTrack( searchItem ));
+        private void OnPlay( SearchItemInfo searchItem, bool playNext ) {
+            mPlayProvider.Queue( CreateTrack( searchItem ), playNext );
         }
 
         public void Dispose() {

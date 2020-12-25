@@ -180,6 +180,26 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
+		public void AddNext( DbTrack track ) {
+			var queueTrack = CreateTrack( track, eStrategySource.User );
+
+			if( PlayingTrack != null ) {
+				mPlayList.Insert( PlayList.IndexOf( PlayingTrack ) + 1, queueTrack );
+            }
+			else {
+				var firstUnplayed = PlayList.FirstOrDefault( t => !t.HasPlayed );
+
+				if( firstUnplayed != null ) {
+					mPlayList.Insert( PlayList.IndexOf( firstUnplayed ), queueTrack );
+                }
+				else {
+					AddTrack( track, eStrategySource.User );
+                }
+            }
+
+            FirePlayQueueChanged();
+        }
+
 		public void Add( IEnumerable<DbTrack> trackList ) {
 			foreach( var track in trackList ) {
 				AddTrack( track, eStrategySource.User );

@@ -8,8 +8,8 @@ using Prism.Mvvm;
 namespace Noise.RemoteClient.Dto {
     [DebuggerDisplay("Track = {" + nameof(TrackName) + "}")]
     class UiTrack : BindableBase {
-        private readonly Action<UiTrack>    mPlayAction;
-        private bool                        mIsPlaying;
+        private readonly Action<UiTrack, bool>  mPlayAction;
+        private bool                            mIsPlaying;
 
         public  TrackInfo                   Track { get; }
         public  string                      TrackName => Track.TrackName;
@@ -21,18 +21,20 @@ namespace Noise.RemoteClient.Dto {
         public  bool                        HasRating => Rating != 0;
         public  string                      Tags => String.Join( " | ", from t in Track.Tags select t.TagName );
 
-        public  DelegateCommand Play { get; }
+        public  DelegateCommand             Play { get; }
+        public  DelegateCommand             PlayNext { get; }
 
-        public UiTrack( TrackInfo track, Action<UiTrack> onPlay, PlayingState state ) :
+        public UiTrack( TrackInfo track, Action<UiTrack, bool> onPlay, PlayingState state ) :
             this( track, onPlay ) {
             SetIsPlaying( state );
         }
 
-        public UiTrack( TrackInfo track, Action<UiTrack> onPlay ) {
+        public UiTrack( TrackInfo track, Action<UiTrack, bool> onPlay ) {
             Track = track;
             mPlayAction = onPlay;
 
             Play = new DelegateCommand( OnPlay );
+            PlayNext = new DelegateCommand( OnPlayNext );
         }
 
         public string RatingSource {
@@ -58,7 +60,11 @@ namespace Noise.RemoteClient.Dto {
         }
 
         private void OnPlay() {
-            mPlayAction?.Invoke( this );
+            mPlayAction?.Invoke( this, false );
+        }
+
+        private void OnPlayNext() {
+            mPlayAction?.Invoke( this, true );
         }
     }
 }

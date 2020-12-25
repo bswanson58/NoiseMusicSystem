@@ -61,8 +61,8 @@ namespace Noise.RemoteClient.ViewModels {
             IsBusy = false;
         }
 
-        protected void OnPlay( UiTrack track ) {
-            mQueuePlay.Queue( track.Track );
+        protected void OnPlay( UiTrack track, bool playNext ) {
+            mQueuePlay.Queue( track.Track, playNext );
         }
 
         protected void OnPlay( UiAlbum album ) {

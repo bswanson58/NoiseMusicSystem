@@ -13,6 +13,7 @@ namespace Noise.Infrastructure.Interfaces {
 		Task	Play( DbAlbum album, string volumeName );
 
 		Task	Play( DbTrack track );
+		Task	PlayNext( DbTrack track );
 		Task	Play( IEnumerable<DbTrack> trackList );
 
 		Task	Play( DbInternetStream stream );

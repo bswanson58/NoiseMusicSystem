@@ -47,6 +47,7 @@ message QueueControlResponse {
 
 message AddQueueRequest {
 	int64		ItemId = 1;
+	bool		PlayNext = 2;
 }
 
 message QueueItemRequest {

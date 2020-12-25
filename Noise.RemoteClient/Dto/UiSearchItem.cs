@@ -4,8 +4,8 @@ using Prism.Commands;
 
 namespace Noise.RemoteClient.Dto {
     class UiSearchItem {
-        private readonly SearchItemInfo         mSearchItem;
-        private readonly Action<SearchItemInfo> mPlayAction;
+        private readonly SearchItemInfo                 mSearchItem;
+        private readonly Action<SearchItemInfo, bool>   mPlayAction;
 
         public  string                          ArtistName => mSearchItem.ArtistName;
         public  string                          AlbumName => mSearchItem.AlbumName;
@@ -16,12 +16,14 @@ namespace Noise.RemoteClient.Dto {
         public  bool                            HasRating => Rating != 0;
 
         public  DelegateCommand                 Play { get; }
+        public  DelegateCommand                 PlayNext { get; }
 
-        public UiSearchItem( SearchItemInfo searchItem, Action<SearchItemInfo> onPlay ) {
+        public UiSearchItem( SearchItemInfo searchItem, Action<SearchItemInfo, bool> onPlay ) {
             mSearchItem = searchItem;
             mPlayAction = onPlay;
 
             Play = new DelegateCommand( OnPlay );
+            PlayNext = new DelegateCommand( OnPlayNext );
         }
 
         public string RatingSource {
@@ -38,7 +40,11 @@ namespace Noise.RemoteClient.Dto {
         }
 
         private void OnPlay() {
-            mPlayAction?.Invoke( mSearchItem );
+            mPlayAction?.Invoke( mSearchItem, false );
+        }
+
+        private void OnPlayNext() {
+            mPlayAction?.Invoke( mSearchItem, true );
         }
     }
 }

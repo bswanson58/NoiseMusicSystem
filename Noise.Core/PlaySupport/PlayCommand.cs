@@ -30,22 +30,22 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public Task Play( DbArtist artist ) {
-			return( Task.Run( () => {
+			return Task.Run( () => {
 					try {
 						mPlayQueue.Add( artist );
 					}
 					catch( Exception exception ) {
 						mLog.LogException( $"Adding artist '{artist.Name}' to playback queue", exception );
 					}
-				}));
+            });
 		}
 
 		public Task PlayRandomArtistTracks( DbArtist artist ) {
-			return( Task.Run( () => mEventAggregator.PublishOnUIThread( new Events.PlayArtistTracksRandom( artist.DbId ))));
+			return Task.Run( () => mEventAggregator.PublishOnUIThread( new Events.PlayArtistTracksRandom( artist.DbId )));
 		}
 
 		public Task PlayTopArtistTracks( DbArtist artist ) {
-			return( Task.Run( () => {
+			return Task.Run( () => {
 				try {
 					var tracks = RetrieveTopTracks( artist );
 
@@ -56,7 +56,7 @@ namespace Noise.Core.PlaySupport {
 				catch( Exception exception ) {
 					mLog.LogException( $"Adding top tracks for artist '{artist.Name}' to playback queue", exception );
 				}
-			}));
+			});
 		}
 
         public Task PlayRandomTaggedTracks( DbTag tag ) {
@@ -109,15 +109,15 @@ namespace Noise.Core.PlaySupport {
 				}
 			}
 
-			return( retValue );
+			return retValue;
 		} 
 
 		private int NextRandom( int maxValue ) {
-			return( mRandom.Next( maxValue ));
+			return mRandom.Next( maxValue );
 		}
 
 		public Task Play( DbAlbum album ) {
-			return( Task.Run( () => {
+			return Task.Run( () => {
 				try {
 					mPlayQueue.Add( album );
 
@@ -126,11 +126,11 @@ namespace Noise.Core.PlaySupport {
 				catch( Exception exception ) {
 					mLog.LogException( $"Adding album '{album.Name}' to playback queue", exception );
 				}
-			}));
+			});
 		}
 
 		public Task Play( DbAlbum album, string volumeName ) {
-			return( Task.Run( () => {
+			return Task.Run( () => {
 				try {
 					mPlayQueue.Add( album, volumeName );
 
@@ -139,11 +139,11 @@ namespace Noise.Core.PlaySupport {
 				catch( Exception exception ) {
 					mLog.LogException( $"Adding volume '{volumeName}' of album '{album.Name}' to playback queue", exception );
 				}
-			}));
+			});
 		}
 
 		public Task Play( DbTrack track ) {
-			return( Task.Run( () => {
+			return Task.Run( () => {
 				try {
 					mPlayQueue.Add( track );
 
@@ -152,29 +152,42 @@ namespace Noise.Core.PlaySupport {
 				catch( Exception exception ) {
 					mLog.LogException( $"Adding track '{track.Name}' to playback queue", exception );
 				}
-			}));
+			});
 		}
 
-		public Task Play( IEnumerable<DbTrack> trackList ) {
-			return( Task.Run( () => {
+        public Task PlayNext( DbTrack track ) {
+            return Task.Run( () => {
+                try {
+                    mPlayQueue.AddNext( track );
+
+                    mEventAggregator.PublishOnUIThread( new Events.TrackQueued( track ));
+                }
+                catch( Exception exception ) {
+                    mLog.LogException( $"Adding track '{track.Name}' to playback queue", exception );
+                }
+            });
+        }
+
+        public Task Play( IEnumerable<DbTrack> trackList ) {
+			return Task.Run( () => {
 				try {
 					mPlayQueue.Add( trackList );
 				}
 				catch( Exception exception ) {
 					mLog.LogException( "Adding track list to playback queue", exception );
 				}
-			}));
+			});
 		}
 
 		public Task Play( DbInternetStream stream ) {
-			return( Task.Run( () => {
+			return Task.Run( () => {
 				try {
 					mPlayQueue.Add( stream );
 				}
 				catch( Exception exception ) {
 					mLog.LogException( $"Adding stream '{stream.Name}' to playback queue", exception );
 				}
-			}));
+			});
 		}
 	}
 }

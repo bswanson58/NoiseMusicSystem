@@ -7,9 +7,9 @@ using Prism.Mvvm;
 namespace Noise.RemoteClient.Dto {
     [DebuggerDisplay("Track = {" + nameof(TrackName) + "}")]
     class UiTagAssociation : BindableBase {
-        private readonly TagAssociationInfo         mTag;
-        private readonly Action<TagAssociationInfo> mPlayAction;
-        private bool                                mIsPlaying;
+        private readonly TagAssociationInfo                 mTag;
+        private readonly Action<TagAssociationInfo, bool>   mPlayAction;
+        private bool                                        mIsPlaying;
 
         public  string                              ArtistName => mTag.ArtistName;
         public  string                              AlbumName => mTag.AlbumName;
@@ -20,17 +20,19 @@ namespace Noise.RemoteClient.Dto {
         public  bool                                HasRating => Rating != 0;
 
         public  DelegateCommand                     Play {  get; }
+        public  DelegateCommand                     PlayNext { get; }
 
-        public UiTagAssociation( TagAssociationInfo tag, Action<TagAssociationInfo> onPlay, PlayingState state  ) :
+        public UiTagAssociation( TagAssociationInfo tag, Action<TagAssociationInfo, bool> onPlay, PlayingState state  ) :
             this( tag, onPlay ) { 
             SetIsPlaying( state );
         }
 
-        public UiTagAssociation( TagAssociationInfo tag, Action<TagAssociationInfo> onPlay  ) {
+        public UiTagAssociation( TagAssociationInfo tag, Action<TagAssociationInfo, bool> onPlay  ) {
             mTag = tag;
             mPlayAction = onPlay;
 
             Play = new DelegateCommand( OnPlay );
+            PlayNext = new DelegateCommand( OnPlayNext );
         }
 
         public string RatingSource {
@@ -56,7 +58,11 @@ namespace Noise.RemoteClient.Dto {
         }
 
         private void OnPlay() {
-            mPlayAction?.Invoke( mTag );
+            mPlayAction?.Invoke( mTag, false );
+        }
+
+        private void OnPlayNext() {
+            mPlayAction?.Invoke( mTag, true );
         }
     }
 }
