@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Noise.RemoteServer.Protocol;
@@ -53,6 +54,21 @@ namespace Noise.RemoteClient.Dto {
         public bool IsPlaying {
             get => mIsPlaying;
             set => SetProperty( ref mIsPlaying, value );
+        }
+
+        public void UpdateTrack( TrackInfo track ) {
+            Track.Rating = track.Rating;
+            Track.IsFavorite = track.IsFavorite;
+
+            var tagList = new List<TrackTagInfo>( track.Tags );
+            Track.Tags.Clear();
+            Track.Tags.AddRange( tagList );
+
+            RaisePropertyChanged( nameof( IsFavorite ));
+            RaisePropertyChanged( nameof( Rating ));
+            RaisePropertyChanged( nameof( HasRating ));
+            RaisePropertyChanged( nameof( RatingSource ));
+            RaisePropertyChanged( nameof( Tags ));
         }
 
         public void SetIsPlaying( PlayingState state ) {

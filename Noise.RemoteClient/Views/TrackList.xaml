@@ -2,9 +2,86 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
+             xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
+             xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.TrackList"
+             x:Name="_trackView"
              Title="Track List">
+
+    <ContentPage.Resources>
+        <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+
+        <DataTemplate x:Key="TrackTemplate" x:DataType="dto:UiTrack">
+            <ViewCell>
+                <SwipeView BackgroundColor="{DynamicResource SwipeViewBackground}">
+                    <SwipeView.LeftItems>
+                        <SwipeItems>
+                            <SwipeItemView Command="{Binding Path=BindingContext.EditTrackRatings, Source={x:Reference Name=_trackView}}"
+                                           CommandParameter="{Binding .}">
+                                <Grid Margin="15,0" BackgroundColor="Transparent">
+                                    <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                        ImageColor="{DynamicResource SwipeViewForeground}"/>
+                                </Grid>
+                            </SwipeItemView>
+                            <SwipeItemView Command="{Binding Path=BindingContext.EditTrackTags, Source={x:Reference Name=_trackView}}"
+                                           CommandParameter="{Binding .}">
+                                <Grid Margin="15,0" BackgroundColor="Transparent">
+                                    <controls:SvgButton Source="EditTags" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                        ImageColor="{DynamicResource SwipeViewForeground}"/>
+                                </Grid>
+                            </SwipeItemView>
+                        </SwipeItems>
+                    </SwipeView.LeftItems>
+
+                    <Grid Margin="5,0,5,3" RowSpacing="0" ColumnSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
+                                     touchEffect:TouchEff.Command="{Binding Play}"
+                                     touchEffect:TouchEff.LongPressCommand="{Binding PlayNext}">
+                            <controls:SvgButton Margin="5,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
+                                                Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                        </ContentView>
+
+                        <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center" 
+                           Text="{Binding TrackName}">
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                    <Setter Property="TextColor" Value="{DynamicResource PlayColor}"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                        <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
+                                            IsVisible="{Binding HasRating}" Source="{Binding RatingSource}" ImageColor="{DynamicResource SignatureColor}"/>
+
+                        <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0"
+                                            IsVisible="{Binding IsFavorite}" Source="Favorite" ImageColor="{DynamicResource SignatureColor}"/>
+
+                        <Label Grid.Row="0" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
+                               HorizontalTextAlignment="End" Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
+
+                        <Label Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Margin="0,0,5,0" Style="{StaticResource ListItemDetailStyle}" 
+                               HorizontalOptions="End" Text="{Binding Tags}"/>
+                    </Grid>
+                </SwipeView>
+            </ViewCell>
+        </DataTemplate>
+    </ContentPage.Resources>
 
     <Shell.TitleView>
         <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
@@ -25,7 +102,7 @@
     <ContentPage.Content>
         <Grid>
             <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" SelectionMode="None" CachingStrategy="RecycleElement"
-                      ItemTemplate="{StaticResource AlbumTrackTemplate}"/>
+                      ItemTemplate="{StaticResource TrackTemplate}"/>
 
             <ActivityIndicator VerticalOptions="Center" HorizontalOptions="Center" IsRunning="{Binding IsBusy}"/>
         </Grid>
