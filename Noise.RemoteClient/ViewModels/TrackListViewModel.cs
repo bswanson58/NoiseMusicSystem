@@ -129,7 +129,6 @@ namespace Noise.RemoteClient.ViewModels {
             });
         }
 
-
         public void Dispose() {
             mPlayingStateSubscription?.Dispose();
             mPlayingStateSubscription = null;
