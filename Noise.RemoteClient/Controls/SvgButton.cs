@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Input;
+using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
@@ -25,6 +26,16 @@ namespace Noise.RemoteClient.Controls {
             get => GetValue( CommandProperty ) as ICommand;
             set => SetValue( CommandProperty, value );
         }
+
+        public static readonly BindableProperty ImageColorProperty = 
+            BindableProperty.Create( nameof( ImageColor ), typeof( Color ), typeof( SvgButton ), Color.Black, propertyChanged: OnColorChanged  );
+
+        public Color ImageColor {
+            get => (Color)GetValue( ImageColorProperty );
+            set => SetValue( ImageColorProperty, value );
+        }
+
+        private static void OnColorChanged( BindableObject sender, object oldValue, object newValue ) { }
 
         public SvgButton() {
             mCanvasView = new SKCanvasView();
@@ -57,37 +68,46 @@ namespace Noise.RemoteClient.Controls {
         }
 
         private void CanvasViewOnPaintSurface( object sender, SKPaintSurfaceEventArgs args ) {
-            var canvas = args.Surface.Canvas;
-
-            canvas.Clear();
-
             if( string.IsNullOrEmpty( Source )) {
                 return;
             }
 
-            using( var stream = GetType().Assembly.GetManifestResourceStream( ResourceName( Source ))) {
-                if( stream != null ) {
-                    var svg = new SKSvg();
+            using( var canvas = args.Surface.Canvas ) {
+                canvas.Clear();
 
-                    svg.Load( stream );
+                using( var stream = GetType().Assembly.GetManifestResourceStream( ResourceName( Source ))) {
+                    if( stream != null ) {
+                        var svg = new SKSvg();
 
-                    var info = args.Info;
-                    canvas.Translate( info.Width / 2f, info.Height / 2f );
+                        svg.Load( stream );
 
-                    var bounds = svg.ViewBox;
+                        var info = args.Info;
+                        canvas.Translate( info.Width / 2f, info.Height / 2f );
 
-                    bounds.Inflate( (float)( Padding.Left + Padding.Right ), (float)( Padding.Top + Padding.Bottom ));
-                    bounds.Offset( (float)( Padding.Left - Padding.Right ), (float)( Padding.Top - Padding.Bottom ));
+                        var bounds = svg.ViewBox;
 
-                    float xRatio = info.Width / bounds.Width;
-                    float yRatio = info.Height / bounds.Height;
+                        bounds.Inflate( (float)( Padding.Left + Padding.Right ), (float)( Padding.Top + Padding.Bottom ));
+                        bounds.Offset( (float)( Padding.Left - Padding.Right ), (float)( Padding.Top - Padding.Bottom ));
 
-                    float ratio = Math.Min( xRatio, yRatio );
+                        float xRatio = info.Width / bounds.Width;
+                        float yRatio = info.Height / bounds.Height;
 
-                    canvas.Scale( ratio );
-                    canvas.Translate( -bounds.MidX, -bounds.MidY );
+                        float ratio = Math.Min( xRatio, yRatio );
 
-                    canvas.DrawPicture( svg.Picture );
+                        canvas.Scale( ratio );
+                        canvas.Translate( -bounds.MidX, -bounds.MidY );
+
+                        if(!ImageColor.Equals( Color.Black )) {
+                            using (var paint = new SKPaint()) {
+                                paint.ColorFilter = SKColorFilter.CreateBlendMode( SKColor.Parse( ImageColor.ToHex()), SKBlendMode.SrcIn );
+
+                                canvas.DrawPicture( svg.Picture, paint );
+                            }
+                        }
+                        else {
+                            canvas.DrawPicture( svg.Picture );
+                        }
+                    }
                 }
             }
         }

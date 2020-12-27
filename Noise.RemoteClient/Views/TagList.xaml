@@ -29,24 +29,25 @@
                     <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
                                  touchEffect:TouchEff.Command="{Binding Play}"
                                  touchEffect:TouchEff.LongPressCommand="{Binding PlayNext}">
-                        <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                        <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5" ImageColor="{DynamicResource PlayColor}"
+                                            Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                     </ContentView>
 
                     <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource ListItemHeaderStyle}" VerticalTextAlignment="Center" Text="{Binding TrackName}">
                         <Label.Triggers>
                             <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                <Setter Property="TextColor" Value="{DynamicResource PlayColor}"/>
                             </DataTrigger>
                         </Label.Triggers>
                     </Label>
 
-                    <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
-                                    IsVisible="{Binding HasRating}" Source="{Binding RatingSource}"/>
+                    <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
+                                    IsVisible="{Binding HasRating}" ImageColor="{DynamicResource SignatureColor}" Source="{Binding RatingSource}"/>
 
-                    <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
-                                    IsVisible="{Binding IsFavorite}" Source="Favorite"/>
+                    <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
+                                    IsVisible="{Binding IsFavorite}" ImageColor="{DynamicResource SignatureColor}" Source="Favorite"/>
 
-                    <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center" WidthRequest="60" 
+                    <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
                        HorizontalTextAlignment="End" Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
 
                     <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="10,0,0,0">

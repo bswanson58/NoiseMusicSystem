@@ -38,7 +38,8 @@
                                 <SwipeItemView Command="{Binding Path=BindingContext.EditAlbumRatings, Source={x:Reference Name=_albumList}}"
                                                CommandParameter="{Binding .}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                        <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            VerticalOptions="Center" ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                             </SwipeItems>
@@ -61,22 +62,23 @@
 
                             <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
                                          touch:TouchEff.Command="{Binding Play}">
-                                <controls:SvgButton Margin="5,0" VerticalOptions="Center" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                                <controls:SvgButton Margin="5,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
+                                                    Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                             </ContentView>
 
                             <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">
                                 <Label.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                        <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                        <Setter Property="TextColor" Value="{DynamicResource PlayColor}"/>
                                     </DataTrigger>
                                 </Label.Triggers>
                             </Label>
 
                             <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
-                                            IsVisible="{Binding HasRating}" Source="{Binding RatingSource}"/>
+                                            IsVisible="{Binding HasRating}" Source="{Binding RatingSource}" ImageColor="{DynamicResource SignatureColor}"/>
 
                             <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
-                                            IsVisible="{Binding IsFavorite}" Source="Favorite"/>
+                                            IsVisible="{Binding IsFavorite}" Source="Favorite" ImageColor="{DynamicResource SignatureColor}"/>
 
                             <Label Grid.Row="1" Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding TrackCount, StringFormat='Tracks: {0}'}"/>
                             <Label Grid.Row="1" Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding PublishedYear, StringFormat='Published: {0}'}"/>

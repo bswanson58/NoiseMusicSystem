@@ -23,13 +23,15 @@
                                 <SwipeItemView Command="{Binding Path=BindingContext.EditTrackRatings, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.EditTrackTags, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="EditTags" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="EditTags" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                             </SwipeItems>
@@ -40,31 +42,36 @@
                                 <SwipeItemView Command="{Binding Path=BindingContext.PromoteTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}" IsVisible="{Binding IsStrategyQueued}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="PromoteTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="PromoteTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.RemoveTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="RemoveItem" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="RemoveItem" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.ReplayTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}" IsVisible="{Binding CanReplay}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="ReplayTrack" HeightRequest="25" WidthRequest="25" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="ReplayTrack" HeightRequest="25" WidthRequest="25" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.SkipTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}" IsVisible="{Binding CanSkip}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="SkipTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="SkipTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                                 <SwipeItemView Command="{Binding Path=BindingContext.PlayFromTrack, Source={x:Reference Name=_queueView}}"
                                                CommandParameter="{Binding .}">
                                     <Grid Margin="15,0" BackgroundColor="Transparent">
-                                        <controls:SvgButton Source="ContinueFromTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
+                                        <controls:SvgButton Source="ContinueFromTrack" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                            ImageColor="{DynamicResource SwipeViewForeground}"/>
                                     </Grid>
                                 </SwipeItemView>
                             </SwipeItems>
@@ -88,7 +95,7 @@
                             <Label x:Name="_trackName" Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding TrackName}">
                                 <Label.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                        <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                        <Setter Property="TextColor" Value="{DynamicResource PlayColor}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsStrategyQueued}" Value="True" TargetType="Label">
                                         <Setter Property="FontAttributes" Value="Bold, Italic"></Setter>
@@ -109,7 +116,7 @@
                                    Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}">
                                 <Label.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
-                                        <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>
+                                        <Setter Property="TextColor" Value="{DynamicResource PlayColor}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding HasPlayed}" Value="True" TargetType="Label">
                                         <Setter Property="Opacity" Value="0.4"/>
@@ -182,7 +189,7 @@
             <ListView Grid.Row="0" Margin="5" ItemsSource="{Binding QueueList}" HasUnevenRows="True" ItemTemplate="{StaticResource QueuedTrackTemplate}"
                       CachingStrategy="RecycleElement"/>
 
-            <SwipeView Grid.Row="1" BackgroundColor="#606060">
+            <SwipeView Grid.Row="1" BackgroundColor="{DynamicResource TransportBackgroundColor}">
                 <SwipeView.RightItems>
                     <SwipeItemView>
                         <StackLayout Margin="0,0,10,5" Orientation="Horizontal" VerticalOptions="Center" BackgroundColor="Transparent">
@@ -195,22 +202,22 @@
                 <Grid BackgroundColor="Transparent" Margin="0,5">
                     <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                         <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
-                            <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Play"/>
+                            <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Play"/>
                         </ContentView>
                         <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Pause}">
-                            <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Pause"/>
+                            <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Pause"/>
                         </ContentView>
                         <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Stop}">
-                            <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Stop"/>
+                            <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Stop"/>
                         </ContentView>
                         <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding PlayPrevious}">
-                            <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Previous"/>
+                            <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Previous"/>
                         </ContentView>
                         <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding PlayNext}">
-                            <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Next"/>
+                            <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Next"/>
                         </ContentView>
                         <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding RepeatTrack}">
-                            <controls:SvgButton Margin="12,5" Opacity="0.4" Source="Transport_Repeat"/>
+                            <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Repeat"/>
                         </ContentView>
                     </StackLayout>
                 </Grid>

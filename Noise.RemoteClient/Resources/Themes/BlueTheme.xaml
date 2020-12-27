@@ -15,16 +15,24 @@
     <Color x:Key="DividerColor">#404040</Color>
     <Color x:Key="AccentColor">#448AFF</Color>
 
+    <Color x:Key="TransportBackgroundColor">#303030</Color>
+
     <Color x:Key="PlayColor">#20FF00</Color>
     <Color x:Key="LightPlayColor">#00A000</Color>
     <Color x:Key="TransparentColor">Transparent</Color>
 
+    <Color x:Key="SignatureColor">#EA6500</Color>
+
     <resources:ColorReference x:Key="PageBackgroundColor" Color="{StaticResource BackgroundColor}"/>
-    <resources:ColorReference x:Key="SwipeViewBackground" Color="{StaticResource DefaultPrimaryColor}"/>
     <resources:ColorReference x:Key="NavigationBarColor" Color="{StaticResource DefaultPrimaryColor}"/>
     <resources:ColorReference x:Key="DisabledColor" Color="{StaticResource LightPrimaryColor}"/>
 
+    <resources:ColorReference x:Key="SwipeViewBackground" Color="{StaticResource DefaultPrimaryColor}"/>
+    <resources:ColorReference x:Key="SwipeViewForeground" Color="{StaticResource PrimaryTextColor}"/>
+
     <resources:ColorReference x:Key="ListSeparatorColor" Color="{StaticResource DividerColor}"/>
+
+    <resources:ColorReference x:Key="TransportButtonColor" Color="{StaticResource PrimaryTextColor}"/>
 
     <Color x:Key="DialogBackgroundColor">White</Color>
     <Color x:Key="DialogTextColor">Black</Color>
