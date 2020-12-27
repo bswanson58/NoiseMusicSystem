@@ -41,13 +41,13 @@
                         </Label.Triggers>
                     </Label>
 
-                    <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
+                    <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
                                     IsVisible="{Binding HasRating}" ImageColor="{DynamicResource SignatureColor}" Source="{Binding RatingSource}"/>
 
-                    <controls:SvgButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
+                    <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
                                     IsVisible="{Binding IsFavorite}" ImageColor="{DynamicResource SignatureColor}" Source="Favorite"/>
 
-                    <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
+                    <Label Grid.Row="0" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
                        HorizontalTextAlignment="End" Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
 
                     <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="10,0,0,0">
