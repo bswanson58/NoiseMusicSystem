@@ -60,7 +60,7 @@
     </ContentPage.Resources>
 
     <Shell.TitleView>
-        <Grid>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -69,7 +69,7 @@
 
             <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Tags"/>
 
-            <StackLayout Grid.Column="2" Orientation="Horizontal" VerticalOptions="Center" Margin="0,0,10,0">
+            <StackLayout Grid.Column="2" Orientation="Horizontal" VerticalOptions="Center" Margin="0,0,10,0" BackgroundColor="Transparent">
                 <Label Margin="0,0,5,0" Style="{StaticResource TitleViewTitleStyle}" VerticalOptions="Center" Text="Display Tracks Tagged With:"/>
                 <Picker WidthRequest="200" ItemsSource="{Binding TagList}" SelectedItem="{Binding CurrentTag}" 
                         ItemDisplayBinding="{Binding TagName}" Title="select a tag"/>

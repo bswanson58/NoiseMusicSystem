@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
       xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
       x:Class="Noise.RemoteClient.Dialogs.EditTrackRatingsView"
-      BackgroundColor="White"
+      BackgroundColor="{DynamicResource DialogBackgroundColor}"
       RowSpacing="0">
 
     <Grid.RowDefinitions>
@@ -19,7 +19,7 @@
 
     <controls:SvgButton Grid.Row="2" Margin="0,10" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" Source="{Binding FavoriteSource}" Command="{Binding ToggleFavorite}"/>
 
-    <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center" Margin="20,10">
+    <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center" Margin="20,10" BackgroundColor="Transparent">
         <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating0Source}" Command="{Binding Set0Star}"/>
         <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating1Source}" Command="{Binding Set1Star}"/>
         <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="{Binding Rating2Source}" Command="{Binding Set2Star}"/>
@@ -29,7 +29,7 @@
         <controls:SvgButton Margin="5,0" HeightRequest="50" WidthRequest="50" Source="ClearRating" Command="{Binding ClearRating}"/>
     </StackLayout>
 
-    <StackLayout Grid.Row="4" Margin="0,20,10,10" Orientation="Horizontal" HorizontalOptions="End">
+    <StackLayout Grid.Row="4" Margin="0,20,10,10" Orientation="Horizontal" HorizontalOptions="End" BackgroundColor="Transparent">
         <Button Command="{Binding Ok}" Text="OK"/>
         <Button Command="{Binding Cancel}" Text="Cancel"/>
     </StackLayout>

@@ -2,52 +2,54 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect">
 
-    <Color x:Key="PlayColor">#FF00D000</Color>
-
     <Style x:Key="TitleViewTitleStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="Large"/>
-        <Setter Property="TextColor" Value="White"/>
+        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}"/>
+        <Setter Property="TextColor" Value="{DynamicResource PrimaryTextColor}" />
         <Setter Property="VerticalOptions" Value="Center"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
     <Style x:Key="TitleViewSubtitleStyle" TargetType="Label" BasedOn="{StaticResource TitleViewTitleStyle}">
-        <Setter Property="FontSize" Value="Medium"/>
+        <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
     </Style>
 
     <Style x:Key="ListItemHeaderStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="Large"/>
+        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}"/>
+        <Setter Property="TextColor" Value="{DynamicResource PrimaryTextColor}" />
         <Setter Property="FontAttributes" Value="Bold"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
     <Style x:Key="ListItemDetailStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="Small"/>
+        <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+        <Setter Property="TextColor" Value="{DynamicResource PrimaryTextColor}" />
         <Setter Property="Opacity" Value="0.75"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
     <Style x:Key="DialogTextStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="Medium"/>
+        <Setter Property="TextColor" Value="{DynamicResource DialogTextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
     <Style x:Key="PlayButtonTouchEffect" TargetType="VisualElement">
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
-        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LawnGreen"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="{DynamicResource LightPlayColor}"/>
     </Style>
 
     <Style x:Key="ListItemTouchEffect" TargetType="VisualElement">
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
-        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LightSkyBlue"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="{DynamicResource LightPrimaryColor}"/>
     </Style>
 
     <Style x:Key="ListItemDetailTouchStyle" TargetType="Label" BasedOn="{StaticResource ListItemDetailStyle}">
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
-        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="LightSkyBlue"/>
+        <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="{DynamicResource LightPrimaryColor}"/>
     </Style>
 
     <Style x:Key="TransportButtonTouchEffect" TargetType="VisualElement">
+        <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
         <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="DarkGray"/>
     </Style>

@@ -6,6 +6,12 @@
              x:Class="Noise.RemoteClient.Views.FavoritesList"
              Title="Favorites">
 
+    <Shell.TitleView>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Favorites"/>
+        </Grid>
+    </Shell.TitleView>
+
     <ContentPage.Content>
         <Grid>
             <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" SelectionMode="None" CachingStrategy="RecycleElement"

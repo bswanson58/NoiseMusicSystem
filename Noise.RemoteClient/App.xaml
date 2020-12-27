@@ -6,6 +6,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Themes/BlueTheme.xaml"/>
+                <ResourceDictionary Source="/Resources/ControlStyles.xaml"/>
+                <ResourceDictionary Source="/Resources/TextSizes/LargeText.xaml"/>
+
                 <ResourceDictionary Source="/Resources/UiStyles.xaml" />
                 <ResourceDictionary Source="/Resources/DataTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>

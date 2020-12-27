@@ -10,7 +10,7 @@
              Title="Artist List">
 
     <Shell.TitleView>
-        <Grid>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -27,7 +27,7 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ArtistTemplate" x:DataType="dto:UiArtist">
                 <ViewCell>
-                    <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}" 
+                    <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
                           touchEffect:TouchEff.Command="{Binding BindingContext.SelectArtist, Source={x:Reference Name=_artistList}}"
                           touchEffect:TouchEff.CommandParameter="{Binding .}">
                         <Grid.RowDefinitions>

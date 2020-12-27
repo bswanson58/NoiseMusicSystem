@@ -52,7 +52,7 @@ namespace Noise.RemoteClient.Dialogs {
                 });
             }
 
-            RaisePropertyChanged( TrackName );
+            RaisePropertyChanged( nameof( TrackName ));
         }
 
         private void OnOk() {

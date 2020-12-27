@@ -8,13 +8,13 @@
              Title="Suggestions">
 
     <Shell.TitleView>
-        <Grid>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackLayout Grid.Column="0" Orientation="Horizontal">
+            <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="Suggestions for: "/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>

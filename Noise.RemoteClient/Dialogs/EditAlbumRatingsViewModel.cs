@@ -19,7 +19,7 @@ namespace Noise.RemoteClient.Dialogs {
                 UpdateRating( mRating );
 
                 RaisePropertyChanged( nameof( FavoriteSource ));
-                RaisePropertyChanged( nameof( TrackName ));
+                RaisePropertyChanged( nameof( AlbumName ));
             }
         }
 

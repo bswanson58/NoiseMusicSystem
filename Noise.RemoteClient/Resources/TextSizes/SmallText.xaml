@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="Noise.RemoteClient.Resources.TextSizes.SmallText">
+
+    <x:Int16 x:Key="LargeFontSize">18</x:Int16>
+    <x:Int16 x:Key="PrimaryFontSize">16</x:Int16>
+    <x:Int16 x:Key="SmallFontSize">12</x:Int16>
+</ResourceDictionary>

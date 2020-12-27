@@ -11,14 +11,14 @@
              Title="Album List">
 
     <Shell.TitleView>
-        <Grid>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackLayout Grid.Column="0" Orientation="Horizontal">
+            <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumCount}"/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text=" Albums for: "/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
@@ -32,14 +32,14 @@
         <ResourceDictionary>
             <DataTemplate x:Key="AlbumTemplate" x:DataType="dto:UiAlbum">
                 <ViewCell>
-                    <SwipeView>
+                    <SwipeView BackgroundColor="{DynamicResource SwipeViewBackground}">
                         <SwipeView.LeftItems>
                             <SwipeItems>
-                                <SwipeItemView Command="{Binding Path=BindingContext.EditAlbumRatings, Source={x:Reference Name=_albumList}}" Background="White"
+                                <SwipeItemView Command="{Binding Path=BindingContext.EditAlbumRatings, Source={x:Reference Name=_albumList}}"
                                                CommandParameter="{Binding .}">
-                                    <StackLayout Orientation="Horizontal" WidthRequest="50">
-                                        <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
-                                    </StackLayout>
+                                    <Grid Margin="15,0" BackgroundColor="Transparent">
+                                        <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Grid>
                                 </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.LeftItems>
@@ -61,8 +61,7 @@
 
                             <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
                                          touch:TouchEff.Command="{Binding Play}">
-                                <controls:SvgButton Margin="5,0" VerticalOptions="Center" Opacity="0.5"
-                                                    Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                                <controls:SvgButton Margin="5,0" VerticalOptions="Center" Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                             </ContentView>
 
                             <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">

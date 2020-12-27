@@ -54,7 +54,7 @@
     </ContentPage.Resources>
 
     <Shell.TitleView>
-        <Grid>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>

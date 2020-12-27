@@ -3,13 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
       xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
       x:Class="Noise.RemoteClient.Dialogs.EditTrackTagsView"
-      BackgroundColor="White"
+      BackgroundColor="{DynamicResource DialogBackgroundColor}"
       RowSpacing="0">
 
     <Grid.Resources>
         <DataTemplate x:Key="UiTag" x:DataType="dto:UiTag">
             <ViewCell>
-                <StackLayout Orientation="Horizontal">
+                <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
                     <CheckBox Margin="10,3" VerticalOptions="Center" IsChecked="{Binding IsTagged}"/>
                     <Label VerticalOptions="Center" Style="{StaticResource DialogTextStyle}" Text="{Binding TagName}"/>
                 </StackLayout>
@@ -30,7 +30,7 @@
     <ListView Grid.Row="2" Margin="10" HeightRequest="200" WidthRequest="450" HasUnevenRows="True" 
               ItemsSource="{Binding TagList}" ItemTemplate="{StaticResource UiTag}"/>
 
-    <StackLayout Grid.Row="3" Margin="0,20,10,10" Orientation="Horizontal" HorizontalOptions="End">
+    <StackLayout Grid.Row="3" Margin="0,20,10,10" Orientation="Horizontal" HorizontalOptions="End" BackgroundColor="Transparent">
         <Button Command="{Binding Ok}" Text="OK"/>
         <Button Command="{Binding Cancel}" Text="Cancel"/>
     </StackLayout>
