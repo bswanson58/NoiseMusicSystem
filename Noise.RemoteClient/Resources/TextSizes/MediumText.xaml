@@ -3,8 +3,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     x:Class="Noise.RemoteClient.Resources.TextSizes.MediumText">
 
-    <x:Int16 x:Key="LargeFontSize">24</x:Int16>
-    <x:Int16 x:Key="PrimaryFontSize">20</x:Int16>
-    <x:Int16 x:Key="SmallFontSize">16</x:Int16>
+    <x:Int16 x:Key="LargeFontSize">26</x:Int16>
+    <x:Int16 x:Key="PrimaryFontSize">22</x:Int16>
+    <x:Int16 x:Key="SmallFontSize">18</x:Int16>
 
 </ResourceDictionary>
