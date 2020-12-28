@@ -18,6 +18,7 @@
     <None Remove="Resources\Images\Empty_Star.svg" />
     <None Remove="Resources\Images\Full_Star.svg" />
     <None Remove="Resources\Images\Negative_Rating.svg" />
+    <None Remove="Resources\Images\Note.svg" />
     <None Remove="Resources\Images\NotFavorite.svg" />
     <None Remove="Resources\Images\Positive_Rating.svg" />
     <None Remove="Resources\Images\PromoteTrack.svg" />
@@ -44,6 +45,7 @@
     <EmbeddedResource Include="Resources\Images\1_Star.svg" />
     <EmbeddedResource Include="Resources\Images\Full_Star.svg" />
     <EmbeddedResource Include="Resources\Images\Negative_Rating.svg" />
+    <EmbeddedResource Include="Resources\Images\Note.svg" />
     <EmbeddedResource Include="Resources\Images\NotFavorite.svg" />
     <EmbeddedResource Include="Resources\Images\PlayButton.svg" />
     <EmbeddedResource Include="Resources\Images\3_Star.svg" />
