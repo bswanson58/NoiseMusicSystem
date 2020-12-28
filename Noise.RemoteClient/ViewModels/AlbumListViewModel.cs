@@ -140,7 +140,7 @@ namespace Noise.RemoteClient.ViewModels {
             if( mSelectedAlbum?.Album != null ) {
                 mClientState.SetCurrentAlbum( mSelectedAlbum.Album );
 
-                Shell.Current.GoToAsync( "trackList" );
+                Shell.Current.GoToAsync( RouteNames.TrackList );
 
                 SelectedAlbum = null;
             }
@@ -150,7 +150,7 @@ namespace Noise.RemoteClient.ViewModels {
             if( PlayingAlbum != null ) {
                 mClientState.SetCurrentAlbum( PlayingAlbum.Album );
 
-                Shell.Current.GoToAsync( "trackList" );
+                Shell.Current.GoToAsync( RouteNames.TrackList );
             }
         }
 
