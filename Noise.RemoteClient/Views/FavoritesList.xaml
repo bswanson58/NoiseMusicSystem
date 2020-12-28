@@ -12,6 +12,11 @@
         </Grid>
     </Shell.TitleView>
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByName}" Text="Sort by Track Name"/>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByArtist}" Text="Sort by Artist Name"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <Grid>
             <ListView Margin="5" ItemsSource="{Binding DisplayList}" HasUnevenRows="True" SelectionMode="None" CachingStrategy="RecycleElement"
