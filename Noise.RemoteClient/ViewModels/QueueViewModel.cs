@@ -4,6 +4,7 @@ using DynamicData.Binding;
 using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -159,7 +160,7 @@ namespace Noise.RemoteClient.ViewModels {
             mClientState.SetSuggestionState( forTrack );
 
             // route to the shell content page, don't push it on the navigation stack.
-            await Shell.Current.GoToAsync( "///suggestions" );
+            await Shell.Current.GoToAsync( $"///{RouteNames.Suggestions}" );
         }
 
         private TrackInfo CreateTrackInfo( UiQueuedTrack fromQueuedTrack ) {

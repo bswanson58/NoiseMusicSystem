@@ -19,7 +19,7 @@
     <FlyoutItem Title="Queue">
         <ShellContent Route="queue" ContentTemplate="{DataTemplate views:Queue}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Suggestions">
+    <FlyoutItem Title="Suggestions" IsVisible="False">
         <ShellContent Route="suggestions" ContentTemplate="{DataTemplate views:Suggestions}"/>
     </FlyoutItem>
     <!--    
