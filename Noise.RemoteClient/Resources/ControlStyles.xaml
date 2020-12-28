@@ -41,6 +41,10 @@
     <Style TargetType="RefreshView">
         <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}" />
     </Style>
+    <Style TargetType="TabbedPage" ApplyToDerivedTypes="True">
+        <Setter Property="BarBackgroundColor" Value="{DynamicResource DefaultPrimaryColor}"/>
+        <Setter Property="BarTextColor" Value="{DynamicResource PrimaryTextColor}"/>
+    </Style>
 
     <Style TargetType="ListView">
         <Setter Property="SeparatorColor" Value="{DynamicResource ListSeparatorColor}"/>
