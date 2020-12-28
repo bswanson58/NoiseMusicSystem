@@ -128,7 +128,7 @@ namespace Noise.RemoteClient.ViewModels {
                 }
             }
             catch( Exception ex ) {
-                mLog.LogException( "StartQueue",ex );
+                mLog.LogException( nameof( StartQueue ), ex );
             }
         }
 
@@ -151,14 +151,14 @@ namespace Noise.RemoteClient.ViewModels {
                 });
             }
             catch( Exception ex ) {
-                mLog.LogException( "OnQueueChanged", ex );
+                mLog.LogException( nameof( OnQueueChanged ), ex );
             }
         }
 
         private async void OnSuggestions( UiQueuedTrack forTrack ) {
             mClientState.SetSuggestionState( forTrack );
 
-            // route to the shell content page, do push it on the navigation stack.
+            // route to the shell content page, don't push it on the navigation stack.
             await Shell.Current.GoToAsync( "///suggestions" );
         }
 
