@@ -1,8 +1,8 @@
 ﻿using Xamarin.Forms;
 
 namespace Noise.RemoteClient.Resources.Themes {
-    public partial class BlueTheme : ResourceDictionary {
-        public BlueTheme() {
+    public partial class DarkBlueTheme : ResourceDictionary {
+        public DarkBlueTheme() {
             InitializeComponent();
         }
     }

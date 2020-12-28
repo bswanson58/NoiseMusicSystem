@@ -6,7 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Themes/BlueTheme.xaml"/>
+                <ResourceDictionary Source="/Resources/Themes/DarkBlueTheme.xaml"/>
                 <ResourceDictionary Source="/Resources/ControlStyles.xaml"/>
                 <ResourceDictionary Source="/Resources/TextSizes/MediumText.xaml"/>
 
