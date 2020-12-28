@@ -2,8 +2,13 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:views="clr-namespace:Noise.RemoteClient.Views;assembly=Noise.RemoteClient"
+       xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
        x:Class="Noise.RemoteClient.Views.AppShell"
        FlyoutBackgroundColor="{DynamicResource DefaultPrimaryColor}">
+
+    <Shell.FlyoutHeader>
+        <controls:ShellFlyoutHeader />
+    </Shell.FlyoutHeader>
 
     <FlyoutItem Title="Library">
         <ShellContent Route="library" ContentTemplate="{DataTemplate views:ArtistList}"/>

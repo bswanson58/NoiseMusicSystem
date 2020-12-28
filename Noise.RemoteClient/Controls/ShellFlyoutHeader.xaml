@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Noise.RemoteClient.Controls.ShellFlyoutHeader">
+  <ContentView.Content>
+      <StackLayout BackgroundColor="{DynamicResource DefaultPrimaryColor}">
+            <Label Margin="10" Style="{StaticResource TitleViewTitleStyle}" Text="Noise Music System" />
+      </StackLayout>
+  </ContentView.Content>
+</ContentView>
