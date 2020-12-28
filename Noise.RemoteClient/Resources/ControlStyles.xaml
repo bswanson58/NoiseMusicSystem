@@ -77,13 +77,13 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}" />
+                            <Setter Property="BackgroundColor" Value="{DynamicResource DefaultPrimaryColor}" />
                             <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="{DynamicResource PrimaryTextColor}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Selected">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}"/>
+                            <Setter Property="BackgroundColor" Value="{DynamicResource DarkPrimaryColor}"/>
                             <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="{DynamicResource PrimaryTextColor}" />
                         </VisualState.Setters>
                     </VisualState>
