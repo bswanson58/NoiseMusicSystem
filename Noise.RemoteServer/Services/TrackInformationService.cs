@@ -296,6 +296,8 @@ namespace Noise.RemoteServer.Services {
 
                         mTagManager.UpdateAssociations( track, tags );
 
+                        mEventAggregator.PublishOnUIThread( new Events.UserTagsChanged());
+
                         retValue.Success = true;
                     }
                 }
@@ -323,7 +325,7 @@ namespace Noise.RemoteServer.Services {
                             retValue.Track = request.Track;
                             retValue.Success = true;
 
-                            mEventAggregator.PublishOnUIThread( new Events.UserTagsChanged());
+                            mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( updater.Item ));
                         }
                     }
                 }
