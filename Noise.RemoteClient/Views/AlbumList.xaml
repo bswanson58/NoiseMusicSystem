@@ -45,12 +45,13 @@
                             </SwipeItems>
                         </SwipeView.LeftItems>
 
-                        <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
+                        <Grid RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
                               touch:TouchEff.Command="{Binding BindingContext.SelectAlbum, Source={x:Reference Name=_albumList}}"
                               touch:TouchEff.CommandParameter="{Binding .}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="3"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -62,7 +63,7 @@
 
                             <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
                                          touch:TouchEff.Command="{Binding Play}">
-                                <controls:SvgButton Margin="5,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
+                                <controls:SvgButton Margin="10,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
                                                     Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                             </ContentView>
 

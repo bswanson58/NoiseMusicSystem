@@ -27,7 +27,7 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ArtistTemplate" x:DataType="dto:UiArtist">
                 <ViewCell>
-                    <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
+                    <Grid RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
                           touchEffect:TouchEff.Command="{Binding BindingContext.SelectArtist, Source={x:Reference Name=_artistList}}"
                           touchEffect:TouchEff.CommandParameter="{Binding .}">
                         <Grid.RowDefinitions>
@@ -40,7 +40,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="3,0,0,0" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">
                             <Label.Triggers>
                                 <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
                                     <Setter Property="TextColor" Value="{StaticResource PlayColor}"/>

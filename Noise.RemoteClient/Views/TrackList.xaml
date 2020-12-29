@@ -36,7 +36,7 @@
                         </SwipeItems>
                     </SwipeView.LeftItems>
 
-                    <Grid Margin="5,0,5,3" RowSpacing="0" ColumnSpacing="0">
+                    <Grid RowSpacing="0" ColumnSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -53,7 +53,7 @@
                         <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
                                      touchEffect:TouchEff.Command="{Binding Play}"
                                      touchEffect:TouchEff.LongPressCommand="{Binding PlayNext}">
-                            <controls:SvgButton Margin="5,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
+                            <controls:SvgButton Margin="10,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
                                                 Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
                         </ContentView>
 
@@ -75,7 +75,7 @@
                         <Label Grid.Row="0" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
                                HorizontalTextAlignment="End" Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
 
-                        <Label Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Margin="0,0,5,0" Style="{StaticResource ListItemDetailStyle}" 
+                        <Label Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Margin="0,0,7,0" Style="{StaticResource ListItemDetailStyle}" 
                                HorizontalOptions="End" Text="{Binding Tags}"/>
                     </Grid>
                 </SwipeView>
