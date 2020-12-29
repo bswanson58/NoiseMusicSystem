@@ -7,6 +7,7 @@ using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Prism.Mvvm;
+using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     abstract class ListBase<T> : BindableBase, IDisposable {
@@ -27,7 +28,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         protected void InitializeLibrarySubscription() {
-            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnLibraryStatus );
+            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
         }
 
         public bool IsBusy {
@@ -47,7 +48,9 @@ namespace Noise.RemoteClient.ViewModels {
         private void OnLibraryStatus( LibraryStatus status ) {
             mLibraryOpen = status?.LibraryOpen == true;
 
-            OnLibraryStatusChanged( status );
+            Device.BeginInvokeOnMainThread( () => {
+                OnLibraryStatusChanged( status );
+            });
         }
 
         protected abstract Task<IEnumerable<T>> RetrieveList();
