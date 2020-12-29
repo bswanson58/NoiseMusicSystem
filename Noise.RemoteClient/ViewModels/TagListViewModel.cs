@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -30,7 +32,7 @@ namespace Noise.RemoteClient.ViewModels {
             TaggedItemsList = new ObservableCollectionExtended<UiTagAssociation>();
 
             mPlayingStateSubscription = clientState.CurrentlyPlaying.Subscribe( OnPlaying );
-            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnLibraryStatus );
         }
 
         private void OnPlaying( PlayingState state ) {

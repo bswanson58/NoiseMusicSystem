@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dto;
@@ -25,7 +27,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         protected void InitializeLibrarySubscription() {
-            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnLibraryStatus );
+            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnLibraryStatus );
         }
 
         public bool IsBusy {

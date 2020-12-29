@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
@@ -96,7 +98,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void Initialize() {
-            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.Subscribe( OnHostStatus );
+            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnHostStatus );
             mClientStatusSubscription = mClientManager.ClientStatus.Subscribe( OnClientStatus );
         }
 
