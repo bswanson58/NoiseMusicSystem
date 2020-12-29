@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvvm="http://prismlibrary.com"
+             xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
+             xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
+             x:Class="Noise.RemoteClient.Views.FavoriteAlbums"
+             mvvm:ViewModelLocator.AutowireViewModel="True"
+             x:Name="_albumList"
+             Title="Favorite Albums">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumCount}"/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text=" Albums for: "/>
+                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
+            </StackLayout>
+
+            <SearchBar Grid.Column="2" TextColor="White" PlaceholderColor="WhiteSmoke" Placeholder="album list filter" Text="{Binding FilterText}"/>
+        </Grid>
+    </Shell.TitleView>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="AlbumTemplate" x:DataType="dto:UiAlbum">
+                <ViewCell>
+                    <Grid Margin="5,0,5,3" RowSpacing="0" Style="{StaticResource ListItemTouchEffect}"
+                          touchEffect:TouchEff.Command="{Binding BindingContext.SelectAlbum, Source={x:Reference Name=_albumList}}"
+                          touchEffect:TouchEff.CommandParameter="{Binding .}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ContentView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Style="{StaticResource PlayButtonTouchEffect}"
+                                     touchEffect:TouchEff.Command="{Binding Play}">
+                            <controls:SvgButton Margin="5,0" VerticalOptions="Center" ImageColor="{DynamicResource PlayColor}"
+                                                Source="Noise.RemoteClient.Resources.Images.PlayButton.svg"/>
+                        </ContentView>
+
+                        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding DisplayName}">
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="True" TargetType="Label">
+                                    <Setter Property="TextColor" Value="{DynamicResource PlayColor}"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                        <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
+                                        IsVisible="{Binding HasRating}" Source="{Binding RatingSource}" ImageColor="{DynamicResource SignatureColor}"/>
+
+                        <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
+                                        IsVisible="{Binding IsFavorite}" Source="Favorite" ImageColor="{DynamicResource SignatureColor}"/>
+
+                        <Label Grid.Row="1" Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding TrackCount, StringFormat='Tracks: {0}'}"/>
+                        <Label Grid.Row="1" Grid.Column="2" Margin="5,0,0,0" Style="{StaticResource ListItemDetailStyle}" Text="{Binding PublishedYear, StringFormat='Published: {0}'}"/>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByName}" Text="Sort by Name"/>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByUnprefixedName}" Text="Sort by Unprefixed Name"/>
+        <ToolbarItem Order="Secondary" Command="{Binding SortByRating}" Text="Sort by Rating"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <Grid>
+            <ListView Margin="5" ItemsSource="{Binding AlbumList}" SelectionMode="None" CachingStrategy="RecycleElement"
+                      HasUnevenRows="True" ItemTemplate="{StaticResource AlbumTemplate}"/>
+
+            <ActivityIndicator VerticalOptions="Center" HorizontalOptions="Center" IsRunning="{Binding IsBusy}" Color="{DynamicResource SignatureColor}"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

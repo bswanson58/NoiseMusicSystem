@@ -7,6 +7,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RemoteServer.Protocol;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.RemoteServer.Services {
     class AlbumInformationService : AlbumInformation.AlbumInformationBase {
@@ -97,6 +98,33 @@ namespace Noise.RemoteServer.Services {
 
                     retValue.ErrorMessage = ex.Message;
                 }
+                return retValue;
+            });
+        }
+
+        public override Task<AlbumListResponse> GetFavoriteAlbums( AlbumInfoEmpty request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new AlbumListResponse();
+
+                try {
+                    using( var albums = mAlbumProvider.GetFavoriteAlbums()) {
+                        albums.List.ForEach( album => {
+                            var artist = mArtistProvider.GetArtist( album.Artist );
+
+                            if( artist != null ) {
+                                retValue.AlbumList.Add( TransformAlbum( artist, album ));
+                            }
+                        });
+                    }
+
+                    retValue.Success = true;
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( GetFavoriteAlbums ), ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+
                 return retValue;
             });
         }

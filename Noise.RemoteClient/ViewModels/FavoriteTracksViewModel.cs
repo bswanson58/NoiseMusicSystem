@@ -10,7 +10,7 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms.Internals;
 
 namespace Noise.RemoteClient.ViewModels {
-    class FavoritesListViewModel : ListBase<UiTrack> {
+    class FavoriteTracksViewModel : ListBase<UiTrack> {
         private readonly ITrackProvider     mTrackProvider;
         private readonly IPreferences       mPreferences;
         private PlayingState                mPlayingState;
@@ -20,8 +20,8 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand             SortByName { get; }
         public  DelegateCommand             SortByArtist { get; }
 
-        public FavoritesListViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IHostInformationProvider hostInformationProvider,
-                                       IClientState clientState, IPreferences preferences ) :
+        public FavoriteTracksViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IHostInformationProvider hostInformationProvider,
+                                        IClientState clientState, IPreferences preferences ) :
             base( queuePlayProvider, hostInformationProvider ) {
             mTrackProvider = trackProvider;
             mPreferences = preferences;

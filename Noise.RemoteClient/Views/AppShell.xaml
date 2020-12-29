@@ -14,7 +14,7 @@
         <ShellContent Route="library" ContentTemplate="{DataTemplate views:ArtistList}"/>
     </FlyoutItem>
     <FlyoutItem Title="Favorites">
-        <ShellContent Route="favorites" ContentTemplate="{DataTemplate views:FavoritesList}"/>
+        <ShellContent Route="favorites" ContentTemplate="{DataTemplate views:Favorites}"/>
     </FlyoutItem>
     <FlyoutItem Title="Tags">
         <ShellContent Route="tags" ContentTemplate="{DataTemplate views:TagList}"/>
@@ -25,17 +25,8 @@
     <FlyoutItem Title="Queue">
         <ShellContent Route="queue" ContentTemplate="{DataTemplate views:Queue}"/>
     </FlyoutItem>
+
     <FlyoutItem Title="Suggestions" IsVisible="False">
         <ShellContent Route="suggestions" ContentTemplate="{DataTemplate views:Suggestions}"/>
     </FlyoutItem>
-    <!--    
-    <TabBar>
-        <Tab Title="Library">
-            <ShellContent ContentTemplate="{DataTemplate views:ArtistList}"/>
-        </Tab>
-        <Tab Title="Queue">
-            <ShellContent ContentTemplate="{DataTemplate views:Queue}"/>
-        </Tab>
-    </TabBar>
--->
 </Shell>

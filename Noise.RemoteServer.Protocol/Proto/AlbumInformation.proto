@@ -38,5 +38,6 @@ message AlbumUpdateResponse {
 
 service AlbumInformation {
 	rpc GetAlbumList (AlbumListRequest) returns (AlbumListResponse);
+	rpc GetFavoriteAlbums (AlbumInfoEmpty) returns (AlbumListResponse);
 	rpc UpdateAlbumRatings (AlbumUpdateRequest) returns (AlbumUpdateResponse);
 }

@@ -27,6 +27,21 @@ namespace Noise.RemoteClient.Services {
             return default;
         }
 
+        public async Task<AlbumListResponse> GetFavoriteAlbums() {
+            var client = Client;
+
+            if( client != null ) {
+                try {
+                    return await client.GetFavoriteAlbumsAsync( new AlbumInfoEmpty());
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( GetFavoriteAlbums ), ex );
+                }
+            }
+
+            return default;
+        }
+
         public async Task<AlbumUpdateResponse> UpdateAlbumRatings( AlbumInfo album ) {
             var client = Client;
 

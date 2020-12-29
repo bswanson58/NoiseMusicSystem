@@ -108,7 +108,13 @@
     <EmbeddedResource Update="Views\ArtistList.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\FavoritesList.xaml">
+    <EmbeddedResource Update="Views\FavoriteAlbums.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Favorites.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\FavoriteTracks.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Queue.xaml">
@@ -143,6 +149,12 @@
   <ItemGroup>
     <Folder Include="Resources\Themes\" />
     <Folder Include="ValueConverters\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\FavoriteTracks.xaml.cs">
+      <DependentUpon>FavoriteTracks.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
