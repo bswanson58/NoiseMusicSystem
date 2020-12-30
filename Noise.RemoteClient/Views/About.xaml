@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvvm="http://prismlibrary.com"
+             xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             x:Class="Noise.RemoteClient.Views.About"
+             mvvm:ViewModelLocator.AutowireViewModel="True"
+             Title="About">
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackLayout Grid.Row="1" Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="Transparent">
+                <StackLayout Orientation="Horizontal">
+                    <controls:SvgButton Source="Note" Margin="0,8,5,0" ImageColor="{DynamicResource SignatureColor}" VerticalOptions="Center" HeightRequest="50" WidthRequest="50"/>
+                    <Label VerticalOptions="Center" TextColor="{DynamicResource PrimaryTextColor}" FontSize="64" Text="Noise Music System"/>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal">
+                    <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
+                           Style="{DynamicResource TitleViewSubtitleStyle}" Text="Version:"/>
+                    <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding VersionNumber}"/>
+                    <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding BuildDate, StringFormat='({0})'}"/>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal">
+                    <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
+                           Style="{DynamicResource TitleViewSubtitleStyle}" Text="Host:"/>
+                    <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding HostName}"/>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal">
+                    <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
+                           Style="{DynamicResource TitleViewSubtitleStyle}" Text="Library:"/>
+                    <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding LibraryName}"/>
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="End" BackgroundColor="Transparent">
+                <Button Margin="0,0,15,10" Text="Display Logs" Command="{Binding DisplayLogs}"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
