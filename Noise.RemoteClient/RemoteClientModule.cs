@@ -14,6 +14,7 @@ using Xamarin.Forms;
 namespace Noise.RemoteClient {
     static class RemoteClientModule {
         public static void RegisterServices( IContainerRegistry container ) {
+            container.RegisterSingleton<IClientEnvironment, ClientEnvironment>();
             container.RegisterSingleton<IPreferences, PreferencesImplementation>();
 
             container.RegisterInstance( PopupNavigation.Instance );

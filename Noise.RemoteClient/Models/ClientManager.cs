@@ -27,6 +27,8 @@ namespace Noise.RemoteClient.Models {
             try {
                 mServiceLocator.StartServiceLocator();
                 mPlayNotifier.StartNotifications();
+
+                mLog.LogMessage( "Client Manager has started." );
             }
             catch( Exception ex ) {
                 mLog.LogException( nameof( StartClientManager ), ex );
@@ -38,6 +40,8 @@ namespace Noise.RemoteClient.Models {
                 mServiceLocator.StopServiceLocator();
                 mHostInformationProvider.StopHostStatusRequests();
                 mPlayNotifier.StopNotifications();
+
+                mLog.LogMessage( "Client Manager has been stopped." );
             }
             catch( Exception ex ) {
                 mLog.LogException( nameof( StopClientManager ), ex );

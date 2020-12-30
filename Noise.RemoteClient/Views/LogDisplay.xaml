@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvvm="http://prismlibrary.com"
+             x:Class="Noise.RemoteClient.Views.LogDisplay"
+             mvvm:ViewModelLocator.AutowireViewModel="True"
+             Title="Log Display">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Logs"/>
+
+            <StackLayout Grid.Column="2" Orientation="Horizontal" VerticalOptions="Center" Margin="0,0,10,0" BackgroundColor="Transparent">
+                <Label Margin="0,0,5,0" Style="{StaticResource TitleViewTitleStyle}" VerticalOptions="Center" Text="Log Files:"/>
+                <Picker WidthRequest="300" ItemsSource="{Binding LogFiles}" SelectedItem="{Binding CurrentLog}"
+                        ItemDisplayBinding="{Binding FileName}" Title="select a log file"/>
+            </StackLayout>
+        </Grid>
+    </Shell.TitleView>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Editor Grid.Row="0" TextColor="{DynamicResource PrimaryTextColor}" FontSize="{DynamicResource PrimaryFontSize}" IsReadOnly="True" 
+                    Text="{Binding LogText}"/>
+
+            <StackLayout Grid.Row="1" Margin="0,0,10,5" Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="End" BackgroundColor="Transparent">
+                <Button Command="{Binding DeleteLog}" Text="Delete Log File"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
