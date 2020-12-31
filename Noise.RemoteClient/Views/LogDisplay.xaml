@@ -18,7 +18,7 @@
 
             <StackLayout Grid.Column="2" Orientation="Horizontal" VerticalOptions="Center" Margin="0,0,10,0" BackgroundColor="Transparent">
                 <Label Margin="0,0,5,0" Style="{StaticResource TitleViewTitleStyle}" VerticalOptions="Center" Text="Log Files:"/>
-                <Picker WidthRequest="300" ItemsSource="{Binding LogFiles}" SelectedItem="{Binding CurrentLog}"
+                <Picker WidthRequest="300" ItemsSource="{Binding LogFiles}" SelectedItem="{Binding CurrentLog}" BackgroundColor="Transparent"
                         ItemDisplayBinding="{Binding FileName}" Title="select a log file"/>
             </StackLayout>
         </Grid>
