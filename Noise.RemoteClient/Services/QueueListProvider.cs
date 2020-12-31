@@ -37,8 +37,10 @@ namespace Noise.RemoteClient.Services {
                 if( mQueueStatusStream != null ) {
                     using( mQueueStatusStream ) {
                         try {
-                            while( await mQueueStatusStream.ResponseStream.MoveNext( mQueueStatusStreamCancellation.Token )) {
-                                PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
+                            if( mQueueStatusStreamCancellation?.IsCancellationRequested == false ) {
+                                while( await mQueueStatusStream.ResponseStream.MoveNext( mQueueStatusStreamCancellation.Token )) {
+                                    PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
+                                }
                             }
                         }
                         catch( RpcException ex ) {
