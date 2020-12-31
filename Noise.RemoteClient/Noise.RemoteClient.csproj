@@ -155,11 +155,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Themes\" />
     <Folder Include="ValueConverters\" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Themes\DarkBlue.xaml.cs">
+      <DependentUpon>DarkBlue.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Themes\DarkIndigo.xaml.cs">
+      <DependentUpon>DarkIndigo.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\FavoriteTracks.xaml.cs">
       <DependentUpon>FavoriteTracks.xaml</DependentUpon>
     </Compile>

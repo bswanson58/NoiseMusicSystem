@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <platform:ThemeResources Source="/Resources/Themes/DarkBlueTheme.xaml"/>
+                <platform:ThemeResources Source="/Resources/Themes/DarkBlue.xaml"/>
                 <platform:FontResources Source="/Resources/TextSizes/MediumText.xaml"/>
 
                 <ResourceDictionary Source="/Resources/ControlStyles.xaml"/>

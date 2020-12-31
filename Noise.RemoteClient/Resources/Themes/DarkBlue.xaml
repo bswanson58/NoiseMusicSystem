@@ -2,18 +2,18 @@
 <ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:resources="clr-namespace:Noise.RemoteClient.Resources;assembly=Noise.RemoteClient"
-                    x:Class="Noise.RemoteClient.Resources.Themes.DarkIndigoTheme">
+                    x:Class="Noise.RemoteClient.Resources.Themes.DarkBlue">
 
-    <Color x:Key="DarkPrimaryColor">#303F9F</Color>
-    <Color x:Key="DefaultPrimaryColor">#3F51B5</Color>
-    <Color x:Key="LightPrimaryColor">#C5CAE9</Color>
+    <Color x:Key="DarkPrimaryColor">#1976D2</Color>
+    <Color x:Key="DefaultPrimaryColor">#2196F3</Color>
+    <Color x:Key="LightPrimaryColor">#BBDEFB</Color>
 
     <Color x:Key="PrimaryTextColor">#FFFFFF</Color>
     <Color x:Key="SecondaryTextColor">#D5D5D5</Color>
 
     <Color x:Key="BackgroundColor">Black</Color>
-    <Color x:Key="DividerColor">#BDBDBD</Color>
-    <Color x:Key="AccentColor">#FFC107</Color>
+    <Color x:Key="DividerColor">#404040</Color>
+    <Color x:Key="AccentColor">#448AFF</Color>
 
     <Color x:Key="TransportBackgroundColor">#303030</Color>
 

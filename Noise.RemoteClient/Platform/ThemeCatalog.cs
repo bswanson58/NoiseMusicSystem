@@ -23,5 +23,12 @@ namespace Noise.RemoteClient.Platform {
             new ThemeResource( 2, "Medium", "Resources/TextSizes/MediumText.xaml" ),
             new ThemeResource( 3, "Large", "Resources/TextSizes/LargeText.xaml" )
         };
+
+        public static int DefaultTheme => 1;
+
+        public static IEnumerable<ThemeResource> ThemeResources => new List<ThemeResource> {
+            new ThemeResource( 1, "Dark Blue", "Resources/Themes/DarkBlue.xaml" ),
+            new ThemeResource( 2, "Dark Indigo", "Resources/Themes/DarkIndigo.xaml" ),
+        };
     }
 }

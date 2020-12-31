@@ -37,6 +37,13 @@ namespace Noise.RemoteClient.Platform {
             if( fontTheme != null ) {
                 ChangeFontResource( fontTheme );
             }
+
+            var theme = Preferences.Get( PreferenceNames.ApplicationTheme, ThemeCatalog.DefaultTheme );
+            var themeResource = ThemeCatalog.ThemeResources.FirstOrDefault( t => t.ResourceId.Equals( theme ));
+
+            if( themeResource != null ) {
+                ChangeThemeResource( themeResource );
+            }
         }
     }
 }

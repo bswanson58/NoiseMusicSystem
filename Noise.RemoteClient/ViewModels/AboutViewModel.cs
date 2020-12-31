@@ -23,10 +23,12 @@ namespace Noise.RemoteClient.ViewModels {
         private string                              mHostName;
         private string                              mLibraryName;
         private ThemeResource                       mFontResource;
+        private ThemeResource                       mThemeResource;
 
         public string                               BuildDate => mBuildDate.ToShortDateString();
 
         public  ObservableCollection<ThemeResource> FontResources { get; }
+        public  ObservableCollection<ThemeResource> ThemeResources { get; }
 
         public  DelegateCommand                     DisplayLogs { get; }
 
@@ -36,6 +38,9 @@ namespace Noise.RemoteClient.ViewModels {
 
             FontResources = new ObservableCollection<ThemeResource>( ThemeCatalog.FontThemes );
             mFontResource = FontResources.FirstOrDefault( r => r.ResourceId.Equals( mPreferences.Get( PreferenceNames.ApplicationFont, ThemeCatalog.DefaultFont )));
+
+            ThemeResources = new ObservableCollection<ThemeResource>( ThemeCatalog.ThemeResources );
+            mThemeResource = ThemeResources.FirstOrDefault( r => r.ResourceId.Equals( mPreferences.Get( PreferenceNames.ApplicationTheme, ThemeCatalog.DefaultTheme )));
 
             DisplayLogs = new DelegateCommand( OnDisplayLogs );
 
@@ -53,6 +58,19 @@ namespace Noise.RemoteClient.ViewModels {
                 ThemeManager.ChangeFontResource( mFontResource );
 
                 mPreferences.Set( PreferenceNames.ApplicationFont, mFontResource.ResourceId );
+            }
+        }
+
+        public ThemeResource CurrentTheme {
+            get => mThemeResource;
+            set => SetProperty( ref mThemeResource, value, OnThemeChanged );
+        }
+
+        private void OnThemeChanged() {
+            if( mThemeResource != null ) {
+                ThemeManager.ChangeThemeResource( mThemeResource );
+
+                mPreferences.Set( PreferenceNames.ApplicationTheme, mThemeResource.ResourceId );
             }
         }
 
