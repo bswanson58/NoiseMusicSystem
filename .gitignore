@@ -5,6 +5,7 @@ lib/
 visuals/
 LicenseKeys.xml.debug
 !/Releases/**
+Noise.RemoteClient/Resources/BuildTimeStamp.txt
 
 #################
 ## Visual Studio

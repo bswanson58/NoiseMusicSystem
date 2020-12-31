@@ -26,7 +26,7 @@
                     <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Version:"/>
                     <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding VersionNumber}"/>
-                    <!-- Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding BuildDate, StringFormat='({0})'}"/ -->
+                    <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding BuildDate, StringFormat='({0})'}"/>
                 </StackLayout>
 
                 <StackLayout Orientation="Horizontal">

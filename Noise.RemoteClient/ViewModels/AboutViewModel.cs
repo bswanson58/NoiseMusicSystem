@@ -58,7 +58,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void GatherVersionInfo() {
             VersionNumber = VersionTracking.CurrentVersion;
-            mBuildDate = new FileInfo( Assembly.GetExecutingAssembly().Location ).LastWriteTime;
+            mBuildDate = BuildTimeStamp.GetTimestamp();
 
             RaisePropertyChanged( nameof( BuildDate ));
         }
