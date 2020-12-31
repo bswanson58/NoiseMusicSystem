@@ -6,4 +6,6 @@
     <x:Int16 x:Key="LargeFontSize">18</x:Int16>
     <x:Int16 x:Key="PrimaryFontSize">16</x:Int16>
     <x:Int16 x:Key="SmallFontSize">12</x:Int16>
+
+    <GridLength x:Key="ListItemMarginBottom">4</GridLength>
 </ResourceDictionary>
