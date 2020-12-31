@@ -40,6 +40,13 @@
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Library:"/>
                     <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding LibraryName}"/>
                 </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Margin="0,15,0,0">
+                    <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
+                           Style="{DynamicResource TitleViewSubtitleStyle}" Text="Font Size:"/>
+                    <Picker WidthRequest="200" ItemsSource="{Binding FontResources}" SelectedItem="{Binding CurrentFont}"
+                            ItemDisplayBinding="{Binding Name}" Title="Select a font"/>
+                </StackLayout>
             </StackLayout>
 
             <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="End" BackgroundColor="Transparent">

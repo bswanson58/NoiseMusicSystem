@@ -2,14 +2,15 @@
 <prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
+             xmlns:platform="clr-namespace:Noise.RemoteClient.Platform;assembly=Noise.RemoteClient"
              x:Class="Noise.RemoteClient.App">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Themes/DarkBlueTheme.xaml"/>
-                <ResourceDictionary Source="/Resources/ControlStyles.xaml"/>
-                <ResourceDictionary Source="/Resources/TextSizes/MediumText.xaml"/>
+                <platform:ThemeResources Source="/Resources/Themes/DarkBlueTheme.xaml"/>
+                <platform:FontResources Source="/Resources/TextSizes/MediumText.xaml"/>
 
+                <ResourceDictionary Source="/Resources/ControlStyles.xaml"/>
                 <ResourceDictionary Source="/Resources/UiStyles.xaml" />
                 <ResourceDictionary Source="/Resources/DataTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>

@@ -1,34 +1,59 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Platform;
 using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
 using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     class AboutViewModel : BindableBase, IDisposable {
         private readonly IHostInformationProvider   mHostInformation;
+        private readonly IPreferences               mPreferences;
         private IDisposable                         mHostStatusSubscription;
         private string                              mVersionNumber;
         private DateTime                            mBuildDate;
         private string                              mHostName;
         private string                              mLibraryName;
+        private ThemeResource                       mFontResource;
 
         public string                               BuildDate => mBuildDate.ToShortDateString();
 
+        public  ObservableCollection<ThemeResource> FontResources { get; }
+
         public  DelegateCommand                     DisplayLogs { get; }
 
-        public AboutViewModel( IHostInformationProvider hostInformation ) {
+        public AboutViewModel( IHostInformationProvider hostInformation, IPreferences preferences ) {
+            mPreferences = preferences;
             mHostInformation = hostInformation;
+
+            FontResources = new ObservableCollection<ThemeResource>( ThemeCatalog.FontThemes );
+            mFontResource = FontResources.FirstOrDefault( r => r.ResourceId.Equals( mPreferences.Get( PreferenceNames.ApplicationFont, ThemeCatalog.DefaultFont )));
 
             DisplayLogs = new DelegateCommand( OnDisplayLogs );
 
             GatherVersionInfo();
             mHostStatusSubscription = mHostInformation.HostStatus.Subscribe( OnHostStatus );
+        }
+
+        public ThemeResource CurrentFont {
+            get => mFontResource;
+            set => SetProperty( ref mFontResource, value, OnFontResourceChanged );
+        }
+
+        private void OnFontResourceChanged() {
+            if( mFontResource != null ) {
+                ThemeManager.ChangeFontResource( mFontResource );
+
+                mPreferences.Set( PreferenceNames.ApplicationFont, mFontResource.ResourceId );
+            }
         }
 
         private void GatherVersionInfo() {

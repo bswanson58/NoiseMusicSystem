@@ -9,5 +9,8 @@ namespace Noise.RemoteClient.Support {
         public const string ArtistListSorting       = "artistListSorting";
         public const string AlbumListSorting        = "albumListSorting";
         public const string FavoritesListSorting    = "favoritesListSorting";
+
+        public const string ApplicationFont         = "applicationFont";
+        public const string ApplicationTheme        = "applicationTheme";
     }
 }

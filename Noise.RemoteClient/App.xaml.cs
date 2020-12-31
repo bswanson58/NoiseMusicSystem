@@ -1,4 +1,5 @@
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Platform;
 using Noise.RemoteClient.Views;
 using Prism;
 using Prism.Ioc;
@@ -22,6 +23,8 @@ namespace Noise.RemoteClient {
 
             mClientManager = Container.Resolve<IClientManager>();
             mLog = Container.Resolve<IPlatformLog>();
+
+            ThemeManager.LoadInitialTheme();
 
             MainPage = new AppShell();
         }
