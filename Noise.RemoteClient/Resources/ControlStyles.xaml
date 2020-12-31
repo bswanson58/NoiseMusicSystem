@@ -46,6 +46,13 @@
         <Setter Property="BarTextColor" Value="{DynamicResource PrimaryTextColor}"/>
     </Style>
 
+    <Style TargetType="Picker">
+        <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
+        <Setter Property="TextColor" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="TitleColor" Value="{DynamicResource PrimaryTextColor}"/>
+    </Style>
+
     <Style TargetType="ListView">
         <Setter Property="SeparatorColor" Value="{DynamicResource ListSeparatorColor}"/>
     </Style>

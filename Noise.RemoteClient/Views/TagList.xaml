@@ -72,7 +72,7 @@
 
             <StackLayout Grid.Column="2" Orientation="Horizontal" VerticalOptions="Center" Margin="0,0,10,0" BackgroundColor="Transparent">
                 <Label Margin="0,0,5,0" Style="{StaticResource TitleViewTitleStyle}" VerticalOptions="Center" Text="Display Tracks Tagged With:"/>
-                <Picker WidthRequest="200" ItemsSource="{Binding TagList}" SelectedItem="{Binding CurrentTag}" 
+                <Picker WidthRequest="200" ItemsSource="{Binding TagList}" SelectedItem="{Binding CurrentTag}" BackgroundColor="Transparent"
                         ItemDisplayBinding="{Binding TagName}" Title="select a tag"/>
             </StackLayout>
         </Grid>
