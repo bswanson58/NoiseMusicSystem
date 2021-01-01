@@ -104,13 +104,14 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" IsVisible="{Binding HavePlayingAlbum}" RowSpacing="0">
-                <SwipeView>
+                <SwipeView BackgroundColor="{DynamicResource SwipeViewBackground}">
                     <SwipeView.LeftItems>
                         <SwipeItems>
-                            <SwipeItemView Command="{Binding Path=BindingContext.EditPlayingAlbumRatings, Source={x:Reference Name=_albumList}}" Background="White">
-                                <StackLayout Orientation="Horizontal" WidthRequest="50">
-                                    <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"/>
-                                </StackLayout>
+                            <SwipeItemView Command="{Binding Path=BindingContext.EditPlayingAlbumRatings, Source={x:Reference Name=_albumList}}">
+                                <Grid Margin="15,0,20,0" BackgroundColor="Transparent">
+                                    <controls:SvgButton Source="Edit" HeightRequest="30" WidthRequest="30" HorizontalOptions="Center"
+                                                        VerticalOptions="Center" ImageColor="{DynamicResource SwipeViewForeground}"/>
+                                </Grid>
                             </SwipeItemView>
                         </SwipeItems>
                     </SwipeView.LeftItems>
