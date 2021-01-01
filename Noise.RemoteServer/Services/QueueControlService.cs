@@ -7,6 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RemoteServer.Interfaces;
 using Noise.RemoteServer.Protocol;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.RemoteServer.Services {
     class QueueService : QueueControl.QueueControlBase {
@@ -29,6 +30,42 @@ namespace Noise.RemoteServer.Services {
             mLog = log;
         }
 
+        // duplicated from AlbumTracksViewModel
+        private IEnumerable<DbTrack> QueueTracksWithStrategy( long fromAlbum, long trackId ) {
+            var retValue = new List<DbTrack>();
+
+            using( var tracksList = mTrackProvider.GetTrackList( fromAlbum )) {
+                var targetTrack = tracksList.List.FirstOrDefault( t => t.DbId.Equals( trackId ));
+                var previousTrack = targetTrack;
+                var previousTracks = new List<DbTrack>();
+
+                while(( previousTrack != null ) && 
+                      (( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
+                       ( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ))) {
+                    previousTrack = tracksList.List.TakeWhile( t => !t.DbId.Equals( previousTrack.DbId )).LastOrDefault();
+
+                    if( previousTrack != null ) {
+                        previousTracks.Insert( 0, previousTrack );
+                    }
+                }
+                previousTracks.ForEach( t => retValue.Add( mTrackProvider.GetTrack( t.DbId )));
+            
+                retValue.Add( mTrackProvider.GetTrack( trackId ));
+
+                while(( targetTrack != null ) &&
+                      (( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ) ||
+                       ( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ))) {
+                    targetTrack = tracksList.List.SkipWhile( t => !t.DbId.Equals( targetTrack.DbId )).Skip( 1 ).FirstOrDefault();
+
+                    if( targetTrack != null ) {
+                        retValue.Add( mTrackProvider.GetTrack( targetTrack.DbId ));
+                    }
+                }
+            }
+
+            return retValue;
+        }
+
         public override Task<QueueControlResponse> AddTrack( AddQueueRequest request, ServerCallContext context ) {
             return Task.Run( () => {
                 var retValue = new QueueControlResponse();
@@ -38,10 +75,10 @@ namespace Noise.RemoteServer.Services {
 
                     if( track != null ) {
                         if( request.PlayNext ) {
-                            mPlayCommand.PlayNext( track );
+                            QueueTracksWithStrategy( track.Album, track.DbId ).Reverse().ForEach( t => mPlayCommand.PlayNext( t ));
                         }
                         else {
-                            mPlayCommand.Play( track );
+                            mPlayCommand.Play( QueueTracksWithStrategy( track.Album, track.DbId ));
                         }
 
                         retValue.Success = true;
