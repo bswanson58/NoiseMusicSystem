@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Interfaces {
@@ -9,5 +10,10 @@ namespace Noise.RemoteClient.Interfaces {
         Task<TransportCommandResponse> PlayNext();
         Task<TransportCommandResponse> PlayPrevious();
         Task<TransportCommandResponse> ReplayTrack();
+
+        void    StartTransportStatusRequests();
+        void    StopTransportStatusRequests();
+
+        IObservable<TransportInformation>   TransportStatus { get; }
     }
 }

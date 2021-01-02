@@ -14,5 +14,6 @@ namespace Noise.RemoteServer.Interfaces {
         SearchService               SearchService { get; }
         TagInformationService       TagInformationService { get; }
         TransportControlService     TransportControlService { get; }
+        TransportStatusResponder    TransportStatusResponder { get; }
     }
 }

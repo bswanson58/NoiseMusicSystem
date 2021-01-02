@@ -1,15 +1,25 @@
 ﻿using System;
+using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Services {
     class TransportProvider : BaseProvider<TransportControl.TransportControlClient>, ITransportProvider {
-        private readonly IPlatformLog   mLog;
+        private readonly IPlatformLog                           mLog;
+        private readonly BehaviorSubject<TransportInformation>  mTransportStatus;
+        private AsyncServerStreamingCall<TransportInformation>  mTransportStatusStream;
+        private CancellationTokenSource                         mTransportStatusStreamCancellation;
+
+        public  IObservable<TransportInformation>               TransportStatus => mTransportStatus;
 
         public TransportProvider( IServiceLocator serviceLocator, IHostInformationProvider hostProvider, IPlatformLog log ) :
             base( serviceLocator, hostProvider  ) {
             mLog = log;
+
+            mTransportStatus = new BehaviorSubject<TransportInformation>( new TransportInformation());
         }
 
         public async Task<TransportCommandResponse> Play() {
@@ -18,7 +28,7 @@ namespace Noise.RemoteClient.Services {
                     return await Client.StartPlayAsync( new TransportControlEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "Play", ex );
+                    mLog.LogException( nameof( Play ), ex );
                 }
             }
 
@@ -31,7 +41,7 @@ namespace Noise.RemoteClient.Services {
                     return await Client.PausePlayAsync( new TransportControlEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "Pause", ex );
+                    mLog.LogException( nameof( Pause ), ex );
                 }
             }
 
@@ -44,7 +54,7 @@ namespace Noise.RemoteClient.Services {
                     return await Client.StopPlayAsync( new TransportControlEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "Stop", ex );
+                    mLog.LogException( nameof( Stop ), ex );
                 }
             }
 
@@ -57,7 +67,7 @@ namespace Noise.RemoteClient.Services {
                     return await Client.PlayPreviousAsync( new TransportControlEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "PlayPrevious", ex );
+                    mLog.LogException( nameof( PlayPrevious ), ex );
                 }
             }
 
@@ -70,7 +80,7 @@ namespace Noise.RemoteClient.Services {
                     return await Client.PlayNextAsync( new TransportControlEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "PlayNext", ex );
+                    mLog.LogException( nameof( PlayNext ), ex );
                 }
             }
 
@@ -83,11 +93,61 @@ namespace Noise.RemoteClient.Services {
                     return await Client.ReplayTrackAsync( new TransportControlEmpty());
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "ReplayTrack", ex );
+                    mLog.LogException( nameof( ReplayTrack ), ex );
                 }
             }
 
             return default;
+        } 
+        
+        public async void StartTransportStatusRequests() {
+            StopTransportStatusRequests();
+
+            if( Client != null ) {
+                try {
+                    mTransportStatusStreamCancellation = new CancellationTokenSource();
+                    mTransportStatusStream = Client.StartTransportStatus( new TransportControlEmpty(), cancellationToken: mTransportStatusStreamCancellation.Token );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( StartTransportStatusRequests ), ex );
+                }
+
+                if( mTransportStatusStream != null ) {
+                    using( mTransportStatusStream ) {
+                        try {
+                            if( mTransportStatusStreamCancellation?.IsCancellationRequested == false ) {
+                                while( await mTransportStatusStream.ResponseStream.MoveNext( mTransportStatusStreamCancellation.Token )) {
+                                    PublishTransportStatus( mTransportStatusStream.ResponseStream.Current );
+                                }
+                            }
+                        }
+                        catch( RpcException ex ) {
+                            if( ex.StatusCode != StatusCode.Cancelled ) {
+                                mLog.LogException( "StartTransportStatusRequests:RpcException", ex );
+                            }
+                        }
+                        catch( Exception ex ) {
+                            mLog.LogException( nameof( StartTransportStatusRequests ), ex );
+                        }
+                    }
+                }
+            }
+        }
+
+        private void PublishTransportStatus( TransportInformation status ) {
+            if( status != null ) {
+                try {
+                    mTransportStatus.OnNext( status );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( PublishTransportStatus ), ex );
+                }
+            }
+        }
+
+        public void StopTransportStatusRequests() {
+            mTransportStatusStreamCancellation?.Cancel();
+            mTransportStatusStreamCancellation = null;
         }
     }
 }

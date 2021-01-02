@@ -25,6 +25,9 @@
     <FlyoutItem Title="Queue">
         <ShellContent Route="queue" ContentTemplate="{DataTemplate views:Queue}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Now Playing">
+        <ShellContent Route="transport" ContentTemplate="{DataTemplate views:Transport}"/>
+    </FlyoutItem>
 
     <FlyoutItem Title="About">
         <ShellContent Route="about" ContentTemplate="{DataTemplate views:About}"/>

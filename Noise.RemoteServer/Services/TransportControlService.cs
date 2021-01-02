@@ -2,17 +2,20 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Noise.Infrastructure.Interfaces;
+using Noise.RemoteServer.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteServer.Services {
     class TransportControlService : TransportControl.TransportControlBase {
         private readonly IPlayController		    mPlayController;
         private readonly IPlayQueue				    mPlayQueue;
+        private readonly IRemoteServiceFactory      mServiceFactory;
         private readonly INoiseLog                  mLog;
 
-        public TransportControlService( IPlayController playController, IPlayQueue playQueue, INoiseLog log ) {
+        public TransportControlService( IPlayController playController, IPlayQueue playQueue, IRemoteServiceFactory serviceFactory, INoiseLog log ) {
             mPlayController = playController;
             mPlayQueue = playQueue;
+            mServiceFactory = serviceFactory;
             mLog = log;
         }
 
@@ -53,6 +56,12 @@ namespace Noise.RemoteServer.Services {
 
                 return new TransportCommandResponse {  Success = true };
             });
+        }
+
+        public override async Task StartTransportStatus( TransportControlEmpty request, IServerStreamWriter<TransportInformation> responseStream, ServerCallContext context ) {
+            var transportStatusResponder = mServiceFactory.TransportStatusResponder;
+
+            await transportStatusResponder.StartResponder( responseStream, context );
         }
     }
 }

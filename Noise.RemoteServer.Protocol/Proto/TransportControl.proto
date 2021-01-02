@@ -8,6 +8,32 @@ message TransportCommandResponse {
 	string		ErrorMessage = 2;
 }
 
+enum TransportState {
+	Unknown = 0;
+	Stopped = 1;
+	Playing = 2;
+	Paused = 3;
+}
+
+message TransportInformation {
+	int64			TrackId = 2;
+	int64			ArtistId = 3;
+	int64			AlbumId = 4;
+	string			ArtistName = 5;
+	string			AlbumName = 6;
+	string			VolumeName = 7;
+	string			TrackName = 8;
+	int32			TrackNumber = 9;
+	int32			Rating = 10;
+	bool			IsFavorite = 11;
+	bool			IsFaulted = 12;
+	bool			IsStrategyQueued = 13;
+	int64			PlayPosition = 14;
+	double			PlayPositionPercentage = 15;
+	int64			TrackLength = 16;
+	TransportState	TransportState = 17;
+}
+
 service TransportControl {
 	rpc StartPlay (TransportControlEmpty) returns (TransportCommandResponse);
 	rpc StopPlay (TransportControlEmpty) returns (TransportCommandResponse);
@@ -15,4 +41,6 @@ service TransportControl {
 	rpc PlayPrevious (TransportControlEmpty) returns (TransportCommandResponse);
 	rpc PlayNext (TransportControlEmpty) returns (TransportCommandResponse);
 	rpc ReplayTrack (TransportControlEmpty) returns (TransportCommandResponse);
+
+	rpc StartTransportStatus (TransportControlEmpty) returns (stream TransportInformation);
 }

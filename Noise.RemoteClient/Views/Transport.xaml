@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mvvm="http://prismlibrary.com"
+             xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
+             xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
+             xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             x:Class="Noise.RemoteClient.Views.Transport"
+             mvvm:ViewModelLocator.AutowireViewModel="True"
+             BackgroundColor="{DynamicResource TransportBackgroundColor}"
+             Title="Now Playing">
+
+    <ContentPage.Resources>
+        <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <Grid RowSpacing="0" BackgroundColor="{DynamicResource TransportBackgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Artist/Album/Track -->
+            <Label Grid.Row="1" HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" Text="{Binding ArtistName}"/>
+            <Label Grid.Row="2" Margin="0,-12" HorizontalOptions="Center" Style="{StaticResource TransportLargeText}" Text="{Binding TrackName}"/>
+            <Label Grid.Row="3" HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" Text="{Binding AlbumName}"/>
+
+            <!-- IsFavorite/Rating -->
+            <StackLayout Grid.Row="4" Margin="0,10,0,0" Orientation="Horizontal" HorizontalOptions="Center" BackgroundColor="Transparent">
+                <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditRatings}">
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="15,10,10,15"
+                                        IsVisible="{Binding HasRating}" ImageColor="{DynamicResource SignatureColor}" 
+                                        Source="{Binding RatingSource}"/>
+                </ContentView>
+
+                <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditRatings}">
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="10,10,15,15"
+                                        IsVisible="{Binding IsFavorite}" ImageColor="{DynamicResource SignatureColor}" 
+                                        Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
+                </ContentView>
+            </StackLayout>
+
+            <!-- Play Position -->
+            <Grid Grid.Row="6" BackgroundColor="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Margin="15,0,5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End"
+                       Style="{StaticResource TransportSmallText}" Text="{Binding TimePlayed, Converter={StaticResource TimeSpanConverter}}"/>
+
+                <ProgressBar Grid.Column="1" VerticalOptions="Center" ScaleY="3" Progress="{Binding PlayPercentage}" 
+                             ProgressColor="{DynamicResource SignatureColor}"/>
+
+                <Label Grid.Column="2" Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" 
+                       Style="{StaticResource TransportSmallText}" Text="{Binding TimeRemaining, Converter={StaticResource TimeSpanConverter}}"/>
+            </Grid>
+
+            <!-- Transport Control -->
+            <Grid Grid.Row="8" BackgroundColor="Transparent" Margin="0,5,0,15" Opacity="0.6">
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
+                        <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Play"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Pause}">
+                        <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Pause"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Stop}">
+                        <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Stop"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding PlayPrevious}">
+                        <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Previous"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding PlayNext}">
+                        <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Next"/>
+                    </ContentView>
+                    <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding RepeatTrack}">
+                        <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Repeat"/>
+                    </ContentView>
+                </StackLayout>
+            </Grid>
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

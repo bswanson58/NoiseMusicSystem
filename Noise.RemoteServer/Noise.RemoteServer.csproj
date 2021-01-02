@@ -166,6 +166,8 @@
     <Compile Include="Services\TagInformationService.cs" />
     <Compile Include="Services\TrackInformationService.cs" />
     <Compile Include="Services\TransportControlService.cs" />
+    <Compile Include="Services\TransportStatus.cs" />
+    <Compile Include="Services\TransportStatusResponder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
