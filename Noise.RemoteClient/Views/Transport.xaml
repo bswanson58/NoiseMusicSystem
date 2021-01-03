@@ -31,15 +31,15 @@
             <!-- Artist/Album/Track -->
             <ContentView Grid.Row="1" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
                 <Label HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                       Text="{Binding ArtistName}"/>
+                       Text="{Binding ArtistName}" LineBreakMode="TailTruncation"/>
             </ContentView>
             <ContentView Grid.Row="2" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
-                <Label Margin="0,-12" HorizontalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold"
-                       Text="{Binding TrackName}"/>
+                <Label Margin="0,-10" HorizontalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold" 
+                       Text="{Binding TrackName}" LineBreakMode="TailTruncation"/>
             </ContentView>
             <ContentView Grid.Row="3" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplayTracks}">
                 <Label HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                       Text="{Binding AlbumName}"/>
+                       Text="{Binding AlbumName}" LineBreakMode="TailTruncation"/>
             </ContentView>
 
             <!-- IsFavorite/Rating/Tags -->
