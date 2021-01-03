@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
@@ -141,7 +142,16 @@ namespace Noise.RemoteClient.ViewModels {
                     mQueueList.Clear();
 
                     if( queueList?.QueueList != null ) {
-                        mQueueList.AddRange( from q in queueList.QueueList select new UiQueuedTrack( q ));
+                        var shortenedList = new List<QueueTrackInfo>( queueList.QueueList );
+
+                        // limit the opening number of played tracks to suite a smaller display
+                        if( shortenedList.Count > 4 ) {
+                            while( shortenedList.Take( 4 ).All( t => t.HasPlayed )) {
+                                shortenedList.RemoveAt( 0 );
+                            }
+                        }
+
+                        mQueueList.AddRange( from q in shortenedList select new UiQueuedTrack( q ));
 
                         TotalTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
                         RemainingTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
