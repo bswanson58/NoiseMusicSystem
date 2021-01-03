@@ -103,7 +103,7 @@
             </Grid>
 
             <!-- Transport Control -->
-            <Grid Grid.Row="8" BackgroundColor="Transparent" Margin="0,5,0,15" Opacity="0.6">
+            <Grid Grid.Row="8" BackgroundColor="Transparent" Margin="0,5,0,15">
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                     <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
                         <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Play"/>
