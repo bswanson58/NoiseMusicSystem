@@ -1,15 +1,22 @@
-﻿using Noise.Infrastructure;
+﻿using System.Collections.Generic;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteServer.Services {
     class TransportStatus {
-        private ePlayState          mPlayState;
-        private PlayQueueTrack      mCurrentTrack;
-        private long                mPlayPosition;
-        private long                mTrackLength;
-        private double              mPlayPercentage;
+        private readonly List<TransportTagInfo> mCurrentTags;
+        private ePlayState                      mPlayState;
+        private PlayQueueTrack                  mCurrentTrack;
+        private long                            mPlayPosition;
+        private long                            mTrackLength;
+        private double                          mPlayPercentage;
+
+        public TransportStatus() {
+            mCurrentTags = new List<TransportTagInfo>();
+            mPlayState = ePlayState.Stopped;
+        }
 
         public void UpdateTransportStatus( Events.PlaybackTrackStarted args ) {
             mCurrentTrack = args.Track;
@@ -25,6 +32,11 @@ namespace Noise.RemoteServer.Services {
 
         public void UpdateTransportStatus( ePlayState toState ) {
             mPlayState = toState;
+        }
+
+        public void UpdateTrackTags( IEnumerable<TransportTagInfo> tags ) {
+            mCurrentTags.Clear();
+            mCurrentTags.AddRange( tags );
         }
 
         public void UpdateTrackPosition( long position, long trackLength, double playPercentage ) {
@@ -84,6 +96,8 @@ namespace Noise.RemoteServer.Services {
             retValue.PlayPosition = mPlayPosition;
             retValue.TrackLength = mTrackLength;
             retValue.PlayPositionPercentage = mPlayPercentage;
+
+            retValue.Tags.AddRange( mCurrentTags );
 
             return retValue;
         }

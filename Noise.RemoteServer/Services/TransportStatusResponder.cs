@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Grpc.Core;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RemoteServer.Protocol;
 
@@ -12,8 +15,10 @@ namespace Noise.RemoteServer.Services {
     class PublishTransportInfo { }
 
     class TransportStatusResponder : IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
-                                     IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackTrackUpdated> {
+                                     IHandle<Events.PlaybackTrackStarted>, IHandle<Events.PlaybackTrackUpdated>,
+                                     IHandle<Events.UserTagsChanged>, IHandle<Events.TrackUserUpdate> {
         private readonly IEventAggregator                   mEventAggregator;
+        private readonly IUserTagManager                    mTagManager;
         private readonly IPlayController                    mPlayController;
         private readonly INoiseLog                          mLog;
         private readonly TransportStatus                    mTransportStatus;
@@ -25,7 +30,8 @@ namespace Noise.RemoteServer.Services {
         private CancellationTokenSource                     mCancellationTokenSource;
         private IDisposable                                 mPlayStateChangedSubscription;
 
-        public TransportStatusResponder( IPlayController playController, IEventAggregator eventAggregator, INoiseLog log ) {
+        public TransportStatusResponder( IUserTagManager tagManager, IPlayController playController, IEventAggregator eventAggregator, INoiseLog log ) {
+            mTagManager = tagManager;
             mPlayController = playController;
             mEventAggregator = eventAggregator;
             mLog = log;
@@ -40,7 +46,11 @@ namespace Noise.RemoteServer.Services {
             mStatusComplete = new TaskCompletionSource<bool>( false );
 
             mCancellationTokenSource = new CancellationTokenSource();
-            mTransportStatus.UpdateTransportStatus( mPlayController.CurrentTrack );
+
+            if( mPlayController.CurrentTrack != null ) {
+                mTransportStatus.UpdateTransportStatus( mPlayController.CurrentTrack );
+                mTransportStatus.UpdateTrackTags( GetTrackTags( mPlayController.CurrentTrack.Track ));
+            }
 
             mPublishTask = Task.Run(() => CaptureConsumer( mCancellationTokenSource.Token ), mCancellationTokenSource.Token );
 
@@ -75,17 +85,42 @@ namespace Noise.RemoteServer.Services {
 
         public void Handle( Events.PlaybackTrackStarted args ) {
             mTransportStatus.UpdateTransportStatus( args );
+            mTransportStatus.UpdateTrackTags( GetTrackTags( args.Track.Track ));
 
             if( mPublishQueue?.IsCompleted == false ) {
                 mPublishQueue.Add( new PublishTransportInfo());
             }
         }
+
         public void Handle( Events.PlaybackTrackUpdated args ) {
             mTransportStatus.UpdateTransportStatus( args );
 
             if( mPublishQueue?.IsCompleted == false ) {
                 mPublishQueue.Add( new PublishTransportInfo());
             }
+        }
+
+        public void Handle( Events.TrackUserUpdate args ) {
+            if( mPlayController.CurrentTrack != null ) {
+                mTransportStatus.UpdateTransportStatus( mPlayController.CurrentTrack );
+                mTransportStatus.UpdateTrackTags( GetTrackTags( mPlayController.CurrentTrack.Track ));
+            }
+        }
+
+        public void Handle( Events.UserTagsChanged args ) {
+            if( mPlayController.CurrentTrack != null ) {
+                mTransportStatus.UpdateTransportStatus( mPlayController.CurrentTrack );
+                mTransportStatus.UpdateTrackTags( GetTrackTags( mPlayController.CurrentTrack.Track ));
+            }
+        }
+
+        private IEnumerable<TransportTagInfo> GetTrackTags( DbTrack track ) {
+            var retValue = new List<TransportTagInfo>();
+            var tags = mTagManager.GetAssociatedTags( track.DbId );
+
+            retValue.AddRange( from t in tags select new TransportTagInfo{ TagId = t.DbId, TagName = t.Name });
+
+            return retValue;
         }
 
         private async void CaptureConsumer( CancellationToken cancelToken ) {

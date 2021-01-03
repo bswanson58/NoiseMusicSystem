@@ -15,6 +15,11 @@ enum TransportState {
 	Paused = 3;
 }
 
+message TransportTagInfo {
+	int64		TagId = 1;
+	string		TagName = 2;
+}
+
 message TransportInformation {
 	int64			TrackId = 2;
 	int64			ArtistId = 3;
@@ -32,6 +37,7 @@ message TransportInformation {
 	double			PlayPositionPercentage = 15;
 	int64			TrackLength = 16;
 	TransportState	TransportState = 17;
+	repeated TransportTagInfo Tags = 18;
 }
 
 service TransportControl {
