@@ -51,6 +51,7 @@ namespace Noise.RemoteServer.Services {
                 mTransportStatus.UpdateTransportStatus( mPlayController.CurrentTrack );
                 mTransportStatus.UpdateTrackTags( GetTrackTags( mPlayController.CurrentTrack.Track ));
             }
+            mTransportStatus.UpdateTransportStatus( mPlayController.PlayState );
 
             mPublishTask = Task.Run(() => CaptureConsumer( mCancellationTokenSource.Token ), mCancellationTokenSource.Token );
 

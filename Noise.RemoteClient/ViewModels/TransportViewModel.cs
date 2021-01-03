@@ -129,11 +129,18 @@ namespace Noise.RemoteClient.ViewModels {
         private void OnTransportChanged( TransportInformation status ) {
             mTrackInformation = status;
 
-            ArtistName = status.ArtistName;
-            AlbumName = status.AlbumName;
-            TrackName = status.TrackName;
-            IsFavorite = status.IsFavorite;
+            if( status.TransportState != TransportState.Stopped ) {
+                ArtistName = status.ArtistName;
+                AlbumName = status.AlbumName;
+                TrackName = status.TrackName;
+            }
+            else {
+                ArtistName = String.Empty;
+                AlbumName = String.Empty;
+                TrackName = String.Empty;
+            }
 
+            IsFavorite = status.IsFavorite;
             mRating = status.Rating;
             RaisePropertyChanged( nameof( RatingSource ));
             RaisePropertyChanged( nameof( HasRating ));
