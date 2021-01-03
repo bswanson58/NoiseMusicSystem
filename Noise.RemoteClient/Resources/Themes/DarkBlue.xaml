@@ -9,7 +9,7 @@
     <Color x:Key="LightPrimaryColor">#BBDEFB</Color>
 
     <Color x:Key="PrimaryTextColor">#FFFFFF</Color>
-    <Color x:Key="SecondaryTextColor">#D5D5D5</Color>
+    <Color x:Key="SecondaryTextColor">#B5B5B5</Color>
 
     <Color x:Key="BackgroundColor">Black</Color>
     <Color x:Key="DividerColor">#404040</Color>

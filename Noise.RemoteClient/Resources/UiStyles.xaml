@@ -33,6 +33,12 @@
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
+    <Style x:Key="ControlTextStyle" TargetType="Label">
+        <Setter Property="TextColor" Value="{DynamicResource SecondaryTextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+        <Setter Property="LineBreakMode" Value="NoWrap"/>
+    </Style>
+
     <Style x:Key="PlayButtonTouchEffect" TargetType="VisualElement">
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
         <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="{DynamicResource LightPlayColor}"/>
@@ -52,6 +58,7 @@
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="touchEffect:TouchEff.PressedAnimationDuration" Value="200"/>
         <Setter Property="touchEffect:TouchEff.PressedBackgroundColor" Value="DarkGray"/>
+        <Setter Property="touchEffect:TouchEff.RegularBackgroundColor" Value="Transparent"/>
     </Style>
 
     <Style x:Key="TransportSmallText" TargetType="Label">
@@ -66,4 +73,5 @@
     <Style x:Key="TransportLargeText" TargetType="Label" BasedOn="{StaticResource TransportSmallText}">
         <Setter Property="FontSize" Value="72"/>
     </Style>
+
 </ResourceDictionary>

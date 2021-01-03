@@ -15,7 +15,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <Grid RowSpacing="0" BackgroundColor="{DynamicResource TransportBackgroundColor}">
+        <Grid RowSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -29,24 +29,58 @@
             </Grid.RowDefinitions>
 
             <!-- Artist/Album/Track -->
-            <Label Grid.Row="1" HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" Text="{Binding ArtistName}"/>
-            <Label Grid.Row="2" Margin="0,-12" HorizontalOptions="Center" Style="{StaticResource TransportLargeText}" Text="{Binding TrackName}"/>
-            <Label Grid.Row="3" HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" Text="{Binding AlbumName}"/>
+            <ContentView Grid.Row="1" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
+                <Label HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                       Text="{Binding ArtistName}"/>
+            </ContentView>
+            <ContentView Grid.Row="2" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
+                <Label Margin="0,-12" HorizontalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold"
+                       Text="{Binding TrackName}"/>
+            </ContentView>
+            <ContentView Grid.Row="3" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplayTracks}">
+                <Label HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                       Text="{Binding AlbumName}"/>
+            </ContentView>
 
-            <!-- IsFavorite/Rating -->
-            <StackLayout Grid.Row="4" Margin="0,10,0,0" Orientation="Horizontal" HorizontalOptions="Center" BackgroundColor="Transparent">
-                <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditRatings}">
-                    <controls:SvgButton VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="15,10,10,15"
-                                        IsVisible="{Binding HasRating}" ImageColor="{DynamicResource SignatureColor}" 
-                                        Source="{Binding RatingSource}"/>
+            <!-- IsFavorite/Rating/Tags -->
+            <Grid Grid.Row="4" Margin="0,5,0,0" HorizontalOptions="Center" ColumnSpacing="0" RowSpacing="0" BackgroundColor="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentView Grid.Column="0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditRatings}">
+                    <Grid ColumnSpacing="0" BackgroundColor="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <controls:SvgButton Grid.Column="0" VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="5"
+                                            IsVisible="{Binding IsFavorite}" ImageColor="{DynamicResource SignatureColor}" 
+                                            Source="Favorite"/>
+
+                        <controls:SvgButton Grid.Column="1" VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="5"
+                                            IsVisible="{Binding HasRating}" ImageColor="{DynamicResource SignatureColor}" 
+                                            Source="{Binding RatingSource}"/>
+
+                        <controls:SvgButton Grid.Column="2" VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="5"
+                                            IsVisible="{Binding NeedRating}" ImageColor="{DynamicResource SecondaryTextColor}" 
+                                            Source="Empty_Star"/>
+                    </Grid>
                 </ContentView>
 
-                <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditRatings}">
-                    <controls:SvgButton VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="10,10,15,15"
-                                        IsVisible="{Binding IsFavorite}" ImageColor="{DynamicResource SignatureColor}" 
-                                        Source="Noise.RemoteClient.Resources.Images.Favorite.svg"/>
+                <ContentView Grid.Column="1" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditTags}">
+                    <Grid BackgroundColor="Transparent" Margin="10,0">
+                        <Label Style="{DynamicResource ControlTextStyle}" VerticalOptions="Center" IsVisible="{Binding HaveTags}" Text="{Binding Tags}"/>
+
+                        <controls:SvgButton VerticalOptions="Center" HeightRequest="33" WidthRequest="35" Margin="5"
+                                            IsVisible="{Binding NeedTags}" ImageColor="{DynamicResource SecondaryTextColor}" 
+                                            Source="Tag"/>
+                    </Grid>
                 </ContentView>
-            </StackLayout>
+            </Grid>
 
             <!-- Play Position -->
             <Grid Grid.Row="6" BackgroundColor="Transparent">
@@ -57,13 +91,15 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" Margin="15,0,5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End"
-                       Style="{StaticResource TransportSmallText}" Text="{Binding TimePlayed, Converter={StaticResource TimeSpanConverter}}"/>
+                       Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                       Text="{Binding TimePlayed, Converter={StaticResource TimeSpanConverter}}"/>
 
                 <ProgressBar Grid.Column="1" VerticalOptions="Center" ScaleY="3" Progress="{Binding PlayPercentage}" 
                              ProgressColor="{DynamicResource SignatureColor}"/>
 
                 <Label Grid.Column="2" Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" 
-                       Style="{StaticResource TransportSmallText}" Text="{Binding TimeRemaining, Converter={StaticResource TimeSpanConverter}}"/>
+                       Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                       Text="{Binding TimeRemaining, Converter={StaticResource TimeSpanConverter}}"/>
             </Grid>
 
             <!-- Transport Control -->

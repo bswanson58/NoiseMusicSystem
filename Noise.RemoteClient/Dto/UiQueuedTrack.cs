@@ -28,6 +28,17 @@ namespace Noise.RemoteClient.Dto {
             Track = track;
         }
 
+        public UiQueuedTrack( TransportInformation fromStatus ) {
+            Track = new QueueTrackInfo {
+                ArtistId = fromStatus.ArtistId, AlbumId = fromStatus.AlbumId, TrackId = fromStatus.TrackId,
+                ArtistName = fromStatus.ArtistName, AlbumName = fromStatus.AlbumName, TrackName = fromStatus.TrackName, VolumeName = fromStatus.VolumeName,
+                TrackNumber = fromStatus.TrackNumber, IsFavorite = fromStatus.IsFavorite, Rating = fromStatus.Rating,
+                IsPlaying = true
+            };
+
+            Track.Tags.AddRange( from t in fromStatus.Tags select new QueueTagInfo{ TagId = t.TagId, TagName = t.TagName });
+        }
+
         public string RatingSource {
             get {
                 var retValue = "0_Star";
