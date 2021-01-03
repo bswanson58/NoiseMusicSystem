@@ -67,7 +67,7 @@
 
                         <controls:SvgButton Grid.Column="2" VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="5"
                                             IsVisible="{Binding NeedRating}" ImageColor="{DynamicResource SecondaryTextColor}" 
-                                            Source="Empty_Star"/>
+                                            Source="Empty_Star" Opacity="0.5"/>
                     </Grid>
                 </ContentView>
 
@@ -77,7 +77,7 @@
 
                         <controls:SvgButton VerticalOptions="Center" HeightRequest="33" WidthRequest="35" Margin="5"
                                             IsVisible="{Binding NeedTags}" ImageColor="{DynamicResource SecondaryTextColor}" 
-                                            Source="Tag"/>
+                                            Source="Tag" Opacity="0.5"/>
                     </Grid>
                 </ContentView>
             </Grid>
