@@ -45,7 +45,6 @@ namespace Noise.RemoteClient.ViewModels {
         private int                                 mRating;
         private TimeSpan                            mTrackLength;
         private TimeSpan                            mTimePlayed;
-        private TimeSpan                            mTimeRemaining;
         private double                              mPlayPercentage;
         private TransportInformation                mTrackInformation;
 
@@ -168,7 +167,6 @@ namespace Noise.RemoteClient.ViewModels {
 
             mTrackLength = TimeSpan.FromTicks( status.TrackLength );
             mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
-            mTimeRemaining = TimeSpan.FromTicks( status.TrackLength - status.PlayPosition );
             DisplayTrackTimes();
             PlayPercentage = status.PlayPositionPercentage;
 
