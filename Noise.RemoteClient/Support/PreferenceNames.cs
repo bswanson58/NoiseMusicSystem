@@ -12,5 +12,7 @@ namespace Noise.RemoteClient.Support {
 
         public const string ApplicationFont         = "applicationFont";
         public const string ApplicationTheme        = "applicationTheme";
+
+        public const string PlaybackTimeFormat      = "playbackTimeFormat";
     }
 }

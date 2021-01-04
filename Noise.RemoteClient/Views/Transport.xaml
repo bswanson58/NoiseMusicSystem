@@ -103,16 +103,21 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0" Margin="15,0,5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End"
-                       Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
-                       Text="{Binding TimePlayed, Converter={StaticResource TimeSpanConverter}}"/>
+                <ContentView Grid.Column="0"  Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleTimeDisplay}">
+                    <Label Margin="15,0,5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End" 
+                           IsVisible="{Binding IsLeftTimeDisplayed}"
+                           Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                           Text="{Binding LeftTime, Converter={StaticResource TimeSpanConverter}}"/>
+                </ContentView>
 
-                <ProgressBar Grid.Column="1" VerticalOptions="Center" ScaleY="3" Progress="{Binding PlayPercentage}" 
+                <ProgressBar Grid.Column="1" Margin="0,3,0,0" VerticalOptions="Center" ScaleY="3" Progress="{Binding PlayPercentage}" 
                              ProgressColor="{DynamicResource SignatureColor}"/>
 
-                <Label Grid.Column="2" Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" 
-                       Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
-                       Text="{Binding TimeRemaining, Converter={StaticResource TimeSpanConverter}}"/>
+                <ContentView Grid.Column="2"  Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleTimeDisplay}">
+                    <Label Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" IsVisible="{Binding IsRightTimeDisplayed}"
+                           Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                           Text="{Binding RightTime, Converter={StaticResource TimeSpanConverter}}"/>
+                </ContentView>
             </Grid>
 
             <!-- Paused -->

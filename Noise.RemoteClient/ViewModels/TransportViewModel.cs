@@ -6,11 +6,13 @@ using System.Threading;
 using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Models;
 using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
@@ -21,8 +23,10 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IClientManager             mClientManager;
         private readonly IClientState               mClientState;
         private readonly IDialogService             mDialogService;
+        private readonly IPreferences               mPreferences;
         private readonly IPlatformLog               mLog;
         private readonly List<TransportTagInfo>     mTags;
+        private readonly PlayTimeDisplay            mTimeDisplay;
         private IDisposable                         mLibraryStatusSubscription;
         private IDisposable                         mClientStatusSubscription;
         private IDisposable                         mTransportSubscription;
@@ -32,11 +36,16 @@ namespace Noise.RemoteClient.ViewModels {
         private bool                                mIsPlaying;
         private bool                                mIsPaused;
         private bool                                mIsStopped;
+        private bool                                mIsRightTimeDisplayed;
+        private bool                                mIsLeftTimeDisplayed;
         private string                              mArtistName;
         private string                              mAlbumName;
         private string                              mTrackName;
         private bool                                mIsFavorite;
         private int                                 mRating;
+        private TimeSpan                            mTrackLength;
+        private TimeSpan                            mTimePlayed;
+        private TimeSpan                            mTimeRemaining;
         private double                              mPlayPercentage;
         private TransportInformation                mTrackInformation;
 
@@ -47,8 +56,8 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  TimeSpan                            PlayPosition { get; private set; }
         public  TimeSpan                            TrackLength { get; private set; }
-        public  TimeSpan                            TimeRemaining {  get; private set; }
-        public  TimeSpan                            TimePlayed {  get; private set; }
+        public  TimeSpan                            LeftTime {  get; private set; }
+        public  TimeSpan                            RightTime {  get; private set; }
         public  string                              Tags => String.Join( " | ", from t in mTags select t.TagName );
 
         public  DelegateCommand                     DisplaySuggestions { get; }
@@ -58,6 +67,8 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     EditRatings {  get; }
         public  DelegateCommand                     EditTags { get; }
 
+        public  DelegateCommand                     ToggleTimeDisplay { get; }
+
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
         public  DelegateCommand                     Stop { get; }
@@ -66,14 +77,18 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     RepeatTrack { get; }
 
         public TransportViewModel( ITransportProvider transportProvider, ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, 
-                                   IClientManager clientManager, IClientState clientState, IPlatformLog log, IDialogService dialogService ) {
+                                   IClientManager clientManager, IClientState clientState, IPlatformLog log, IDialogService dialogService, IPreferences preferences ) {
             mTransportProvider = transportProvider;
             mTrackProvider = trackProvider;
             mHostInformationProvider = hostInformationProvider;
             mClientManager = clientManager;
             mClientState = clientState;
             mDialogService = dialogService;
+            mPreferences = preferences;
             mLog = log;
+
+            mTimeDisplay = new PlayTimeDisplay();
+            mTimeDisplay.SetMode( mPreferences.Get( PreferenceNames.PlaybackTimeFormat, mTimeDisplay.DefaultMode ));
 
             mTags = new List<TransportTagInfo>();
 
@@ -83,6 +98,8 @@ namespace Noise.RemoteClient.ViewModels {
 
             EditRatings = new DelegateCommand( OnEditRatings );
             EditTags = new DelegateCommand( OnEditTags );
+
+            ToggleTimeDisplay = new DelegateCommand( OnToggleTimeDisplay );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -149,12 +166,10 @@ namespace Noise.RemoteClient.ViewModels {
             PlayPosition = TimeSpan.FromTicks( status.PlayPosition );
             RaisePropertyChanged( nameof( PlayPosition ));
 
-            TimePlayed = TimeSpan.FromTicks( status.PlayPosition );
-            RaisePropertyChanged( nameof( TimePlayed ));
-
-            TimeRemaining = TimeSpan.FromTicks( status.TrackLength - status.PlayPosition );
-            RaisePropertyChanged( nameof( TimeRemaining ));
-
+            mTrackLength = TimeSpan.FromTicks( status.TrackLength );
+            mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
+            mTimeRemaining = TimeSpan.FromTicks( status.TrackLength - status.PlayPosition );
+            DisplayTrackTimes();
             PlayPercentage = status.PlayPositionPercentage;
 
             IsPaused = mTrackInformation?.TransportState == TransportState.Paused;
@@ -229,6 +244,45 @@ namespace Noise.RemoteClient.ViewModels {
         public double PlayPercentage {
             get => mPlayPercentage;
             set => SetProperty( ref mPlayPercentage, value );
+        }
+
+        private void OnToggleTimeDisplay() {
+            mTimeDisplay.SetNextMode();
+            mPreferences.Set( PreferenceNames.PlaybackTimeFormat, mTimeDisplay.CurrentMode );
+
+            DisplayTrackTimes();
+        }
+
+        private void DisplayTrackTimes() {
+            if( mTimeDisplay.IsLeftIncrementing ) {
+                LeftTime = mTimePlayed;
+            }
+            else {
+                LeftTime = mTimePlayed - mTrackLength;
+            }
+
+            if( mTimeDisplay.IsRightIncrementing ) {
+                RightTime = mTimePlayed;
+            }
+            else {
+                RightTime = mTimePlayed - mTrackLength;
+            }
+
+            IsRightTimeDisplayed = mTimeDisplay.IsRightDisplayed;
+            IsLeftTimeDisplayed = mTimeDisplay.IsLeftDisplayed;
+
+            RaisePropertyChanged( nameof( LeftTime ));
+            RaisePropertyChanged( nameof( RightTime ));
+        }
+
+        public bool IsRightTimeDisplayed {
+            get => mIsRightTimeDisplayed;
+            set => SetProperty( ref mIsRightTimeDisplayed, value );
+        }
+
+        public bool IsLeftTimeDisplayed {
+            get => mIsLeftTimeDisplayed;
+            set => SetProperty( ref mIsLeftTimeDisplayed, value );
         }
 
         private TrackInfo CreateTrackInfo( TransportInformation fromStatus ) {
