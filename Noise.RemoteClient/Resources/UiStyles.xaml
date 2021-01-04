@@ -68,10 +68,10 @@
         <Setter Property="FontSize" Value="32"/>
     </Style>
     <Style x:Key="TransportMediumText" TargetType="Label" BasedOn="{StaticResource TransportSmallText}">
-        <Setter Property="FontSize" Value="48"/>
+        <Setter Property="FontSize" Value="64"/>
     </Style>
     <Style x:Key="TransportLargeText" TargetType="Label" BasedOn="{StaticResource TransportSmallText}">
-        <Setter Property="FontSize" Value="72"/>
+        <Setter Property="FontSize" Value="96"/>
     </Style>
 
 </ResourceDictionary>

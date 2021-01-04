@@ -5,6 +5,7 @@
              xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
              xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
+             xmlns:forms9="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              x:Class="Noise.RemoteClient.Views.Transport"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              BackgroundColor="{DynamicResource TransportBackgroundColor}"
@@ -17,33 +18,39 @@
     <ContentPage.Content>
         <Grid RowSpacing="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- Artist/Album/Track -->
-            <ContentView Grid.Row="1" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
-                <Label HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                       Text="{Binding ArtistName}" LineBreakMode="TailTruncation"/>
-            </ContentView>
-            <ContentView Grid.Row="2" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
-                <Label Margin="0,-10" HorizontalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold" 
-                       Text="{Binding TrackName}" LineBreakMode="TailTruncation"/>
-            </ContentView>
-            <ContentView Grid.Row="3" Margin="5,0" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding DisplayTracks}">
-                <Label HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                       Text="{Binding AlbumName}" LineBreakMode="TailTruncation"/>
-            </ContentView>
+            <Grid Grid.Row="0" Margin="0,15,0,0" RowSpacing="0" BackgroundColor="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
+                             touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
+                    <forms9:Label HorizontalOptions="Center" VerticalOptions="End" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                                  Text="{Binding ArtistName}" Lines="1" AutoFit="Lines" MinFontSize="18"/>
+                </ContentView>
+                <ContentView Grid.Row="1" Margin="5,-5,5,-10" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
+                             touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
+                    <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold" 
+                                  Text="{Binding TrackName}" Lines="1" AutoFit="Width" MinFontSize="24"/>
+                </ContentView>
+                <ContentView Grid.Row="2" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
+                             touchEffect:TouchEff.Command="{Binding DisplayTracks}">
+                        <forms9:Label HorizontalOptions="Center" VerticalOptions="Start" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                                      Text="{Binding AlbumName}" Lines="1" AutoFit="Width" MinFontSize="18"/>
+                </ContentView>
+            </Grid>
 
             <!-- IsFavorite/Rating/Tags -->
-            <Grid Grid.Row="4" Margin="0,5,0,0" HorizontalOptions="Center" ColumnSpacing="0" RowSpacing="0" BackgroundColor="Transparent">
+            <Grid Grid.Row="1" HorizontalOptions="Center" ColumnSpacing="0" RowSpacing="0" BackgroundColor="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -83,7 +90,7 @@
             </Grid>
 
             <!-- Play Position -->
-            <Grid Grid.Row="6" BackgroundColor="Transparent">
+            <Grid Grid.Row="2" VerticalOptions="Center" BackgroundColor="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -103,7 +110,7 @@
             </Grid>
 
             <!-- Transport Control -->
-            <Grid Grid.Row="8" BackgroundColor="Transparent" Margin="0,5,0,15">
+            <Grid Grid.Row="3" BackgroundColor="Transparent" Margin="0,0,0,15">
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                     <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
                         <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Play"/>
