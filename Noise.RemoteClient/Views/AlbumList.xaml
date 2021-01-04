@@ -116,12 +116,25 @@
                         </SwipeItems>
                     </SwipeView.LeftItems>
 
-                    <StackLayout Orientation="Horizontal" Style="{StaticResource ListItemTouchEffect}"
-                                 touch:TouchEff.Command="{Binding SelectPlayingAlbum}">
+                    <Grid Style="{StaticResource ListItemTouchEffect}" touch:TouchEff.Command="{Binding SelectPlayingAlbum}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="0"/>
+                        </Grid.ColumnDefinitions>
 
-                        <Label Margin="20,15,0,15" VerticalOptions="Center" Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
-                        <Label VerticalOptions="Center" TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}" Text="{Binding PlayingAlbum.AlbumName}"/>
-                    </StackLayout>
+                        <Label Grid.Column="0" Margin="20,15,0,15" VerticalOptions="Center" Style="{StaticResource ListItemHeaderStyle}" Text="Now Playing: "/>
+                        <Label Grid.Column="1" VerticalOptions="Center" TextColor="{StaticResource PlayColor}" Style="{StaticResource ListItemHeaderStyle}"
+                               Text="{Binding PlayingAlbum.AlbumName}"/>
+
+                        <controls:SvgButton Grid.Column="2" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
+                                            IsVisible="{Binding PlayingAlbum.HasRating}" Source="{Binding PlayingAlbum.RatingSource}" ImageColor="{DynamicResource SignatureColor}"/>
+
+                        <controls:SvgButton Grid.Column="3" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0" 
+                                            IsVisible="{Binding PlayingAlbum.IsFavorite}" Source="Favorite" ImageColor="{DynamicResource SignatureColor}"/>
+                    </Grid>
                 </SwipeView>
             </Grid>
 
