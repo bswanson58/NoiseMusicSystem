@@ -28,6 +28,10 @@ namespace Noise.RemoteClient.ViewModels {
         private IDisposable                         mTransportSubscription;
         private bool                                mClientAwake;
         private bool                                mLibraryOpen;
+        private bool                                mPlaybackActive;
+        private bool                                mIsPlaying;
+        private bool                                mIsPaused;
+        private bool                                mIsStopped;
         private string                              mArtistName;
         private string                              mAlbumName;
         private string                              mTrackName;
@@ -129,16 +133,9 @@ namespace Noise.RemoteClient.ViewModels {
         private void OnTransportChanged( TransportInformation status ) {
             mTrackInformation = status;
 
-            if( status.TransportState != TransportState.Stopped ) {
-                ArtistName = status.ArtistName;
-                AlbumName = status.AlbumName;
-                TrackName = status.TrackName;
-            }
-            else {
-                ArtistName = String.Empty;
-                AlbumName = String.Empty;
-                TrackName = String.Empty;
-            }
+            ArtistName = status.ArtistName;
+            AlbumName = status.AlbumName;
+            TrackName = status.TrackName;
 
             IsFavorite = status.IsFavorite;
             mRating = status.Rating;
@@ -160,11 +157,36 @@ namespace Noise.RemoteClient.ViewModels {
 
             PlayPercentage = status.PlayPositionPercentage;
 
+            IsPaused = mTrackInformation?.TransportState == TransportState.Paused;
+            IsPlaying = mTrackInformation?.TransportState == TransportState.Playing;
+            IsPlaybackActive = IsPlaying || IsPaused;
+            IsStopped = mTrackInformation?.TransportState == TransportState.Stopped || mTrackInformation?.TransportState == TransportState.Unknown;
+
             mTags.Clear();
             mTags.AddRange( status.Tags );
             RaisePropertyChanged( nameof( Tags ));
             RaisePropertyChanged( nameof( NeedTags ));
             RaisePropertyChanged( nameof( HaveTags ));
+        }
+
+        public bool IsPlaybackActive {
+            get => mPlaybackActive;
+            set => SetProperty( ref mPlaybackActive, value );
+        }
+
+        public bool IsPlaying {
+            get => mIsPlaying;
+            set => SetProperty( ref mIsPlaying, value );
+        }
+
+        public bool IsPaused {
+            get => mIsPaused;
+            set => SetProperty( ref mIsPaused, value );
+        }
+
+        public bool IsStopped {
+            get => mIsStopped;
+            set => SetProperty( ref mIsStopped, value );
         }
 
         public string ArtistName {

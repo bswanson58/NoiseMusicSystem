@@ -24,8 +24,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+            <!-- Transport Stopped -->
+            <Grid Grid.Row="0" BackgroundColor="Transparent" IsVisible="{Binding IsStopped}">
+                <Label HorizontalOptions="Center" VerticalOptions="Center" Style="{DynamicResource TransportSmallText}"
+                       TextColor="{DynamicResource SecondaryTextColor}" Text="Press Play to get me started!"/>
+            </Grid>
+
             <!-- Artist/Album/Track -->
-            <Grid Grid.Row="0" Margin="0,15,0,0" RowSpacing="0" BackgroundColor="Transparent">
+            <Grid Grid.Row="0" Margin="0,15,0,0" RowSpacing="0" BackgroundColor="Transparent" IsVisible="{Binding IsPlaybackActive}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -50,7 +56,7 @@
             </Grid>
 
             <!-- IsFavorite/Rating/Tags -->
-            <Grid Grid.Row="1" HorizontalOptions="Center" ColumnSpacing="0" RowSpacing="0" BackgroundColor="Transparent">
+            <Grid Grid.Row="1" HorizontalOptions="Center" ColumnSpacing="0" RowSpacing="0" BackgroundColor="Transparent" IsVisible="{Binding IsPlaybackActive}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -90,7 +96,7 @@
             </Grid>
 
             <!-- Play Position -->
-            <Grid Grid.Row="2" VerticalOptions="Center" BackgroundColor="Transparent">
+            <Grid Grid.Row="2" VerticalOptions="Center" BackgroundColor="Transparent" IsVisible="{Binding IsPlaying}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -107,6 +113,12 @@
                 <Label Grid.Column="2" Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" 
                        Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
                        Text="{Binding TimeRemaining, Converter={StaticResource TimeSpanConverter}}"/>
+            </Grid>
+
+            <!-- Paused -->
+            <Grid Grid.Row="2" VerticalOptions="Center" BackgroundColor="Transparent" IsVisible="{Binding IsPaused}">
+                <Label HorizontalOptions="Center" Style="{DynamicResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                       Text="(paused)"/>
             </Grid>
 
             <!-- Transport Control -->
