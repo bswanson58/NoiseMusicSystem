@@ -6,6 +6,7 @@
              xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
              xmlns:forms9="clr-namespace:Forms9Patch;assembly=Forms9Patch"
+             xmlns:behaviors="clr-namespace:Noise.RemoteClient.Behaviors;assembly=Noise.RemoteClient"
              x:Class="Noise.RemoteClient.Views.Transport"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              BackgroundColor="{DynamicResource TransportBackgroundColor}"
@@ -41,17 +42,29 @@
                 <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
                              touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
                     <forms9:Label HorizontalOptions="Center" VerticalOptions="End" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                                  Text="{Binding ArtistName}" Lines="1" AutoFit="Lines" MinFontSize="18"/>
+                                  Lines="1" AutoFit="Lines" MinFontSize="18">
+                        <forms9:Label.Behaviors>
+                            <behaviors:AnimatedLabel Text="{Binding ArtistName}" AnimationLength="500" AnimationType="ScaleY"/>
+                        </forms9:Label.Behaviors>
+                    </forms9:Label>
                 </ContentView>
                 <ContentView Grid.Row="1" Margin="5,-5,5,-10" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
                              touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
                     <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold" 
-                                  Text="{Binding TrackName}" Lines="1" AutoFit="Width" MinFontSize="24"/>
+                                  Lines="1" AutoFit="Width" MinFontSize="24">
+                        <forms9:Label.Behaviors>
+                            <behaviors:AnimatedLabel Text="{Binding TrackName}" AnimationLength="500" AnimationType="Fade"/>
+                        </forms9:Label.Behaviors>
+                    </forms9:Label>
                 </ContentView>
                 <ContentView Grid.Row="2" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
                              touchEffect:TouchEff.Command="{Binding DisplayTracks}">
                         <forms9:Label HorizontalOptions="Center" VerticalOptions="Start" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                                      Text="{Binding AlbumName}" Lines="1" AutoFit="Width" MinFontSize="18"/>
+                                      Lines="1" AutoFit="Width" MinFontSize="18">
+                            <forms9:Label.Behaviors>
+                                <behaviors:AnimatedLabel Text="{Binding AlbumName}" AnimationLength="500" AnimationType="ScaleY"/>
+                            </forms9:Label.Behaviors>
+                        </forms9:Label>
                 </ContentView>
             </Grid>
 

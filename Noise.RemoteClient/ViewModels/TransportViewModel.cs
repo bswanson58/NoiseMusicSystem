@@ -183,7 +183,11 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         public bool IsPlaybackActive {
-            get => mPlaybackActive;
+            get {
+                Initialize();
+
+                return mPlaybackActive;
+            }
             set => SetProperty( ref mPlaybackActive, value );
         }
 
@@ -203,11 +207,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         public string ArtistName {
-            get {
-                Initialize();
-
-                return mArtistName;
-            }
+            get => mArtistName;
             set => SetProperty( ref mArtistName, value );
         }
 
