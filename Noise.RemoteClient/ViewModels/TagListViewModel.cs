@@ -24,14 +24,14 @@ namespace Noise.RemoteClient.ViewModels {
         public  ObservableCollectionExtended<UiTagAssociation>  TaggedItemsList { get; }
 
         public TagListViewModel( ITagInformationProvider tagProvider, IHostInformationProvider hostInformationProvider, IQueuePlayProvider queuePlayProvider,
-                                 IClientState clientState ) {
+                                 IQueueListener queueListener ) {
             mTagProvider = tagProvider;
             mPlayProvider = queuePlayProvider;
 
             TagList = new ObservableCollectionExtended<TagInfo>();
             TaggedItemsList = new ObservableCollectionExtended<UiTagAssociation>();
 
-            mPlayingStateSubscription = clientState.CurrentlyPlaying.Subscribe( OnPlaying );
+            mPlayingStateSubscription = queueListener.CurrentlyPlaying.Subscribe( OnPlaying );
             mLibraryStatusSubscription = hostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnLibraryStatus );
         }
 

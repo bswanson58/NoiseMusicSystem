@@ -14,14 +14,14 @@ namespace Noise.RemoteClient.ViewModels {
         private IDisposable                             mClientStateSubscription;
         private IDisposable                             mPlayingStateSubscription;
 
-        public AlbumSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState, 
+        public AlbumSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IQueueListener queueListener, IClientState clientState,
                                           IHostInformationProvider hostInformationProvider ) :
         base( playProvider, hostInformationProvider ) {
             mTrackProvider = trackProvider;
 
             InitializeLibrarySubscription();
 
-            mPlayingStateSubscription = clientState.CurrentlyPlaying.Subscribe( OnPlaying );
+            mPlayingStateSubscription = queueListener.CurrentlyPlaying.Subscribe( OnPlaying );
             mClientStateSubscription = clientState.CurrentSuggestion.Subscribe( OnSuggestion );
         }
 

@@ -13,6 +13,7 @@ using Xamarin.Forms.Internals;
 namespace Noise.RemoteClient.ViewModels {
     class FavoriteAlbumsViewModel : BindableBase, IDisposable {
         private readonly IClientState               mClientState;
+        private readonly IQueueListener             mQueueListener;
         private readonly IAlbumProvider             mAlbumProvider;
         private readonly IQueuePlayProvider         mPlayProvider;
         private readonly IPrefixedNameHandler       mPrefixedNameHandler;
@@ -25,9 +26,10 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand<UiAlbum>                SelectAlbum { get; }
 
         public FavoriteAlbumsViewModel( IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState,
-                                        IPrefixedNameHandler prefixedNameHandler ) {
+                                        IQueueListener queueListener, IPrefixedNameHandler prefixedNameHandler ) {
             mAlbumProvider = albumProvider;
             mPlayProvider = queuePlayProvider;
+            mQueueListener = queueListener;
             mClientState = clientState;
             mPrefixedNameHandler = prefixedNameHandler;
 
@@ -49,7 +51,7 @@ namespace Noise.RemoteClient.ViewModels {
         private void Initialize() {
             LoadAlbumList();
 
-            mPlayingTrackSubscription = mClientState.CurrentlyPlaying.Subscribe( OnPlaying );
+            mPlayingTrackSubscription = mQueueListener.CurrentlyPlaying.Subscribe( OnPlaying );
         }
 
         private void OnPlaying( PlayingState state ) {

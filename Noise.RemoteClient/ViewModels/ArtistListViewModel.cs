@@ -20,6 +20,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         private readonly IArtistProvider            mArtistProvider;
         private readonly IClientState               mClientState;
+        private readonly IQueueListener             mQueueListener;
         private readonly IHostInformationProvider   mHostInformationProvider;
         private readonly IPrefixedNameHandler       mPrefixedNameHandler;
         private readonly List<UiArtist>             mCompleteArtistList;
@@ -47,9 +48,10 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     SortByRating { get; }
 
         public ArtistListViewModel( IArtistProvider artistProvider, IHostInformationProvider hostInformationProvider, IClientState clientState,
-                                    IPrefixedNameHandler prefixedNameHandler, IPreferences preferences ) {
+                                    IQueueListener queueListener, IPrefixedNameHandler prefixedNameHandler, IPreferences preferences ) {
             mArtistProvider = artistProvider;
             mClientState = clientState;
+            mQueueListener = queueListener;
             mHostInformationProvider = hostInformationProvider;
             mPrefixedNameHandler = prefixedNameHandler;
             mPreferences = preferences;
@@ -73,7 +75,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void Initialize() {
             mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnLibraryStatus );
-            mPlayingStateSubscription = mClientState.CurrentlyPlaying.Subscribe( OnPlaying );
+            mPlayingStateSubscription = mQueueListener.CurrentlyPlaying.Subscribe( OnPlaying );
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
@@ -91,10 +93,6 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnPlaying( PlayingState state ) {
             mPlayingState = state;
-            PlayingArtist = ArtistList.FirstOrDefault( a => a.ArtistId.Equals( state?.ArtistId ));
-
-            RaisePropertyChanged( nameof( PlayingArtist ));
-            RaisePropertyChanged( nameof( HavePlayingArtist ));
 
             UpdatePlayingState();
         }
@@ -102,6 +100,10 @@ namespace Noise.RemoteClient.ViewModels {
         private void UpdatePlayingState() {
             mCompleteArtistList.ForEach( a => a.SetIsPlaying( mPlayingState ));
             mArtistList?.ForEach( a => a.SetIsPlaying( mPlayingState ));
+            PlayingArtist = ArtistList.FirstOrDefault( a => a.ArtistId.Equals( mPlayingState?.ArtistId ));
+
+            RaisePropertyChanged( nameof( PlayingArtist ));
+            RaisePropertyChanged( nameof( HavePlayingArtist ));
         }
 
         public ObservableCollectionExtended<UiArtist> ArtistList {
@@ -176,6 +178,7 @@ namespace Noise.RemoteClient.ViewModels {
             }
 
             RefreshArtistList();
+            UpdatePlayingState();
             IsBusy = false;
         }
 

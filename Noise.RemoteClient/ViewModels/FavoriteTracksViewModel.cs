@@ -21,7 +21,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand             SortByArtist { get; }
 
         public FavoriteTracksViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IHostInformationProvider hostInformationProvider,
-                                        IClientState clientState, IPreferences preferences ) :
+                                        IQueueListener queueListener, IPreferences preferences ) :
             base( queuePlayProvider, hostInformationProvider ) {
             mTrackProvider = trackProvider;
             mPreferences = preferences;
@@ -30,7 +30,7 @@ namespace Noise.RemoteClient.ViewModels {
             SortByArtist = new DelegateCommand( OnSortByArtist );
 
             InitializeLibrarySubscription();
-            mPlayingStateSubscription = clientState.CurrentlyPlaying.Subscribe( OnPlayingState );
+            mPlayingStateSubscription = queueListener.CurrentlyPlaying.Subscribe( OnPlayingState );
         }
 
         protected override void OnLibraryStatusChanged( LibraryStatus status ) {

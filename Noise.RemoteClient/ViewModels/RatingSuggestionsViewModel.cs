@@ -15,13 +15,13 @@ namespace Noise.RemoteClient.ViewModels {
         private IDisposable                             mClientStateSubscription;
         private IDisposable                             mPlayingStateSubscription;
 
-        public RatingSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState, 
+        public RatingSuggestionsViewModel( ITrackProvider trackProvider, IQueuePlayProvider playProvider, IClientState clientState, IQueueListener queueListener, 
                                            IHostInformationProvider hostInformationProvider ) :
             base( playProvider, hostInformationProvider) {
             mTrackProvider = trackProvider;
 
             InitializeLibrarySubscription();
-            mPlayingStateSubscription = clientState.CurrentlyPlaying.Subscribe( OnPlaying );
+            mPlayingStateSubscription = queueListener.CurrentlyPlaying.Subscribe( OnPlaying );
             mClientStateSubscription = clientState.CurrentSuggestion.Subscribe( OnSuggestion );
         }
 

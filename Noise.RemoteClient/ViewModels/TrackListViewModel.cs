@@ -14,6 +14,7 @@ namespace Noise.RemoteClient.ViewModels {
     class TrackListViewModel : BindableBase, IDisposable {
         private readonly ITrackProvider         mTrackProvider;
         private readonly IClientState           mClientState;
+        private readonly IQueueListener         mQueueListener;
         private readonly IQueuePlayProvider     mPlayProvider;
         private readonly IDialogService         mDialogService;
         private PlayingState                    mPlayingState;
@@ -27,9 +28,11 @@ namespace Noise.RemoteClient.ViewModels {
         public  string                          ArtistName { get; private set; }
         public  string                          AlbumName { get; private set; }
 
-        public TrackListViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IDialogService dialogService ) {
+        public TrackListViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IQueueListener queueListener,
+                                   IDialogService dialogService ) {
             mTrackProvider = trackProvider;
             mPlayProvider = queuePlayProvider;
+            mQueueListener = queueListener;
             mClientState = clientState;
             mDialogService = dialogService;
 
@@ -50,7 +53,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void Initialize() {
-            mPlayingStateSubscription = mClientState.CurrentlyPlaying.Subscribe( OnPlayingState );
+            mPlayingStateSubscription = mQueueListener.CurrentlyPlaying.Subscribe( OnPlayingState );
 
             mCurrentAlbum = mClientState.CurrentAlbum;
 

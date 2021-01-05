@@ -11,10 +11,10 @@ namespace Noise.RemoteClient.Models {
     class QueueListener : IQueueListener, IDisposable {
         private readonly IHostInformationProvider       mHostInformationProvider;
         private readonly IClientManager                 mClientManager;
-        private readonly IClientState                   mClientState;
         private readonly IQueueListProvider             mQueueListProvider;
         private readonly IPlatformLog                   mLog;
         private readonly SourceList<UiQueuedTrack>      mQueueList;
+        private readonly BehaviorSubject<PlayingState>  mPlayingState;
         private readonly BehaviorSubject<UiQueuedTrack> mNextPlayingTrack;
         private IDisposable                             mLibraryStatusSubscription;
         private IDisposable                             mClientStatusSubscription;
@@ -24,19 +24,20 @@ namespace Noise.RemoteClient.Models {
 
         public  IObservableList<UiQueuedTrack>          QueueList => mQueueList.AsObservableList();
         public  IObservable<UiQueuedTrack>              NextPlayingTrack => mNextPlayingTrack;
+        public  IObservable<PlayingState>               CurrentlyPlaying => mPlayingState;
 
         public  TimeSpan                                TotalPlayingTime { get; private set; }
         public  TimeSpan                                RemainingPlayTime { get; private set; }
 
-        public QueueListener( IQueueListProvider queueListProvider, IClientManager clientManager, IClientState clientState,
+        public QueueListener( IQueueListProvider queueListProvider, IClientManager clientManager,
                               IHostInformationProvider hostInformationProvider, IPlatformLog log ) {
             mHostInformationProvider = hostInformationProvider;
             mQueueListProvider = queueListProvider;
             mClientManager = clientManager;
-            mClientState = clientState;
             mLog = log;
 
             mQueueList = new SourceList<UiQueuedTrack>();
+            mPlayingState = new BehaviorSubject<PlayingState>( new PlayingState());
             mNextPlayingTrack = new BehaviorSubject<UiQueuedTrack>( new UiQueuedTrack());
 
             Initialize();
@@ -115,7 +116,7 @@ namespace Noise.RemoteClient.Models {
 
             mNextPlayingTrack.OnNext( nextTrack );
 
-            mClientState.SetPlayingTrack( mQueueList.Items.FirstOrDefault( t => t.IsPlaying ));
+            mPlayingState.OnNext( new PlayingState( mQueueList.Items.FirstOrDefault( t => t.IsPlaying )));
         }
 
         public void Dispose() {
