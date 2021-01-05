@@ -23,6 +23,7 @@ namespace Noise.RemoteClient {
             container.RegisterSingleton<IClientState, ClientState>();
             container.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
             container.RegisterSingleton<IQueuedItemNotifier, QueuedItemNotifier>();
+            container.RegisterSingleton<IQueueListener, QueueListener>();
             container.RegisterSingleton<IServiceLocator, ServiceLocator>();
             container.RegisterSingleton<IHostInformationProvider, HostInformationProvider>();
             container.RegisterSingleton<IQueueListProvider, QueueListProvider>();

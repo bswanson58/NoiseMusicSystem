@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
+using DynamicData;
 using DynamicData.Binding;
 using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
@@ -16,19 +17,15 @@ using Xamarin.Forms;
 
 namespace Noise.RemoteClient.ViewModels {
     class QueueViewModel : BindableBase, IDisposable {
-        private readonly IHostInformationProvider   mHostInformationProvider;
-        private readonly IClientManager             mClientManager;
         private readonly IQueueListProvider         mQueueListProvider;
         private readonly ITransportProvider         mTransportProvider;
         private readonly ITrackProvider             mTrackProvider;
         private readonly IClientState               mClientState;
+        private readonly IQueueListener             mQueueListener;
         private readonly IPlatformLog               mLog;
         private readonly IDialogService             mDialogService;
-        private bool                                mClientAwake;
-        private bool                                mLibraryOpen;
-        private IDisposable                         mLibraryStatusSubscription;
         private IDisposable                         mQueueSubscription;
-        private IDisposable                         mClientStatusSubscription;
+        private IDisposable                         mQueueListSubscription;
 
         private ObservableCollectionExtended<UiQueuedTrack> mQueueList;
 
@@ -54,14 +51,12 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand<UiQueuedTrack>      RemoveTrack { get; }
         public  DelegateCommand<UiQueuedTrack>      PromoteTrack { get; }
 
-        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, ITrackProvider trackProvider,
-                               IHostInformationProvider hostInformationProvider, IClientState clientState, IClientManager clientManager,
-                               IPlatformLog log, IDialogService dialogService ) {
+        public QueueViewModel( IQueueListProvider queueListProvider, ITransportProvider transportProvider, ITrackProvider trackProvider, IQueueListener queueListener,
+                               IClientState clientState, IPlatformLog log, IDialogService dialogService ) {
             mQueueListProvider = queueListProvider;
+            mQueueListener = queueListener;
             mTransportProvider = transportProvider;
             mTrackProvider = trackProvider;
-            mHostInformationProvider = hostInformationProvider;
-            mClientManager = clientManager;
             mClientState = clientState;
             mDialogService = dialogService;
             mLog = log;
@@ -99,68 +94,18 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private void Initialize() {
-            mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnHostStatus );
-            mClientStatusSubscription = mClientManager.ClientStatus.Subscribe( OnClientStatus );
+            mQueueList.CollectionChanged += OnQueueChanged;
+            mQueueListSubscription = mQueueListener.QueueList.Connect().ObserveOn( SynchronizationContext.Current ).Bind( mQueueList ).Subscribe();
         }
 
-        private void OnClientStatus( ClientStatus status ) {
-            mClientAwake = status?.ClientState == eClientState.Starting;
-
-            StartQueue();
-        }
-
-        private void OnHostStatus( LibraryStatus status ) {
-            mLibraryOpen = status?.LibraryOpen == true;
-
-            StartQueue();
-        }
-
-        private void StartQueue() {
-            try {
-                if(( mLibraryOpen ) &&
-                   ( mClientAwake )) {
-                    mQueueSubscription = mQueueListProvider.QueueListStatus.Subscribe( OnQueueChanged );
-                    mQueueListProvider.StartQueueStatusRequests();
-                }
-                else {
-                    mQueueListProvider.StopQueueStatusRequests();
-
-                    mQueueSubscription?.Dispose();
-                    mQueueSubscription = null;
-
-                    mQueueList.Clear();
-                }
-            }
-            catch( Exception ex ) {
-                mLog.LogException( nameof( StartQueue ), ex );
-            }
-        }
-
-        private void OnQueueChanged( QueueStatusResponse queueList ) {
+        private void OnQueueChanged( object sender, NotifyCollectionChangedEventArgs args ) {
             try {
                 Device.BeginInvokeOnMainThread(() => {
-                    mQueueList.Clear();
+                    TotalTime = mQueueListener.TotalPlayingTime;
+                    RemainingTime = mQueueListener.RemainingPlayTime;
 
-                    if( queueList?.QueueList != null ) {
-                        var shortenedList = new List<QueueTrackInfo>( queueList.QueueList );
-
-                        // limit the opening number of played tracks to suite a smaller display
-                        if( shortenedList.Count > 4 ) {
-                            while( shortenedList.Take( 4 ).All( t => t.HasPlayed )) {
-                                shortenedList.RemoveAt( 0 );
-                            }
-                        }
-
-                        mQueueList.AddRange( from q in shortenedList select new UiQueuedTrack( q ));
-
-                        TotalTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
-                        RemainingTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
-
-                        RaisePropertyChanged( nameof( TotalTime ));
-                        RaisePropertyChanged( nameof( RemainingTime ));
-
-                        mClientState.SetPlayingTrack( mQueueList.FirstOrDefault( t => t.IsPlaying ));
-                    }
+                    RaisePropertyChanged( nameof( TotalTime ));
+                    RaisePropertyChanged( nameof( RemainingTime ));
                 });
             }
             catch( Exception ex ) {
@@ -279,14 +224,11 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         public void Dispose() {
-            mLibraryStatusSubscription?.Dispose();
-            mLibraryStatusSubscription = null;
-
-            mClientStatusSubscription?.Dispose();
-            mClientStatusSubscription = null;
-
             mQueueSubscription?.Dispose();
             mQueueSubscription = null;
+
+            mQueueListSubscription?.Dispose();
+            mQueueListSubscription = null;
         }
     }
 }
