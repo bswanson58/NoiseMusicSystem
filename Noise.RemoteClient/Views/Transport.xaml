@@ -19,10 +19,11 @@
     <ContentPage.Content>
         <Grid RowSpacing="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="4*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- Transport Stopped -->
@@ -117,7 +118,7 @@
                 </Grid.ColumnDefinitions>
 
                 <ContentView Grid.Column="0"  Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleTimeDisplay}">
-                    <Label Margin="15,0,5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End" 
+                    <Label Margin="5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End" 
                            IsVisible="{Binding IsLeftTimeDisplayed}"
                            Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
                            Text="{Binding LeftTime, Converter={StaticResource TimeSpanConverter}}"/>
@@ -139,8 +140,20 @@
                        Text="(paused)"/>
             </Grid>
 
+            <!-- Next Playing Track -->
+            <Grid Grid.Row="3" BackgroundColor="Transparent" Opacity="0.6" HeightRequest="45" IsVisible="{Binding HaveNextPlayingTrack}">
+                <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}"
+                             touchEffect:TouchEff.Command="{Binding DisplayNextPlay}">
+                    <Label Style="{DynamicResource TransportTinyText}" TextColor="{DynamicResource SecondaryTextColor}" HorizontalOptions="Center" Margin="5">
+                        <Label.Behaviors>
+                            <behaviors:DelayedLabel Text="{Binding NextPlayingTrack, StringFormat='Next up: {0}'}" DelayLength="5000" AnimationLength="2000"/>
+                        </Label.Behaviors>
+                    </Label>
+                </ContentView>
+            </Grid>
+
             <!-- Transport Control -->
-            <Grid Grid.Row="3" BackgroundColor="Transparent" Margin="0,0,0,15">
+            <Grid Grid.Row="4" BackgroundColor="Transparent" Margin="0,0,0,15">
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                     <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
                         <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Play"/>

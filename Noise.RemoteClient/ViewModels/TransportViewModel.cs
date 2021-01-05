@@ -20,6 +20,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly ITransportProvider         mTransportProvider;
         private readonly ITrackProvider             mTrackProvider;
         private readonly IHostInformationProvider   mHostInformationProvider;
+        private readonly IQueueListener             mQueueListener;
         private readonly IClientManager             mClientManager;
         private readonly IClientState               mClientState;
         private readonly IDialogService             mDialogService;
@@ -30,6 +31,7 @@ namespace Noise.RemoteClient.ViewModels {
         private IDisposable                         mLibraryStatusSubscription;
         private IDisposable                         mClientStatusSubscription;
         private IDisposable                         mTransportSubscription;
+        private IDisposable                         mNextTrackSubscription;
         private bool                                mClientAwake;
         private bool                                mLibraryOpen;
         private bool                                mPlaybackActive;
@@ -47,21 +49,25 @@ namespace Noise.RemoteClient.ViewModels {
         private TimeSpan                            mTimePlayed;
         private double                              mPlayPercentage;
         private TransportInformation                mTrackInformation;
+        private UiQueuedTrack                       mNextPlayingTrack;
 
         public  bool                                HasRating => mRating != 0;
         public  bool                                NeedRating => !HasRating && !IsFavorite;
         public  bool                                HaveTags => mTags.Any();
         public  bool                                NeedTags => !HaveTags;
+        public  bool                                HaveNextPlayingTrack => !String.IsNullOrWhiteSpace( mNextPlayingTrack?.TrackName );
 
         public  TimeSpan                            PlayPosition { get; private set; }
         public  TimeSpan                            TrackLength { get; private set; }
         public  TimeSpan                            LeftTime {  get; private set; }
         public  TimeSpan                            RightTime {  get; private set; }
         public  string                              Tags => String.Join( " | ", from t in mTags select t.TagName );
+        public  string                              NextPlayingTrack { get; private set; }
 
         public  DelegateCommand                     DisplaySuggestions { get; }
         public  DelegateCommand                     DisplayAlbums { get; }
         public  DelegateCommand                     DisplayTracks { get; }
+        public  DelegateCommand                     DisplayNextPlay { get; }
 
         public  DelegateCommand                     EditRatings {  get; }
         public  DelegateCommand                     EditTags { get; }
@@ -76,10 +82,12 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     RepeatTrack { get; }
 
         public TransportViewModel( ITransportProvider transportProvider, ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, 
-                                   IClientManager clientManager, IClientState clientState, IPlatformLog log, IDialogService dialogService, IPreferences preferences ) {
+                                   IClientManager clientManager, IClientState clientState, IQueueListener queueListener,
+                                   IPlatformLog log, IDialogService dialogService, IPreferences preferences ) {
             mTransportProvider = transportProvider;
             mTrackProvider = trackProvider;
             mHostInformationProvider = hostInformationProvider;
+            mQueueListener = queueListener;
             mClientManager = clientManager;
             mClientState = clientState;
             mDialogService = dialogService;
@@ -94,6 +102,7 @@ namespace Noise.RemoteClient.ViewModels {
             DisplayAlbums = new DelegateCommand( OnDisplayAlbums );
             DisplayTracks = new DelegateCommand( OnDisplayTracks );
             DisplaySuggestions = new DelegateCommand( OnDisplaySuggestions );
+            DisplayNextPlay = new DelegateCommand( OnDisplayNextPlay );
 
             EditRatings = new DelegateCommand( OnEditRatings );
             EditTags = new DelegateCommand( OnEditTags );
@@ -112,6 +121,7 @@ namespace Noise.RemoteClient.ViewModels {
             if( mLibraryStatusSubscription == null ) {
                 mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnHostStatus );
                 mClientStatusSubscription = mClientManager.ClientStatus.Subscribe( OnClientStatus );
+                mNextTrackSubscription = mQueueListener.NextPlayingTrack.Subscribe( OnNextPlayingTrack );
             }
         }
 
@@ -144,6 +154,17 @@ namespace Noise.RemoteClient.ViewModels {
             catch( Exception ex ) {
                 mLog.LogException( nameof( StartStatus ), ex );
             }
+        }
+
+        private void OnNextPlayingTrack( UiQueuedTrack track ) {
+            mNextPlayingTrack = track;
+
+            if( HaveNextPlayingTrack ) {
+                NextPlayingTrack = $"{mNextPlayingTrack.TrackName}/{mNextPlayingTrack.ArtistName}";
+            }
+
+            RaisePropertyChanged( nameof( NextPlayingTrack ));
+            RaisePropertyChanged( nameof( HaveNextPlayingTrack ));
         }
 
         private void OnTransportChanged( TransportInformation status ) {
@@ -322,6 +343,15 @@ namespace Noise.RemoteClient.ViewModels {
             }
         }
 
+        private async void OnDisplayNextPlay() {
+            if(!String.IsNullOrWhiteSpace( mNextPlayingTrack?.TrackName )) {
+                mClientState.SetSuggestionState( mNextPlayingTrack );
+
+                // route to the shell content page, don't push it on the navigation stack.
+                await Shell.Current.GoToAsync( $"///{RouteNames.Suggestions}" );
+            }
+        }
+
         private void OnEditRatings() {
             if(!String.IsNullOrWhiteSpace( mTrackInformation?.TrackName )) {
                 var parameters = new DialogParameters {{ EditTrackRatingsViewModel.cTrackParameter, CreateTrackInfo( mTrackInformation ) }};
@@ -410,6 +440,9 @@ namespace Noise.RemoteClient.ViewModels {
 
             mClientStatusSubscription?.Dispose();
             mClientStatusSubscription = null;
+
+            mNextTrackSubscription?.Dispose();
+            mNextTrackSubscription = null;
         }
     }
 }

@@ -61,16 +61,19 @@
         <Setter Property="touchEffect:TouchEff.RegularBackgroundColor" Value="Transparent"/>
     </Style>
 
-    <Style x:Key="TransportSmallText" TargetType="Label">
+    <Style x:Key="TransportTinyText" TargetType="Label">
         <Setter Property="LineBreakMode" Value="NoWrap"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="TextColor" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="FontSize" Value="20"/>
+    </Style>
+    <Style x:Key="TransportSmallText" TargetType="Label" BasedOn="{StaticResource TransportTinyText}">
         <Setter Property="FontSize" Value="32"/>
     </Style>
-    <Style x:Key="TransportMediumText" TargetType="Label" BasedOn="{StaticResource TransportSmallText}">
+    <Style x:Key="TransportMediumText" TargetType="Label" BasedOn="{StaticResource TransportTinyText}">
         <Setter Property="FontSize" Value="64"/>
     </Style>
-    <Style x:Key="TransportLargeText" TargetType="Label" BasedOn="{StaticResource TransportSmallText}">
+    <Style x:Key="TransportLargeText" TargetType="Label" BasedOn="{StaticResource TransportTinyText}">
         <Setter Property="FontSize" Value="96"/>
     </Style>
 

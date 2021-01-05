@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using DynamicData;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -8,21 +9,24 @@ using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Models {
     class QueueListener : IQueueListener, IDisposable {
-        private readonly IHostInformationProvider   mHostInformationProvider;
-        private readonly IClientManager             mClientManager;
-        private readonly IClientState               mClientState;
-        private readonly IQueueListProvider         mQueueListProvider;
-        private readonly IPlatformLog               mLog;
-        private readonly SourceList<UiQueuedTrack>  mQueueList;
-        private IDisposable                         mLibraryStatusSubscription;
-        private IDisposable                         mClientStatusSubscription;
-        private IDisposable                         mQueueSubscription;
-        private bool                                mClientAwake;
-        private bool                                mLibraryOpen;
+        private readonly IHostInformationProvider       mHostInformationProvider;
+        private readonly IClientManager                 mClientManager;
+        private readonly IClientState                   mClientState;
+        private readonly IQueueListProvider             mQueueListProvider;
+        private readonly IPlatformLog                   mLog;
+        private readonly SourceList<UiQueuedTrack>      mQueueList;
+        private readonly BehaviorSubject<UiQueuedTrack> mNextPlayingTrack;
+        private IDisposable                             mLibraryStatusSubscription;
+        private IDisposable                             mClientStatusSubscription;
+        private IDisposable                             mQueueSubscription;
+        private bool                                    mClientAwake;
+        private bool                                    mLibraryOpen;
 
-        public  IObservableList<UiQueuedTrack>      QueueList => mQueueList.AsObservableList();
-        public  TimeSpan                            TotalPlayingTime { get; private set; }
-        public  TimeSpan                            RemainingPlayTime { get; private set; }
+        public  IObservableList<UiQueuedTrack>          QueueList => mQueueList.AsObservableList();
+        public  IObservable<UiQueuedTrack>              NextPlayingTrack => mNextPlayingTrack;
+
+        public  TimeSpan                                TotalPlayingTime { get; private set; }
+        public  TimeSpan                                RemainingPlayTime { get; private set; }
 
         public QueueListener( IQueueListProvider queueListProvider, IClientManager clientManager, IClientState clientState,
                               IHostInformationProvider hostInformationProvider, IPlatformLog log ) {
@@ -33,6 +37,7 @@ namespace Noise.RemoteClient.Models {
             mLog = log;
 
             mQueueList = new SourceList<UiQueuedTrack>();
+            mNextPlayingTrack = new BehaviorSubject<UiQueuedTrack>( new UiQueuedTrack());
 
             Initialize();
         }
@@ -94,14 +99,23 @@ namespace Noise.RemoteClient.Models {
 
                         TotalPlayingTime = TimeSpan.FromMilliseconds( queueList.TotalPlayMilliseconds );
                         RemainingPlayTime = TimeSpan.FromMilliseconds( queueList.RemainingPlayMilliseconds );
-
-                        mClientState.SetPlayingTrack( list.FirstOrDefault( t => t.IsPlaying ));
                     }
                 });
+
+                UpdatePlayingTracks();
             }
             catch( Exception ex ) {
                 mLog.LogException( nameof( OnQueueChanged ), ex );
             }
+        }
+
+        private void UpdatePlayingTracks() {
+            var nextTrack = mQueueList.Items.SkipWhile( t => !t.IsPlaying ).Skip( 1 ).SkipWhile( t => t.HasPlayed ).FirstOrDefault() ??
+                            mQueueList.Items.FirstOrDefault( t => !t.HasPlayed && !t.IsPlaying );
+
+            mNextPlayingTrack.OnNext( nextTrack );
+
+            mClientState.SetPlayingTrack( mQueueList.Items.FirstOrDefault( t => t.IsPlaying ));
         }
 
         public void Dispose() {
