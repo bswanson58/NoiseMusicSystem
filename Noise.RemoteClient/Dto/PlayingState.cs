@@ -10,14 +10,17 @@ namespace Noise.RemoteClient.Dto {
         public  string      AlbumName { get; }
         public  string      TrackName { get; }
 
-        public PlayingState( UiQueuedTrack forTrack ) {
-            ArtistId = forTrack.Track.ArtistId;
-            AlbumId = forTrack.Track.AlbumId;
-            TrackId = forTrack.Track.TrackId;
+        public PlayingState( UiQueuedTrack forTrack ) :
+            this() {
+            if( forTrack != null ) {
+                ArtistId = forTrack.Track.ArtistId;
+                AlbumId = forTrack.Track.AlbumId;
+                TrackId = forTrack.Track.TrackId;
 
-            ArtistName = forTrack.ArtistName;
-            AlbumName = forTrack.AlbumName;
-            TrackName = forTrack.TrackName;
+                ArtistName = forTrack.ArtistName;
+                AlbumName = forTrack.AlbumName;
+                TrackName = forTrack.TrackName;
+            }
         }
 
         public PlayingState() {
