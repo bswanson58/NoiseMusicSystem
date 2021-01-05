@@ -33,9 +33,6 @@
         <ShellContent Route="about" ContentTemplate="{DataTemplate views:About}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Log Files" IsVisible="False">
-        <ShellContent Route="logFiles" ContentTemplate="{DataTemplate views:LogDisplay}"/>
-    </FlyoutItem>
     <FlyoutItem Title="Suggestions" IsVisible="False">
         <ShellContent Route="suggestions" ContentTemplate="{DataTemplate views:Suggestions}"/>
     </FlyoutItem>

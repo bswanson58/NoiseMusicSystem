@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteClient.Platform;
 using Noise.RemoteClient.Support;
@@ -110,8 +108,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private async void OnDisplayLogs() {
-            // route to the shell content page, don't push it on the navigation stack.
-            await Shell.Current.GoToAsync( $"///{RouteNames.LogFileDisplay}" );
+            await Shell.Current.GoToAsync( RouteNames.LogFileDisplay );
         }
 
         public void Dispose() {

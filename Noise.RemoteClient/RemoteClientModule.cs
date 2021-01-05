@@ -42,6 +42,7 @@ namespace Noise.RemoteClient {
             Routing.RegisterRoute( RouteNames.ArtistList, typeof( ArtistList ));
             Routing.RegisterRoute( RouteNames.AlbumList, typeof( AlbumList ));
             Routing.RegisterRoute( RouteNames.TrackList, typeof( TrackList ));
+            Routing.RegisterRoute( RouteNames.LogFileDisplay, typeof( LogDisplay ));
 
             // do not register fly out content...
 
