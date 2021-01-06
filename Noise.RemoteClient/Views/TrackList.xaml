@@ -88,6 +88,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
@@ -96,6 +97,19 @@
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>
                 <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumName}"/>
             </StackLayout>
+
+            <ContentView Grid.Column="2" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditAlbumRatings}">
+                <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="30" WidthRequest="30" Margin="10,0"
+                                        IsVisible="{Binding AlbumHasRating}" Source="{Binding AlbumRatingSource}" ImageColor="{DynamicResource SignatureColor}"/>
+
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="28" WidthRequest="30" Margin="10,0"
+                                        IsVisible="{Binding AlbumIsFavorite}" Source="Favorite" ImageColor="{DynamicResource SignatureColor}"/>
+
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="30" WidthRequest="30" Margin="10,0" Opacity="0.5"
+                                        IsVisible="{Binding AlbumNeedsRating}" Source="Empty_Star" ImageColor="{DynamicResource SecondaryTextColor}"/>
+                </StackLayout>
+            </ContentView>
         </Grid>
     </Shell.TitleView>
 

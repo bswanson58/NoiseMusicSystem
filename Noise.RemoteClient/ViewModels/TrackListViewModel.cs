@@ -13,6 +13,7 @@ using Xamarin.Forms.Internals;
 namespace Noise.RemoteClient.ViewModels {
     class TrackListViewModel : BindableBase, IDisposable {
         private readonly ITrackProvider         mTrackProvider;
+        private readonly IAlbumProvider         mAlbumProvider;
         private readonly IClientState           mClientState;
         private readonly IQueueListener         mQueueListener;
         private readonly IQueuePlayProvider     mPlayProvider;
@@ -22,20 +23,27 @@ namespace Noise.RemoteClient.ViewModels {
         private AlbumInfo                       mCurrentAlbum;
         private ObservableCollectionExtended<UiTrack>   mTrackList;
 
+        public  bool                            AlbumIsFavorite => mCurrentAlbum?.IsFavorite == true;
+        public  bool                            AlbumHasRating => mCurrentAlbum?.Rating != 0;
+        public  bool                            AlbumNeedsRating => !AlbumIsFavorite && !AlbumHasRating;
+
+        public  DelegateCommand                 EditAlbumRatings { get; }
         public  DelegateCommand<UiTrack>        EditTrackRatings { get; }
         public  DelegateCommand<UiTrack>        EditTrackTags { get; }
 
         public  string                          ArtistName { get; private set; }
         public  string                          AlbumName { get; private set; }
 
-        public TrackListViewModel( ITrackProvider trackProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState, IQueueListener queueListener,
-                                   IDialogService dialogService ) {
+        public TrackListViewModel( ITrackProvider trackProvider, IAlbumProvider albumProvider, IQueuePlayProvider queuePlayProvider, IClientState clientState,
+                                   IQueueListener queueListener, IDialogService dialogService ) {
             mTrackProvider = trackProvider;
+            mAlbumProvider = albumProvider;
             mPlayProvider = queuePlayProvider;
             mQueueListener = queueListener;
             mClientState = clientState;
             mDialogService = dialogService;
 
+            EditAlbumRatings = new DelegateCommand( OnEditAlbumRatings );
             EditTrackRatings = new DelegateCommand<UiTrack>( OnEditTrackRatings );
             EditTrackTags = new DelegateCommand<UiTrack>( OnEditTrackTags );
         }
@@ -63,6 +71,11 @@ namespace Noise.RemoteClient.ViewModels {
 
                 RaisePropertyChanged( nameof( ArtistName ));
                 RaisePropertyChanged( nameof( AlbumName ));
+
+                RaisePropertyChanged( nameof( AlbumIsFavorite ));
+                RaisePropertyChanged( nameof( AlbumHasRating ));
+                RaisePropertyChanged( nameof( AlbumNeedsRating ));
+                RaisePropertyChanged( nameof( AlbumRatingSource ));
             }
 
             LoadAlbums();
@@ -88,6 +101,48 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnPlay( UiTrack track, bool playNext ) {
             mPlayProvider.Queue( track.Track, playNext );
+        }
+
+        public string AlbumRatingSource {
+            get {
+                var retValue = "0_Star";
+
+                if(( mCurrentAlbum != null ) &&
+                   ( mCurrentAlbum.Rating > 0 ) &&
+                   ( mCurrentAlbum.Rating < 6 )) {
+                    retValue = $"{mCurrentAlbum.Rating:D1}_Star";
+                }
+
+                return retValue;
+            }
+        }
+
+        private void OnEditAlbumRatings() {
+            if( mCurrentAlbum != null ) {
+                var parameters = new DialogParameters {{ EditAlbumRatingsViewModel.cAlbumParameter, mCurrentAlbum }};
+
+                mDialogService.ShowDialog( nameof( EditAlbumRatingsView ), parameters, async result => {
+                    var accepted = result.Parameters.GetValue<bool>( EditTrackRatingsViewModel.cDialogAccepted );
+
+                    if( accepted ) {
+                        var album = parameters.GetValue<AlbumInfo>( EditAlbumRatingsViewModel.cAlbumParameter );
+
+                        if( album != null ) {
+                            var callResult = await mAlbumProvider.UpdateAlbumRatings( album );
+
+                            if(( callResult.Success ) &&
+                               ( album.AlbumId.Equals( mCurrentAlbum?.AlbumId ))) {
+                                mCurrentAlbum = album;
+
+                                RaisePropertyChanged( nameof( AlbumIsFavorite ));
+                                RaisePropertyChanged( nameof( AlbumHasRating ));
+                                RaisePropertyChanged( nameof( AlbumNeedsRating ));
+                                RaisePropertyChanged( nameof( AlbumRatingSource ));
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         private void OnEditTrackRatings( UiTrack forTrack ) {
