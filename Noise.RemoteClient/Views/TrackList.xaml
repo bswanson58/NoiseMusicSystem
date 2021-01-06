@@ -66,13 +66,13 @@
                             </Label.Triggers>
                         </Label>
 
-                        <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25"
+                        <controls:SvgButton Grid.Row="0" Grid.Column="3" VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="0,0,5,0"
                                             IsVisible="{Binding HasRating}" Source="{Binding RatingSource}" ImageColor="{DynamicResource SignatureColor}"/>
 
                         <controls:SvgButton Grid.Row="0" Grid.Column="4" VerticalOptions="Center" HeightRequest="23" WidthRequest="25" Margin="0,0,5,0"
                                             IsVisible="{Binding IsFavorite}" Source="Favorite" ImageColor="{DynamicResource SignatureColor}"/>
 
-                        <Label Grid.Row="0" Grid.Column="5" Margin="0,0,5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
+                        <Label Grid.Row="0" Grid.Column="5" Margin="5,0" Style="{StaticResource ListItemHeaderStyle}" VerticalOptions="Center"
                                HorizontalTextAlignment="End" Text="{Binding TrackDuration, Converter={StaticResource TimeSpanConverter}}"/>
 
                         <Label Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Margin="0,0,7,0" Style="{StaticResource ListItemDetailStyle}" 
