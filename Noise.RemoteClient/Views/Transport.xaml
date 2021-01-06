@@ -33,7 +33,7 @@
             </Grid>
 
             <!-- Artist/Album/Track -->
-            <Grid Grid.Row="0" Margin="0,15,0,0" RowSpacing="0" BackgroundColor="Transparent" IsVisible="{Binding IsPlaybackActive}">
+            <Grid Grid.Row="0" Margin="0,5,0,10" RowSpacing="0" BackgroundColor="Transparent" IsVisible="{Binding IsPlaybackActive}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -60,8 +60,8 @@
                 </ContentView>
                 <ContentView Grid.Row="2" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
                              touchEffect:TouchEff.Command="{Binding DisplayTracks}">
-                        <forms9:Label HorizontalOptions="Center" VerticalOptions="Start" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                                      Lines="1" AutoFit="Width" MinFontSize="18">
+                        <forms9:Label Margin="0,-15,0,0" HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                                      Lines="1" AutoFit="Width" MinFontSize="12">
                             <forms9:Label.Behaviors>
                                 <behaviors:AnimatedLabel Text="{Binding AlbumName}" AnimationLength="500" AnimationType="ScaleY"/>
                             </forms9:Label.Behaviors>
@@ -141,7 +141,7 @@
             </Grid>
 
             <!-- Next Playing Track -->
-            <Grid Grid.Row="3" BackgroundColor="Transparent" Opacity="0.6" HeightRequest="45" IsVisible="{Binding HaveNextPlayingTrack}">
+            <Grid Grid.Row="3" BackgroundColor="Transparent" Opacity="0.6" HeightRequest="50" IsVisible="{Binding HaveNextPlayingTrack}">
                 <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}"
                              touchEffect:TouchEff.Command="{Binding DisplayNextPlay}">
                     <Label Style="{DynamicResource TransportTinyText}" TextColor="{DynamicResource SecondaryTextColor}" HorizontalOptions="Center" Margin="5">
