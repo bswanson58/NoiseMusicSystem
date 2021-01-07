@@ -16,6 +16,23 @@
         <valueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
     </ContentPage.Resources>
 
+    <Shell.TitleView>
+        <Grid BackgroundColor="{DynamicResource NavigationBarColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Now Playing"/>
+
+            <ContentView Grid.Column="2" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleVolumeDisplay}">
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="15"
+                                        ImageColor="{DynamicResource PrimaryTextColor}" Source="Volume"/>
+            </ContentView>
+        </Grid>
+    </Shell.TitleView>
+
     <ContentPage.Content>
         <Grid RowSpacing="0">
             <Grid.RowDefinitions>
@@ -176,6 +193,24 @@
                 </StackLayout>
             </Grid>
 
+            <!-- Volume Control -->
+            <Grid Grid.Row="0" Grid.RowSpan="5" RowSpacing="0" HorizontalOptions="End" BackgroundColor="{DynamicResource NavigationBarColor}" TranslationX="100">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <controls:VerticalContentView Grid.Row="0" WidthRequest="100">
+                    <Slider Margin="10,0" Minimum="0" Maximum="100" Value="{Binding VolumeLevel}"/>
+                </controls:VerticalContentView>
+
+                <Label Grid.Row="1" Style="{DynamicResource TransportSmallText}" HorizontalOptions="Center" Text="{Binding VolumeLevel}"/>
+
+                <Grid.Behaviors>
+                    <behaviors:Animation AnimationStyle="TranslateX" FalseAmount="100" TrueAmount="0" AnimationLength="500" 
+                                         AnimationState="{Binding DisplayVolume}"/>
+                </Grid.Behaviors>
+            </Grid>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

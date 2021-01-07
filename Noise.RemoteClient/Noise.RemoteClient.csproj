@@ -33,6 +33,7 @@
     <None Remove="Resources\Images\Transport_Previous.svg" />
     <None Remove="Resources\Images\Transport_Repeat.svg" />
     <None Remove="Resources\Images\Transport_Stop.svg" />
+    <None Remove="Resources\Images\Volume.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +67,7 @@
     <EmbeddedResource Include="Resources\Images\Transport_Previous.svg" />
     <EmbeddedResource Include="Resources\Images\Transport_Repeat.svg" />
     <EmbeddedResource Include="Resources\Images\Transport_Stop.svg" />
+    <EmbeddedResource Include="Resources\Images\Volume.svg" />
   </ItemGroup>
 
   <ItemGroup>

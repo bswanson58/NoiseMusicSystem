@@ -15,5 +15,8 @@ namespace Noise.RemoteClient.Interfaces {
         void    StopTransportStatusRequests();
 
         IObservable<TransportInformation>   TransportStatus { get; }
+
+        Task<VolumeLevelInformation>    GetVolumeLevel();
+        Task<VolumeLevelInformation>    SetVolumeLevel( int volumeLevel );
     }
 }

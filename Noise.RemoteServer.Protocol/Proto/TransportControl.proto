@@ -40,6 +40,12 @@ message TransportInformation {
 	repeated TransportTagInfo Tags = 18;
 }
 
+message VolumeLevelInformation {
+	bool		Success = 1;
+	string		ErrorMessage = 2;
+	int32		VolumeLevel = 3;
+}
+
 service TransportControl {
 	rpc StartPlay (TransportControlEmpty) returns (TransportCommandResponse);
 	rpc StopPlay (TransportControlEmpty) returns (TransportCommandResponse);
@@ -49,4 +55,7 @@ service TransportControl {
 	rpc ReplayTrack (TransportControlEmpty) returns (TransportCommandResponse);
 
 	rpc StartTransportStatus (TransportControlEmpty) returns (stream TransportInformation);
+
+	rpc GetVolumeLevel (TransportControlEmpty) returns (VolumeLevelInformation);
+	rpc SetVolumeLevel (VolumeLevelInformation) returns (VolumeLevelInformation);
 }

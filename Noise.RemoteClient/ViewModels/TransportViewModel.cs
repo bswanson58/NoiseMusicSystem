@@ -50,12 +50,15 @@ namespace Noise.RemoteClient.ViewModels {
         private double                              mPlayPercentage;
         private TransportInformation                mTrackInformation;
         private UiQueuedTrack                       mNextPlayingTrack;
+        private int                                 mVolumeLevel;
 
         public  bool                                HasRating => mRating != 0;
         public  bool                                NeedRating => !HasRating && !IsFavorite;
         public  bool                                HaveTags => mTags.Any();
         public  bool                                NeedTags => !HaveTags;
         public  bool                                HaveNextPlayingTrack => !String.IsNullOrWhiteSpace( mNextPlayingTrack?.TrackName );
+
+        public  bool                                DisplayVolume { get; private set; }
 
         public  TimeSpan                            PlayPosition { get; private set; }
         public  TimeSpan                            TrackLength { get; private set; }
@@ -73,6 +76,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     EditTags { get; }
 
         public  DelegateCommand                     ToggleTimeDisplay { get; }
+        public  DelegateCommand                     ToggleVolumeDisplay { get; }
 
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
@@ -108,6 +112,7 @@ namespace Noise.RemoteClient.ViewModels {
             EditTags = new DelegateCommand( OnEditTags );
 
             ToggleTimeDisplay = new DelegateCommand( OnToggleTimeDisplay );
+            ToggleVolumeDisplay = new DelegateCommand( OnToggleVolumeDisplay );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -302,6 +307,29 @@ namespace Noise.RemoteClient.ViewModels {
         public bool IsLeftTimeDisplayed {
             get => mIsLeftTimeDisplayed;
             set => SetProperty( ref mIsLeftTimeDisplayed, value );
+        }
+
+        public int VolumeLevel {
+            get => mVolumeLevel;
+            set => SetProperty( ref mVolumeLevel, value, OnVolumeChanged );
+        }
+
+        private void OnVolumeChanged() {
+            mTransportProvider.SetVolumeLevel( VolumeLevel );
+        }
+
+        private async void OnToggleVolumeDisplay() {
+            DisplayVolume = !DisplayVolume;
+
+            if( DisplayVolume ) {
+                var volume = await mTransportProvider.GetVolumeLevel();
+
+                if( volume.Success ) {
+                    VolumeLevel = volume.VolumeLevel;
+                }
+            }
+
+            RaisePropertyChanged( nameof( DisplayVolume ));
         }
 
         private TrackInfo CreateTrackInfo( TransportInformation fromStatus ) {

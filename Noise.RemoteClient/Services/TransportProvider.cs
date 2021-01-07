@@ -149,5 +149,33 @@ namespace Noise.RemoteClient.Services {
             mTransportStatusStreamCancellation?.Cancel();
             mTransportStatusStreamCancellation = null;
         }
+
+        public async Task<VolumeLevelInformation> GetVolumeLevel() {
+            if( Client != null ) {
+                try {
+                    return await Client.GetVolumeLevelAsync( new TransportControlEmpty());
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( PlayNext ), ex );
+                }
+            }
+
+            return default;
+        }
+
+        public async Task<VolumeLevelInformation> SetVolumeLevel( int volumeLevel ) {
+            if( Client != null ) {
+                try {
+                    return await Client.SetVolumeLevelAsync( new VolumeLevelInformation { Success = true, 
+                                                                                          VolumeLevel = Math.Max( 0, Math.Min( 100,  volumeLevel ))
+                    });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( PlayNext ), ex );
+                }
+            }
+
+            return default;
+        }
     }
 }

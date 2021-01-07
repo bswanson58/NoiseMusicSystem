@@ -9,12 +9,15 @@ namespace Noise.RemoteServer.Services {
     class TransportControlService : TransportControl.TransportControlBase {
         private readonly IPlayController		    mPlayController;
         private readonly IPlayQueue				    mPlayQueue;
+        private readonly IAudioController           mAudioController;
         private readonly IRemoteServiceFactory      mServiceFactory;
         private readonly INoiseLog                  mLog;
 
-        public TransportControlService( IPlayController playController, IPlayQueue playQueue, IRemoteServiceFactory serviceFactory, INoiseLog log ) {
+        public TransportControlService( IPlayController playController, IPlayQueue playQueue, IAudioController audioController,
+                                        IRemoteServiceFactory serviceFactory, INoiseLog log ) {
             mPlayController = playController;
             mPlayQueue = playQueue;
+            mAudioController = audioController;
             mServiceFactory = serviceFactory;
             mLog = log;
         }
@@ -62,6 +65,34 @@ namespace Noise.RemoteServer.Services {
             var transportStatusResponder = mServiceFactory.TransportStatusResponder;
 
             await transportStatusResponder.StartResponder( responseStream, context );
+        }
+
+        public override Task<VolumeLevelInformation> GetVolumeLevel( TransportControlEmpty request, ServerCallContext context ) {
+            return Task.Run( () => {
+                try {
+                    return new VolumeLevelInformation{ Success  = true, VolumeLevel = (int)( mAudioController.Volume * 100 ) };
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( GetVolumeLevel ), ex );
+
+                    return new VolumeLevelInformation { Success = false, ErrorMessage = ex.Message };
+                }
+            });
+        }
+
+        public override Task<VolumeLevelInformation> SetVolumeLevel( VolumeLevelInformation request, ServerCallContext context ) {
+            return Task.Run( () => {
+                try {
+                    mAudioController.Volume = Math.Min( 1.0f, Math.Max( 0.0f, request.VolumeLevel / 100.0f ));
+
+                    return new VolumeLevelInformation{ Success  = true, VolumeLevel = (int)( mAudioController.Volume * 100 ) };
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( GetVolumeLevel ), ex );
+
+                    return new VolumeLevelInformation { Success = false, ErrorMessage = ex.Message };
+                }
+            });
         }
     }
 }
