@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.AppSupport", "Noise.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.UI.Style", "Noise.UI.Style\Noise.UI.Style.csproj", "{DA31563C-5B51-4072-AF18-57E4FC5DE957}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RemoteHost", "Noise.RemoteHost\Noise.RemoteHost.csproj", "{85472B64-4F49-4182-8709-9229E25E5119}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Core.Tests", "Noise.Core.Tests\Noise.Core.Tests.csproj", "{834DA007-16BA-48BA-8A75-C9F974FBFFD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.UI.Tests", "Noise.UI.Tests\Noise.UI.Tests.csproj", "{9301F3A9-AB4F-46D6-AA28-695F55002C6E}"
@@ -63,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Guide", "Noise.Guide\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RemoteServer", "Noise.RemoteServer\Noise.RemoteServer.csproj", "{86B71B1E-1C46-4E78-8376-E6DB55F0253F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RemoteServer.Protocol", "Noise.RemoteServer.Protocol\Noise.RemoteServer.Protocol.csproj", "{B3B71881-1761-4DFC-892A-77D4E0ED0F14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noise.RemoteServer.Protocol", "Noise.RemoteServer.Protocol\Noise.RemoteServer.Protocol.csproj", "{B3B71881-1761-4DFC-892A-77D4E0ED0F14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -223,28 +221,6 @@ Global
 		{DA31563C-5B51-4072-AF18-57E4FC5DE957}.Release|x64.Build.0 = Release|x64
 		{DA31563C-5B51-4072-AF18-57E4FC5DE957}.Release|x86.ActiveCfg = Release|x86
 		{DA31563C-5B51-4072-AF18-57E4FC5DE957}.Release|x86.Build.0 = Release|x86
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|x64.ActiveCfg = Debug|x64
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|x64.Build.0 = Debug|x64
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|x86.ActiveCfg = Debug|x86
-		{85472B64-4F49-4182-8709-9229E25E5119}.Debug|x86.Build.0 = Debug|x86
-		{85472B64-4F49-4182-8709-9229E25E5119}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Installers - Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Installers - Release|x64.ActiveCfg = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Installers - Release|x86.ActiveCfg = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|Any CPU.Build.0 = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|x64.ActiveCfg = Release|x64
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|x64.Build.0 = Release|x64
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|x86.ActiveCfg = Release|x86
-		{85472B64-4F49-4182-8709-9229E25E5119}.Release|x86.Build.0 = Release|x86
 		{834DA007-16BA-48BA-8A75-C9F974FBFFD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{834DA007-16BA-48BA-8A75-C9F974FBFFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{834DA007-16BA-48BA-8A75-C9F974FBFFD0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -695,7 +671,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {57609179-6AFB-4BB9-A2F5-31E6ADEB7C82}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 EndGlobal

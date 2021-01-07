@@ -92,11 +92,10 @@ namespace Noise.AppSupport {
 				var catalog = new ModuleCatalog();
 
 				catalog.AddModule( typeof( Core.NoiseCoreModule ))
-						.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ))
+					    .AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ))
 						.AddModule( typeof( AudioSupportModule ))
 						.AddModule( typeof( BlobStorage.BlobStorageModule ))
-						.AddModule( typeof( NoiseMetadataModule ))
-						.AddModule( typeof( RemoteHost.RemoteHostModule ));
+						.AddModule( typeof( NoiseMetadataModule ));
 				mContainer.RegisterInstance<IModuleCatalog>( catalog );
 
 				mContainer.RegisterSingleton<IServiceLocator, UnityServiceLocatorAdapter>();
