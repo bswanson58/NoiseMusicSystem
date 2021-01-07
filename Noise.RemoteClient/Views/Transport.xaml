@@ -75,9 +75,9 @@
                         </forms9:Label.Behaviors>
                     </forms9:Label>
                 </ContentView>
-                <ContentView Grid.Row="2" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
+                <ContentView Grid.Row="2" Margin="5,-15,5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
                              touchEffect:TouchEff.Command="{Binding DisplayTracks}">
-                        <forms9:Label Margin="0,-15,0,0" HorizontalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                        <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
                                       Lines="1" AutoFit="Width" MinFontSize="12">
                             <forms9:Label.Behaviors>
                                 <behaviors:AnimatedLabel Text="{Binding AlbumName}" AnimationLength="500" AnimationType="ScaleY"/>
