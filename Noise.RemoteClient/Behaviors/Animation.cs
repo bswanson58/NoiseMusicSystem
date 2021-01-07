@@ -4,7 +4,8 @@ using Xamarin.Forms;
 // Usage:
 //    <Label ... > 
 //      <Label.Behaviors>
-//          <behaviors:Animation AnimationStyle="TranslateX" TrueAmount="100" FalseAmount="0" AnimationLength="500" AnimationState="{Binding ...}"/>
+//          <behaviors:Animation AnimationStyle="TranslateX" TrueAmount="100" TrueEasing="{x:Static Easing.BounceOut}"
+//                               FalseAmount="0" AnimationLength="500" AnimationState="{Binding ...}"/>
 //      <Label.Behaviors>
 //    <Label>
 namespace Noise.RemoteClient.Behaviors {
@@ -43,12 +44,44 @@ namespace Noise.RemoteClient.Behaviors {
             set => SetValue( TrueAmountProperty, value );
         }
 
+        public static readonly BindableProperty TrueLengthProperty =
+            BindableProperty.Create( nameof( TrueLength ), typeof( uint ), typeof( Animation ), (uint)0 );
+
+        public uint TrueLength {
+            get => (uint)GetValue( TrueLengthProperty );
+            set => SetValue( TrueLengthProperty, value );
+        }
+
+        public static readonly BindableProperty FalseLengthProperty =
+            BindableProperty.Create( nameof( FalseLength ), typeof( uint ), typeof( Animation ), (uint)0 );
+
+        public uint FalseLength {
+            get => (uint)GetValue( FalseLengthProperty );
+            set => SetValue( FalseLengthProperty, value );
+        }
+
         public static readonly BindableProperty AnimationLengthProperty =
             BindableProperty.Create( nameof( AnimationLength ), typeof( uint ), typeof( Animation ), (uint)250 );
 
         public uint AnimationLength {
             get => (uint)GetValue( AnimationLengthProperty );
             set => SetValue( AnimationLengthProperty, value );
+        }
+
+        public static readonly BindableProperty TrueEasingProperty =
+            BindableProperty.Create( nameof( TrueEasing ), typeof( Easing ), typeof( Animation ), Easing.Linear );
+
+        public Easing TrueEasing {
+            get => (Easing)GetValue( TrueEasingProperty );
+            set => SetValue( TrueEasingProperty, value );
+        }
+
+        public static readonly BindableProperty FalseEasingProperty =
+            BindableProperty.Create( nameof( FalseEasing ), typeof( Easing ), typeof( Animation ), Easing.Linear );
+
+        public Easing FalseEasing {
+            get => (Easing)GetValue( FalseEasingProperty );
+            set => SetValue( FalseEasingProperty, value );
         }
 
         public static readonly BindableProperty AnimationStateProperty =
@@ -97,7 +130,18 @@ namespace Noise.RemoteClient.Behaviors {
         }
 
         private void TranslateX() {
-            mAssociatedObject.TranslateTo( AnimationState ? TrueAmount : FalseAmount, 0.0D, AnimationLength );
+            mAssociatedObject.TranslateTo( AnimationState ? TrueAmount : FalseAmount, 0.0D, GetLength(), AnimationState ? TrueEasing : FalseEasing );
+        }
+
+        private uint GetLength() {
+            var retValue = AnimationLength;
+
+            if(( TrueLength != 0 ) ||
+               ( FalseLength != 0 )) {
+                retValue = AnimationState ? TrueLength : FalseLength;
+            }
+
+            return retValue;
         }
 
         protected override void OnDetachingFrom( View associatedObject ) {

@@ -194,21 +194,22 @@
             </Grid>
 
             <!-- Volume Control -->
-            <Grid Grid.Row="0" Grid.RowSpan="5" RowSpacing="0" HorizontalOptions="End" BackgroundColor="{DynamicResource NavigationBarColor}" TranslationX="100">
+            <Grid Grid.Row="0" Grid.RowSpan="5" RowSpacing="0" HorizontalOptions="End" Opacity="0.9" BackgroundColor="{DynamicResource NavigationBarColor}" TranslationX="100">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <controls:VerticalContentView Grid.Row="0" WidthRequest="100">
-                    <Slider Margin="10,0" Minimum="0" Maximum="100" Value="{Binding VolumeLevel}"/>
+                    <Slider Margin="10,0" Minimum="0" Maximum="100" ThumbColor="{DynamicResource SignatureColor}" Value="{Binding VolumeLevel}"/>
                 </controls:VerticalContentView>
 
                 <Label Grid.Row="1" Style="{DynamicResource TransportSmallText}" HorizontalOptions="Center" Text="{Binding VolumeLevel}"/>
 
                 <Grid.Behaviors>
-                    <behaviors:Animation AnimationStyle="TranslateX" FalseAmount="100" TrueAmount="0" AnimationLength="500" 
-                                         AnimationState="{Binding DisplayVolume}"/>
+                    <behaviors:Animation AnimationStyle="TranslateX" AnimationState="{Binding DisplayVolume}"
+                                         FalseAmount="100" FalseEasing="{x:Static Easing.Linear}" FalseLength="800"
+                                         TrueAmount="0" TrueEasing="{x:Static Easing.BounceOut}" TrueLength="500"/>
                 </Grid.Behaviors>
             </Grid>
         </Grid>
