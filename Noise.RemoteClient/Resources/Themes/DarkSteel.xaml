@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:resources="clr-namespace:Noise.RemoteClient.Resources;assembly=Noise.RemoteClient"
+                    x:Class="Noise.RemoteClient.Resources.Themes.DarkSteel">
+
+    <Color x:Key="DarkPrimaryColor">#4F5E6B</Color>
+    <Color x:Key="DefaultPrimaryColor">#647687</Color>
+    <Color x:Key="LightPrimaryColor">#9BB7D1</Color>
+
+    <Color x:Key="PrimaryTextColor">#FFFFFF</Color>
+    <Color x:Key="SecondaryTextColor">#B5B5B5</Color>
+
+    <Color x:Key="BackgroundColor">Black</Color>
+    <Color x:Key="DividerColor">#404040</Color>
+    <Color x:Key="AccentColor">#4A5763</Color>
+
+    <Color x:Key="TransportBackgroundColor">#303030</Color>
+
+    <Color x:Key="PlayColor">#20FF00</Color>
+    <Color x:Key="LightPlayColor">#00A000</Color>
+    <Color x:Key="TransparentColor">Transparent</Color>
+
+    <Color x:Key="SignatureColor">#EA6500</Color>
+
+    <resources:ColorReference x:Key="PageBackgroundColor" Color="{StaticResource BackgroundColor}"/>
+    <resources:ColorReference x:Key="NavigationBarColor" Color="{StaticResource DefaultPrimaryColor}"/>
+    <resources:ColorReference x:Key="DisabledColor" Color="{StaticResource LightPrimaryColor}"/>
+
+    <resources:ColorReference x:Key="SwipeViewBackground" Color="{StaticResource DefaultPrimaryColor}"/>
+    <resources:ColorReference x:Key="SwipeViewForeground" Color="{StaticResource PrimaryTextColor}"/>
+
+    <resources:ColorReference x:Key="ListSeparatorColor" Color="{StaticResource DividerColor}"/>
+
+    <resources:ColorReference x:Key="TransportButtonColor" Color="{StaticResource SecondaryTextColor}"/>
+
+    <Color x:Key="DialogBackgroundColor">White</Color>
+    <Color x:Key="DialogTextColor">Black</Color>
+
+</ResourceDictionary>

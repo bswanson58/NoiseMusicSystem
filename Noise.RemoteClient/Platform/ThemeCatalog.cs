@@ -29,6 +29,7 @@ namespace Noise.RemoteClient.Platform {
         public static IEnumerable<ThemeResource> ThemeResources => new List<ThemeResource> {
             new ThemeResource( 1, "Dark Blue", "Resources/Themes/DarkBlue.xaml" ),
             new ThemeResource( 2, "Dark Indigo", "Resources/Themes/DarkIndigo.xaml" ),
+            new ThemeResource( 3, "Dark Steel", "Resources/Themes/DarkSteel.xaml" )
         };
     }
 }
