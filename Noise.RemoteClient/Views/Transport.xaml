@@ -58,31 +58,31 @@
                 </Grid.RowDefinitions>
 
                 <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
-                             touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
+                             HorizontalOptions="Center" touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
                     <forms9:Label HorizontalOptions="Center" VerticalOptions="End" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
-                                  Lines="1" AutoFit="Lines" MinFontSize="18">
+                                  Margin="25,0" Lines="1" AutoFit="Lines" MinFontSize="18">
                         <forms9:Label.Behaviors>
                             <behaviors:AnimatedLabel Text="{Binding ArtistName}" AnimationLength="500" AnimationType="ScaleY"/>
                         </forms9:Label.Behaviors>
                     </forms9:Label>
                 </ContentView>
                 <ContentView Grid.Row="1" Margin="5,-5,5,-10" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
-                             touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
+                             HorizontalOptions="Center" touchEffect:TouchEff.Command="{Binding DisplaySuggestions}">
                     <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportLargeText}" FontAttributes="Bold" 
-                                  Lines="1" AutoFit="Width" MinFontSize="24">
+                                  Margin="25,0" Lines="1" AutoFit="Width" MinFontSize="24">
                         <forms9:Label.Behaviors>
                             <behaviors:AnimatedLabel Text="{Binding TrackName}" AnimationLength="500" AnimationType="Fade"/>
                         </forms9:Label.Behaviors>
                     </forms9:Label>
                 </ContentView>
                 <ContentView Grid.Row="2" Margin="5,-15,5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
-                             touchEffect:TouchEff.Command="{Binding DisplayTracks}">
-                        <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportMediumText}" 
-                                      TextColor="{DynamicResource SecondaryTextColor}" Lines="1" AutoFit="Width" MinFontSize="12">
-                            <forms9:Label.Behaviors>
-                                <behaviors:AnimatedLabel Text="{Binding AlbumName}" AnimationLength="500" AnimationType="ScaleY"/>
-                            </forms9:Label.Behaviors>
-                        </forms9:Label>
+                             HorizontalOptions="Center" touchEffect:TouchEff.Command="{Binding DisplayTracks}">
+                    <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportMediumText}" 
+                                  Margin="25,0" TextColor="{DynamicResource SecondaryTextColor}" Lines="1" AutoFit="Width" MinFontSize="12">
+                        <forms9:Label.Behaviors>
+                            <behaviors:AnimatedLabel Text="{Binding AlbumName}" AnimationLength="500" AnimationType="ScaleY"/>
+                        </forms9:Label.Behaviors>
+                    </forms9:Label>
                 </ContentView>
             </Grid>
 
@@ -158,10 +158,11 @@
             </Grid>
 
             <!-- Next Playing Track -->
-            <Grid Grid.Row="3" BackgroundColor="Transparent" Opacity="0.6" HeightRequest="50" IsVisible="{Binding HaveNextPlayingTrack}">
-                <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}"
+            <Grid Grid.Row="3" BackgroundColor="Transparent" HeightRequest="50" IsVisible="{Binding HaveNextPlayingTrack}">
+                <ContentView Grid.Row="0" HorizontalOptions="Center" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}"
                              touchEffect:TouchEff.Command="{Binding DisplayNextPlay}">
-                    <Label Style="{DynamicResource TransportTinyText}" TextColor="{DynamicResource SecondaryTextColor}" HorizontalOptions="Center" Margin="5">
+                    <Label Style="{DynamicResource TransportTinyText}" TextColor="{DynamicResource SecondaryTextColor}" 
+                           HorizontalOptions="Center" VerticalOptions="Center" Margin="25,5">
                         <Label.Behaviors>
                             <behaviors:DelayedLabel Text="{Binding NextPlayingTrack, StringFormat='Next up: {0}'}" DelayLength="5000" AnimationLength="2000"/>
                         </Label.Behaviors>
