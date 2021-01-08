@@ -20,7 +20,7 @@ namespace Noise.RemoteClient.Dto {
         public  bool                        IsFavorite => Track.IsFavorite;
         public  Int32                       Rating => Track.Rating;
         public  bool                        HasRating => Rating != 0;
-        public  string                      Tags => String.Join( " | ", from t in Track.Tags select t.TagName );
+        public  string                      Tags => String.Join( " | ", from t in Track.Tags orderby t.TagName select t.TagName );
 
         public  DelegateCommand             Play { get; }
         public  DelegateCommand             PlayNext { get; }

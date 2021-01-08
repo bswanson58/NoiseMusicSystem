@@ -64,7 +64,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  TimeSpan                            TrackLength { get; private set; }
         public  TimeSpan                            LeftTime {  get; private set; }
         public  TimeSpan                            RightTime {  get; private set; }
-        public  string                              Tags => String.Join( " | ", from t in mTags select t.TagName );
+        public  string                              Tags => String.Join( " | ", from t in mTags orderby t.TagName select t.TagName );
         public  string                              NextPlayingTrack { get; private set; }
 
         public  DelegateCommand                     DisplaySuggestions { get; }

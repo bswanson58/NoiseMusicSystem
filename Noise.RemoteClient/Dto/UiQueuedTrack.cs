@@ -17,7 +17,7 @@ namespace Noise.RemoteClient.Dto {
         public  bool            IsStrategyQueued => Track.IsStrategyQueued;
         public  bool            HasPlayed => Track.HasPlayed;
         public  bool            IsFavorite => Track.IsFavorite;
-        public  string          Tags => String.Join( " | ", from t in Track.Tags select t.TagName );
+        public  string          Tags => String.Join( " | ", from t in Track.Tags orderby t.TagName select t.TagName );
         public  Int32           Rating => Track.Rating;
         public  bool            HasRating => Rating != 0;
 
