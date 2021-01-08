@@ -60,8 +60,6 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  bool                                DisplayVolume { get; private set; }
 
-        public  TimeSpan                            PlayPosition { get; private set; }
-        public  TimeSpan                            TrackLength { get; private set; }
         public  TimeSpan                            LeftTime {  get; private set; }
         public  TimeSpan                            RightTime {  get; private set; }
         public  string                              Tags => String.Join( " | ", from t in mTags orderby t.TagName select t.TagName );
@@ -185,16 +183,10 @@ namespace Noise.RemoteClient.ViewModels {
             RaisePropertyChanged( nameof( HasRating ));
             RaisePropertyChanged( nameof( NeedRating ));
 
-            TrackLength = TimeSpan.FromTicks( status.TrackLength );
-            RaisePropertyChanged( nameof( TrackLength ));
-
-            PlayPosition = TimeSpan.FromTicks( status.PlayPosition );
-            RaisePropertyChanged( nameof( PlayPosition ));
-
+            PlayPercentage = status.PlayPositionPercentage;
             mTrackLength = TimeSpan.FromTicks( status.TrackLength );
             mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
             DisplayTrackTimes();
-            PlayPercentage = status.PlayPositionPercentage;
 
             IsPaused = mTrackInformation?.TransportState == TransportState.Paused;
             IsPlaying = mTrackInformation?.TransportState == TransportState.Playing;
