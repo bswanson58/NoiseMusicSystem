@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Noise.RemoteClient.Interfaces;
+using Noise.RemoteClient.Resources;
 using Noise.RemoteClient.Support;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -27,6 +29,13 @@ namespace Noise.RemoteClient.Platform {
                 var source = new Uri( toTheme.Source, UriKind.RelativeOrAbsolute );
 
                 dictionary.SetAndLoadSource( source, toTheme.Source, typeof( ThemeManager ).GetTypeInfo().Assembly, null );
+            }
+
+            Application.Current.Resources.TryGetValue( "NavigationBarColor", out var color );
+            if( color is ColorReference barColor ) {
+                var platform = DependencyService.Get<IPlatformSupport>();
+
+                platform?.SetStatusBarColor( barColor.Color );
             }
         }
 
