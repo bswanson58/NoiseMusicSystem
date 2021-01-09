@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
+using MagicGradients;
 using Noise.RemoteClient.Dialogs;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
@@ -23,6 +24,7 @@ namespace Noise.RemoteClient.ViewModels {
         private readonly IQueueListener             mQueueListener;
         private readonly IClientManager             mClientManager;
         private readonly IClientState               mClientState;
+        private readonly ICssStyleProvider          mStyleProvider;
         private readonly IDialogService             mDialogService;
         private readonly IPreferences               mPreferences;
         private readonly IPlatformLog               mLog;
@@ -65,6 +67,9 @@ namespace Noise.RemoteClient.ViewModels {
         public  string                              Tags => String.Join( " | ", from t in mTags orderby t.TagName select t.TagName );
         public  string                              NextPlayingTrack { get; private set; }
 
+        public  GradientCollection                  BackgroundSource => mStyleProvider.CurrentGradient;
+        public  Dimensions                          BackgroundGradientSize => mStyleProvider.GradientSize;
+
         public  DelegateCommand                     DisplaySuggestions { get; }
         public  DelegateCommand                     DisplayAlbums { get; }
         public  DelegateCommand                     DisplayTracks { get; }
@@ -75,6 +80,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  DelegateCommand                     ToggleTimeDisplay { get; }
         public  DelegateCommand                     ToggleVolumeDisplay { get; }
+        public  DelegateCommand                     ToggleBackground { get; }
 
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
@@ -84,7 +90,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     RepeatTrack { get; }
 
         public TransportViewModel( ITransportProvider transportProvider, ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, 
-                                   IClientManager clientManager, IClientState clientState, IQueueListener queueListener,
+                                   IClientManager clientManager, IClientState clientState, IQueueListener queueListener, ICssStyleProvider styleProvider,
                                    IPlatformLog log, IDialogService dialogService, IPreferences preferences ) {
             mTransportProvider = transportProvider;
             mTrackProvider = trackProvider;
@@ -92,6 +98,7 @@ namespace Noise.RemoteClient.ViewModels {
             mQueueListener = queueListener;
             mClientManager = clientManager;
             mClientState = clientState;
+            mStyleProvider = styleProvider;
             mDialogService = dialogService;
             mPreferences = preferences;
             mLog = log;
@@ -100,6 +107,8 @@ namespace Noise.RemoteClient.ViewModels {
             mTimeDisplay.SetMode( mPreferences.Get( PreferenceNames.PlaybackTimeFormat, mTimeDisplay.DefaultMode ));
 
             mTags = new List<TransportTagInfo>();
+
+            mStyleProvider.Initialize( PreferenceNames.TransportBackground );
 
             DisplayAlbums = new DelegateCommand( OnDisplayAlbums );
             DisplayTracks = new DelegateCommand( OnDisplayTracks );
@@ -111,6 +120,7 @@ namespace Noise.RemoteClient.ViewModels {
 
             ToggleTimeDisplay = new DelegateCommand( OnToggleTimeDisplay );
             ToggleVolumeDisplay = new DelegateCommand( OnToggleVolumeDisplay );
+            ToggleBackground = new DelegateCommand( OnToggleBackground );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -452,6 +462,13 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void OnRepeatTrack() {
             mTransportProvider.ReplayTrack();
+        }
+
+        private void OnToggleBackground() {
+            mStyleProvider.SelectNextStyle();
+
+            RaisePropertyChanged( nameof( BackgroundGradientSize ));
+            RaisePropertyChanged( nameof( BackgroundSource ));
         }
 
         public void Dispose() {

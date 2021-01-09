@@ -14,5 +14,7 @@ namespace Noise.RemoteClient.Support {
         public const string ApplicationTheme        = "applicationTheme";
 
         public const string PlaybackTimeFormat      = "playbackTimeFormat";
+
+        public const string TransportBackground     = "transportBackground";
     }
 }

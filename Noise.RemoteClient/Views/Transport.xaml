@@ -7,6 +7,7 @@
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
              xmlns:forms9="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              xmlns:behaviors="clr-namespace:Noise.RemoteClient.Behaviors;assembly=Noise.RemoteClient"
+             xmlns:magicGradients="clr-namespace:MagicGradients;assembly=MagicGradients"
              x:Class="Noise.RemoteClient.Views.Transport"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              BackgroundColor="{DynamicResource TransportBackgroundColor}"
@@ -43,10 +44,26 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <magicGradients:GradientView Grid.Row="0" Grid.RowSpan="5" GradientSource="{Binding BackgroundSource}" GradientSize="{Binding BackgroundGradientSize}"/>
+
             <!-- Transport Stopped -->
             <Grid Grid.Row="0" BackgroundColor="Transparent" IsVisible="{Binding IsStopped}">
-                <Label HorizontalOptions="Center" VerticalOptions="Center" Style="{DynamicResource TransportSmallText}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="1" HorizontalOptions="Center" Style="{DynamicResource TransportSmallText}"
                        TextColor="{DynamicResource SecondaryTextColor}" Text="Press Play to get me started!"/>
+
+                <ContentView Grid.Row="3"  BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" HorizontalOptions="Center"
+                             touchEffect:TouchEff.Command="{Binding ToggleBackground}">
+                    <Label HorizontalOptions="Center" Margin="25,5" Style="{DynamicResource TransportTinyText}"
+                           TextColor="{DynamicResource SecondaryTextColor}" Text="Tap here to change background..."/>
+                </ContentView>
             </Grid>
 
             <!-- Artist/Album/Track -->
@@ -57,7 +74,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" 
+                <ContentView Grid.Row="0" Margin="5,0" BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}"
                              HorizontalOptions="Center" touchEffect:TouchEff.Command="{Binding DisplayAlbums}">
                     <forms9:Label HorizontalOptions="Center" VerticalOptions="End" Style="{StaticResource TransportMediumText}" TextColor="{DynamicResource SecondaryTextColor}" 
                                   Margin="25,0" Lines="1" AutoFit="Lines" MinFontSize="18">
