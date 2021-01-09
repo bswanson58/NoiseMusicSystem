@@ -22,6 +22,7 @@
                     <Label VerticalOptions="Center" TextColor="{DynamicResource PrimaryTextColor}" FontSize="64" Text="Noise Music System"/>
                 </StackLayout>
 
+                <!-- Version -->
                 <StackLayout Orientation="Horizontal">
                     <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Version:"/>
@@ -29,30 +30,34 @@
                     <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding BuildDate, StringFormat='({0})'}"/>
                 </StackLayout>
 
+                <!-- Host -->
                 <StackLayout Orientation="Horizontal">
                     <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Host:"/>
                     <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding HostName}"/>
                 </StackLayout>
 
+                <!-- Library -->
                 <StackLayout Orientation="Horizontal">
                     <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Library:"/>
                     <Label Style="{DynamicResource TitleViewSubtitleStyle}" Text="{Binding LibraryName}"/>
                 </StackLayout>
 
+                <!-- Theme -->
                 <StackLayout Orientation="Horizontal" Margin="0,15,0,0">
                     <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Theme:"/>
                     <Picker WidthRequest="200" ItemsSource="{Binding ThemeResources}" SelectedItem="{Binding CurrentTheme}"
-                            ItemDisplayBinding="{Binding Name}" Title="Select a theme"/>
+                            ItemDisplayBinding="{Binding Name}" Title="Select a theme" TitleColor="{DynamicResource PrimaryTextColor}"/>
                 </StackLayout>
 
+                <!-- Font Size -->
                 <StackLayout Orientation="Horizontal">
                     <Label WidthRequest="135" HorizontalTextAlignment="End" VerticalOptions="Center" Opacity="0.6" Margin="0,0,5,0"
                            Style="{DynamicResource TitleViewSubtitleStyle}" Text="Font Size:"/>
                     <Picker WidthRequest="200" ItemsSource="{Binding FontResources}" SelectedItem="{Binding CurrentFont}"
-                            ItemDisplayBinding="{Binding Name}" Title="Select a font"/>
+                            ItemDisplayBinding="{Binding Name}" Title="Select a font" TitleColor="{DynamicResource PrimaryTextColor}"/>
                 </StackLayout>
             </StackLayout>
 
