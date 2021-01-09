@@ -34,15 +34,16 @@ namespace Noise.RemoteServer.Services {
         private IEnumerable<DbTrack> QueueTracksWithStrategy( long fromAlbum, long trackId ) {
             var retValue = new List<DbTrack>();
 
-            using( var tracksList = mTrackProvider.GetTrackList( fromAlbum )) {
-                var targetTrack = tracksList.List.FirstOrDefault( t => t.DbId.Equals( trackId ));
+            using( var trackList = mTrackProvider.GetTrackList( fromAlbum )) {
+                var tracks = ( from track in trackList.List orderby track.VolumeName, track.TrackNumber select track ).ToList();
+                var targetTrack = tracks.FirstOrDefault( t => t.DbId.Equals( trackId ));
                 var previousTrack = targetTrack;
                 var previousTracks = new List<DbTrack>();
 
                 while(( previousTrack != null ) && 
                       (( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
                        ( previousTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ))) {
-                    previousTrack = tracksList.List.TakeWhile( t => !t.DbId.Equals( previousTrack.DbId )).LastOrDefault();
+                    previousTrack = tracks.TakeWhile( t => !t.DbId.Equals( previousTrack.DbId )).LastOrDefault();
 
                     if( previousTrack != null ) {
                         previousTracks.Insert( 0, previousTrack );
@@ -55,7 +56,7 @@ namespace Noise.RemoteServer.Services {
                 while(( targetTrack != null ) &&
                       (( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious ) ||
                        ( targetTrack.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ))) {
-                    targetTrack = tracksList.List.SkipWhile( t => !t.DbId.Equals( targetTrack.DbId )).Skip( 1 ).FirstOrDefault();
+                    targetTrack = tracks.SkipWhile( t => !t.DbId.Equals( targetTrack.DbId )).Skip( 1 ).FirstOrDefault();
 
                     if( targetTrack != null ) {
                         retValue.Add( mTrackProvider.GetTrack( targetTrack.DbId ));
