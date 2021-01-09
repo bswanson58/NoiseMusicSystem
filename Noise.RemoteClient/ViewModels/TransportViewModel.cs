@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MagicGradients;
 using Noise.RemoteClient.Dialogs;
@@ -241,7 +242,22 @@ namespace Noise.RemoteClient.ViewModels {
 
         public string AlbumName {
             get => mAlbumName;
-            set => SetProperty( ref mAlbumName, value );
+            set => SetProperty( ref mAlbumName, value, OnAlbumNameChanged );
+        }
+
+        public string AlbumDisplayName { get; private set; }
+
+        private void OnAlbumNameChanged() {
+            AlbumDisplayName = CreateDisplayName( AlbumName );
+
+            RaisePropertyChanged( nameof( AlbumDisplayName ));
+        }
+
+        private static string CreateDisplayName( string fullAlbumName ) {
+            // Strip any published year from the end.
+            var regex = new Regex( @".+(?<publishedYear>-\s*\d{4})\Z" );
+
+            return fullAlbumName.Replace( regex, "publishedYear", String.Empty ).Trim();
         }
 
         public string TrackName {

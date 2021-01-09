@@ -97,7 +97,7 @@
                     <forms9:Label HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource TransportMediumText}" 
                                   Margin="25,0" TextColor="{DynamicResource SecondaryTextColor}" Lines="1" AutoFit="Width" MinFontSize="12">
                         <forms9:Label.Behaviors>
-                            <behaviors:AnimatedLabel Text="{Binding AlbumName}" AnimationLength="500" AnimationType="ScaleY"/>
+                            <behaviors:AnimatedLabel Text="{Binding AlbumDisplayName}" AnimationLength="500" AnimationType="ScaleY"/>
                         </forms9:Label.Behaviors>
                     </forms9:Label>
                 </ContentView>
