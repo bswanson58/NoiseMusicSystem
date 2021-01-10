@@ -28,7 +28,7 @@
             <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Now Playing"/>
 
             <ContentView Grid.Column="2" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleVolumeDisplay}">
-                    <controls:SvgButton VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="15"
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="15" Opacity="0.8"
                                         ImageColor="{DynamicResource PrimaryTextColor}" Source="Volume"/>
             </ContentView>
         </Grid>
@@ -59,11 +59,27 @@
                 <Label Grid.Row="1" HorizontalOptions="Center" Style="{DynamicResource TransportSmallText}"
                        TextColor="{DynamicResource SecondaryTextColor}" Text="Press Play to get me started!"/>
 
-                <ContentView Grid.Row="3"  BackgroundColor="Transparent" Style="{StaticResource TransportButtonTouchEffect}" HorizontalOptions="Center"
-                             touchEffect:TouchEff.Command="{Binding ToggleBackground}">
-                    <Label HorizontalOptions="Center" Margin="25,5" Style="{DynamicResource TransportTinyText}"
-                           TextColor="{DynamicResource SecondaryTextColor}" Text="Tap here to change background..."/>
-                </ContentView>
+                <Grid Grid.Row="3" BackgroundColor="Transparent" HorizontalOptions="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="1" Margin="25,5" Style="{DynamicResource TransportTinyText}"
+                           TextColor="{DynamicResource SecondaryTextColor}" Opacity="0.7" Text="&#60; Tap here to change background >"/>
+
+                    <Grid Grid.Column="1" BackgroundColor="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ContentView Grid.Column="0" touchEffect:TouchEff.Command="{Binding TogglePreviousBackground}"/>
+                        <ContentView Grid.Column="2" touchEffect:TouchEff.Command="{Binding ToggleNextBackground}"/>
+                    </Grid>
+                </Grid>
             </Grid>
 
             <!-- Artist/Album/Track -->
@@ -158,8 +174,19 @@
                            Text="{Binding LeftTime, Converter={StaticResource TimeSpanConverter}}"/>
                 </ContentView>
 
-                <ProgressBar Grid.Column="1" Margin="0,3,0,0" VerticalOptions="Center" ScaleY="3" Progress="{Binding PlayPercentage}" 
-                             ProgressColor="{DynamicResource SignatureColor}"/>
+                <Grid Grid.Column="1" BackgroundColor="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ProgressBar Grid.Column="0" Grid.ColumnSpan="3" Margin="0,3,0,0" VerticalOptions="Center" ScaleY="3" Progress="{Binding PlayPercentage}" 
+                                 ProgressColor="{DynamicResource SignatureColor}"/>
+
+                    <ContentView Grid.Column="0" touchEffect:TouchEff.Command="{Binding SkipBackward}"/>
+                    <ContentView Grid.Column="2" touchEffect:TouchEff.Command="{Binding SkipForward}"/>
+                </Grid>
 
                 <ContentView Grid.Column="2"  Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleTimeDisplay}">
                     <Label Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" IsVisible="{Binding IsRightTimeDisplayed}"
@@ -209,6 +236,9 @@
                         <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Repeat"/>
                     </ContentView>
                 </StackLayout>
+
+                <Label Margin="5" VerticalOptions="End" Style="{DynamicResource TransportTinyText}" TextColor="Gray"
+                       Text="{Binding BackgroundStyleName}" IsVisible="{Binding IsStopped}"/>
             </Grid>
 
             <!-- Volume Control -->

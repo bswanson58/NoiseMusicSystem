@@ -70,6 +70,7 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  GradientCollection                  BackgroundSource => mStyleProvider.CurrentGradient;
         public  Dimensions                          BackgroundGradientSize => mStyleProvider.GradientSize;
+        public  string                              BackgroundStyleName => mStyleProvider.CurrentStyle?.Name;
 
         public  DelegateCommand                     DisplaySuggestions { get; }
         public  DelegateCommand                     DisplayAlbums { get; }
@@ -81,7 +82,8 @@ namespace Noise.RemoteClient.ViewModels {
 
         public  DelegateCommand                     ToggleTimeDisplay { get; }
         public  DelegateCommand                     ToggleVolumeDisplay { get; }
-        public  DelegateCommand                     ToggleBackground { get; }
+        public  DelegateCommand                     ToggleNextBackground { get; }
+        public  DelegateCommand                     TogglePreviousBackground { get; }
 
         public  DelegateCommand                     Play { get; }
         public  DelegateCommand                     Pause { get; }
@@ -89,6 +91,9 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     PlayNext { get; }
         public  DelegateCommand                     PlayPrevious { get; }
         public  DelegateCommand                     RepeatTrack { get; }
+
+        public  DelegateCommand                     SkipForward { get; }
+        public  DelegateCommand                     SkipBackward { get; }
 
         public TransportViewModel( ITransportProvider transportProvider, ITrackProvider trackProvider, IHostInformationProvider hostInformationProvider, 
                                    IClientManager clientManager, IClientState clientState, IQueueListener queueListener, ICssStyleProvider styleProvider,
@@ -121,7 +126,8 @@ namespace Noise.RemoteClient.ViewModels {
 
             ToggleTimeDisplay = new DelegateCommand( OnToggleTimeDisplay );
             ToggleVolumeDisplay = new DelegateCommand( OnToggleVolumeDisplay );
-            ToggleBackground = new DelegateCommand( OnToggleBackground );
+            ToggleNextBackground = new DelegateCommand( OnToggleNextBackground );
+            TogglePreviousBackground = new DelegateCommand( OnTogglePreviousBackground );
 
             Play = new DelegateCommand( OnPlay );
             Pause = new DelegateCommand( OnPause );
@@ -129,6 +135,9 @@ namespace Noise.RemoteClient.ViewModels {
             PlayPrevious = new DelegateCommand( OnPlayPrevious );
             PlayNext = new DelegateCommand( OnPlayNext );
             RepeatTrack = new DelegateCommand( OnRepeatTrack );
+
+            SkipBackward = new DelegateCommand( OnSkipBackward );
+            SkipForward = new DelegateCommand( OnSkipForward );
         }
 
         private void Initialize() {
@@ -480,11 +489,28 @@ namespace Noise.RemoteClient.ViewModels {
             mTransportProvider.ReplayTrack();
         }
 
-        private void OnToggleBackground() {
+        private void OnSkipForward() {
+            mTransportProvider.OffsetPlaybackPosition( 15 );
+        }
+
+        private void OnSkipBackward() {
+            mTransportProvider.OffsetPlaybackPosition( -15 );
+        }
+
+        private void OnToggleNextBackground() {
             mStyleProvider.SelectNextStyle();
 
             RaisePropertyChanged( nameof( BackgroundGradientSize ));
             RaisePropertyChanged( nameof( BackgroundSource ));
+            RaisePropertyChanged( nameof( BackgroundStyleName ));
+        }
+
+        private void OnTogglePreviousBackground() {
+            mStyleProvider.SelectPreviousStyle();
+
+            RaisePropertyChanged( nameof( BackgroundGradientSize ));
+            RaisePropertyChanged( nameof( BackgroundSource ));
+            RaisePropertyChanged( nameof( BackgroundStyleName ));
         }
 
         public void Dispose() {

@@ -177,5 +177,18 @@ namespace Noise.RemoteClient.Services {
 
             return default;
         }
+
+        public async Task<TransportCommandResponse> OffsetPlaybackPosition( int bySeconds ) {
+            if( Client != null ) {
+                try {
+                    return await Client.OffsetPlaybackPositionAsync( new TransportPositionRequest{ PositionOffsetSeconds = bySeconds });
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( OffsetPlaybackPosition ), ex );
+                }
+            }
+
+            return default;
+        }
     }
 }

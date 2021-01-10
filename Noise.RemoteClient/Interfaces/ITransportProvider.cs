@@ -10,6 +10,7 @@ namespace Noise.RemoteClient.Interfaces {
         Task<TransportCommandResponse> PlayNext();
         Task<TransportCommandResponse> PlayPrevious();
         Task<TransportCommandResponse> ReplayTrack();
+        Task<TransportCommandResponse> OffsetPlaybackPosition( int bySeconds );
 
         void    StartTransportStatusRequests();
         void    StopTransportStatusRequests();

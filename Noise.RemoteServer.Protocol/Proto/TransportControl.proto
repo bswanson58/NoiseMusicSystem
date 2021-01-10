@@ -15,6 +15,10 @@ enum TransportState {
 	Paused = 3;
 }
 
+message TransportPositionRequest {
+	int32		PositionOffsetSeconds = 1;
+}
+
 message TransportTagInfo {
 	int64		TagId = 1;
 	string		TagName = 2;
@@ -53,6 +57,7 @@ service TransportControl {
 	rpc PlayPrevious (TransportControlEmpty) returns (TransportCommandResponse);
 	rpc PlayNext (TransportControlEmpty) returns (TransportCommandResponse);
 	rpc ReplayTrack (TransportControlEmpty) returns (TransportCommandResponse);
+	rpc OffsetPlaybackPosition (TransportPositionRequest) returns (TransportCommandResponse);
 
 	rpc StartTransportStatus (TransportControlEmpty) returns (stream TransportInformation);
 

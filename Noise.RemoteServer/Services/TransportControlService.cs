@@ -94,5 +94,35 @@ namespace Noise.RemoteServer.Services {
                 }
             });
         }
+
+        public override Task<TransportCommandResponse> OffsetPlaybackPosition( TransportPositionRequest request, ServerCallContext context ) {
+            return Task.Run( () => {
+                var retValue = new TransportCommandResponse();
+
+                try {
+                    if( mPlayController.CanStop ) {
+                        var timeSpan = TimeSpan.FromSeconds( request.PositionOffsetSeconds );
+
+                        if(( mPlayController.PlayPosition + timeSpan.Ticks ) < 0 ) {
+                            timeSpan = TimeSpan.Zero;
+                        }
+                        if(( mPlayController.PlayPosition + timeSpan.Ticks) > mPlayController.TrackEndPosition ) {
+                            timeSpan = TimeSpan.FromTicks( mPlayController.TrackEndPosition );
+                        }
+
+                        mPlayController.PlayPosition += timeSpan.Ticks;
+
+                        retValue.Success = true;
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( nameof( OffsetPlaybackPosition ), ex );
+
+                    retValue.ErrorMessage = ex.Message;
+                }
+
+                return retValue;
+            });
+        }
     }
 }
