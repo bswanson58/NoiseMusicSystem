@@ -253,8 +253,8 @@
                                         ImageColor="{DynamicResource SecondaryTextColor}" Source="DownArrow">
                         <controls:SvgButton.Behaviors>
                             <behaviors:Animation AnimationStyle="Rotate" AnimationState="{Binding DisplayTransport}"
-                                                 FalseAmount="0" FalseEasing="{x:Static Easing.BounceOut}" FalseLength="500"
-                                                 TrueAmount="180" TrueEasing="{x:Static Easing.BounceOut}" TrueLength="500"/>
+                                                 FalseAmount="0" FalseEasing="{x:Static Easing.BounceOut}" FalseLength="900"
+                                                 TrueAmount="180" TrueEasing="{x:Static Easing.BounceOut}" TrueLength="700"/>
                         </controls:SvgButton.Behaviors>
                     </controls:SvgButton>
                 </ContentView>
