@@ -15,6 +15,7 @@
     <None Remove="Resources\Images\5_Star.svg" />
     <None Remove="Resources\Images\ClearRating.svg" />
     <None Remove="Resources\Images\ContinueFromTrack.svg" />
+    <None Remove="Resources\Images\DownArrow.svg" />
     <None Remove="Resources\Images\Edit.svg" />
     <None Remove="Resources\Images\EditTags.svg" />
     <None Remove="Resources\Images\Empty_Star.svg" />
@@ -42,6 +43,7 @@
     <EmbeddedResource Include="Resources\CssStyles.json" />
     <EmbeddedResource Include="Resources\Images\ClearRating.svg" />
     <EmbeddedResource Include="Resources\Images\ContinueFromTrack.svg" />
+    <EmbeddedResource Include="Resources\Images\DownArrow.svg" />
     <EmbeddedResource Include="Resources\Images\Edit.svg" />
     <EmbeddedResource Include="Resources\Images\EditTags.svg" />
     <EmbeddedResource Include="Resources\Images\Empty_Star.svg" />

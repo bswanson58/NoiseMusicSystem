@@ -61,6 +61,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  bool                                NeedTags => !HaveTags;
         public  bool                                HaveNextPlayingTrack => !String.IsNullOrWhiteSpace( mNextPlayingTrack?.TrackName );
 
+        public  bool                                DisplayTransport { get; private set; }
         public  bool                                DisplayVolume { get; private set; }
 
         public  TimeSpan                            LeftTime {  get; private set; }
@@ -81,6 +82,7 @@ namespace Noise.RemoteClient.ViewModels {
         public  DelegateCommand                     EditTags { get; }
 
         public  DelegateCommand                     ToggleTimeDisplay { get; }
+        public  DelegateCommand                     ToggleTransportDisplay { get; }
         public  DelegateCommand                     ToggleVolumeDisplay { get; }
         public  DelegateCommand                     ToggleNextBackground { get; }
         public  DelegateCommand                     TogglePreviousBackground { get; }
@@ -125,6 +127,7 @@ namespace Noise.RemoteClient.ViewModels {
             EditTags = new DelegateCommand( OnEditTags );
 
             ToggleTimeDisplay = new DelegateCommand( OnToggleTimeDisplay );
+            ToggleTransportDisplay = new DelegateCommand( OnToggleTransportDisplay );
             ToggleVolumeDisplay = new DelegateCommand( OnToggleVolumeDisplay );
             ToggleNextBackground = new DelegateCommand( OnToggleNextBackground );
             TogglePreviousBackground = new DelegateCommand( OnTogglePreviousBackground );
@@ -357,6 +360,12 @@ namespace Noise.RemoteClient.ViewModels {
             }
 
             RaisePropertyChanged( nameof( DisplayVolume ));
+        }
+
+        private void OnToggleTransportDisplay() {
+            DisplayTransport = !DisplayTransport;
+
+            RaisePropertyChanged( nameof( DisplayTransport ));
         }
 
         private TrackInfo CreateTrackInfo( TransportInformation fromStatus ) {

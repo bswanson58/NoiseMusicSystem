@@ -11,6 +11,7 @@ using Xamarin.Forms;
 namespace Noise.RemoteClient.Behaviors {
     public enum AnimationStyle {
         Fade,
+        Rotate,
         ScaleX,
         ScaleY,
         TranslateX,
@@ -123,14 +124,30 @@ namespace Noise.RemoteClient.Behaviors {
 
         private void StateChanged() {
             switch( AnimationStyle ) {
+                case AnimationStyle.Rotate:
+                    Rotate();
+                    break;
+
                 case AnimationStyle.TranslateX:
                     TranslateX();
+                    break;
+
+                case AnimationStyle.TranslateY:
+                    TranslateY();
                     break;
             }
         }
 
+        private void Rotate() {
+            mAssociatedObject.RotateTo( AnimationState ? TrueAmount : FalseAmount, GetLength(), AnimationState ? TrueEasing : FalseEasing );
+        }
+
         private void TranslateX() {
             mAssociatedObject.TranslateTo( AnimationState ? TrueAmount : FalseAmount, 0.0D, GetLength(), AnimationState ? TrueEasing : FalseEasing );
+        }
+
+        private void TranslateY() {
+            mAssociatedObject.TranslateTo( 0.0D, AnimationState ? TrueAmount : FalseAmount, GetLength(), AnimationState ? TrueEasing : FalseEasing );
         }
 
         private uint GetLength() {

@@ -215,7 +215,7 @@
             </Grid>
 
             <!-- Transport Control -->
-            <Grid Grid.Row="4" BackgroundColor="Transparent" Margin="0,0,0,15" Opacity="0.75">
+            <Grid Grid.Row="4" BackgroundColor="Transparent" Margin="0,0,0,15" HeightRequest="60" Opacity="0.75">
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                     <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding Play}">
                         <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Play"/>
@@ -235,10 +235,29 @@
                     <ContentView Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding RepeatTrack}">
                         <controls:SvgButton Margin="12,5" ImageColor="{DynamicResource TransportButtonColor}" Source="Transport_Repeat"/>
                     </ContentView>
+
+                    <StackLayout.Behaviors>
+                        <behaviors:Animation AnimationStyle="TranslateY" AnimationState="{Binding DisplayTransport}"
+                                             FalseAmount="0" FalseEasing="{x:Static Easing.BounceOut}" FalseLength="500"
+                                             TrueAmount="80" TrueEasing="{x:Static Easing.Linear}" TrueLength="900"/>
+                    </StackLayout.Behaviors>
                 </StackLayout>
 
-                <Label Margin="5" VerticalOptions="End" Style="{DynamicResource TransportTinyText}" TextColor="Gray"
+                <Label Margin="5" VerticalOptions="End" Style="{DynamicResource TransportTinyText}" TextColor="Gray" Opacity="0.5"
                        Text="{Binding BackgroundStyleName}" IsVisible="{Binding IsStopped}"/>
+
+                <ContentView HorizontalOptions="End" VerticalOptions="End" Margin="5" Style="{StaticResource TransportButtonTouchEffect}"
+                             touchEffect:TouchEff.Command="{Binding ToggleTransportDisplay}">
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="25" WidthRequest="25" Margin="10,5" Opacity="0.3"
+                                        ImageColor="{DynamicResource SecondaryTextColor}" Source="DownArrow">
+                        <controls:SvgButton.Behaviors>
+                            <behaviors:Animation AnimationStyle="Rotate" AnimationState="{Binding DisplayTransport}"
+                                                 FalseAmount="0" FalseEasing="{x:Static Easing.BounceOut}" FalseLength="500"
+                                                 TrueAmount="180" TrueEasing="{x:Static Easing.BounceOut}" TrueLength="500"/>
+                        </controls:SvgButton.Behaviors>
+                    </controls:SvgButton>
+                </ContentView>
+
             </Grid>
 
             <!-- Volume Control -->
