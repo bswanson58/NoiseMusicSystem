@@ -38,14 +38,20 @@ namespace Noise.RemoteClient.Models {
         }
 
         private void SelectDefaultStyle() {
-            var preferenceStyle = mPreferences.Get( mPreferenceName, String.Empty );
-
             if(!mStyles.Any()) {
                 LoadStyles();
             }
 
-            SetStyle( String.IsNullOrWhiteSpace( preferenceStyle ) ? mStyles.FirstOrDefault() : 
-                                                                     mStyles.FirstOrDefault( s => s.Name.Equals( preferenceStyle )));
+            if( mStyles.Any()) {
+                var preferenceStyle = mPreferences.Get( mPreferenceName, String.Empty );
+
+                SetStyle( String.IsNullOrWhiteSpace( preferenceStyle ) ? mStyles.FirstOrDefault() : 
+                                                                         mStyles.FirstOrDefault( s => s.Name.Equals( preferenceStyle )));
+
+                if( CurrentStyle == null ) {
+                    SetStyle( mStyles.FirstOrDefault());
+                }
+            }
         }
 
         public void SelectNextStyle() {
