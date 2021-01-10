@@ -208,7 +208,8 @@
                     <Label Style="{DynamicResource TransportTinyText}" TextColor="{DynamicResource SecondaryTextColor}" 
                            HorizontalOptions="Center" VerticalOptions="Center" Margin="25,5">
                         <Label.Behaviors>
-                            <behaviors:DelayedLabel Text="{Binding NextPlayingTrack, StringFormat='Next up: {0}'}" DelayLength="5000" AnimationLength="2000"/>
+                            <behaviors:DelayedLabel Text="{Binding NextPlayingTrack, StringFormat='Next up: {0}'}" 
+                                                    AnimationOutLength="1000" DelayLength="5000" AnimationInLength="2000"/>
                         </Label.Behaviors>
                     </Label>
                 </ContentView>

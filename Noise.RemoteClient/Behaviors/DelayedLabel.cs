@@ -5,7 +5,7 @@ using Xamarin.Forms;
 // Usage:
 //    <Label ... > 
 //      <Label.Behaviors>
-//          <behaviors:DelayedLabel Text="{Binding ...}" DelayLength="5000" AnimationLength="500"/>
+//          <behaviors:DelayedLabel Text="{Binding ...}" DelayLength="5000" AnimationInLength="500"/>
 //      <Label.Behaviors>
 //    <Label>
 
@@ -29,12 +29,20 @@ namespace Noise.RemoteClient.Behaviors {
             set => SetValue( DelayLengthProperty, value );
         }
 
-        public static readonly BindableProperty AnimationLengthProperty =
-            BindableProperty.Create( nameof( AnimationLength ), typeof( uint ), typeof( DelayedLabel ), (uint)250 );
+        public static readonly BindableProperty AnimationInLengthProperty =
+            BindableProperty.Create( nameof( AnimationInLength ), typeof( uint ), typeof( DelayedLabel ), (uint)250 );
 
-        public uint AnimationLength {
-            get => (uint)GetValue( AnimationLengthProperty );
-            set => SetValue( AnimationLengthProperty, value );
+        public uint AnimationInLength {
+            get => (uint)GetValue( AnimationInLengthProperty );
+            set => SetValue( AnimationInLengthProperty, value );
+        }
+
+        public static readonly BindableProperty AnimationOutLengthProperty =
+            BindableProperty.Create( nameof( AnimationOutLength ), typeof( uint ), typeof( DelayedLabel ), (uint)0 );
+
+        public uint AnimationOutLength {
+            get => (uint)GetValue( AnimationOutLengthProperty );
+            set => SetValue( AnimationOutLengthProperty, value );
         }
 
         protected override void OnAttachedTo( Label associatedObject ) {
@@ -75,12 +83,12 @@ namespace Noise.RemoteClient.Behaviors {
         }
 
         private async void AnimateChange( string newValue ) {
-            await AssociatedObject.FadeTo( 0.0, 0 );
+            await AssociatedObject.FadeTo( 0.0, AnimationOutLength );
             await Task.Delay( DelayLength );
 
             AssociatedObject.Text = newValue;
 
-            await AssociatedObject.FadeTo( 1.0, AnimationLength, Easing.Linear );
+            await AssociatedObject.FadeTo( 1.0, AnimationInLength, Easing.Linear );
         }
     }
 }
