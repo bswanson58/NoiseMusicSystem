@@ -17,8 +17,8 @@ namespace Noise.RemoteClient.Models {
         private readonly DimensionsTypeConverter    mDimensionsTypeConverter;
         private readonly List<CssStyle>             mStyles;
         private string                              mPreferenceName;
-        private CssStyle                            mCurrentStyle;
-
+        
+        public  CssStyle                            CurrentStyle { get; private set; }
         public  GradientCollection                  CurrentGradient { get; }
         public  Dimensions                          GradientSize { get; private set; }
 
@@ -49,8 +49,8 @@ namespace Noise.RemoteClient.Models {
         }
 
         public void SelectNextStyle() {
-            if( mCurrentStyle != null ) {
-                var index = mStyles.IndexOf( mCurrentStyle );
+            if( CurrentStyle != null ) {
+                var index = mStyles.IndexOf( CurrentStyle );
 
                 index++;
 
@@ -60,6 +60,22 @@ namespace Noise.RemoteClient.Models {
                 }
                 else {
                     SetStyle( mStyles.FirstOrDefault());
+                }
+            }
+        }
+
+        public void SelectPreviousStyle() {
+            if( CurrentStyle != null ) {
+                var index = mStyles.IndexOf( CurrentStyle );
+
+                index--;
+
+                if(( index >= 0 ) &&
+                   ( index < mStyles.Count )) {
+                    SetStyle( mStyles[index]);
+                }
+                else {
+                    SetStyle( mStyles.LastOrDefault());
                 }
             }
         }
@@ -79,8 +95,8 @@ namespace Noise.RemoteClient.Models {
                         GradientSize = (Dimensions)mDimensionsTypeConverter.ConvertFromInvariantString( style.Size );
                     }
 
-                    mCurrentStyle = style;
-                    mPreferences.Set( mPreferenceName, mCurrentStyle.Name );
+                    CurrentStyle = style;
+                    mPreferences.Set( mPreferenceName, CurrentStyle.Name );
                 }
                 catch( Exception ex ) {
                     mLog.LogException( nameof( SetStyle ), ex );

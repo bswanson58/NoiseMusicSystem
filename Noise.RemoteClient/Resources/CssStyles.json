@@ -504,11 +504,6 @@
 
 
     {
-      "Name": "background100",
-      "Css": "radial-gradient(circle 7px at 23% 62%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 7px at 25% 58%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 7px at 57% 71%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 5px at 65% 94%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 5px at 22% 15%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 5px at 22% 76%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 5px at 66% 78%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 5px at 12% 17%, rgb(56,56,56) 0%, rgb(56,56,56) 50%,transparent 50%, transparent 100%),radial-gradient(circle 12px at 73% 76%, rgb(43,43,43) 0%, rgb(43,43,43) 50%,transparent 50%, transparent 100%),radial-gradient(circle 12px at 84% 91%, rgb(43,43,43) 0%, rgb(43,43,43) 50%,transparent 50%, transparent 100%),radial-gradient(circle at bottom left, rgb(35,35,35) 0%, rgb(35,35,35) 10%,transparent 10%, transparent 90%),linear-gradient(135deg, rgb(28, 37, 233),rgb(61, 215, 224))",
-      "Size": ""
-    },
-    {
       "Name": "background101",
       "Css": "repeating-linear-gradient(135deg, rgba(25,25,25,0.08) 0px, rgba(25,25,25,0.08) 2px,transparent 2px, transparent 4px),linear-gradient(45deg, rgb(27,27,27),transparent),linear-gradient(135deg, rgb(27,27,27),transparent),linear-gradient(0deg, rgb(27,27,27),transparent),linear-gradient(90deg, rgb(255,255,255),rgb(255,255,255))",
       "Size": ""
