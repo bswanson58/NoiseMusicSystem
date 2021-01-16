@@ -168,10 +168,21 @@
                 </Grid.ColumnDefinitions>
 
                 <ContentView Grid.Column="0"  Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleTimeDisplay}">
-                    <Label Margin="5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End" 
-                           IsVisible="{Binding IsLeftTimeDisplayed}"
-                           Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
-                           Text="{Binding LeftTime, Converter={StaticResource TimeSpanConverter}}"/>
+                    <Grid BackgroundColor="Transparent" IsVisible="{Binding IsLeftTimeDisplayed}">
+                        <Label Margin="5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End"
+                               Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                               Text="{Binding LeftTime, Converter={StaticResource TimeSpanConverter}}"/>
+                        <Label Margin="5,0" WidthRequest="100" VerticalOptions="Center" HorizontalTextAlignment="End" Opacity="0.0"
+                               Style="{StaticResource TransportSmallText}" TextColor="Lime"
+                               Text="{Binding LeftTime, Converter={StaticResource TimeSpanConverter}}">
+                            <Label.Behaviors>
+                                <behaviors:Animation AnimationStyle="Fade" AnimationState="{Binding GreenFlash}"
+                                                     TrueAmount="1.0" TrueLength="400" TrueEasing="{x:Static Easing.CubicIn}"
+                                                     FalseAmount="0.0" FalseLength="200" FalseEasing="{x:Static Easing.CubicOut}">
+                                </behaviors:Animation>
+                            </Label.Behaviors>
+                        </Label>
+                    </Grid>
                 </ContentView>
 
                 <Grid Grid.Column="1" BackgroundColor="Transparent">
@@ -189,9 +200,22 @@
                 </Grid>
 
                 <ContentView Grid.Column="2"  Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleTimeDisplay}">
-                    <Label Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" IsVisible="{Binding IsRightTimeDisplayed}"
-                           Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
-                           Text="{Binding RightTime, Converter={StaticResource TimeSpanConverter}}"/>
+                    <Grid BackgroundColor="Transparent" IsVisible="{Binding IsRightTimeDisplayed}">
+                        <Label Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center"
+                               Style="{StaticResource TransportSmallText}" TextColor="{DynamicResource SecondaryTextColor}"
+                               Text="{Binding RightTime, Converter={StaticResource TimeSpanConverter}}"/>
+                        <Label Margin="5,0,15,0" WidthRequest="100" VerticalOptions="Center" Opacity="0.0"
+                               Style="{StaticResource TransportSmallText}" TextColor="Lime"
+                               Text="{Binding RightTime, Converter={StaticResource TimeSpanConverter}}">
+                            <Label.Behaviors>
+                                <behaviors:Animation AnimationStyle="Fade" AnimationState="{Binding GreenFlash}"
+                                                     TrueAmount="1.0" TrueLength="400" TrueEasing="{x:Static Easing.CubicIn}"
+                                                     FalseAmount="0.0" FalseLength="200" FalseEasing="{x:Static Easing.CubicOut}">
+                                </behaviors:Animation>
+                            </Label.Behaviors>
+                        </Label>
+                    </Grid>
+
                 </ContentView>
             </Grid>
 

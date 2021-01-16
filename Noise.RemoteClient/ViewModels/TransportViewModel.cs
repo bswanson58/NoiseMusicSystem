@@ -43,6 +43,7 @@ namespace Noise.RemoteClient.ViewModels {
         private bool                                mIsStopped;
         private bool                                mIsRightTimeDisplayed;
         private bool                                mIsLeftTimeDisplayed;
+        private bool                                mGreenFlash;
         private string                              mArtistName;
         private string                              mAlbumName;
         private string                              mTrackName;
@@ -221,6 +222,8 @@ namespace Noise.RemoteClient.ViewModels {
             RaisePropertyChanged( nameof( Tags ));
             RaisePropertyChanged( nameof( NeedTags ));
             RaisePropertyChanged( nameof( HaveTags ));
+
+            UpdateGreenFlash();
         }
 
         public bool IsPlaybackActive {
@@ -366,6 +369,19 @@ namespace Noise.RemoteClient.ViewModels {
             DisplayTransport = !DisplayTransport;
 
             RaisePropertyChanged( nameof( DisplayTransport ));
+        }
+
+        public bool GreenFlash {
+            get => mGreenFlash;
+            set => SetProperty( ref mGreenFlash, value );
+        }
+
+        private void UpdateGreenFlash() {
+            GreenFlash = (( IsLeftTimeDisplayed ) &&
+                          ( IsRightTimeDisplayed ) && 
+                          ( IsPlaying ) &&
+                          ( LeftTime.Minutes.Equals( Math.Abs( RightTime.Minutes ))) &&
+                          ( LeftTime.Seconds.Equals( Math.Abs( RightTime.Seconds ))));
         }
 
         private TrackInfo CreateTrackInfo( TransportInformation fromStatus ) {
