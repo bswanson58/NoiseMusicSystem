@@ -80,7 +80,7 @@ namespace Noise.RemoteClient.ViewModels {
         }
 
         private async void OnHostStatus( HostStatusResponse status ) {
-            if( status.LibraryOpen ) {
+            if( status?.LibraryOpen == true ) {
                 LibraryName = status.LibraryName;
 
                 var hostInfo = await mHostInformation.GetHostInformation();
