@@ -213,14 +213,15 @@ namespace Noise.RemoteClient.ViewModels {
                 if( status.PlayPositionPercentage < 0.1 ) {
                     PlayPercentage = status.PlayPositionPercentage;
                     mTrackLength = trackLength;
+                    mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
                 }
             }
             else {
                 PlayPercentage = status.PlayPositionPercentage;
                 mTrackLength = trackLength;
+                mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
             }
 
-            mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
             DisplayTrackTimes();
 
             IsPaused = mTrackInformation?.TransportState == TransportState.Paused;
