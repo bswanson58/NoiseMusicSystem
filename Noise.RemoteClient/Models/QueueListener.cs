@@ -111,10 +111,7 @@ namespace Noise.RemoteClient.Models {
         }
 
         private void UpdatePlayingTracks() {
-            var nextTrack = mQueueList.Items.SkipWhile( t => !t.IsPlaying ).Skip( 1 ).SkipWhile( t => t.HasPlayed ).FirstOrDefault() ??
-                            mQueueList.Items.FirstOrDefault( t => !t.HasPlayed && !t.IsPlaying );
-
-            mNextPlayingTrack.OnNext( nextTrack );
+            mNextPlayingTrack.OnNext( mQueueList.Items.FirstOrDefault( t => !t.HasPlayed && !t.IsPlaying ));
 
             mPlayingState.OnNext( new PlayingState( mQueueList.Items.FirstOrDefault( t => t.IsPlaying )));
         }
