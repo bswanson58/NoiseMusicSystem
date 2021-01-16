@@ -75,7 +75,6 @@ namespace Noise.RemoteClient.ViewModels {
 
         private void Initialize() {
             mLibraryStatusSubscription = mHostInformationProvider.LibraryStatus.ObserveOn( SynchronizationContext.Current ).Subscribe( OnLibraryStatus );
-            mPlayingStateSubscription = mQueueListener.CurrentlyPlaying.Subscribe( OnPlaying );
         }
 
         private void OnLibraryStatus( LibraryStatus status ) {
@@ -167,6 +166,10 @@ namespace Noise.RemoteClient.ViewModels {
 
         private async void LoadArtistList() {
             IsBusy = true;
+
+            mPlayingStateSubscription?.Dispose();
+            mPlayingStateSubscription = null;
+
             mCompleteArtistList.Clear();
 
             if( mLibraryOpen ) {
@@ -180,6 +183,8 @@ namespace Noise.RemoteClient.ViewModels {
             RefreshArtistList();
             UpdatePlayingState();
             IsBusy = false;
+
+            mPlayingStateSubscription = mQueueListener.CurrentlyPlaying.Subscribe( OnPlaying );
         }
 
         private IEnumerable<UiArtist> SortArtists( IEnumerable<UiArtist> list ) {
