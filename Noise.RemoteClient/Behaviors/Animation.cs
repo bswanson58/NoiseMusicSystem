@@ -4,8 +4,9 @@ using Xamarin.Forms;
 // Usage:
 //    <Label ... > 
 //      <Label.Behaviors>
-//          <behaviors:Animation AnimationStyle="TranslateX" TrueAmount="100" TrueEasing="{x:Static Easing.BounceOut}"
-//                               FalseAmount="0" AnimationLength="500" AnimationState="{Binding ...}"/>
+//          <behaviors:Animation AnimationState="{Binding ...}" AnimationStyle="TranslateX"
+//                               TrueAmount="100" TrueLength="400" TrueEasing="{x:Static Easing.BounceOut}"
+//                               FalseAmount="0" FalseLength="500" TrueEasing="{x:Static Easing.BounceIn}"/>
 //      <Label.Behaviors>
 //    <Label>
 namespace Noise.RemoteClient.Behaviors {
@@ -124,6 +125,10 @@ namespace Noise.RemoteClient.Behaviors {
 
         private void StateChanged() {
             switch( AnimationStyle ) {
+                case AnimationStyle.Fade:
+                    Fade();
+                    break;
+
                 case AnimationStyle.Rotate:
                     Rotate();
                     break;
@@ -136,6 +141,10 @@ namespace Noise.RemoteClient.Behaviors {
                     TranslateY();
                     break;
             }
+        }
+
+        private void Fade() {
+            mAssociatedObject.FadeTo( AnimationState ? TrueAmount : FalseAmount, GetLength(), AnimationState ? TrueEasing : FalseEasing );
         }
 
         private void Rotate() {
