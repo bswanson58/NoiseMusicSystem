@@ -207,8 +207,19 @@ namespace Noise.RemoteClient.ViewModels {
             RaisePropertyChanged( nameof( HasRating ));
             RaisePropertyChanged( nameof( NeedRating ));
 
-            PlayPercentage = status.PlayPositionPercentage;
-            mTrackLength = TimeSpan.FromTicks( status.TrackLength );
+            var trackLength = TimeSpan.FromTicks( status.TrackLength );
+            // Attempt to sync all the times...
+            if(!trackLength.Equals( mTrackLength )) {
+                if( status.PlayPositionPercentage < 0.1 ) {
+                    PlayPercentage = status.PlayPositionPercentage;
+                    mTrackLength = trackLength;
+                }
+            }
+            else {
+                PlayPercentage = status.PlayPositionPercentage;
+                mTrackLength = trackLength;
+            }
+
             mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
             DisplayTrackTimes();
 
