@@ -57,7 +57,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="3"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
@@ -86,6 +88,9 @@
                         <ContentView Grid.Column="2" touchEffect:TouchEff.Command="{Binding ToggleNextBackground}"/>
                     </Grid>
                 </Grid>
+
+                <Label Grid.Row="5" HorizontalOptions="Center" Style="{DynamicResource TransportTinyText}" Opacity="0.7"
+                       TextColor="{DynamicResource SecondaryTextColor}" Text="{Binding BackgroundStyleName, StringFormat='Current background: {0}'}"/>
             </Grid>
 
             <!-- Artist/Album/Track -->
@@ -273,9 +278,6 @@
                                              TrueAmount="80" TrueEasing="{x:Static Easing.Linear}" TrueLength="900"/>
                     </StackLayout.Behaviors>
                 </StackLayout>
-
-                <Label Margin="5" VerticalOptions="End" Style="{DynamicResource TransportTinyText}" TextColor="Gray" Opacity="0.5"
-                       Text="{Binding BackgroundStyleName}" IsVisible="{Binding IsStopped}"/>
 
                 <ContentView HorizontalOptions="End" VerticalOptions="End" Margin="5" Style="{StaticResource TransportButtonTouchEffect}"
                              touchEffect:TouchEff.Command="{Binding ToggleTransportDisplay}">
