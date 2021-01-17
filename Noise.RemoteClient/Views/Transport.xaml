@@ -28,8 +28,14 @@
             <Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Text="Now Playing"/>
 
             <ContentView Grid.Column="2" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding ToggleVolumeDisplay}">
-                    <controls:SvgButton VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="15" Opacity="0.8"
-                                        ImageColor="{DynamicResource PrimaryTextColor}" Source="Volume"/>
+                    <controls:SvgButton VerticalOptions="Center" HeightRequest="35" WidthRequest="35" Margin="15" Opacity="0.85"
+                                        ImageColor="{DynamicResource PrimaryTextColor}" Source="Volume">
+                        <controls:SvgButton.Behaviors>
+                            <behaviors:Animation AnimationStyle="Rotate" AnimationState="{Binding DisplayVolume}"
+                                                 FalseAmount="0" FalseEasing="{x:Static Easing.BounceOut}" FalseLength="1500"
+                                                 TrueAmount="180" TrueEasing="{x:Static Easing.BounceOut}" TrueLength="500"/>
+                        </controls:SvgButton.Behaviors>
+                    </controls:SvgButton>
             </ContentView>
         </Grid>
     </Shell.TitleView>
