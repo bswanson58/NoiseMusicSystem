@@ -47,6 +47,7 @@ namespace Noise.RemoteClient.ViewModels {
         private string                              mArtistName;
         private string                              mAlbumName;
         private string                              mTrackName;
+        private long                                mTrackId;
         private bool                                mIsFavorite;
         private int                                 mRating;
         private TimeSpan                            mTrackLength;
@@ -208,18 +209,19 @@ namespace Noise.RemoteClient.ViewModels {
             RaisePropertyChanged( nameof( NeedRating ));
 
             var trackLength = TimeSpan.FromTicks( status.TrackLength );
-            // Attempt to sync all the times...
-            if(!trackLength.Equals( mTrackLength )) {
-                if( status.PlayPositionPercentage < 0.1 ) {
-                    PlayPercentage = status.PlayPositionPercentage;
-                    mTrackLength = trackLength;
-                    mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
-                }
-            }
-            else {
+            // Attempt to sync all the times... Update while both track and length match.
+            if(( trackLength.Equals( mTrackLength )) &&
+               ( status.TrackId.Equals( mTrackId ))) {
                 PlayPercentage = status.PlayPositionPercentage;
-                mTrackLength = trackLength;
                 mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
+            }
+            // Don't update until both track and track length do not match the current.
+            if((!trackLength.Equals( mTrackLength )) &&
+               (!status.TrackId.Equals( mTrackId ))) {
+                mTrackId = status.TrackId;
+                mTrackLength = trackLength;
+                mTimePlayed = TimeSpan.Zero;
+                PlayPercentage = 0.0;
             }
 
             DisplayTrackTimes();
@@ -392,6 +394,7 @@ namespace Noise.RemoteClient.ViewModels {
             GreenFlash = (( IsLeftTimeDisplayed ) &&
                           ( IsRightTimeDisplayed ) && 
                           ( IsPlaying ) &&
+                          ( LeftTime.TotalSeconds > 10 ) &&
                           ( LeftTime.Minutes.Equals( Math.Abs( RightTime.Minutes ))) &&
                           ( LeftTime.Seconds.Equals( Math.Abs( RightTime.Seconds ))));
         }
