@@ -48,12 +48,15 @@ namespace Noise.RemoteServer.Services {
         public TransportInformation CreateTransportInformation() {
             var retValue = new TransportInformation();
 
-            if( mCurrentTrack != null ) {
+            if( mCurrentTrack != null ) { 
                 retValue.ArtistId = mCurrentTrack.Artist.DbId;
                 retValue.ArtistName = mCurrentTrack.Artist.Name;
 
                 retValue.AlbumId = mCurrentTrack.Album.DbId;
                 retValue.AlbumName = mCurrentTrack.Album.Name;
+
+                retValue.AlbumRating = mCurrentTrack.Album.Rating;
+                retValue.AlbumIsFavorite = mCurrentTrack.Album.IsFavorite;
 
                 retValue.TrackId = mCurrentTrack.Track.DbId;
                 retValue.TrackNumber = mCurrentTrack.Track.TrackNumber;

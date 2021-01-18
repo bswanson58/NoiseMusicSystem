@@ -423,7 +423,8 @@ namespace Noise.RemoteClient.ViewModels {
         private async void OnDisplayTracks() {
             if(!String.IsNullOrWhiteSpace( mTrackInformation?.AlbumName )) {
                 mClientState.SetCurrentAlbum( new AlbumInfo { ArtistId = mTrackInformation.ArtistId, ArtistName  = mTrackInformation.ArtistName,
-                                                              AlbumId = mTrackInformation.AlbumId, AlbumName = mTrackInformation.AlbumName } );
+                                                              AlbumId = mTrackInformation.AlbumId, AlbumName = mTrackInformation.AlbumName,
+                                                              Rating = mTrackInformation.AlbumRating, IsFavorite = mTrackInformation.AlbumIsFavorite });
 
                 await Shell.Current.GoToAsync( RouteNames.TrackList );
             }

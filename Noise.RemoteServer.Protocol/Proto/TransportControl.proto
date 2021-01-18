@@ -35,13 +35,15 @@ message TransportInformation {
 	int32			TrackNumber = 9;
 	int32			Rating = 10;
 	bool			IsFavorite = 11;
-	bool			IsFaulted = 12;
-	bool			IsStrategyQueued = 13;
-	int64			PlayPosition = 14;
-	double			PlayPositionPercentage = 15;
-	int64			TrackLength = 16;
-	TransportState	TransportState = 17;
-	repeated TransportTagInfo Tags = 18;
+	int32			AlbumRating = 12;
+	bool			AlbumIsFavorite = 13;
+	bool			IsFaulted = 14;
+	bool			IsStrategyQueued = 15;
+	int64			PlayPosition = 16;
+	double			PlayPositionPercentage = 17;
+	int64			TrackLength = 18;
+	TransportState	TransportState = 19;
+	repeated TransportTagInfo Tags = 20;
 }
 
 message VolumeLevelInformation {
