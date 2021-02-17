@@ -11,7 +11,10 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Noise.UI.Views;
 using Prism;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits;
 using ReusableBits.ExtensionClasses;
 using ReusableBits.ExtensionClasses.MoreLinq;
@@ -25,23 +28,29 @@ namespace Noise.UI.ViewModels {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly IPlayCommand		mPlayCommand;
+		private readonly IDialogService		mDialogService;
         private readonly BindableCollection<UiArtistTrackNode>	mTrackList;
         private ICollectionView				mTrackView;
 		private	bool						mIsActive;
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 		private CancellationTokenSource						mCancellationTokenSource;
 
+		public	DelegateCommand							RenameTracks { get; }
+
 		public	bool									IsListFiltered => !String.IsNullOrWhiteSpace( FilterText );
 		public	event EventHandler						IsActiveChanged = delegate { };
 
         public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
-									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
+									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IDialogService dialogService, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mPlayCommand = playCommand;
+			mDialogService = dialogService;
+
+			RenameTracks = new DelegateCommand( OnRenameTracks );
 
 			mEventAggregator.Subscribe( this );
 
@@ -252,6 +261,30 @@ namespace Noise.UI.ViewModels {
 		private void OnTrackPlay( long trackId ) {
 			mPlayCommand.Play( mTrackProvider.GetTrack( trackId ));
 		}
+
+		private void OnRenameTracks() {
+			var trackList = new List<UiAlbumTrack>();
+
+			TrackList.OfType<UiArtistTrackNode>().ForEach( i => {
+				if( i.MultipleAlbums ) {
+					trackList.AddRange( i.Children );
+                }
+				else {
+					trackList.Add( new UiAlbumTrack( i.Album, i.Track ));
+                }
+            });
+
+			var parameters = new DialogParameters{{ BulkTrackRenameViewModel.cTrackListParameter, trackList }};
+
+			mDialogService.ShowDialog( nameof( BulkTrackRenameView ), parameters, result => {
+				if( result.Result == ButtonResult.OK ) {
+					ClearTrackList();
+                    if( mSelectionState.CurrentArtist != null ) {
+                        UpdateTrackList( mSelectionState.CurrentArtist );
+                    }
+                }
+            });
+        }
 
         public void Dispose() {
             mCancellationTokenSource?.Dispose();

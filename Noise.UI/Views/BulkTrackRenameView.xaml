@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Noise.UI.Views.BulkTrackRenameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:dto="clr-namespace:Noise.UI.Dto"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:BulkTrackRenameViewModel, IsDesignTimeCreatable=False}"
+             Height="480" Width="950">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="TrackTemplate" DataType="dto:UiSelectableTrackNode">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <CheckBox Grid.Column="0" VerticalAlignment="Center" Margin="3,0" IsChecked="{Binding Selected}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Text="{Binding TrackName}"/>
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Opacity="0.6" Text="(" Margin="5,0,0,0"/>
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Opacity="0.6" Text="{Binding AlbumName}"/>
+                    <TextBlock Style="{StaticResource ListViewTextStyle}" VerticalAlignment="Center" Opacity="0.6" Text=")"/>
+                </StackPanel>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding WillSelect}" Value="False">
+                    <Setter TargetName="TrackName" Property="Opacity" Value="0.6"></Setter>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,3" Orientation="Horizontal">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding TrackCount}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="3,0,0,0" Text="Tracks to be renamed:"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding TrackList}" ItemTemplate="{StaticResource TrackTemplate}" SelectedItem="{Binding SelectedTrack}"/>
+
+        <StackPanel Grid.Row="2" Margin="30,10" Orientation="Horizontal">
+            <Button Margin="5,0" Content="Select All" Command="{Binding SelectAll}"/>
+            <Button Margin="5,0" Content="Deselect All" Command="{Binding DeselectAll}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="0,8" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Foreground="LawnGreen" Text="{Binding SelectedTrackCount}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Margin="3,0" Text="track(s) will be renamed."/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Margin="0,0,5,0" Text="Replacement Name:"/>
+            <TextBox VerticalAlignment="Center" Width="500" Text="{Binding ReplacementName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="OK" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

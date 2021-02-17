@@ -289,6 +289,7 @@
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
+    <Compile Include="Dto\UiSelectableTrackNode.cs" />
     <Compile Include="Dto\UiStrategyDescription.cs" />
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Dto\UiTagAssociation.cs" />
@@ -343,6 +344,7 @@
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
+    <Compile Include="ViewModels\BulkTrackRenameViewModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\ExhaustedPlayPickerViewModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
@@ -415,6 +417,9 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BulkTrackRenameView.xaml.cs">
+      <DependentUpon>BulkTrackRenameView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ExhaustedPlayPickerView.xaml.cs">
       <DependentUpon>ExhaustedPlayPickerView.xaml</DependentUpon>
@@ -720,6 +725,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BulkTrackRenameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

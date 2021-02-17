@@ -108,6 +108,7 @@
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="1*"/>
 					<ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Margin="5" Orientation="Horizontal" VerticalAlignment="Center">
@@ -122,10 +123,14 @@
                 <TextBox Grid.Column="2" Tag="dimOnClear" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
                          behaviours:TextBoxHelper.Watermark="enter track filter text..." behaviours:TextBoxHelper.ClearTextButton="True"
                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Button Grid.Column="3" Tag="dimmed" Style="{StaticResource PathButtonStyle}" Height="28" VerticalAlignment="Bottom" Margin="5,0,0,3"
+                        Command="{Binding Path=RenameTracks}" Content="{StaticResource Path_Edit}" ToolTip="Edit Track Names" />
             </Grid>
 		</Grid>
         <b:Interaction.Behaviors>
             <reusableBehaviours:ScrollBarOpacity FadeInAnimation="{StaticResource ScrollBarEnterAnimation}" FadeOutAnimation="{StaticResource ScrollBarLeaveAnimation}"/>
+            <reusableBehaviours:WidgetOpacity TagName="dimmed" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
             <reusableBehaviours:WidgetOpacity TagName="dimOnClear" IsDisabled="{Binding IsListFiltered}" FadeInAnimation="{StaticResource WidgetEnterAnimation}" FadeOutAnimation="{StaticResource WidgetLeaveAnimation}"/>
         </b:Interaction.Behaviors>
 	</GroupBox>
