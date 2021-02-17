@@ -143,6 +143,7 @@ namespace Noise.UI.ViewModels {
                     }
 
                     mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( mTrackProvider.GetTrack( track.Track.DbId )));
+                    mEventAggregator.PublishOnUIThread( new Events.LibraryBackupPressure( 1, "Track Rename (Bulk)" ));
                 }
             });
         }
