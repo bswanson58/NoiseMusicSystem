@@ -4,7 +4,7 @@ using Noise.RemoteServer.Protocol;
 
 namespace Noise.RemoteClient.Interfaces {
     interface IQueueListProvider {
-        void            StartQueueStatusRequests();
+        Task<bool>      StartQueueStatusRequests();
         void            StopQueueStatusRequests();
 
         Task<bool>      ClearQueue();

@@ -6,6 +6,7 @@ using DynamicData;
 using Noise.RemoteClient.Dto;
 using Noise.RemoteClient.Interfaces;
 using Noise.RemoteServer.Protocol;
+using Polly;
 
 namespace Noise.RemoteClient.Models {
     class QueueListener : IQueueListener, IDisposable {
@@ -65,7 +66,8 @@ namespace Noise.RemoteClient.Models {
                 if(( mLibraryOpen ) &&
                    ( mClientAwake )) {
                     mQueueSubscription = mQueueListProvider.QueueListStatus.Subscribe( OnQueueChanged );
-                    mQueueListProvider.StartQueueStatusRequests();
+
+                    StartQueueStatus();
                 }
                 else {
                     mQueueListProvider.StopQueueStatusRequests();
@@ -79,6 +81,19 @@ namespace Noise.RemoteClient.Models {
             catch( Exception ex ) {
                 mLog.LogException( nameof( StartQueue ), ex );
             }
+        }
+
+        private void StartQueueStatus() {
+            // If the request returns with a false result, restart it again (up to 10 times).
+            // Cancelling the status requests should return a true result, and failures returns a false.
+            Policy
+                .HandleResult( false )
+                .WaitAndRetryAsync( 10, retryAfter => TimeSpan.FromSeconds( 3 ), OnStartQueueRetry )
+                .ExecuteAsync( async () => await mQueueListProvider.StartQueueStatusRequests());
+        }
+
+        private void OnStartQueueRetry( DelegateResult<bool> result, TimeSpan delay, Context context ) {
+            mLog.LogMessage( "Restarting queue status requests" );
         }
 
         private void OnQueueChanged( QueueStatusResponse queueList ) {

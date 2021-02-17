@@ -11,6 +11,7 @@ using Noise.RemoteClient.Interfaces;
 using Noise.RemoteClient.Models;
 using Noise.RemoteClient.Support;
 using Noise.RemoteServer.Protocol;
+using Polly;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
@@ -47,7 +48,6 @@ namespace Noise.RemoteClient.ViewModels {
         private string                              mArtistName;
         private string                              mAlbumName;
         private string                              mTrackName;
-        private long                                mTrackId;
         private bool                                mIsFavorite;
         private int                                 mRating;
         private TimeSpan                            mTrackLength;
@@ -170,7 +170,8 @@ namespace Noise.RemoteClient.ViewModels {
                 if(( mLibraryOpen ) &&
                    ( mClientAwake )) {
                     mTransportSubscription = mTransportProvider.TransportStatus.Subscribe( OnTransportChanged );
-                    mTransportProvider.StartTransportStatusRequests();
+
+                    StartTransportStatus();
                 }
                 else {
                     mTransportProvider.StopTransportStatusRequests();
@@ -183,6 +184,20 @@ namespace Noise.RemoteClient.ViewModels {
                 mLog.LogException( nameof( StartStatus ), ex );
             }
         }
+
+        private void StartTransportStatus() {
+            // If the request returns with a false result, restart it again (up to 10 times).
+            // Cancelling the status requests should return a true result, and failures returns a false.
+            Policy
+                .HandleResult( false )
+                .WaitAndRetryAsync( 10, retryAfter => TimeSpan.FromSeconds( 3 ), OnStartTransportRetry )
+                .ExecuteAsync( async () => await mTransportProvider.StartTransportStatusRequests());
+        }
+
+        private void OnStartTransportRetry( DelegateResult<bool> result, TimeSpan delay, Context context ) {
+            mLog.LogMessage( "Restarting transport status requests" );
+        }
+
 
         private void OnNextPlayingTrack( UiQueuedTrack track ) {
             mNextPlayingTrack = track;
@@ -209,20 +224,9 @@ namespace Noise.RemoteClient.ViewModels {
             RaisePropertyChanged( nameof( NeedRating ));
 
             var trackLength = TimeSpan.FromTicks( status.TrackLength );
-            // Attempt to sync all the times... Update while both track and length match.
-            if(( trackLength.Equals( mTrackLength )) &&
-               ( status.TrackId.Equals( mTrackId ))) {
-                PlayPercentage = status.PlayPositionPercentage;
-                mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
-            }
-            // Don't update until both track and track length do not match the current.
-            if((!trackLength.Equals( mTrackLength )) &&
-               (!status.TrackId.Equals( mTrackId ))) {
-                mTrackId = status.TrackId;
-                mTrackLength = trackLength;
-                mTimePlayed = TimeSpan.Zero;
-                PlayPercentage = 0.0;
-            }
+            PlayPercentage = trackLength != mTrackLength ? 0.0 : status.PlayPositionPercentage;
+            mTrackLength = trackLength;
+            mTimePlayed = TimeSpan.FromTicks( status.PlayPosition );
 
             DisplayTrackTimes();
 

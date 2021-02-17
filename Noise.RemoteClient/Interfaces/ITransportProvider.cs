@@ -12,8 +12,8 @@ namespace Noise.RemoteClient.Interfaces {
         Task<TransportCommandResponse> ReplayTrack();
         Task<TransportCommandResponse> OffsetPlaybackPosition( int bySeconds );
 
-        void    StartTransportStatusRequests();
-        void    StopTransportStatusRequests();
+        Task<bool>  StartTransportStatusRequests();
+        void        StopTransportStatusRequests();
 
         IObservable<TransportInformation>   TransportStatus { get; }
 

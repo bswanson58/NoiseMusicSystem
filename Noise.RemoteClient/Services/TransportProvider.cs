@@ -100,7 +100,10 @@ namespace Noise.RemoteClient.Services {
             return default;
         } 
         
-        public async void StartTransportStatusRequests() {
+        // Returns true if the method exits without an error condition causing it.
+        public async Task<bool> StartTransportStatusRequests() {
+            var retValue = Client == null;
+
             StopTransportStatusRequests();
 
             if( Client != null ) {
@@ -112,17 +115,21 @@ namespace Noise.RemoteClient.Services {
                     mLog.LogException( nameof( StartTransportStatusRequests ), ex );
                 }
 
-                if( mTransportStatusStream != null ) {
+                if( mTransportStatusStream?.ResponseStream != null ) {
                     using( mTransportStatusStream ) {
                         try {
-                            if( mTransportStatusStreamCancellation?.IsCancellationRequested == false ) {
-                                while( await mTransportStatusStream.ResponseStream.MoveNext( mTransportStatusStreamCancellation.Token )) {
-                                    PublishTransportStatus( mTransportStatusStream.ResponseStream.Current );
-                                }
+                            while(( mTransportStatusStreamCancellation?.IsCancellationRequested == false ) &&
+                                  ( await mTransportStatusStream.ResponseStream.MoveNext( mTransportStatusStreamCancellation.Token ))) {
+                                PublishTransportStatus( mTransportStatusStream.ResponseStream.Current );
                             }
+
+                            retValue = true;
                         }
                         catch( RpcException ex ) {
-                            if( ex.StatusCode != StatusCode.Cancelled ) {
+                            if( ex.StatusCode == StatusCode.Cancelled ) {
+                                retValue = true;
+                            }
+                            else {
                                 mLog.LogException( "StartTransportStatusRequests:RpcException", ex );
                             }
                         }
@@ -132,6 +139,8 @@ namespace Noise.RemoteClient.Services {
                     }
                 }
             }
+
+            return retValue;
         }
 
         private void PublishTransportStatus( TransportInformation status ) {

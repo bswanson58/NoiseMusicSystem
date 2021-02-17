@@ -22,7 +22,10 @@ namespace Noise.RemoteClient.Services {
             mQueueListStatus = new BehaviorSubject<QueueStatusResponse>( new QueueStatusResponse());
         }
 
-        public async void StartQueueStatusRequests() {
+        // Returns true if the method exits without an error condition causing it.
+        public async Task<bool> StartQueueStatusRequests() {
+            var retValue = Client == null;
+
             StopQueueStatusRequests();
 
             if( Client != null ) {
@@ -34,17 +37,21 @@ namespace Noise.RemoteClient.Services {
                     mLog.LogException( "Client.StartQueueStatus", ex );
                 }
 
-                if( mQueueStatusStream != null ) {
+                if( mQueueStatusStream?.ResponseStream != null ) {
                     using( mQueueStatusStream ) {
                         try {
-                            if( mQueueStatusStreamCancellation?.IsCancellationRequested == false ) {
-                                while( await mQueueStatusStream.ResponseStream.MoveNext( mQueueStatusStreamCancellation.Token )) {
-                                    PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
-                                }
+                            while(( mQueueStatusStreamCancellation?.IsCancellationRequested == false ) &&
+                                  ( await mQueueStatusStream.ResponseStream.MoveNext( mQueueStatusStreamCancellation.Token ))) {
+                                PublishQueueStatus( mQueueStatusStream.ResponseStream.Current );
                             }
+
+                            retValue = true;
                         }
                         catch( RpcException ex ) {
-                            if( ex.StatusCode != StatusCode.Cancelled ) {
+                            if( ex.StatusCode == StatusCode.Cancelled ) {
+                                retValue = true;
+                            }
+                            else {
                                 mLog.LogException( "StartQueueStatusRequests:RpcException", ex );
                             }
                         }
@@ -54,6 +61,8 @@ namespace Noise.RemoteClient.Services {
                     }
                 }
             }
+
+            return retValue;
         }
 
         private void PublishQueueStatus( QueueStatusResponse status ) {
