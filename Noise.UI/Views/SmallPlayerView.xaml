@@ -12,6 +12,7 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:prism="http://prismlibrary.com/"
                  xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+                 xmlns:system="clr-namespace:System;assembly=mscorlib"
                  mc:Ignorable="d" 
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  d:DataContext="{d:DesignInstance viewModels:PlayerViewModel, IsDesignTimeCreatable=False}"
@@ -31,6 +32,10 @@
         <valueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
         <reusableConverters:EmptyStringVisibilityConverter x:Key="CollapseIfEmptyString" HideOnEmpty="False" IsHidden="False"/>
         <reusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="False"/>
+
+        <!-- MahApps Slider thumb dimensions -->
+        <system:Double x:Key="MahApps.Sizes.Slider.HorizontalThumb.Height">13</system:Double>
+        <system:Double x:Key="MahApps.Sizes.Slider.HorizontalThumb.Width">25</system:Double>
 
         <DataTemplate x:Key="AfterTemplate">
             <Rectangle Fill="{DynamicResource SignatureBrush}" Margin="0,4,-4,4"/>
@@ -126,7 +131,7 @@
                     <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
                         <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Position: "/>
                         <TextBlock Width="35" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
-                                   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
+                                   Text="{Binding LeftTrackTime, Converter={StaticResource TimeSpanConverter}}">
                                 <eventCommandTriggers:CommandSource.Trigger>
                                     <eventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
                                 </eventCommandTriggers:CommandSource.Trigger>
@@ -208,7 +213,7 @@
 
                     <!-- Volume Slider -->
                     <Slider Grid.Column="5" Margin="3,0,0,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
-                            Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+                            Style="{DynamicResource MahApps.Styles.Slider}" Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
                 </Grid>
             </Grid>
         </Grid>
