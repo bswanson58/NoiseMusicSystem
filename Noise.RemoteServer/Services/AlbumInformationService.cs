@@ -90,6 +90,7 @@ namespace Noise.RemoteServer.Services {
                             retValue.Success = true;
 
                             mEventAggregator.PublishOnUIThread( new Events.AlbumUserUpdate( updater.Item.DbId ));
+                            mEventAggregator.PublishOnUIThread( new Events.LibraryBackupPressure( 1, "Remote Album Rating Update" ));
                         }
                     }
                 }
