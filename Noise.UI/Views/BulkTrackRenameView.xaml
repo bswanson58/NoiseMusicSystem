@@ -8,15 +8,16 @@
              xmlns:dto="clr-namespace:Noise.UI.Dto"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance viewModels:BulkTrackRenameViewModel, IsDesignTimeCreatable=False}"
-             Height="480" Width="950">
+             d:DataContext="{d:DesignInstance viewModels:BulkTrackRenameViewModel, IsDesignTimeCreatable=False}">
 
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
-            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
             <Setter Property="ShowInTaskbar" Value="False"/>
             <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+            <Setter Property="MinHeight" Value="480"/>
+            <Setter Property="MinWidth" Value="950"/>
         </Style>
     </prism:Dialog.WindowStyle>
 
