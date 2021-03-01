@@ -165,13 +165,22 @@ namespace Noise.RemoteClient.ViewModels {
             StartStatus();
         }
 
-        private void StartStatus() {
+        private async void StartStatus() {
             try {
                 if(( mLibraryOpen ) &&
                    ( mClientAwake )) {
                     mTransportSubscription = mTransportProvider.TransportStatus.Subscribe( OnTransportChanged );
 
                     StartTransportStatus();
+
+                    // get the initial volume level.
+                    var volume = await mTransportProvider.GetVolumeLevel();
+
+                    if( volume.Success ) {
+                        VolumeLevel = volume.VolumeLevel;
+
+                        RaisePropertyChanged( nameof( VolumeLevel ));
+                    }
                 }
                 else {
                     mTransportProvider.StopTransportStatusRequests();
