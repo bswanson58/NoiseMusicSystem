@@ -18,10 +18,12 @@ namespace Noise.Core {
 		private readonly ILibraryBuilder			mLibraryBuilder;
 		private readonly IDatabaseManager			mDatabaseManager;
 		private readonly IPlayController			mPlayController;
-        // ReSharper disable once NotAccessedField.Local
+        // ReSharper disable NotAccessedField.Local
         private readonly IBackgroundTaskManager		mBackgroundTasks;
+        private readonly ILibraryBackupManager		mBackupManager;
+        // ReSharper restore NotAccessedField.Local
 
-		public NoiseManager( IEventAggregator eventAggregator,
+        public NoiseManager( IEventAggregator eventAggregator,
 							 INoiseLog log,
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
@@ -29,7 +31,8 @@ namespace Noise.Core {
 							 IRemoteServer remoteServer,
 							 IPreferences preferences,
                              IPlayController playController,
-                             IBackgroundTaskManager backgroundTaskManager ) {
+                             IBackgroundTaskManager backgroundTaskManager,
+                             ILibraryBackupManager backupManager ) {
 			mEvents = eventAggregator;
 			mLog = log;
 			mLifecycleManager = lifecycleManager;
@@ -39,6 +42,7 @@ namespace Noise.Core {
 			mPreferences = preferences;
 			mPlayController = playController;
 			mBackgroundTasks = backgroundTaskManager;
+			mBackupManager = backupManager;
 		}
 
 		public Task<bool> AsyncInitialize() {
