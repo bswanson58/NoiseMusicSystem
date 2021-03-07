@@ -5,6 +5,7 @@
              xmlns:dto="clr-namespace:Noise.RemoteClient.Dto;assembly=Noise.RemoteClient"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
              xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
+             xmlns:forms9Patch="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.AlbumList"
              x:Name="_albumList"
@@ -18,13 +19,16 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumCount}"/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text=" Albums for: "/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
-            </StackLayout>
+            <forms9Patch:Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Lines="1" AutoFit="Width">
+                <forms9Patch:Label.Text>
+                    <MultiBinding StringFormat="({0}) Albums for: {1}">
+                        <Binding Path="AlbumCount"/>
+                        <Binding Path="ArtistName"/>
+                    </MultiBinding>
+                </forms9Patch:Label.Text>
+            </forms9Patch:Label>
 
-            <SearchBar Grid.Column="2" TextColor="White" PlaceholderColor="WhiteSmoke" Placeholder="album list filter" Text="{Binding FilterText}"/>
+            <SearchBar Grid.Column="2" WidthRequest="220" TextColor="White" PlaceholderColor="WhiteSmoke" Placeholder="album list filter" Text="{Binding FilterText}"/>
         </Grid>
     </Shell.TitleView>
 

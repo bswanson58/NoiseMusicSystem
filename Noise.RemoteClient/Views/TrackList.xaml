@@ -6,6 +6,7 @@
              xmlns:touchEffect="clr-namespace:TouchEffect;assembly=TouchEffect"
              xmlns:controls="clr-namespace:Noise.RemoteClient.Controls;assembly=Noise.RemoteClient"
              xmlns:valueConverters="clr-namespace:Noise.RemoteClient.ValueConverters;assembly=Noise.RemoteClient"
+             xmlns:forms9Patch="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Noise.RemoteClient.Views.TrackList"
              x:Name="_trackView"
@@ -91,12 +92,14 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="Tracks for: "/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding AlbumName}"/>
-            </StackLayout>
+            <forms9Patch:Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Lines="1" AutoFit="Width">
+                <forms9Patch:Label.Text>
+                    <MultiBinding StringFormat="Tracks for: {0}/{1}">
+                        <Binding Path="ArtistName"/>
+                        <Binding Path="AlbumName"/>
+                    </MultiBinding>
+                </forms9Patch:Label.Text>
+            </forms9Patch:Label>
 
             <ContentView Grid.Column="2" Style="{StaticResource TransportButtonTouchEffect}" touchEffect:TouchEff.Command="{Binding EditAlbumRatings}">
                 <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">

@@ -4,6 +4,7 @@
              xmlns:views="clr-namespace:Noise.RemoteClient.Views;assembly=Noise.RemoteClient"
              x:Class="Noise.RemoteClient.Views.Suggestions"
              xmlns:prism="http://prismlibrary.com"
+             xmlns:forms9Patch="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              prism:ViewModelLocator.AutowireViewModel="True"
              Title="Suggestions">
 
@@ -14,12 +15,14 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackLayout Grid.Column="0" Orientation="Horizontal" BackgroundColor="Transparent">
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="Suggestions for: "/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding ArtistName}"/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="/"/>
-                <Label Style="{StaticResource TitleViewTitleStyle}" Text="{Binding TrackName}"/>
-            </StackLayout>
+            <forms9Patch:Label Grid.Column="0" Style="{StaticResource TitleViewTitleStyle}" Lines="1" AutoFit="Width">
+                <forms9Patch:Label.Text>
+                    <MultiBinding StringFormat="Suggestions for: {0}/{1}">
+                        <Binding Path="ArtistName"/>
+                        <Binding Path="TrackName"/>
+                    </MultiBinding>
+                </forms9Patch:Label.Text>
+            </forms9Patch:Label>
         </Grid>
     </Shell.TitleView>
 
