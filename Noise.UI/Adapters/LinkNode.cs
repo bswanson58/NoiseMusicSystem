@@ -18,8 +18,8 @@ namespace Noise.UI.Adapters {
 			LinkClicked = new DelegateCommand( OnLinkClicked );
 		}
 
-		public LinkNode( string displayText, long linkId, Action<long> linkAction ) {
-			DisplayText = displayText;
+		public LinkNode( string displayText, long linkId, Action<long> linkAction ) : 
+            this( displayText ) {
 			LinkId = linkId;
 			mLinkAction = linkAction;
 
