@@ -212,6 +212,7 @@ namespace Noise.UI.ViewModels {
 
 			AlbumPlayTime = TimeSpan.FromMilliseconds( trackList.Sum( track => track.DurationMilliseconds ));
 
+			VolumeNames.Clear();
 			VolumeNames.AddRange(( from track in trackList 
 								   where !string.IsNullOrWhiteSpace( track.VolumeName ) 
                                    orderby track.VolumeName 
