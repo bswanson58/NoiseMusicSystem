@@ -94,14 +94,22 @@ namespace Noise.UI.ViewModels {
             var retValue = new List<UiTagAssociation>();
 
             if( mCurrentTag != null ) {
-                var associations = mTagManager.GetAssociations( mCurrentTag.DbId );
+                try {
+                    var associations = mTagManager.GetAssociations( mCurrentTag.DbId );
 
-                foreach( var association in associations ) {
-                    var track = mTrackProvider.GetTrack( association.ArtistId );
-                    var artist = mArtistProvider.GetArtist( track.Artist );
-                    var album = mAlbumProvider.GetAlbum( track.Album );
+                    foreach( var association in associations ) {
+                        var track = mTrackProvider.GetTrack( association.ArtistId );
 
-                    retValue.Add( new UiTagAssociation( association, artist, album, track, OnAssociationPlay, OnAssociationDelete ));
+                        if( track != null ) {
+                            var artist = mArtistProvider.GetArtist( track.Artist );
+                            var album = mAlbumProvider.GetAlbum( track.Album );
+
+                            retValue.Add( new UiTagAssociation( association, artist, album, track, OnAssociationPlay, OnAssociationDelete ));
+                        }
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "LoadAssociations", ex );
                 }
             }
 
