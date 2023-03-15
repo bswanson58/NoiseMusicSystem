@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using ColorMine.ColorSpaces;
 using HueLighting.Dto;
 using HueLighting.Interfaces;
-using JetBrains.Annotations;
 using MilkBottle.Infrastructure.Dto;
 using MilkBottle.Infrastructure.Interfaces;
 using Q42.HueApi;
+using Q42.HueApi.ColorConverters;
+using Q42.HueApi.ColorConverters.HSB;
 using Q42.HueApi.Interfaces;
+using Q42.HueApi.Models.Bridge;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
 
 namespace HueLighting.Models {
+
     public class HubManager : IHubManager {
         private readonly IApplicationConstants  mApplicationConstants;
         private readonly IEnvironment           mEnvironment;
@@ -26,7 +28,6 @@ namespace HueLighting.Models {
 
         public  bool                            IsInitialized => mClient != null;
 
-        [UsedImplicitly]
         public HubManager( IEnvironment environment, IPreferences preferences, IBasicLog log, IApplicationConstants constants ) {
             mEnvironment = environment;
             mPreferences = preferences;
@@ -60,6 +61,34 @@ namespace HueLighting.Models {
             return retValue;
         }
 
+        public async Task<IList<HubInformation>> GetRegisteredHubs() {
+            var retValue = new List<HubInformation>();
+            var installationInfo = mPreferences.Load<HueConfiguration>();
+
+            if(!String.IsNullOrWhiteSpace( installationInfo.BridgeIp )) {
+                try {
+                    var client = new LocalHueClient( installationInfo.BridgeIp, installationInfo.BridgeAppKey );
+
+                    var bridgeInfo = await client.GetBridgeAsync();
+
+                    if( bridgeInfo?.Config != null ) {
+                        var bridge = new LocatedBridge {
+                            BridgeId = bridgeInfo.Config.BridgeId, 
+                            IpAddress = bridgeInfo.Config.IpAddress
+                        };
+
+                        retValue.Add( new HubInformation( bridge, bridgeInfo, installationInfo.BridgeAppKey, 
+                                                          installationInfo.BridgeStreamingKey, true ));
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "Attempt to GetRegisteredHubs", ex );
+                }
+            }
+
+            return retValue;
+        }
+
         public void EmulateHub() {
             mEmulating = true;
         }
@@ -67,7 +96,8 @@ namespace HueLighting.Models {
         public async Task<IEnumerable<HubInformation>> LocateHubs() { 
             var retValue = new List<HubInformation>();
             var installationInfo = mPreferences.Load<HueConfiguration>();
-            var bridges = await HueBridgeDiscovery.FastDiscoveryWithNetworkScanFallbackAsync( TimeSpan.FromSeconds( 5 ), TimeSpan.FromSeconds( 30 ));
+//            var bridges = await ( new HueBridgeDiscovery2()).ScanEverythingAsync( TimeSpan.FromSeconds( 20 ));
+            var bridges = await HueBridgeDiscovery.FastDiscoveryWithNetworkScanFallbackAsync( TimeSpan.FromSeconds( 15 ), TimeSpan.FromSeconds( 30 ));
 
             foreach( var bridge in bridges ) {
                 try {
@@ -94,19 +124,24 @@ namespace HueLighting.Models {
             return retValue;
         }
 
-        public async Task<String> RegisterApp( HubInformation hub, bool setAsConfiguredHub ) {
-            var retValue = String.Empty;
+        public async Task<HubInformation> RegisterApp( HubInformation hub, bool setAsConfiguredHub ) {
+            HubInformation retValue = default;
 
             try {
                 var client = new LocalHueClient( hub.IpAddress );
                 var clientKey = await client.RegisterAsync( mApplicationConstants.ApplicationName, mEnvironment.EnvironmentName(), true );
 
-                if( setAsConfiguredHub ) {
-                    SetConfiguredHub( new HubInformation( hub, clientKey?.Username, clientKey?.StreamingClientKey ));
+                if( clientKey != null ) {
+                    retValue = new HubInformation( hub, clientKey.Username, clientKey.StreamingClientKey ?? String.Empty );
+
+                    if( setAsConfiguredHub ) {
+                        SetConfiguredHub( retValue );
+                    }
                 }
+
             }
             catch( Exception ex ) {
-                retValue = ex.Message;
+                mLog.LogException( "Attempting to RegisterApp", ex );
             }
 
             return retValue;
@@ -124,7 +159,7 @@ namespace HueLighting.Models {
         }
 
         public async Task<IEnumerable<Bulb>> GetBulbs() {
-            var retValue = default( IEnumerable<Bulb>);
+            var retValue = Enumerable.Empty<Bulb>();
 
             try {
                 if( mClient == null ) {
@@ -149,7 +184,7 @@ namespace HueLighting.Models {
         }
 
         public async Task<IEnumerable<BulbGroup>> GetBulbGroups() {
-            var retValue = default( IEnumerable<BulbGroup>);
+            var retValue = Enumerable.Empty<BulbGroup>();
 
             try {
                 if( mClient == null ) {
@@ -169,16 +204,123 @@ namespace HueLighting.Models {
 
         private async Task<IEnumerable<BulbGroup>> ToBulbGroup( IEnumerable<Group> fromList ) {
             var retValue = new List<BulbGroup>();
+            var bulbList = await GetBulbs();
 
-            if( fromList != null ) {
-                var bulbList = await GetBulbs();
-
-                foreach( var g in fromList ) {
-                    retValue.Add( new BulbGroup( g.Name, g.Type, from bulb in g.Lights select bulbList.FirstOrDefault( b => b.Id.Equals( bulb ))));
-                }
+            foreach( var g in fromList ) {
+                retValue.Add( new BulbGroup( g.Name, g.Type, from bulb in g.Lights select bulbList.FirstOrDefault( b => b.Id.Equals( bulb ))));
             }
 
             return retValue;
+        }
+
+        private static IEnumerable<Bulb> BuildEmulationBulbSet() {
+            var retValue = new List<Bulb> {
+                new Bulb( "1", "Illuminate 1", true ),
+                new Bulb( "2", "Illuminate 2", true ),
+                new Bulb( "3", "Illuminate 3", true ),
+                new Bulb( "4", "Illuminate 4", true ),
+                new Bulb( "5", "Illuminate 5", true )
+            };
+
+            return retValue;
+        }
+
+        public async Task<bool> SetBulbState( Bulb bulb, bool state) {
+            return await SetBulbState( new []{ bulb.Id }, state );
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, bool state ) {
+            return await SetBulbState( from b in bulbList select b.Id, state );
+        }
+         
+        private async Task<bool> SetBulbState( IEnumerable<string> bulbList, bool state ) {
+            if(( mClient == null ) ||
+               ( mEmulating )) {
+                return true;
+            }
+
+            var command = new LightCommand{ On = state };
+            var result = await mClient.SendCommandAsync( command, bulbList );
+
+            return !result.HasErrors();
+        }
+
+        public async Task<bool> SetBulbState( Bulb bulb, int brightness ) {
+            return await SetBulbState( new []{ bulb.Id }, brightness );
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, int brightness ) {
+            return await SetBulbState( from b in bulbList select b.Id, brightness );
+        }
+
+        public async Task<bool> SetBulbState( Bulb bulb, double brightness ) {
+            return await SetBulbState( new []{ bulb.Id }, (int)( brightness * 255 ));
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, double brightness ) {
+            return await SetBulbState( from b in bulbList select b.Id, (int)( brightness * 255 ));
+        }
+
+        private async Task<bool> SetBulbState( IEnumerable<string> bulbList, int brightness ) {
+            if(( mClient == null ) ||
+               ( mEmulating )) {
+                return true;
+            }
+
+            brightness = Math.Max( Math.Min( 255, brightness ), 0 );
+
+            var command = new LightCommand{ Brightness = (byte)brightness };
+            var result = await mClient.SendCommandAsync( command, bulbList );
+
+            return !result.HasErrors();
+        }
+
+        public async Task<bool> SetBulbState( Bulb bulb, Color color, TimeSpan? transitionTime = null ) {
+            return await SetBulbState( new []{ bulb.Id }, color, transitionTime );
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, Color color, TimeSpan? transitionTime = null ) {
+            return await SetBulbState( from b in bulbList select b.Id, color, transitionTime );
+        }
+
+        private async Task<bool> SetBulbState( IEnumerable<string> bulbList, Color color, TimeSpan? transitionTime = null ) {
+            if(( mClient == null ) ||
+               ( mEmulating )) {
+                return true;
+            }
+
+            var command = new LightCommand();
+
+            command.SetColor( new RGBColor( color.R, color.G, color.B ));
+            command.TransitionTime = transitionTime;
+
+            var result = await mClient.SendCommandAsync( command, bulbList );
+
+            return !result.HasErrors();
+        }
+
+        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, Color color, double brightness, TimeSpan transitionTime ) =>
+            await SetBulbState( bulbList.Select( b => b.Id ), color, brightness, transitionTime );
+
+        public async Task<bool> SetBulbState( Bulb bulb, Color color, double brightness, TimeSpan transitionTime ) =>
+            await SetBulbState( new []{ bulb.Id }, color, brightness, transitionTime );
+
+        private async Task<bool> SetBulbState( IEnumerable<string> bulbList, Color color, double brightness, TimeSpan transitionTime ) {
+            if(( mClient == null ) ||
+               ( mEmulating )) {
+                return true;
+            }
+
+            var command = new LightCommand();
+            var brightnessFactor = Math.Max( Math.Min( brightness, 1.0D ), 0 );
+
+            command.TransitionTime = transitionTime;
+            command.SetColor( new RGBColor( color.R, color.G, color.B ));
+            command.Brightness = (byte)( brightnessFactor * 255.0 );
+
+            var result = await mClient.SendCommandAsync( command, bulbList );
+
+            return !result.HasErrors();
         }
 
         public async Task<IEnumerable<Group>> GetEntertainmentGroups() {
@@ -247,87 +389,6 @@ namespace HueLighting.Models {
             await retValue.StartStreamingGroup();
 
             return retValue;
-        }
-
-        private IEnumerable<Bulb> BuildEmulationBulbSet() {
-            var retValue = new List<Bulb> {
-                                new Bulb( "1", "Illuminate 1", true ),
-                                new Bulb( "2", "Illuminate 2", true ),
-                                new Bulb( "3", "Illuminate 3", true ),
-                                new Bulb( "4", "Illuminate 4", true ),
-                                new Bulb( "5", "Illuminate 5", true )
-                            };
-
-            return retValue;
-        }
-
-        public async Task<bool> SetBulbState( Bulb bulb, bool state) {
-            return await SetBulbState( new []{ bulb.Id }, state );
-        }
-
-        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, bool state ) {
-            return await SetBulbState( from b in bulbList select b.Id, state );
-        }
-         
-        public async Task<bool> SetBulbState( IEnumerable<string> bulbList, bool state ) {
-            if(( mClient == null ) ||
-               ( mEmulating )) {
-                return true;
-            }
-
-            var command = new LightCommand{ On = state };
-            var result = await mClient.SendCommandAsync( command, bulbList );
-
-            return !result.HasErrors();
-        }
-
-        public async Task<bool> SetBulbState( Bulb bulb, int brightness ) {
-            return await SetBulbState( new []{ bulb.Id }, brightness );
-        }
-
-        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, int brightness ) {
-            return await SetBulbState( from b in bulbList select b.Id, brightness );
-        }
-
-        public async Task<bool> SetBulbState( IEnumerable<string> bulbList, int brightness ) {
-            if(( mClient == null ) ||
-               ( mEmulating )) {
-                return true;
-            }
-
-            brightness = Math.Max( Math.Min( 255, brightness ), 0 );
-
-            var command = new LightCommand{ Brightness = (byte)brightness };
-            var result = await mClient.SendCommandAsync( command, bulbList );
-
-            return !result.HasErrors();
-        }
-
-        public async Task<bool> SetBulbState( Bulb bulb, Color color, TimeSpan? transitionTime = null ) {
-            return await SetBulbState( new []{ bulb.Id }, color, transitionTime );
-        }
-
-        public async Task<bool> SetBulbState( IEnumerable<Bulb> bulbList, Color color, TimeSpan? transitionTime = null ) {
-            return await SetBulbState( from b in bulbList select b.Id, color, transitionTime );
-        }
-
-        public async Task<bool> SetBulbState( IEnumerable<string> bulbList, Color color, TimeSpan? transitionTime = null ) {
-            if(( mClient == null ) ||
-               ( mEmulating )) {
-                return true;
-            }
-
-            var command = new LightCommand();
-            var hsbColor = new Rgb { R = color.R, G = color.G, B = color.B }.To<Hsb>();
-
-            command.Hue = Math.Max( Math.Min( 65535, (int)(( hsbColor.H / 360.0 ) * 65535 )), 0 );
-            command.Saturation = Math.Max( Math.Min( 254, (int)( hsbColor.S * 254 )), 0 );
-            command.Brightness = Math.Max( Math.Min( (byte)254, (byte)( hsbColor.B * 254 )), (byte)1 );
-            command.TransitionTime = transitionTime;
-
-            var result = await mClient.SendCommandAsync( command, bulbList );
-
-            return !result.HasErrors();
         }
     }
 }

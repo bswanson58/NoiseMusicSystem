@@ -144,10 +144,8 @@ namespace AirSpace.Interop
         {
             RECT rcClient = new RECT();
             NativeMethods.GetClientRect(Handle, ref rcClient);
-            if (_interopBitmap == null || rcClient.width != _bitmapWidth || rcClient.height != _bitmapHeight)
-            {
-                if (_interopBitmap != null)
-                {
+            if (_interopBitmap == null || rcClient.width != _bitmapWidth || rcClient.height != _bitmapHeight) {
+                if (_interopBitmap != null) {
                     DestroyBitmap();
                 }
 
@@ -162,7 +160,9 @@ namespace AirSpace.Interop
             NativeMethods.BitBlt(_hDC, 0, 0, _bitmapWidth, _bitmapHeight, hdcSrc, 0, 0, ROP.SRCCOPY);
             NativeMethods.ReleaseDC(Handle, hdcSrc);
 
-            _interopBitmap.Invalidate();
+            if( _interopBitmap != null ) {
+                _interopBitmap.Invalidate();
+            }
 
             return _interopBitmap;
         }

@@ -196,12 +196,16 @@
     <Compile Include="Models\EntertainmentGroupManager.cs" />
     <Compile Include="Models\HubManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\TaskRepeater.cs" />
     <Compile Include="ViewModels\BulbSelectorViewModel.cs" />
     <Compile Include="ViewModels\EntertainmentGroupDisplayViewModel.cs" />
     <Compile Include="ViewModels\EntertainmentGroupViewModel.cs" />
     <Compile Include="ViewModels\HubConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\HubRegistrationViewModel.cs" />
     <Compile Include="ViewModels\HubSelectionViewModel.cs" />
+    <Compile Include="ViewModels\HubViewModel.cs" />
     <Compile Include="ViewModels\LightColorSelectorViewModel.cs" />
+    <Compile Include="ViewModels\MessageDialogViewModel.cs" />
     <Compile Include="Views\BulbSelectorView.xaml.cs">
       <DependentUpon>BulbSelectorView.xaml</DependentUpon>
     </Compile>
@@ -214,11 +218,14 @@
     <Compile Include="Views\HubConfigurationView.xaml.cs">
       <DependentUpon>HubConfigurationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HubSelectionView.xaml.cs">
-      <DependentUpon>HubSelectionView.xaml</DependentUpon>
+    <Compile Include="Views\HubRegistrationView.xaml.cs">
+      <DependentUpon>HubRegistrationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LightColorSelectorView.xaml.cs">
       <DependentUpon>LightColorSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MessageDialog.xaml.cs">
+      <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -273,6 +280,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HubRegistrationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\HubSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -280,6 +291,10 @@
     <Page Include="Views\LightColorSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MessageDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

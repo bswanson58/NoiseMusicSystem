@@ -24,7 +24,7 @@ namespace HueLighting.ViewModels {
         }
 
         private void OnConfigureBridge() {
-            mDialogService.ShowDialog( nameof( HubSelectionView ), new DialogParameters(), result => {
+            mDialogService.ShowDialog( nameof( HubRegistrationView ), new DialogParameters(), result => {
                 if( result.Result == ButtonResult.OK ) {
                     LoadHubInfo();
                 }

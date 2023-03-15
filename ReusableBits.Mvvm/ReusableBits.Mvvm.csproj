@@ -164,6 +164,7 @@
     <Compile Include="ViewModelSupport\AutomaticCommandBase.cs" />
     <Compile Include="ViewModelSupport\AutomaticPropertyBase.cs" />
     <Compile Include="ViewModelSupport\DependantPropertyBase.cs" />
+    <Compile Include="ViewModelSupport\DialogAwareBase.cs" />
     <Compile Include="ViewModelSupport\PropertyChangeBase.cs" />
     <Compile Include="ViewModelSupport\SortableCollection.cs" />
   </ItemGroup>

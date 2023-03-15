@@ -39,7 +39,7 @@
         <GradientStop Color="{StaticResource PlayButtonMouseOverStroke}" Offset="1" />
     </LinearGradientBrush>
 
-<Style x:Key="StartupFontStyle" TargetType="Control">
+    <Style x:Key="StartupFontStyle" TargetType="Control">
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
@@ -108,7 +108,13 @@
     <Style x:Key="GeneralComboStyle" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
 		<Setter Property="Padding" Value="5,3"/>
 	</Style>
-	
+
+    <Style x:Key="LabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource BorderTextColor}"/>
+    </Style>
+
 	<Style x:Key="TransportButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Height" Value="29"/>
 		<Setter Property="Width" Value="29"/>
