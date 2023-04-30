@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define ApplicationName "Tune Renamer II"
-#define ApplicationVersion "v" + GetFileVersion("..\..\Album4Matter\bin\x64\Release\Album4Matter.exe")
+#define ApplicationVersion "v" + GetFileVersion("..\..\TuneRenamer\bin\x64\Release\TuneRenamer.exe")
 #define GroupName "Secret Squirrel Software"
 #define ExecutableName "TuneRenamer.exe"
 #define Platform "x64"
