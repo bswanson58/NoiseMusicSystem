@@ -8,7 +8,7 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:ReplacementWordsViewModel, IsDesignTimeCreatable=False}"
-             Height="700" Width="550">
+             Height="700" Width="530">
 
     <mvvm:Dialog.WindowStyle>
         <Style TargetType="Window">
@@ -31,8 +31,8 @@
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeColumns="True"
                   ItemsSource="{Binding WordReplacements}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Original" MinWidth="200" Binding="{Binding Word}" />
-                <DataGridTextColumn Header="Replacement" MinWidth="200" Binding="{Binding Replacement}" />
+                <DataGridTextColumn Header="Original" MinWidth="250" Binding="{Binding Word}" />
+                <DataGridTextColumn Header="Replacement" MinWidth="250" Binding="{Binding Replacement}" />
             </DataGrid.Columns>
         </DataGrid>
 

@@ -124,11 +124,13 @@ namespace TuneRenamer.Dto {
         public  BindableCollection<SourceItem>  Children { get; }
         public  DelegateCommand                 CopyNames { get; }
         public  DelegateCommand                 CopyTags { get; }
+        public  long                            DirectorySize { get; }
 
-        public SourceFolder( string fileName, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags ) :
+        public SourceFolder( string fileName, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags, long directorySize ) :
             base( Path.GetFileName( fileName ), fileName ) {
             mCopyNames = copyNames;
             mCopyTags = copyTags;
+            DirectorySize = directorySize;
 
             CopyNames = new DelegateCommand( OnCopyNames );
             CopyTags = new DelegateCommand( OnCopyTags );

@@ -9,12 +9,15 @@
              xmlns:behaviors="clr-namespace:TuneRenamer.Behaviors"
              xmlns:viewModels="clr-namespace:TuneRenamer.ViewModels"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:RenamerWorkshopViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <valueConverters:NumericTextMultitudeConverter x:Key="MultitudeConverter"/>
+
         <Style x:Key="IsExpandedBindingStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
             <Setter Property="Focusable" Value="{Binding IsSelectable}"/>
@@ -125,6 +128,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Source:"/>
@@ -150,6 +154,10 @@
                 </b:Interaction.Behaviors>
             </TreeView>
 
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label Style="{StaticResource LabelStyle}" Content="Source Size: "/>
+                <Label Style="{StaticResource LabelStyle}" Content="{Binding SourceSize, Converter={StaticResource MultitudeConverter}}"/>
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Column="1" Margin="10,0" IsSharedSizeScope="True">

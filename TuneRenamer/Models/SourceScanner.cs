@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
 using TuneRenamer.Platform;
+using TuneRenamer.Support;
 
 namespace TuneRenamer.Models {
     class SourceScanner : ISourceScanner {
@@ -19,11 +20,12 @@ namespace TuneRenamer.Models {
             mLog = log;
         }
 
-        public Task<IEnumerable<SourceItem>> CollectFolder( string rootPath, Action<SourceFile> onItemInspect, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags ) {
+        public Task<List<SourceItem>> CollectFolder( string rootPath, Action<SourceFile> onItemInspect, Action<SourceFolder> copyNames, Action<SourceFolder> copyTags ) {
             var appPreferences = mPreferences.Load<TuneRenamerPreferences>();
 
             return Task.Run( () => {
-                var rootFolder = new SourceFolder( rootPath, copyNames, copyTags );
+                var dirInfo = new DirectoryInfo( rootPath );
+                var rootFolder = new SourceFolder( rootPath, copyNames, copyTags, dirInfo.GetDirectorySize());
 
                 try {
                     if( Directory.Exists( rootPath )) {
@@ -34,7 +36,7 @@ namespace TuneRenamer.Models {
                     mLog.LogException( $"CollectFolder: '{rootPath}'", ex );
                 }
 
-                return rootFolder.Children.AsEnumerable();
+                return rootFolder.Children.ToList();
             });
         }
 
@@ -48,7 +50,8 @@ namespace TuneRenamer.Models {
                         continue;
                     }
 
-                    var folder = new SourceFolder( directory, copyNames, copyTags );
+                    var dirInfo = new DirectoryInfo( directory );
+                    var folder = new SourceFolder( directory, copyNames, copyTags, dirInfo.GetDirectorySize());
 
                     rootFolder.Children.Add( folder );
                     CollectFolder( folder, onItemInspect, copyNames, copyTags, skipUnderscoredDirectories );

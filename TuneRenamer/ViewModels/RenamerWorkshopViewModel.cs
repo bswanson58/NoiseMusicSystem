@@ -38,6 +38,7 @@ namespace TuneRenamer.ViewModels {
         public  int                                         FileCount { get; private  set; }
         public  int                                         LineCount { get; private set; }
         public  bool                                        CountsMatch {get; private set; }
+        public  long                                        SourceSize { get; private set; }
 
         public  DelegateCommand                             BrowseSourceFolder { get; }
         public  DelegateCommand                             OpenSourceFolder { get; }
@@ -241,8 +242,13 @@ namespace TuneRenamer.ViewModels {
         }
 
         private async void CollectSource() {
+            var sourceDirectory = await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection, OnCopyNames, OnCopyTags );
+
             SourceList.Clear();
-            SourceList.AddRange( await mSourceScanner.CollectFolder( SourceDirectory, OnItemInspection, OnCopyNames, OnCopyTags ));
+            SourceList.AddRange( sourceDirectory );
+            SourceSize = sourceDirectory.OfType<SourceFolder>().Sum( f => f.DirectorySize );
+
+            RaisePropertyChanged( () => SourceSize );
 
             await mSourceScanner.AddTags( SourceList );
         }
