@@ -215,10 +215,14 @@
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\RenamerWorkshopViewModel.cs" />
+    <Compile Include="ViewModels\ReplacementWordsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="Views\RenamerWorkshopView.xaml.cs">
       <DependentUpon>RenamerWorkshopView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReplacementWordsView.xaml.cs">
+      <DependentUpon>ReplacementWordsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -236,6 +240,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\RenamerWorkshopView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReplacementWordsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

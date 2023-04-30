@@ -6,15 +6,18 @@ using System.Text;
 using System.Windows;
 using Caliburn.Micro;
 using Prism.Commands;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneRenamer.Dto;
 using TuneRenamer.Interfaces;
+using TuneRenamer.Views;
 
 namespace TuneRenamer.ViewModels {
     class RenamerWorkshopViewModel : PropertyChangeBase, IHandle<Events.WindowStateEvent>, IDisposable {
+        private readonly IDialogService                     mDialogService;
         private readonly IEventAggregator                   mEventAggregator;
         private readonly IPreferences                       mPreferences;
-        private readonly IPlatformDialogService             mDialogService;
+        private readonly IPlatformDialogService             mPlatformDialogService;
         private readonly IPlatformLog                       mLog;
         private readonly ISourceScanner                     mSourceScanner;
         private readonly ITextHelpers                       mTextHelpers;
@@ -40,6 +43,7 @@ namespace TuneRenamer.ViewModels {
         public  DelegateCommand                             OpenSourceFolder { get; }
         public  DelegateCommand                             RefreshSourceFolder { get; }
 
+        public  DelegateCommand                             Configuration { get; }
         public  DelegateCommand                             IsolateText { get; }
         public  DelegateCommand                             ClearText { get; }
         public  DelegateCommand                             CleanText { get; }
@@ -51,8 +55,10 @@ namespace TuneRenamer.ViewModels {
         public  DelegateCommand                             Renumber { get; }
         public  DelegateCommand                             RenameFiles { get; }
 
-        public RenamerWorkshopViewModel( IPlatformDialogService dialogService, IPreferences preferences, IPlatformLog log, ISourceScanner scanner,
-                                         ITextHelpers textHelpers, IFileRenamer fileRenamer, IEventAggregator eventAggregator ) {
+        public RenamerWorkshopViewModel( IPlatformDialogService platformDialogService, IPreferences preferences, IPlatformLog log,
+                                         ISourceScanner scanner, ITextHelpers textHelpers, IFileRenamer fileRenamer,
+                                         IEventAggregator eventAggregator, IDialogService dialogService ) {
+            mPlatformDialogService = platformDialogService;
             mDialogService = dialogService;
             mPreferences = preferences;
             mSourceScanner = scanner;
@@ -61,6 +67,7 @@ namespace TuneRenamer.ViewModels {
             mEventAggregator = eventAggregator;
             mLog = log;
 
+            Configuration = new DelegateCommand( OnConfiguration );
             BrowseSourceFolder = new DelegateCommand( OnBrowseSourceFolder );
             OpenSourceFolder = new DelegateCommand( OnOpenSourceFolder );
             RefreshSourceFolder = new DelegateCommand( OnRefreshSourceFolder );
@@ -80,8 +87,8 @@ namespace TuneRenamer.ViewModels {
             CommonTextList = new ObservableCollection<string>();
             CharacterPairs = new ObservableCollection<CharacterPair>();
 
-            CharacterPairs.Add( new CharacterPair( '[', ']', "Between '[' and ']'" ));
             CharacterPairs.Add( new CharacterPair( '(', ')', "Between '(' and ')'" ));
+            CharacterPairs.Add( new CharacterPair( '[', ']', "Between '[' and ']'" ));
             SelectedCharacterPair = CharacterPairs.FirstOrDefault();
 
             LineCount = 0;
@@ -201,7 +208,7 @@ namespace TuneRenamer.ViewModels {
         private void OnBrowseSourceFolder() {
             var directory = SourceDirectory;
 
-            if( mDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
+            if( mPlatformDialogService.SelectFolderDialog( "Select Source Directory", ref directory ) == true ) {
                 SourceDirectory = directory;
                 CollectSource();
 
@@ -460,6 +467,12 @@ namespace TuneRenamer.ViewModels {
 
         public void Dispose() {
             mEventAggregator.Unsubscribe( this );
+        }
+
+        private void OnConfiguration() {
+            var parameters = new DialogParameters();
+
+            mDialogService.ShowDialog( nameof( ReplacementWordsView ), parameters, result => { });
         }
     }
 }

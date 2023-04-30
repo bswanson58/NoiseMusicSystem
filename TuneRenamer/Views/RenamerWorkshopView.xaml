@@ -228,6 +228,8 @@
 
                 <Button Grid.Column="0" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right" Content="Delete Text:" Command="{Binding DeleteCharacterPair}"/>
                 <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding CharacterPairs}" DisplayMemberPath="Description" SelectedItem="{Binding SelectedCharacterPair, Mode=TwoWay}"/>
+                <Button Grid.Column="2" Height="25" Width="25" HorizontalAlignment="Right" Padding="2" Opacity="0.7"
+                        Content="{StaticResource Path_Configure}" Command="{Binding Configuration}" ToolTip="Configure Replacement Words"/>
             </Grid>
         </Grid>
         

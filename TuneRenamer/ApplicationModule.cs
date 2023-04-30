@@ -6,6 +6,8 @@ using TuneRenamer.Interfaces;
 using TuneRenamer.Logging;
 using TuneRenamer.Models;
 using TuneRenamer.Platform;
+using TuneRenamer.ViewModels;
+using TuneRenamer.Views;
 
 namespace TuneRenamer {
     class ApplicationModule : IModule {
@@ -23,6 +25,8 @@ namespace TuneRenamer {
             containerRegistry.Register<ITextHelpers, TextHelpers>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
+
+            containerRegistry.RegisterDialog<ReplacementWordsView, ReplacementWordsViewModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {
