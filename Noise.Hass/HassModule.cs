@@ -9,10 +9,10 @@ using Prism.Modularity;
 namespace Noise.Hass {
     public class HassModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
-            containerRegistry.Register<IHassIntegrationManager, HassIntegrationManager>();
-            containerRegistry.Register<IHassContextProvider, HassContextProvider>();
-            containerRegistry.Register<IHassMqttManager, HassMqttManager>();
-            containerRegistry.Register<IMqttManager, MqttManager>();
+            containerRegistry.RegisterSingleton<IHassIntegrationManager, HassIntegrationManager>();
+            containerRegistry.RegisterSingleton<IHassContextProvider, HassContextProvider>();
+            containerRegistry.RegisterSingleton<IHassMqttManager, HassMqttManager>();
+            containerRegistry.RegisterSingleton<IMqttManager, MqttManager>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

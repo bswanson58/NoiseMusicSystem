@@ -11,9 +11,11 @@ namespace Noise.Hass {
 
     public class HassIntegrationManager : IHassIntegrationManager {
         private readonly IHassContextProvider   mContextProvider;
+        private readonly IHassMqttManager       mHassMqttManager;
 
-        public HassIntegrationManager( IHassContextProvider contextProvider ) {
+        public HassIntegrationManager( IHassContextProvider contextProvider, IHassMqttManager hassMqttManager ) {
             mContextProvider = contextProvider;
+            mHassMqttManager = hassMqttManager;
         }
 
         public HassMqttParameters GetHassMqttParameters() =>

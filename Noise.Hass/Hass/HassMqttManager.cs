@@ -128,7 +128,7 @@ namespace Noise.Hass.Hass {
 
                     await AnnounceAvailabilityAsync();
 
-                    await Task.Delay( TimeSpan.FromSeconds( 10 ), cancelToken );
+                    await Task.Delay( TimeSpan.FromSeconds( 30 ), cancelToken );
                 }
                 catch( Exception ex ) {
                     mLog.LogException( "Error while announcing availability.", ex );

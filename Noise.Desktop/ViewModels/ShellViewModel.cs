@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Hass;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,6 +15,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.Platform;
 
 namespace Noise.Desktop.ViewModels {
+    // ReSharper disable once ClassNeverInstantiated.Global
     class ShellViewModel : PropertyChangeBase, IHandle<Events.WindowLayoutRequest> {
         private readonly INoiseWindowManager            mWindowManager;
         private readonly IRegionManager                 mRegionManager;
@@ -21,6 +23,7 @@ namespace Noise.Desktop.ViewModels {
         private readonly IDialogService                 mDialogService;
         private readonly IPlatformDialogService         mPlatformDialogs;
         private readonly IDataExchangeManager	        mDataExchangeMgr;
+        private readonly IHassIntegrationManager        mHassIntegration;
 
         public  ObservableCollection<UiCompanionApp>    CompanionApplications => mIpcManager.CompanionApplications;
         public  bool									HaveCompanionApplications => CompanionApplications.Any();
@@ -35,14 +38,17 @@ namespace Noise.Desktop.ViewModels {
         public  DelegateCommand                         Options { get; }
         public  DelegateCommand                         Guide { get; }
 
-        public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager, IDataExchangeManager dataExchangeManager, 
-                               IDialogService dialogService, IPlatformDialogService platformDialogService, IEventAggregator eventAggregator ) {
+        public ShellViewModel( INoiseWindowManager windowManager, IRegionManager regionManager, IIpcManager ipcManager,
+                               IDataExchangeManager dataExchangeManager, IDialogService dialogService, 
+                               IPlatformDialogService platformDialogService, IEventAggregator eventAggregator,
+                               IHassIntegrationManager hassIntegrationManager ) {
             mDialogService = dialogService;
             mWindowManager = windowManager;
             mRegionManager = regionManager;
             mIpcManager = ipcManager;
             mDataExchangeMgr = dataExchangeManager;
             mPlatformDialogs = platformDialogService;
+            mHassIntegration = hassIntegrationManager;
 
             LibraryLayout = new DelegateCommand( OnLibraryLayout );
             ListeningLayout = new DelegateCommand( OnListeningLayout );

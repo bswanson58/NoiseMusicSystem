@@ -19,8 +19,6 @@ namespace Noise.Hass.Context {
 
         string              DeviceAvailabilityTopic();
         string              DeviceMessageSubscriptionTopic();
-
-        string              DeviceBaseTopic( string forDomain );
     }
 
     public class HassClientContext : IHassClientContext {
@@ -43,18 +41,15 @@ namespace Noise.Hass.Context {
         }
 
         public string LastWillTopic =>
-            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{DeviceConfiguration.Identifiers}/{Constants.Availability}";
+            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
 
         public string LastWillPayload =>
             Constants.Offline;
 
-        public string DeviceBaseTopic( string forDomain ) =>
-            $"{mHassParameters.DiscoveryPrefix}/{forDomain}/{DeviceConfiguration.Name}";
-
         public string DeviceAvailabilityTopic() =>
-            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{DeviceConfiguration.Identifiers}/{Constants.Availability}";
+            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
 
         public string DeviceMessageSubscriptionTopic() =>
-            $"{mHassParameters.DiscoveryPrefix}/+/{DeviceConfiguration.Name}/#";
+            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/#";
     }
 }
