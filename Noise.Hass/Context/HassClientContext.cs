@@ -18,6 +18,7 @@ namespace Noise.Hass.Context {
         string              LastWillPayload { get; }
 
         string              DeviceAvailabilityTopic();
+        string              DeviceStatusTopic();
         string              DeviceMessageSubscriptionTopic();
     }
 
@@ -48,6 +49,9 @@ namespace Noise.Hass.Context {
 
         public string DeviceAvailabilityTopic() =>
             $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
+
+        public string DeviceStatusTopic() =>
+            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Status}";
 
         public string DeviceMessageSubscriptionTopic() =>
             $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/#";

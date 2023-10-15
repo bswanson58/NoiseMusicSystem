@@ -9,6 +9,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Packets;
+using Newtonsoft.Json;
 using Noise.Hass.Context;
 using OneOf;
 using OneOf.Types;
@@ -16,6 +17,8 @@ using OneOf.Types;
 // ReSharper disable IdentifierTypo
 
 namespace Noise.Hass.Mqtt {
+    public interface IJsonPayload { }
+
     public enum MqttStatus {
         Uninitialized,
         Connected,
@@ -34,6 +37,7 @@ namespace Noise.Hass.Mqtt {
         IObservable<MqttMessage>        OnMessageProcessed {  get; }
 
         Task<OneOf<None, Exception>>    PublishAsync( string topic, string payload );
+        Task<OneOf<None, Exception>>    PublishAsync( string topic, IJsonPayload payload );
         Task<OneOf<None, Exception>>    PublishAsync( MqttApplicationMessage message );
 
         Task<OneOf<None, Exception>>    SubscribeAsync( string topic );
@@ -174,6 +178,9 @@ namespace Noise.Hass.Mqtt {
 
             return Task.CompletedTask;
         }
+
+        public Task<OneOf<None, Exception>> PublishAsync( string topic, IJsonPayload payload ) =>
+            PublishAsync( topic, JsonConvert.SerializeObject( payload ));
 
         public async Task<OneOf<None, Exception>> PublishAsync( MqttApplicationMessage message ) {
             if( mClient != null ) {
