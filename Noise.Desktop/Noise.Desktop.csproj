@@ -316,6 +316,10 @@
       <Project>{9246b179-aaf0-4472-979e-48c4df52df00}</Project>
       <Name>Noise.Guide</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.Hass\Noise.Hass.csproj">
+      <Project>{ffd95340-915a-4d99-a8a2-0f9a0eb08691}</Project>
+      <Name>Noise.Hass</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>

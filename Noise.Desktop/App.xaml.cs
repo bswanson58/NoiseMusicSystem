@@ -173,6 +173,7 @@ namespace Noise.Desktop {
             RegisterModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
             RegisterModule( typeof( UI.NoiseUiModule ));
             RegisterModule( typeof( Guide.GuideModule ));
+            RegisterModule( typeof( Hass.HassModule ));
         }
 
         private void RegisterModule( Type moduleType ) {
@@ -191,6 +192,7 @@ namespace Noise.Desktop {
             InitializeModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
             InitializeModule( typeof( UI.NoiseUiModule ));
             InitializeModule( typeof( Guide.GuideModule ));
+            InitializeModule( typeof( Hass.HassModule ));
         }
 
         private void InitializeModule( Type moduleType ) {
