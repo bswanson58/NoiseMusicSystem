@@ -28,7 +28,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <mah:ToggleSwitch Grid.Row="0" Margin="25,10,0,15" IsOn="{Binding EnableIntegration}" 
+        <mah:ToggleSwitch Grid.Row="0" Margin="25,10,0,30" IsOn="{Binding EnableIntegration}" 
                           OnContent="Enable Home Assistant Integration" 
                           OffContent="Enable Home Assistant Integration (Disabled)"/>
 
@@ -44,8 +44,6 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="20"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="10"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
@@ -64,13 +62,9 @@
             <Label Grid.Column="0" Grid.Row="6" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
                    Content="Device Name:"/>
             <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding DeviceName, UpdateSourceTrigger=PropertyChanged}"/>
-
-            <Label Grid.Column="0" Grid.Row="8" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
-                   Content="Client Identifier:"/>
-            <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding ClientIdentifier, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,15,0,5">
+        <Grid Grid.Row="2" Margin="0,40,0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="*"/>

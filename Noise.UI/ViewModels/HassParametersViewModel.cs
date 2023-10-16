@@ -21,7 +21,6 @@ namespace Noise.UI.ViewModels {
         private string                              mUserName;
         private string                              mPassword;
         private string                              mDeviceName;
-        private string                              mClientIdentifier;
         private IDisposable                         mStatusSubscription;
 
         public  bool                                IsIntegrationEnabled => mEnableIntegration;
@@ -42,7 +41,6 @@ namespace Noise.UI.ViewModels {
             mPassword = parameters.Password;
             mUseRetainFlag = parameters.UseRetainFlag;
             mDeviceName = parameters.DeviceName;
-            mClientIdentifier = parameters.ClientIdentifier;
 
             TestConnection = new DelegateCommand( OnTestConnection, CanAccept );
 
@@ -141,16 +139,6 @@ namespace Noise.UI.ViewModels {
             }
         }
 
-        public string ClientIdentifier {
-            get => mClientIdentifier;
-            set {
-                mClientIdentifier = value;
-
-                Ok.RaiseCanExecuteChanged();
-                TestConnection.RaiseCanExecuteChanged();
-            }
-        }
-
         public bool UseRetainFlag {
             get => mUseRetainFlag;
             set {
@@ -168,8 +156,7 @@ namespace Noise.UI.ViewModels {
                 UserName = mUserName,
                 Password = mPassword,
                 UseRetainFlag = mUseRetainFlag,
-                DeviceName = mDeviceName,
-                ClientIdentifier = mClientIdentifier
+                DeviceName = mDeviceName
             };
 
             mHassManager.SetHassMqttParameters( parameters );
@@ -178,8 +165,7 @@ namespace Noise.UI.ViewModels {
         protected override bool CanAccept() =>
             !mEnableIntegration ||
             !String.IsNullOrWhiteSpace( mServerAddress ) &&
-            !String.IsNullOrWhiteSpace( mDeviceName ) &&
-            !String.IsNullOrWhiteSpace( mClientIdentifier );
+            !String.IsNullOrWhiteSpace( mDeviceName );
 
         private void OnTestConnection() {
             if( CanAccept()) {
