@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
@@ -11,22 +10,14 @@ using Noise.Infrastructure.Interfaces;
 // ReSharper disable IdentifierTypo
 
 namespace Noise.Hass.Hass {
-    public interface IMqttMessageHandler {
-        bool    ProcessMessage( MqttMessage message );
-    }
+    public interface IHassMqttManager : IDisposable { }
 
-    public interface IHassMqttManager : IDisposable {
-        void    RegisterMessageHandler( IMqttMessageHandler handler );
-        void    RevokeMessageHandler( IMqttMessageHandler handler );
-    }
-
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class HassMqttManager : IHassMqttManager {
         private readonly IMqttManager               mMqttManager;
         private readonly IHassContextProvider       mContextProvider;
         private readonly IApplicationLog            mLog;
-        private readonly List<IMqttMessageHandler>  mMessageHandlers;
         private DateTime                            mLastAvailableAnnouncementFailedLogged;
-        private IDisposable                         mMessageSubscription;
         private IDisposable                         mStatusSubscription;
         private CancellationTokenSource             mTokenSource;
         private Task                                mProcessTask;
@@ -36,10 +27,8 @@ namespace Noise.Hass.Hass {
             mContextProvider = contextProvider;
             mLog = log;
 
-            mMessageHandlers = new List<IMqttMessageHandler>();
             mLastAvailableAnnouncementFailedLogged = DateTime.MinValue;
 
-            mMessageSubscription = mMqttManager.OnMessageReceived.Subscribe( OnMessageReceived );
             mStatusSubscription = mMqttManager.OnStatusChanged.Subscribe( OnMqttStatusChanged );
         }
 
@@ -73,41 +62,13 @@ namespace Noise.Hass.Hass {
             mTokenSource = null;
         }
 
-        public void RegisterMessageHandler( IMqttMessageHandler handler ) {
-            RevokeMessageHandler( handler );
-
-            mMessageHandlers.Add( handler );
-        }
-
-        public void RevokeMessageHandler( IMqttMessageHandler handler ) {
-            if( mMessageHandlers.Contains( handler )) {
-                mMessageHandlers.Remove( handler );
-            }
-        }
-
-        private void OnMessageReceived( MqttMessage message ) {
-            if( message.Topic.EndsWith( Constants.Subscribe )) {
-                foreach( var handler in mMessageHandlers ) {
-                    if( handler.ProcessMessage( message )) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        public async Task ShutdownAsync() {
-            mTokenSource?.Cancel();
-
-            mMessageSubscription?.Dispose();
-            mMessageSubscription = null;
-
-            if( mProcessTask != null ) {
-                await mProcessTask;
-
-                mProcessTask?.Dispose();
-            }
+        private async Task ShutdownAsync() {
+            await StopProcessing();
 
             await AnnounceAvailabilityAsync( true );
+
+            mStatusSubscription?.Dispose();
+            mStatusSubscription = null;
         }
 
         private async Task Process( CancellationToken cancelToken ) {
@@ -166,13 +127,7 @@ namespace Noise.Hass.Hass {
         }
 
         public async void Dispose() {
-            mMessageSubscription?.Dispose();
-            mMessageSubscription = null;
-
-            mStatusSubscription?.Dispose();
-            mStatusSubscription = null;
-
-            await StopProcessing();
+            await ShutdownAsync();
         }
     }
 }

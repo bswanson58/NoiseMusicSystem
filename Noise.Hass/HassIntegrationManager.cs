@@ -2,6 +2,7 @@
 using Noise.Hass.Handlers;
 using Noise.Hass.Hass;
 
+// ReSharper disable NotAccessedField.Local
 // ReSharper disable IdentifierTypo
 
 namespace Noise.Hass {
