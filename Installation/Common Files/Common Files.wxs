@@ -12,7 +12,8 @@
 		<?include DotNetZip.wxi ?>
 		<?include EntityFramework.wxi ?>
 		<?include GongSolutions.wxi ?>
-		<?include gRpc.wxi?>
+    <?include gRpc.wxi?>
+    <?include HassIntegration.wxi?>
     <?include LiteDB.wxi ?>
 		<?include Lucene.wxi ?>
 		<?include MahApps.wxi?>

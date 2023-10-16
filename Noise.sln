@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Core", "Noise.Core\Noise.Core.csproj", "{33A45442-71E5-4BFE-B37F-129EDB4F18E8}"
 EndProject
@@ -55,6 +55,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RemoteServer", "Noise.RemoteServer\Noise.RemoteServer.csproj", "{86B71B1E-1C46-4E78-8376-E6DB55F0253F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noise.RemoteServer.Protocol", "Noise.RemoteServer.Protocol\Noise.RemoteServer.Protocol.csproj", "{12773C19-AD23-40CA-8AB7-D75AA9354DF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Hass", "Noise.Hass\Noise.Hass.csproj", "{FFD95340-915A-4D99-A8A2-0F9A0EB08691}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -617,6 +619,30 @@ Global
 		{12773C19-AD23-40CA-8AB7-D75AA9354DF3}.Release|x64.Build.0 = Release|Any CPU
 		{12773C19-AD23-40CA-8AB7-D75AA9354DF3}.Release|x86.ActiveCfg = Release|Any CPU
 		{12773C19-AD23-40CA-8AB7-D75AA9354DF3}.Release|x86.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|x64.Build.0 = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Debug|x86.Build.0 = Debug|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|x64.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|x64.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|x86.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Installers - Release|x86.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|x64.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|x64.Build.0 = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|x86.ActiveCfg = Release|Any CPU
+		{FFD95340-915A-4D99-A8A2-0F9A0EB08691}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

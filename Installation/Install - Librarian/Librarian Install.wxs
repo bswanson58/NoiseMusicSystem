@@ -138,7 +138,8 @@
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
 			<ComponentGroupRef Id="ReplayGainFiles"/>
       <ComponentGroupRef Id="gRpcFiles"/>
-		</Feature>
+      <ComponentGroupRef Id="HassIntegrationFiles"/>
+    </Feature>
 
 		<UIRef Id="InstallUI" />
 

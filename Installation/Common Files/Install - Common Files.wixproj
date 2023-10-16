@@ -43,6 +43,7 @@
     <Content Include="EntityFramework.wxi" />
     <Content Include="GongSolutions.wxi" />
     <Content Include="gRpc.wxi" />
+    <Content Include="HassIntegration.wxi" />
     <Content Include="LiteDB.wxi" />
     <Content Include="Lucene.wxi" />
     <Content Include="MahApps.wxi" />

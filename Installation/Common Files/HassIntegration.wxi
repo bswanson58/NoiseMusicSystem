@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Noise.Hass.dll" Guid="5BFCCA2A-34FC-432A-B103-F769EE814449">
+      <File Id="Noise.Hass.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Noise.Hass.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="MQTTnet.dll" Guid="F1279CD3-DD4A-438E-98BD-F7014D47937F">
+      <File Id="MQTTnet.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)MQTTnet.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="MQTTnet.Extensions.ManagedClient.dll" Guid="61AE5E22-E0BC-4318-AB72-99497A4A4AB2">
+      <File Id="MQTTnet.Extensions.ManagedClient.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)MQTTnet.Extensions.ManagedClient.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="OneOf.dll" Guid="7EA7FD4E-E96D-4B3C-9D39-E37E414D70E3">
+      <File Id="OneOf.Micro.Platform.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)OneOf.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="HassIntegrationFiles">
+    <ComponentRef Id="Noise.Hass.dll" />
+    <ComponentRef Id="MQTTnet.dll" />
+    <ComponentRef Id="MQTTnet.Extensions.ManagedClient.dll" />
+    <ComponentRef Id="OneOf.dll" />
+  </ComponentGroup>
+</Include>

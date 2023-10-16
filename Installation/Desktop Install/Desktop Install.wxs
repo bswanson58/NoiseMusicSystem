@@ -128,6 +128,7 @@
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
         <ComponentGroupRef Id="gRpcFiles"/>
+        <ComponentGroupRef Id="HassIntegrationFiles"/>
         <ComponentGroupRef Id="LiteDBFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MahAppsMetroFiles"/>
