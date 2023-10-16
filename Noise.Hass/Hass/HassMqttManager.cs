@@ -72,19 +72,11 @@ namespace Noise.Hass.Hass {
         }
 
         private async Task Process( CancellationToken cancelToken ) {
-            var subscriptionRequested = false;
-
             while(!cancelToken.IsCancellationRequested ) {
                 try {
                     if(( cancelToken.IsCancellationRequested ) ||
                        ( mMqttManager.Status != MqttStatus.Connected )) {
                         continue;
-                    }
-
-                    if(!subscriptionRequested ) {
-                        await mMqttManager.SubscribeAsync( mContextProvider.Context.DeviceMessageSubscriptionTopic());
-
-                        subscriptionRequested = true;
                     }
 
                     await AnnounceAvailabilityAsync();
@@ -94,10 +86,6 @@ namespace Noise.Hass.Hass {
                 catch( Exception ex ) {
                     mLog.LogException( "Error while announcing availability.", ex );
                 }
-            }
-
-            if( subscriptionRequested ) {
-                await mMqttManager.UnsubscribeAsync( mContextProvider.Context.DeviceMessageSubscriptionTopic());
             }
         }
 
