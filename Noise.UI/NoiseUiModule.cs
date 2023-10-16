@@ -33,6 +33,7 @@ namespace Noise.UI {
             containerRegistry.RegisterDialog<BulkTrackRenameView, BulkTrackRenameViewModel>();
             containerRegistry.RegisterDialog<ConfigurationDialog, ConfigurationViewModel>();
             containerRegistry.RegisterDialog<ExhaustedPlayPickerView, ExhaustedPlayPickerViewModel>();
+            containerRegistry.RegisterDialog<HassParametersDialog, HassParametersViewModel>();
             containerRegistry.RegisterDialog<LibraryBackupDialog, LibraryBackupDialogModel>();
             containerRegistry.RegisterDialog<LibraryConfigurationDialog, LibraryConfigurationDialogModel>();
             containerRegistry.RegisterDialog<PlaybackContextDialog, PlaybackContextDialogManager>();

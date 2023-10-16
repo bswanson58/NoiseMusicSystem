@@ -348,6 +348,7 @@
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\ExhaustedPlayPickerViewModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
+    <Compile Include="ViewModels\HassParametersViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryBackupDialogModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
@@ -426,6 +427,9 @@
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HassParametersDialog.xaml.cs">
+      <DependentUpon>HassParametersDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryAdditionsView.xaml.cs">
       <DependentUpon>LibraryAdditionsView.xaml</DependentUpon>
@@ -570,6 +574,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Noise.Hass\Noise.Hass.csproj">
+      <Project>{ffd95340-915a-4d99-a8a2-0f9a0eb08691}</Project>
+      <Name>Noise.Hass</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
@@ -737,6 +745,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FavoritesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HassParametersDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

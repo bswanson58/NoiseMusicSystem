@@ -4,53 +4,39 @@ using Caliburn.Micro;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
+using Noise.UI.Views;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 
 namespace Noise.UI.ViewModels {
     public class ConfigurationViewModel : PropertyChangedBase, IDialogAware {
-        private readonly IPreferences   mPreferences;
-        private readonly ThemeManager   mThemeManager;
-        private ThemeColors             mCurrentTheme;
-        private SignatureColors         mCurrentSignature;
+        private readonly IPreferences       mPreferences;
+        private readonly IDialogService     mDialogService;
+        private readonly ThemeManager       mThemeManager;
+        private ThemeColors                 mCurrentTheme;
+        private SignatureColors             mCurrentSignature;
 
-        public  bool                    EnableGlobalHotkeys { get; set; }
-        public  bool                    EnableRemoteAccess { get; set; }
-        public  bool                    EnableSortPrefixes { get; set; }
-        public  bool                    HasNetworkAccess { get; set; }
-        public  bool                    LoadLastLibraryOnStartup { get; set; }
-        public  bool                    MinimizeToTray { get; set; }
-        public  bool                    MinimizeOnSwitchToCompanionApp { get; set; }
-        public  string                  SortPrefixes { get; set; }
+        public  bool                        EnableGlobalHotkeys { get; set; }
+        public  bool                        EnableRemoteAccess { get; set; }
+        public  bool                        EnableSortPrefixes { get; set; }
+        public  bool                        HasNetworkAccess { get; set; }
+        public  bool                        LoadLastLibraryOnStartup { get; set; }
+        public  bool                        MinimizeToTray { get; set; }
+        public  bool                        MinimizeOnSwitchToCompanionApp { get; set; }
+        public  string                      SortPrefixes { get; set; }
 
         public  BindableCollection<ThemeColors>     AvailableThemes { get; }
         public  BindableCollection<SignatureColors> AvailableSignatures { get; }
 
         public  string                              Title { get; }
+        public  DelegateCommand                     HassIntegration { get; }
         public  DelegateCommand                     Ok { get; }
         public  DelegateCommand                     Cancel { get; }
         public  event Action<IDialogResult>         RequestClose;
 
-        public ThemeColors CurrentTheme {
-            get => mCurrentTheme;
-            set {
-                mCurrentTheme = value;
-
-                UpdateTheme();
-            }
-        }
-
-        public SignatureColors CurrentSignature {
-            get => mCurrentSignature;
-            set {
-                mCurrentSignature = value;
-
-                UpdateTheme();
-            }
-        }
-
-        public ConfigurationViewModel( IPreferences preferences ) {
+        public ConfigurationViewModel( IPreferences preferences, IDialogService dialogService ) {
             mPreferences = preferences;
+            mDialogService = dialogService;
 
             mThemeManager = new ThemeManager();
             var themeCatalog = new ThemeCatalog();
@@ -77,8 +63,27 @@ namespace Noise.UI.ViewModels {
 
             Title ="Noise Options";
 
+            HassIntegration = new DelegateCommand( OnHassIntegration );
             Ok = new DelegateCommand( OnOk );
             Cancel = new DelegateCommand( OnCancel );
+        }
+
+        public ThemeColors CurrentTheme {
+            get => mCurrentTheme;
+            set {
+                mCurrentTheme = value;
+
+                UpdateTheme();
+            }
+        }
+
+        public SignatureColors CurrentSignature {
+            get => mCurrentSignature;
+            set {
+                mCurrentSignature = value;
+
+                UpdateTheme();
+            }
         }
 
         public void UpdatePreferences() {
@@ -113,6 +118,10 @@ namespace Noise.UI.ViewModels {
                ( CurrentTheme != null )) {
                 mThemeManager.UpdateApplicationTheme( CurrentTheme.Id, CurrentSignature?.Location );
             }
+        }
+
+        private void OnHassIntegration() {
+            mDialogService.ShowDialog( nameof( HassParametersDialog ), new DialogParameters(), _ => { });
         }
 
         public bool CanCloseDialog() {

@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="Noise.UI.Views.HassParametersDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:viewModels="clr-namespace:Noise.UI.ViewModels"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:HassParametersViewModel, IsDesignTimeCreatable=False}"
+             Height="400" Width="450">
+    <mvvm:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="mvvm:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </mvvm:Dialog.WindowStyle>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <mah:ToggleSwitch Grid.Row="0" Margin="25,10,0,15" IsOn="{Binding EnableIntegration}" 
+                          OnContent="Enable Home Assistant Integration" 
+                          OffContent="Enable Home Assistant Integration (Disabled)"/>
+
+        <Grid Grid.Row="1" IsEnabled="{Binding IsIntegrationEnabled}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                   Content="MQTT Server Address:"/>
+            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ServerAddress, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Label Grid.Column="0" Grid.Row="2" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                   Content="MQTT User Name:"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Label Grid.Column="0" Grid.Row="4" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                   Content="MQTT User Password:"/>
+            <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Label Grid.Column="0" Grid.Row="6" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                   Content="Device Name:"/>
+            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding DeviceName, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Label Grid.Column="0" Grid.Row="8" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                   Content="Client Identifier:"/>
+            <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding ClientIdentifier, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0,15,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" 
+                   Content="Integration Status:"></Label>
+            <Label Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource LabelStyle}"
+                   Content="{Binding MqttStatus}"/>
+            <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding TestConnection}"
+                    Content="Test Connection"/>
+
+            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}"
+                   Content="{Binding MqttMessage}"/>
+        </Grid>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Margin="10,0" Content="Ok" Command="{Binding Ok}" IsDefault="True"/>
+            <Button Style="{StaticResource GeneralButtonStyle}" Width="70" Content="Cancel" Command="{Binding Cancel}" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
