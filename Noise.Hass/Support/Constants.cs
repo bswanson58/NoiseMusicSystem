@@ -1,7 +1,7 @@
 ﻿namespace Noise.Hass.Support {
     public static class Constants {
         // ReSharper disable once StringLiteralTypo
-        public  static readonly string      DiscoveryPrefix = "homeassistant";
+        public  static readonly string      TopicPrefix = "noisemusicsystem";
 
         public  static readonly string      Availability = "availability";
         public  static readonly string      Configuration = "config";

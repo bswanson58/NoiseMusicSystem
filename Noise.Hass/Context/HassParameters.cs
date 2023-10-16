@@ -9,7 +9,7 @@ namespace Noise.Hass.Context {
         public string   ClientIdentifier { get; set; }
         public string   Model { get; set; }
         public string   Version { get; set; }
-        public string   DiscoveryPrefix { get; set; }
+        public string   TopicPrefix { get; set; }
         public string   DeviceSerialNumber { get; set; }
 
         public HassParameters() {
@@ -17,7 +17,7 @@ namespace Noise.Hass.Context {
             ClientIdentifier = string.Empty;
             Model = string.Empty;
             Version = string.Empty;
-            DiscoveryPrefix = Constants.DiscoveryPrefix;
+            TopicPrefix = Constants.TopicPrefix;
             DeviceSerialNumber = string.Empty;
         }
     }

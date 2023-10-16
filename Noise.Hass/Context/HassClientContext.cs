@@ -42,18 +42,18 @@ namespace Noise.Hass.Context {
         }
 
         public string LastWillTopic =>
-            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
+            $"{mHassParameters.TopicPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
 
         public string LastWillPayload =>
             Constants.Offline;
 
         public string DeviceAvailabilityTopic() =>
-            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
+            $"{mHassParameters.TopicPrefix}/{DeviceConfiguration.Name}/{Constants.Availability}";
 
         public string DeviceStatusTopic() =>
-            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/{Constants.Status}";
+            $"{mHassParameters.TopicPrefix}/{DeviceConfiguration.Name}/{Constants.Status}";
 
         public string DeviceMessageSubscriptionTopic() =>
-            $"{mHassParameters.DiscoveryPrefix}/{DeviceConfiguration.Name}/#";
+            $"{mHassParameters.TopicPrefix}/{DeviceConfiguration.Name}/#";
     }
 }
