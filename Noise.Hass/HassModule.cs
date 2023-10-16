@@ -16,6 +16,7 @@ namespace Noise.Hass {
             containerRegistry.RegisterSingleton<IMqttManager, MqttManager>();
 
             containerRegistry.RegisterSingleton<IStatusHandler, StatusHandler>();
+            containerRegistry.RegisterSingleton<ICommandHandler, CommandHandler>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

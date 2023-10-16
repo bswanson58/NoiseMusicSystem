@@ -100,6 +100,7 @@ namespace Noise.Hass.Handlers {
             mStatus.PositionUpdatedAt = DateTime.Now.ToString( "R" ); // RFC 1123 format
 
             mStatus.Volume = Convert.ToInt32( mAudioController.Volume * 100.0 );
+            mStatus.IsVolumeMuted = mAudioController.Mute;
 
             UpdateStatus( mStatus );
         }

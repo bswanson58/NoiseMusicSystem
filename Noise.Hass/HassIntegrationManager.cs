@@ -14,12 +14,14 @@ namespace Noise.Hass {
     public class HassIntegrationManager : IHassIntegrationManager {
         private readonly IHassContextProvider   mContextProvider;
         private readonly IHassMqttManager       mHassMqttManager;
+        private readonly ICommandHandler        mCommandHandler;
         private readonly IStatusHandler         mStatusHandler;
 
         public HassIntegrationManager( IHassContextProvider contextProvider, IHassMqttManager hassMqttManager,
-                                       IStatusHandler statusHandler ) {
+                                       IStatusHandler statusHandler, ICommandHandler commandHandler ) {
             mContextProvider = contextProvider;
             mHassMqttManager = hassMqttManager;
+            mCommandHandler = commandHandler;
             mStatusHandler = statusHandler;
         }
 

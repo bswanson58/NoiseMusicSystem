@@ -34,6 +34,9 @@ namespace Noise.Hass.Dto {
         [JsonProperty( PropertyName = "volume")]
         public  int     Volume { get; set; }
 
+        [JsonProperty( PropertyName = "muted")]
+        public  bool IsVolumeMuted {  get; set; }
+
         public StatusDto() {
             Artist = String.Empty;
             Album = String.Empty;
@@ -44,6 +47,7 @@ namespace Noise.Hass.Dto {
             Duration = 0;
             Position = 0;
             Volume = 0;
+            IsVolumeMuted = false;
         }
     }
 }

@@ -106,7 +106,9 @@
     <Compile Include="Context\HassContextProvider.cs" />
     <Compile Include="Context\HassParameters.cs" />
     <Compile Include="Discovery\DeviceConfigModel.cs" />
+    <Compile Include="Dto\CommandDto.cs" />
     <Compile Include="Dto\StatusDto.cs" />
+    <Compile Include="Handlers\CommandHandler.cs" />
     <Compile Include="Handlers\StatusHandler.cs" />
     <Compile Include="HassIntegrationManager.cs" />
     <Compile Include="HassModule.cs" />
