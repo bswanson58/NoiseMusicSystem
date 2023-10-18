@@ -32,18 +32,25 @@ namespace Noise.Core.DataExchange {
                         var tagElement = new XElement( ExchangeConstants.cUserTag );
                         var associations = mTagManager.GetAssociations( tag.DbId );
 
-                        tagElement.Add( new XAttribute( ExchangeConstants.cUserTagName, tag.Name ));
-                        tagElement.Add( new XAttribute( ExchangeConstants.cUserTagDescription, tag.Description ));
+                        tagElement.Add( new XAttribute( ExchangeConstants.cUserTagName, tag.Name ?? "Unknown Tag" ));
+                        tagElement.Add( new XAttribute( ExchangeConstants.cUserTagDescription, tag.Description ?? String.Empty ));
 
                         foreach( var association in associations ) {
                             var track = mTrackProvider.GetTrack( association.ArtistId );
-                            var artist = mArtistProvider.GetArtist( track.Artist );
-                            var album = mAlbumProvider.GetAlbum( track.Album );
 
-                            tagElement.Add( new XElement( ExchangeConstants.cTagAssociation,
-                                            new XElement( ExchangeConstants.cArtist, artist.Name ),
-                                            new XElement( ExchangeConstants.cAlbum, album.Name ),
-                                            new XElement( ExchangeConstants.cTrack, track.Name )));
+							if( track != null ) {
+                                var artist = mArtistProvider.GetArtist( track.Artist );
+                                var album = mAlbumProvider.GetAlbum( track.Album );
+
+                                if((!String.IsNullOrWhiteSpace( artist?.Name )) &&
+                                   (!String.IsNullOrWhiteSpace( album?.Name )) &&
+                                   (!String.IsNullOrWhiteSpace( track.Name ))) {
+                                    tagElement.Add( new XElement( ExchangeConstants.cTagAssociation,
+                                        new XElement( ExchangeConstants.cArtist, artist.Name ),
+                                        new XElement( ExchangeConstants.cAlbum, album.Name ),
+                                        new XElement( ExchangeConstants.cTrack, track.Name )));
+                                }
+                            }
                         }
 
                         rootElement.Add( tagElement );
