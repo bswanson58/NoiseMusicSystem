@@ -54,10 +54,20 @@ namespace Noise.Hass.Handlers {
         private async void Subscribe() {
             if( mContext != null ) {
                 if( mMqttStatus.Equals( MqttStatus.Connected )) {
-                    await mMqttManager.SubscribeAsync( mContext.DeviceMessageSubscriptionTopic());
+                    var result = await mMqttManager.SubscribeAsync( mContext.DeviceMessageSubscriptionTopic());
+
+                    result.Switch( 
+                        _ => { },
+                        ex => mLog.LogException( "Subscribing to device MQTT messages", ex )
+                    );
                 }
                 else {
-                    await mMqttManager.UnsubscribeAsync( mContext.DeviceMessageSubscriptionTopic());
+                    var result = await mMqttManager.UnsubscribeAsync( mContext.DeviceMessageSubscriptionTopic());
+
+                    result.Switch( 
+                        _ => { },
+                        ex => mLog.LogException( "Unsubscribing from device MQTT messages", ex )
+                    );
                 }
             }
         }

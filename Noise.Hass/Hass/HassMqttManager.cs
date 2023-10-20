@@ -98,7 +98,12 @@ namespace Noise.Hass.Hass {
                         .WithPayload( offline ? Constants.Offline : Constants.Online )
                         .WithRetainFlag( mContextProvider.Context.UseMqttRetainFlag );
 
-                    await mMqttManager.PublishAsync( messageBuilder.Build());
+                    var result = await mMqttManager.PublishAsync( messageBuilder.Build());
+
+                    result.Switch(
+                        _ => { },
+                        ex => mLog.LogException( "Error when announcing availability.", ex )
+                    );
                 }
                 else {
                     // only log failures once every 5 minutes to minimize log growth
