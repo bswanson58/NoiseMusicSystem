@@ -5,6 +5,9 @@ using Noise.Hass.Hass;
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable IdentifierTypo
 
+// The support for Home Assistant needs the NoiseHass integration installed into Home Assistant via HACS
+// and a media player configured in the HA configuration file as outlined in the NoiseHass readme file.
+
 namespace Noise.Hass {
     public interface IHassIntegrationManager {
         HassMqttParameters      GetHassMqttParameters();
